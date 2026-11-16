@@ -5,12 +5,12 @@ Variables, sources, license and references come from the metadata; do not repeat
 
 ```js
 {
-  id: 'municipalities339-ntl', type: 'indicator', section: 'indicators',
+  id: 'municipalities343-ntl', type: 'indicator', section: 'indicators',
   title: 'Night-time lights per capita',
-  scope: '339 municipalities · 2012–2020',                  // shown above the title
+  scope: '333 of 343 municipalities · 2012–2020',             // shown above the title
   summary: 'One sentence for the card and the header.',
   description: 'The About paragraph: what, where, when, how, why, caveats.',
-  geography: 'Municipality', units: 339, period: '2012–2020', frequency: 'Annual',
+  geography: 'Municipality', units: 343, period: '2012–2020', frequency: 'Annual',
   key: 'geo_id', idExample: 'XX-01-02-03',                   // a real geo_id of the scale
   categories: ['Economy'], tags: ['night-time lights', 'VIIRS'],
   image: 'images/indicators/ntl.webp',                       // the 16:9 card (indicator_map.py)

@@ -44,6 +44,6 @@ reads the properties below at runtime; the validator enforces the starred ones.
 | `name`* | Variable name |
 | `title`* | **Label**: a readable plot label (sentence case, spaces, no codes or year, ≤ 45 characters) |
 | `description`* | **How it was built**: definition, unit, original source, reference year or period |
-| `geo:unit`, `geo:aggregation`, `geo:source`, `geo:role`, `geo:year` | Package and docs (`geo:source` also goes in the map's data credit) |
+| `geo:unit`, `geo:aggregation`, `geo:source`, `geo:role`, `geo:reference_years` | Package and docs (`geo:source` also goes in the map's data credit) |
 
 `geo.dictionary(dataset)` returns `variable, label, description, unit, role, aggregation, source`.

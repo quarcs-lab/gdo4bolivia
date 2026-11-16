@@ -8,7 +8,7 @@ images/projects/<id>.webp (1600 x 900) and images/pillar-projects.webp (1200 x 8
 
 Rules for the pictures: Bolivian places only; no maps, country outlines, borders, globes or other
 countries; no text, logos or flags. Where a card needs a map (OVERLAY), this script draws it from
-the website's boundaries (site/data/municipality.geojson: geoBoundaries, GeoBolivia, public domain)
+the website's boundaries (site/data/municipality.geojson: SDSN Bolivia 2025)
 over the picture, so every border shown is the official one used across the site.
 """
 
@@ -46,7 +46,7 @@ PROMPTS = {
     "satellite trails.",
 }
 # Cards that carry an official map: dataset, variable and colour ramp (rose = low, turquoise = high)
-OVERLAY = {"sdg-atlas-bolivia": ("sdg01", "index_sdg1")}
+OVERLAY = {"sdg-atlas-bolivia": ("sdg", "index_sdg")}   # the IDS in its latest year
 RAMP = ["#d1405a", "#ff8597", "#e3ecea", "#5ad6c6"]
 
 
@@ -75,6 +75,7 @@ def map_layer(dataset: str, variable: str, height: int) -> Image.Image:
     mun = gpd.read_file(ROOT / "site/data/municipality.geojson").to_crs(4326)
     df = pd.read_csv(ROOT / f"data/municipality/{dataset}.csv")
     mun["v"] = mun["geo_id"].map(df.dropna(subset=[variable]).groupby("geo_id")[variable].last())
+    mun["v"] = mun["v"].rank(pct=True)   # shade by percentile, so the colours spread over the ramp
     fig = plt.figure(figsize=(7, 9), dpi=100)
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_axis_off()

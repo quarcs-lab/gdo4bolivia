@@ -33,8 +33,8 @@ import geo4bolivia as geo
 import plotly.express as px                          # interactive maps and charts (preinstalled in Colab)
 
 geo.datasets()                                       # what is available, at which scale and years
-gdf = geo.load("sdg01", variables="sdg1_2_mpi", years=2012, geometry=True)   # 339 municipalities with boundaries
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index, color="sdg1_2_mpi",
+gdf = geo.load("sdg", years=2024, geometry=True)    # 343 municipalities with boundaries
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index, color="index_sdg",
                   hover_name="name", center={"lat": -16.3, "lon": -64}, zoom=4)
 ```
 
@@ -44,23 +44,24 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index, color="sdg1_2_
 
 ## 📊 GeoDevelopment Indicators
 
-All data share one spatial backbone. Every unit at every scale has a **geo ID** that nests by prefix (numbered as in GADM 4.1): municipality `BO-04-17-04` (La Paz) lies in province `BO-04-17` (Murillo), which lies in department `BO-04` (La Paz), which lies in Bolivia `BO`. INE codes, DS4Bolivia's `asdf_id` and GADM and geoBoundaries codes are kept as columns of [`geo/units.csv`](geo/units.csv). The boundaries are [geoBoundaries](https://www.geoboundaries.org)' municipalities from GeoBolivia, in the public domain; provinces, departments and the country are their exact unions. Each dataset is a panel with one row per unit (`geo_id`) and year, published as CSV and Parquet.
+All data share one spatial backbone. Every unit at every scale has a **geo ID** that nests by prefix (numbered as in GADM 4.1): municipality `BO-04-17-04` (Nuestra Señora de La Paz) lies in province `BO-04-17` (Murillo), which lies in department `BO-04` (La Paz), which lies in Bolivia `BO`. INE codes, DS4Bolivia's `asdf_id` and GADM codes are kept as columns of [`geo/units.csv`](geo/units.csv). The municipalities are the 343 municipalities and indigenous autonomies (GAIOC) of SDSN Bolivia's municipal map of 2025, the units of the SDG Atlas 2026; provinces, departments and the country are their exact unions. Each dataset is a panel with one row per unit (`geo_id`) and year, published as CSV and Parquet.
 
 | Dataset | Title | Scale | Period | Files |
 | --- | --- | --- | --- | --- |
-| [`pop`](docs/datasets/pop.md) | Population (gridded estimates) | 339 municipalities | 2001–2020 | [`data/municipality/`](data/municipality/) |
-| [`ntl`](docs/datasets/ntl.md) | Night-time lights per capita (log) and its long-run trend | 339 municipalities | 2012–2020 | [`data/municipality/`](data/municipality/) |
-| [`sdg01`](docs/datasets/sdg01.md) … [`sdg17`](docs/datasets/sdg17.md) | Municipal Atlas of the SDGs 2020, one dataset per goal: the goal index and its indicators, each at its reference year | 339 municipalities | 2010–2020 | [`data/municipality/`](data/municipality/) |
-| [`emb`](docs/datasets/emb.md) | Satellite embeddings, 64 dimensions, area-weighted | 339 municipalities | 2017 | [`data/municipality/`](data/municipality/) |
-| [`embpw`](docs/datasets/embpw.md) | Satellite embeddings, 64 dimensions, population-weighted | 339 municipalities | 2017 | [`data/municipality/`](data/municipality/) |
-| [`geo`](geo/) | Units, names, codes, boundaries and crosswalks for every scale | 461 units | — | [`geo/`](geo/) |
+| [`sdg`](docs/datasets/sdg.md) | SDG Atlas 2026: the Sustainable Development Index (IDS) and its ranking, with census population | 343 municipalities | ~2012, ~2024 | [`data/municipality/`](data/municipality/) |
+| [`sdg01`](docs/datasets/sdg01.md) … [`sdg17`](docs/datasets/sdg17.md) | SDG Atlas 2026, one dataset per goal: the goal index and its 81 indicators in all | 343 municipalities | ~2012, ~2024 | [`data/municipality/`](data/municipality/) |
+| [`pop`](docs/datasets/pop.md) | Population (gridded estimates) | 333 municipalities | 2001–2020 | [`data/municipality/`](data/municipality/) |
+| [`ntl`](docs/datasets/ntl.md) | Night-time lights per capita (log) and its long-run trend | 333 municipalities | 2012–2020 | [`data/municipality/`](data/municipality/) |
+| [`emb`](docs/datasets/emb.md) | Satellite embeddings, 64 dimensions, area-weighted | 333 municipalities | 2017 | [`data/municipality/`](data/municipality/) |
+| [`embpw`](docs/datasets/embpw.md) | Satellite embeddings, 64 dimensions, population-weighted | 333 municipalities | 2017 | [`data/municipality/`](data/municipality/) |
+| [`geo`](geo/) | Units, names, codes, boundaries and crosswalks for every scale | 466 units | — | [`geo/`](geo/) |
 
 Each dataset has three descriptions:
 - a [Frictionless datapackage](metadata/)
 - a generated page in [`docs/datasets/`](docs/datasets/), with its variable dictionary, coverage, sources and citation
 - its rows in [`definitions_gdo-bolivia.csv`](definitions_gdo-bolivia.csv), which lists every variable of every dataset
 
-New municipalities keep being created in Bolivia. The 339 municipalities here are GeoBolivia's 2015 map (via geoBoundaries), numbered as in GADM 4.1; data on a newer map will be published at their own scale and linked to this one by area-weighted overlay ([how](CONTRIBUTING_DATA.md#add-a-municipality-map-of-another-vintage)).
+The SDG Atlas 2026 measures each indicator twice, near the 2012 census and near the 2024 census; the panels store the two periods as 2012 and 2024, and each variable's actual reference years are in its metadata. New municipalities keep being created in Bolivia: since version 0.4 the municipalities are SDSN Bolivia's 343-unit map of 2025. The 339 municipalities of GeoBolivia's 2015 map kept their geo IDs (numbered as in GADM 4.1) and the four units created since were numbered after them. Population, night-time lights and satellite embeddings were computed on the 2015 polygons, so they cover the 333 municipalities whose territory did not change ([how maps change](CONTRIBUTING_DATA.md#add-a-municipality-map-of-another-vintage)).
 
 ### Load the data: two ways
 
@@ -71,15 +72,15 @@ New municipalities keep being created in Bolivia. The 339 municipalities here ar
 import geo4bolivia as geo
 
 geo.dictionary("sdg01")                                    # variables, units, reference years
-mpi = geo.load("sdg01", variables="sdg1_2_mpi", years=2012)  # one SDG indicator at its year
+mpi = geo.load("sdg01", variables="sdg1_2_mpi")            # one SDG indicator, ~2012 and ~2024
 wide = geo.load("pop", wide="pop")                         # one column per year
 geo.units("municipality")                                  # names, parents, INE and DS4Bolivia codes
 
 geo.aggregate(geo.load("pop"), to="department", dataset="pop")    # municipalities -> departments
-geo.aggregate(mpi, to="department", rules={"sdg1_2_mpi": "weighted_mean:pop"},
-              weights=geo.load("pop"))                            # population-weighted poverty
+geo.aggregate(mpi, to="department", rules={"sdg1_2_mpi": "weighted_mean:population"},
+              weights=geo.load("sdg", variables="population"))    # census-weighted poverty
 geo.combine(["ntl", "pop"], scale="municipality")                 # two datasets, one panel
-geo.load("ntl", ref="v0.2.0")                                     # a frozen release of the data
+geo.load("ntl", ref="v0.4.0")                                     # a frozen release of the data
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -91,7 +92,7 @@ import pandas as pd
 import geopandas as gpd
 
 BASE = "https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/"
-df = pd.read_csv(BASE + "data/municipality/ntl.csv")               # geo_id, year, variables
+df = pd.read_csv(BASE + "data/municipality/sdg.csv")               # geo_id, year, variables
 units = pd.read_csv(BASE + "geo/units.csv")                         # names, parents, source codes
 gdf = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")   # polygons keyed by geo_id
 ```
@@ -115,7 +116,7 @@ ntl = geo.zonal("viirs_2020.tif", scale="municipality", name="ntl", year=2020)
 panel = geo.combine(["pop"], scale="municipality", extra=[mine])
 geo.save(panel, "my_indicator", scale="municipality", directory="my_data")
 df, df_def = geo.for_expdpy(panel)                                          # inputs for expdpy (panel econometrics)
-gdf, df, df_dict = geo.for_geometrics("ntl")                                # inputs for geometrics (spatial analysis)
+gdf, df, df_dict = geo.for_geometrics("sdg")                                # inputs for geometrics (spatial analysis)
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -124,7 +125,7 @@ The full guide is [`docs/data-infrastructure.md`](docs/data-infrastructure.md). 
 
 ### A note on DS4Bolivia's homonyms
 
-Three pairs of municipalities share a name across departments: San Javier (Beni, Santa Cruz), El Puente (Tarija, Santa Cruz) and Santa Rosa (Beni, Pando). In DS4Bolivia, the attribute rows of each pair (names, INE codes and the SDG Atlas indicators) are attached to the other polygon of the pair. GDO-Bolivia links the SDG indicators by INE code, so each lies in its own municipality, while population, lights and embeddings, which were computed from the polygons, follow the polygons. Details and evidence: [`raw/README.md`](raw/README.md).
+Three pairs of municipalities share a name across departments: San Javier (Beni, Santa Cruz), El Puente (Tarija, Santa Cruz) and Santa Rosa (Beni, Pando). In DS4Bolivia, the attribute rows of each pair (names, INE codes and the SDG Atlas 2020 indicators) are attached to the other polygon of the pair. Population, lights and embeddings, which DS4Bolivia computed from the polygons, follow the polygons; the SDG Atlas 2026 comes from SDSN Bolivia and is linked by INE code. Details and evidence: [`raw/README.md`](raw/README.md).
 
 ---
 
@@ -161,7 +162,7 @@ Three pairs of municipalities share a name across departments: San Javier (Beni,
 
 | Project | What it does |
 | --- | --- |
-| [The subnational SDG Atlas of Bolivia](https://atlasods.sdsnbolivia.org/) | SDSN Bolivia's municipal index for each Sustainable Development Goal; its 2020 edition is the `sdg01`…`sdg17` datasets |
+| [The subnational SDG Atlas of Bolivia](https://atlasods.sdsnbolivia.org/) | SDSN Bolivia's municipal indices of the Sustainable Development Goals, ~2012 and ~2024; its 2026 edition is the `sdg` and `sdg01`…`sdg17` datasets |
 | [Regional shocks and spillover effects](https://quarcs-lab.github.io/scspill/) | `scspill`: synthetic control when a shock spills over to neighbouring regions |
 | Monitoring space-time dynamics of local pollution | satellite monitoring of local air pollution across municipalities (website coming soon) |
 
@@ -258,4 +259,4 @@ Please also cite the original source of each dataset you use. The citations are 
 
 **Disclaimer.** The indicators, tools, projects and insights are the responsibility of the individual researchers and do not necessarily represent the views of their affiliated institutions or related organizations. Maps are for geo-statistical use only. They have a referential, informational character and do not represent an official definition of Bolivia's territorial boundaries.
 
-**License.** Code: [MIT](LICENSE). Data: [CC BY 4.0](LICENSE-DATA), except where an original source requires otherwise. The boundaries (`geo/boundaries/`) are geoBoundaries' (Runfola et al. 2020), from GeoBolivia, in the public domain. Each dataset's sources, their licenses and the credits they ask for are listed in its metadata, its page in `docs/datasets/` and its page on the website. The indicator maps use Esri's World Dark Gray Canvas basemap (Esri, HERE, Garmin, © OpenStreetMap contributors). Section illustrations come from the geo4cambodia template (generated with OpenAI image generation via Codex); satellite imagery in the hero and the section backgrounds is Sentinel-2 cloudless 2016 by EOX IT Services GmbH (CC BY 4.0), except the Laguna Verde background from Sentinel-2 cloudless 2024 (CC BY-NC-SA 4.0), and NASA Blue Marble (public domain).
+**License.** Code: [MIT](LICENSE). Data: [CC BY 4.0](LICENSE-DATA), except where an original source requires otherwise. The boundaries (`geo/boundaries/`) are SDSN Bolivia's municipal map of 2025, used and shared with SDSN Bolivia's permission (cite “SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/”). Each dataset's sources, their licenses and the credits they ask for are listed in its metadata, its page in `docs/datasets/` and its page on the website. The indicator maps use Esri's World Dark Gray Canvas basemap (Esri, HERE, Garmin, © OpenStreetMap contributors). Section illustrations come from the geo4cambodia template (generated with OpenAI image generation via Codex); satellite imagery in the hero and the section backgrounds is Sentinel-2 cloudless 2016 by EOX IT Services GmbH (CC BY 4.0), except the Laguna Verde background from Sentinel-2 cloudless 2024 (CC BY-NC-SA 4.0), and NASA Blue Marble (public domain).

@@ -19,18 +19,25 @@ sources, provide a link to the license, and indicate if changes were made.
 
 Exceptions
 
-  - Boundaries. geo/boundaries/, site/data/*.geojson and raw/boundaries/geoboundaries/ come
-    from geoBoundaries gbOpen (https://www.geoboundaries.org; Runfola et al. 2020, PLoS ONE
-    15(4): e0231866), whose Bolivian boundaries come from GeoBolivia and are in the public
-    domain: free to use and redistribute, including commercially. Please credit
-    "geoBoundaries (GeoBolivia, public domain)". The geo IDs follow GADM 4.1's numbering,
-    and geo/units keeps GADM's codes and names (gid, name_gadm) as source keys; no GADM
-    geometry is distributed (version 0.1 of the observatory did).
+  - Boundaries. geo/boundaries/, site/data/*.geojson and raw/boundaries/sdsn2025/ come from
+    SDSN Bolivia's municipal map of 2025 (Límites Municipales Bolivia 2025: the 343
+    municipalities and indigenous autonomies, from the Ministerio de Planificación del
+    Desarrollo, the Instituto Nacional de Estadística and the Viceministerio de Autonomías).
+    It states no open license; it is used and shared with the permission of SDSN Bolivia,
+    and its citation is mandatory: "SDSN Bolivia (2025). Límites Municipales Bolivia 2025
+    [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/". The same terms apply to
+    raw/protected_areas/sdsn2025/ (Áreas protegidas Bolivia 2025). The geo IDs follow GADM
+    4.1's numbering, and geo/units keeps GADM's codes and names (gid, name_gadm) as source
+    keys; no GADM geometry is distributed (version 0.1 of the observatory did). Versions 0.2
+    and 0.3 used geoBoundaries' public-domain polygons from GeoBolivia.
   - Original sources. Each dataset is derived from third-party data whose own terms and
     required credits are listed in its metadata (metadata/<dataset>.datapackage.json,
     "sources") and on its page of the website. Where a source requires otherwise, its
-    terms prevail. The Municipal Atlas of the SDGs in Bolivia 2020 (dataset sdg) states no
-    open license (© Universidad Privada Boliviana); it is used and shared with the
-    permission of SDSN Bolivia, and its authors ask to be cited.
+    terms prevail. The Atlas de los ODS en Bolivia 2026 (datasets sdg and sdg01 ... sdg17)
+    states no open license (© Universidad Privada Boliviana); it is used and shared with the
+    permission of SDSN Bolivia, and its authors ask to be cited: Andersen, L.E. & Argandoña,
+    F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo
+    sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad
+    Privada Boliviana, SDSN Bolivia.
   - raw/ holds the original inputs as received; they keep their sources' terms.
   - Website images (images/, media/) keep the terms stated in the website's credits.

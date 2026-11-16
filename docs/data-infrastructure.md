@@ -61,13 +61,13 @@ A **scale** is a set of units that tile the country: departments, provinces, mun
 
 ```yaml
 municipality:
-  label: Municipality (339)
+  label: Municipality (343)
   kind: admin            # admin | grouping | grid | custom
   level: 3               # administrative level
   parent: province       # the next coarser scale it nests in exactly
   id_pattern: '^BO-\d{2}-\d{2}-\d{2}$'
   example: BO-04-17-04
-  source: geoBoundaries gbOpen ADM3 (GeoBolivia, public domain), numbered as GADM 4.1 level 3
+  source: SDSN Bolivia (2025), Límites Municipales Bolivia 2025, numbered as GADM 4.1 level 3
   status: active         # active: published in geo/ | planned: reserved
 ```
 
@@ -86,14 +86,14 @@ municipality:
 | --- | --- | --- | --- | --- |
 | `country` | 1 | `BO` | `BO` | — |
 | `department` | 9 | `BO-NN` | `BO-04` (La Paz) | country |
-| `province` | 112 | `BO-NN-NN` | `BO-04-17` (Murillo) | department → country |
-| `municipality` | 339 | `BO-NN-NN-NN` | `BO-04-17-04` (La Paz) | province → department → country |
+| `province` | 113 | `BO-NN-NN` | `BO-04-17` (Murillo) | department → country |
+| `municipality` | 343 | `BO-NN-NN-NN` | `BO-04-17-04` (Nuestra Señora de La Paz) | province → department → country |
 | `municipality_ine` | planned | `BO-INE-NNNNNN` | `BO-INE-020101` | (overlay) |
 | `grid10k` | planned | `BO-G10K-rNNNcNNN` | `BO-G10K-r012c034` | (overlay) |
 
-Administrative numbers follow the GADM order; the boundaries are geoBoundaries' (Bolivia: GeoBolivia's 2015 map, public domain), attached to the IDs by a one-off area match (`scripts/match_geoboundaries.py`, `build/geoboundaries.py`). geoBoundaries leaves salt flats and lakes outside every unit, so they are holes at every scale and `area_km2` excludes them. Codes from other sources are **kept as columns**, never used as keys: Bolivia's INE codes order the departments differently (La Paz is `BO-04` here and `02` in INE), so `ine_code` is a column of `geo/units.csv`, next to DS4Bolivia's `asdf_id` and the INE `mun_id`.
+Administrative numbers follow the GADM order; the boundaries are SDSN Bolivia's municipal map of 2025 (343 municipalities and indigenous autonomies, used with SDSN Bolivia's permission), attached to the IDs by INE code (`scripts/match_municipalities343.py`, `build/geo.py`, `build/geoboundaries.py`); the four units created after GADM's map are numbered after the last municipality of their province. The map leaves salt flats and lakes outside every unit, so they are holes at every scale and `area_km2` excludes them. Codes from other sources are **kept as columns**, never used as keys: Bolivia's INE codes order the departments differently (La Paz is `BO-04` here and `02` in INE), so `ine_code` is a column of `geo/units.csv`, next to DS4Bolivia's `asdf_id` and the INE `mun_id`.
 
-**Municipality maps of other vintages.** New municipalities are created over time, so later datasets may use a map with more units than these 339. Each map is its own scale with its own ID prefix (e.g. the planned `municipality_ine`), never a relabelling of `municipality`. Its boundaries are published like any other scale, and data move between maps with `overlay()` (area weights), or through a hand-checked lookup when units only split. See [`CONTRIBUTING_DATA.md`](../CONTRIBUTING_DATA.md).
+**Municipality maps of other vintages.** New municipalities are created over time. Version 0.4 replaced GeoBolivia's 2015 map (339 municipalities) with SDSN Bolivia's 2025 map (343): the 339 kept their IDs and the 4 new units got new ones, so an ID never changes meaning. Six municipalities lost territory to the new units; data computed on the 2015 polygons (`pop`, `ntl`, `emb`, `embpw`) are published only for the 333 unchanged units. A map whose units cannot keep the IDs becomes a scale of its own (the planned `municipality_ine`) linked by `overlay()`. See [`CONTRIBUTING_DATA.md`](../CONTRIBUTING_DATA.md).
 
 ---
 
@@ -101,7 +101,7 @@ Administrative numbers follow the GADM order; the boundaries are geoBoundaries' 
 
 | File | Contents |
 | --- | --- |
-| `units.csv` / `.parquet` | One row per unit of every scale: `geo_id`, `scale`, `name`, `parent_id`; one `<scale>_id` column per scale it lies in (`country_id`, `department_id`, `province_id`, `municipality_id`); source keys (`gid` = GADM, `ine_code` = INE, and for municipalities `asdf_id` = DS4Bolivia polygon, `mun_id` = INE code as an integer and `gb_id` = geoBoundaries `shapeID`); the GADM spelling (`name_gadm`); `area_km2` |
+| `units.csv` / `.parquet` | One row per unit of every scale: `geo_id`, `scale`, `name`, `parent_id`; one `<scale>_id` column per scale it lies in (`country_id`, `department_id`, `province_id`, `municipality_id`); source keys (`gid` = GADM, `ine_code` = INE, and for municipalities `asdf_id` = DS4Bolivia polygon, `mun_id` = INE code as an integer); DS4Bolivia's and GADM's spellings (`name_ds4bolivia`, `name_gadm`); `area_km2` |
 | `boundaries/<scale>.geojson` / `.parquet` | Polygons in WGS 84 with `geo_id` and `name`. Coarser scales are dissolved from the finest one, so they nest exactly |
 | `crosswalks/<from>__<to>.csv` | `geo_id_from`, `geo_id_to`, `weight_area` for every nested pair, finer to coarser (`municipality__province.csv`) |
 
@@ -126,13 +126,14 @@ Each table is a **long panel**: one row per unit and year, sorted by `geo_id` an
 
 | Dataset | Scale | Years | Variables |
 | --- | --- | --- | --- |
-| `pop` | municipality (339) | 2001–2020 | gridded population |
-| `ntl` | municipality (339) | 2012–2020 | log night-time lights per capita and its HP trend |
-| `sdg01` … `sdg17` | municipality (339) | 2010–2020 | Municipal Atlas of the SDGs 2020, one dataset per goal: the goal index and its indicators, each at its reference year |
-| `emb` | municipality (339) | 2017 | 64 satellite embedding dimensions, area-weighted |
-| `embpw` | municipality (339) | 2017 | the same, population-weighted |
+| `sdg` | municipality (343) | 2012, 2024 | SDG Atlas 2026: the Sustainable Development Index (IDS), its ranking, census population and urbanization |
+| `sdg01` … `sdg17` | municipality (343) | 2012, 2024 | SDG Atlas 2026, one dataset per goal: the goal index and its indicators (81 in all) |
+| `pop` | municipality (333 of 343) | 2001–2020 | gridded population |
+| `ntl` | municipality (333 of 343) | 2012–2020 | log night-time lights per capita and its HP trend |
+| `emb` | municipality (333 of 343) | 2017 | 64 satellite embedding dimensions, area-weighted |
+| `embpw` | municipality (333 of 343) | 2017 | the same, population-weighted |
 
-A cross-sectional source fits the same shape: each variable is stored at its reference year. The SDG Atlas indicators come from different years (e.g. poverty from the 2012 census, infant mortality from 2016), so each SDG goal dataset (`sdg01` … `sdg17`) has one row per municipality and reference year, and a variable has values only in its year (`geo:year` in the metadata says which).
+Sources measured at a few points in time fit the same shape. The SDG Atlas 2026 measures each indicator twice, near the 2012 census and near the 2024 census, from sources of different years (e.g. poverty from the 2012 and 2024 censuses, child malnutrition from the 2008 and 2023 health surveys, crop production as averages of 2013–15 and 2022–24). Its datasets store the two periods at the nominal years 2012 and 2024, so every variable can be compared between them, and each field's `geo:reference_years` gives the actual years behind each stored year.
 
 ### Metadata
 
@@ -142,7 +143,7 @@ A cross-sectional source fits the same shape: each variable is stored at its ref
 | --- | --- | --- |
 | package | `name`, `title`, `description`, `licenses`, `sources` | standard Frictionless fields; `licenses` is the license of the published files (CC BY 4.0 unless a source requires otherwise) |
 | package | `geo:categories`, `geo:citation`, `geo:notes`, `geo:notebooks` | shown on the dataset page |
-| package | `geo:map` | the website's headline map: `{"variable", "year"}`, optionally `"scale"` and `"classify": "log"` (checked by `validate`) |
+| package | `geo:map` | the website's headline map: `{"variable", "year"}`, optionally `"scale"`, `"classify": "log"` and `"panels": [first, last]` (the page map shows each year side by side) (checked by `validate`) |
 | package | `geo:updated` | date of the last update, shown in the page's License section |
 | source | `title`, `path` | full citation and its DOI or URL |
 | source | `geo:role`, `geo:creator`, `geo:homepage` | `original` (produced the data) or `intermediary` (a tool, repository or boundary set it passed through); who made it; the data's home page |
@@ -156,7 +157,7 @@ A cross-sectional source fits the same shape: each variable is stored at its ref
 | field | `geo:role` | `id`, `time`, `source_key` (with `geo:units_column`) or `variable` (default) |
 | field | `geo:unit`, `geo:source` | unit of measure and source of the variable |
 | field | `geo:aggregation` | how the variable moves to coarser scales (below) |
-| field | `geo:year` | for variables observed once: the year they are stored at |
+| field | `geo:reference_years` | for panels stored at nominal years: the actual reference years behind each stored year, e.g. `{"2012": "2008", "2024": "2023"}` (checked by `validate`) |
 
 `metadata/index.json` lists the dataset ids, so remote users can discover them.
 
@@ -478,10 +479,10 @@ How-tos:
 
 ## 9. Design decisions
 
-- **GADM's numbering, geoBoundaries' polygons.** GADM covers every country in one consistent format, and its codes give stable nested IDs, but its license forbids redistribution. geoBoundaries' gbOpen polygons can be redistributed (Bolivia's are public domain), so since version 0.2 they are the boundaries, matched once to the IDs by area overlap; the IDs did not change. Other sources (INE codes, DS4Bolivia's polygons) are linked through columns of `geo/units`.
+- **GADM's numbering, the Atlas's map.** GADM covers every country in one consistent format, and its codes give stable nested IDs, but its license forbids redistribution. Versions 0.2 and 0.3 drew geoBoundaries' public-domain polygons (GeoBolivia's 2015 map); since version 0.4 the boundaries are SDSN Bolivia's map of 2025, the units of the SDG Atlas 2026, matched to the IDs by INE code. The IDs did not change; the four new units got new ones. Other sources (INE codes, DS4Bolivia's polygons) are linked through columns of `geo/units`.
 - **Long panels, not wide files.** One shape for every dataset makes loading, combining, validating and aggregating generic. Wide tables are one `pivot` (or `wide=`) away.
 - **CSV and Parquet.** CSV for universal access (Excel, any tool); Parquet for exact types and speed. The validator keeps them identical.
 - **Aggregation rules in the metadata.** Whether a variable can be summed or must be weighted is a property of the data, so it is recorded once by whoever knows the data best.
 - **A small package that reads from GitHub.** The data are not inside the package, so `pip install` is quick and the package always reads the files the website links to. Pin a release tag (`ref=`) for reproducible research.
-- **Everything regenerated from `raw/`.** Any correction is a line of code in a builder, so it is documented and repeatable. Example: DS4Bolivia attaches the rows of three pairs of homonym municipalities to the wrong polygon of each pair; `build/sdg.py` links those rows by INE code instead (see [`raw/README.md`](../raw/README.md)).
-- **One scale per municipality map.** Bolivia keeps creating municipalities. Data published on the 339-unit map stay on it; a newer map becomes a new scale linked by overlay, so no published number is silently moved to a different unit.
+- **Everything regenerated from `raw/`.** Any correction is a line of code in a builder, so it is documented and repeatable. Examples: DS4Bolivia attaches the rows of three pairs of homonym municipalities to the wrong polygon of each pair, so its polygon-based data link by `asdf_id` (see [`raw/README.md`](../raw/README.md)); the SDSN map's polygons overlap slightly, so `build/geo.py` cleans the coverage before simplifying it.
+- **An ID keeps its meaning across maps.** Bolivia keeps creating municipalities. When a new map only carves new units out of old ones, the old units keep their IDs, the new ones get new IDs, and data computed on the old polygons are kept only where the territory is unchanged; a map that cannot keep the IDs becomes a new scale linked by overlay. Either way no published number is silently moved to a different unit.

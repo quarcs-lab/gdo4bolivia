@@ -45,9 +45,10 @@ The page composes it from the metadata, so all that's needed is accurate fields:
 - **Last updated:** `geo:updated`.
 - **Licenses of the sources:** each source's `geo:license` link and its `geo:attribution`
   ("Required credit").
-- **Boundary note:** a fixed sentence in `site/src/app.jsx` (`BOUNDARY_NOTE`): every boundary
-  (maps, `geometry=True`, `geo/boundaries/`) is geoBoundaries' public-domain polygons from
-  GeoBolivia; check the license of each country's geoBoundaries file when porting.
+- **Boundary note:** a fixed sentence in `site/src/app.jsx` (`BOUNDARY_NOTE`) on the license of
+  every boundary (maps, `geometry=True`, `geo/boundaries/`): in Bolivia, SDSN Bolivia's municipal
+  map of 2025, used with SDSN Bolivia's permission (`project.yaml` `site.boundary_credit` is the
+  credit printed on maps); check the license of each country's boundary file when porting.
 
 Show the user the table of verdicts before writing, and say plainly when something blocks
 publication.
