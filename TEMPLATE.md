@@ -69,7 +69,7 @@ This creates `geo/units.csv`, `geo/boundaries/{country,province,district}.*` and
 - Push the repository to GitHub. The package reads data from the `repository` in `project.yaml`, so remote loading works after the first push.
 - Release the package on PyPI with [`docs/publishing.md`](docs/publishing.md).
 
-**6. Optional: a website.** Copy `site/` (without `node_modules/` and `data/`), `.github/workflows/pages.yml`, `robots.txt` and `site.webmanifest`. Replace the constants and `CONTENT_REGISTRY` entries in `site/src/content.js`, the texts and images and the hero settings, run `uv run python scripts/web_boundaries.py` for the maps' boundaries, set Pages' source to GitHub Actions, and preview with `npm ci --prefix site && npm run --prefix site preview`. The landing page has three components, Indicators & tools (one filtered section), Projects (`type: 'project'`, cards from `scripts/project_images.py`) and Insights; Projects, Insights and Events appear only once they have items.
+**6. Optional: a website.** Copy `site/` (without `node_modules/` and `data/`), `.github/workflows/pages.yml`, `robots.txt` and `site.webmanifest`. Replace the constants and `CONTENT_REGISTRY` entries in `site/src/content.js`, the texts and images and the hero settings, run `uv run python scripts/web_boundaries.py` for the maps' boundaries, set Pages' source to GitHub Actions, and preview with `npm ci --prefix site && npm run --prefix site preview`. The landing page has three components, Indicators & tools (one filtered section), Projects (`type: 'project'`, cards prepared by `scripts/project_images.py` from ChatGPT pictures) and Insights; Projects, Insights and Events appear only once they have items.
 
 ## Adapting the design
 

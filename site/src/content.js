@@ -2315,7 +2315,8 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
   },
 
   // ---------------------------------------------------------------- Projects
-  // Card images are AI-generated illustrations (OpenAI gpt-image-1), drawn by scripts/project_images.py
+  // Card images: AI-generated pictures of Bolivian places (ChatGPT), prepared by scripts/project_images.py;
+  // the only map is drawn from the site's official boundaries (geoBoundaries, GeoBolivia)
   {
     id: 'sdg-atlas-bolivia', type: 'project', section: 'projects',
     title: 'The subnational SDG Atlas of Bolivia',
@@ -2326,7 +2327,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
     citation: 'Andersen, L. E., Canelas, S., Gonzales, A., & Peñaranda, L. (2020). Atlas municipal de los Objetivos de Desarrollo Sostenible en Bolivia 2020. La Paz: Universidad Privada Boliviana, SDSN Bolivia.',
     tags: ['SDGs', 'municipalities', 'atlas', 'sustainable development'],
     image: 'images/projects/sdg-atlas-bolivia.webp',
-    imageAlt: 'Illustration of a map of Bolivia divided into municipalities, shaded in turquoise and rose tones, with small icons of development goals rising above it',
+    imageAlt: 'The 339 municipalities of Bolivia shaded by the SDG 1 (No poverty) index, from rose (low) to turquoise (high), over an illustration of the Salar de Uyuni at night',
     date: '2026-11-17', pinned: true,
     links: [
       { label: 'Visit the Atlas', url: 'https://atlasods.sdsnbolivia.org/', kind: 'external' },
@@ -2343,7 +2344,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
     citation: 'Mendez, C., Sakaguchi, S., & Tagawa, H. (2026). Synthetic Control Models with Spillovers in Python (version 0.3.0).',
     tags: ['synthetic control', 'spillovers', 'causal inference', 'Python'],
     image: 'images/projects/regional-shocks-spillovers.webp',
-    imageAlt: 'Illustration of a glowing treated region on a dark map of South America, with ripples of light spreading to the neighbouring regions',
+    imageAlt: 'Illustration of La Paz and El Alto at night below Illimani, with rings of rose light spreading from the city across the Altiplano to the turquoise lights of nearby towns',
     date: '2026-11-17', pinned: true,
     links: [
       { label: 'Visit the project', url: 'https://quarcs-lab.github.io/scspill/', kind: 'external' },
@@ -2358,7 +2359,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
     status: 'In preparation',
     tags: ['air pollution', 'remote sensing', 'space-time dynamics', 'environment'],
     image: 'images/projects/local-pollution-dynamics.webp',
-    imageAlt: 'Illustration of a satellite above Bolivia at night, with drifting haze over the lowlands shaded from turquoise to rose',
+    imageAlt: 'Illustration of the lowlands around Santa Cruz de la Sierra at dusk, with rose haze drifting over the city lights and a satellite scanning from above',
     date: '2026-11-17', pinned: true,
     links: [],
     related: ['municipalities339-ntl', 'municipalities339-pop', 'municipalities339-sdg13'],
