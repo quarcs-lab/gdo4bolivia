@@ -590,18 +590,26 @@ def notebook_cards(geo, plt) -> None:
     crs = geo.config()["equal_area_crs"]
     units = geo.units("municipality")
     deps = geo.boundaries("department").to_crs(crs)
+    # every unit, poverty in 2024 (the latest period), for the maps of the ESDA notebooks
+    all24 = (geo.load("sdg01", variables="sdg1_2_mpi", years=2024, geometry=True)
+                .merge(units[["geo_id", "department_id"]], on="geo_id").to_crs(crs))
+    W24 = weights.KNN.from_dataframe(all24, k=6)
+    W24.transform = "r"
+    # the units with night-time lights (333), poverty in 2012, for the notebooks that use lights
     mpi = geo.load("sdg01", variables="sdg1_2_mpi", years=2012, geometry=True)
     ntl = geo.load("ntl", variables="ln_t400NTLpc", years=2012)
     gdf = (mpi.merge(ntl[["geo_id", "ln_t400NTLpc"]], on="geo_id")
-              .merge(units[["geo_id", "department_id"]], on="geo_id").to_crs(crs))
+              .merge(units[["geo_id", "department_id"]], on="geo_id").to_crs(crs).reset_index(drop=True))
     W = weights.KNN.from_dataframe(gdf, k=6)
     W.transform = "r"
     quad = {1: "High-high", 2: "Low-high", 3: "Low-low", 4: "High-low"}
     tools = IMG / "tools"
+    n_all, n_ntl = len(all24), len(gdf)
 
-    # quickstart: population-weighted poverty by department
-    dep_mpi = geo.aggregate(geo.load("sdg01", variables="sdg1_2_mpi", years=2012), to="department",
-                            rules={"sdg1_2_mpi": "weighted_mean:pop"}, weights=geo.load("pop"))
+    # quickstart: census-weighted poverty by department
+    dep_mpi = geo.aggregate(geo.load("sdg01", variables="sdg1_2_mpi", years=2024), to="department",
+                            rules={"sdg1_2_mpi": "weighted_mean:population"},
+                            weights=geo.load("sdg", variables="population"))
     d = deps.merge(dep_mpi[["geo_id", "sdg1_2_mpi"]], on="geo_id")
     fig = plt.figure(figsize=(16, 9)); ax = map_axes(fig)
     d.plot(column="sdg1_2_mpi", cmap=site_cmap(), ax=ax, edgecolor=BG, linewidth=1.5); ax.set_axis_off()
@@ -613,7 +621,7 @@ def notebook_cards(geo, plt) -> None:
     cb = fig.colorbar(plt.cm.ScalarMappable(norm=plt.Normalize(d["sdg1_2_mpi"].min(), d["sdg1_2_mpi"].max()), cmap=site_cmap()),
                       cax=cax, orientation="horizontal")
     cb.outline.set_edgecolor(MUTED); cb.ax.tick_params(colors=TEXT, labelsize=13)
-    card_text(fig, "Poverty by department, 2012", "Multidimensional Poverty Index,\npopulation-weighted from 339 municipalities",
+    card_text(fig, "Poverty by department, 2024", f"Multidimensional Poverty Index, weighted\nby census population, {n_all} municipalities",
               'geo.aggregate(mpi, to="department")')
     save_fig(fig, tools / "geo4bolivia-quickstart.webp")
 
@@ -625,39 +633,38 @@ def notebook_cards(geo, plt) -> None:
     ax.plot(xs, a + b * xs, color=FLAMINGO, linewidth=3)
     ax.set_xlabel("Log night-time lights per capita (trend)", fontsize=16)
     ax.set_ylabel("Multidimensional Poverty Index", fontsize=16)
-    card_text(fig, "Lights and poverty, 2012", f"Brighter municipalities are less poor:\n339 municipalities, r = {np.corrcoef(x, y)[0, 1]:.2f}",
+    card_text(fig, "Lights and poverty, 2012", f"Brighter municipalities are less poor:\n{n_ntl} municipalities, r = {np.corrcoef(x, y)[0, 1]:.2f}",
               x=0.64)
     save_fig(fig, tools / "eda.webp")
 
     # esda: LISA clusters of poverty (p < 0.05)
-    lisa = Moran_Local(gdf["sdg1_2_mpi"], W, permutations=999, seed=12345)
-    gdf["lisa"] = np.where(lisa.p_sim < 0.05, pd.Series(lisa.q).map(quad), "Not significant")
+    lisa = Moran_Local(all24["sdg1_2_mpi"], W24, permutations=999, seed=12345)
+    all24["lisa"] = np.where(lisa.p_sim < 0.05, pd.Series(lisa.q).map(quad), "Not significant")
     fig = plt.figure(figsize=(16, 9)); ax = map_axes(fig)
-    lisa_map(ax, gdf, "lisa", deps)
-    card_text(fig, "Poverty clusters, 2012", "Local Moran's I of multidimensional\npoverty, 6 nearest neighbours, p < 0.05")
-    swatches(fig, [(f"{k} ({(gdf['lisa'] == k).sum()})", c) for k, c in LISA_COLORS.items()])
+    lisa_map(ax, all24, "lisa", deps)
+    card_text(fig, "Poverty clusters, 2024", "Local Moran's I of multidimensional\npoverty, 6 nearest neighbours, p < 0.05")
+    swatches(fig, [(f"{k} ({(all24['lisa'] == k).sum()})", c) for k, c in LISA_COLORS.items()])
     save_fig(fig, tools / "esda.webp")
 
     # esda_dependence: box-plot breaks
     import mapclassify
-    bp = mapclassify.BoxPlot(gdf["sdg1_2_mpi"])
+    bp = mapclassify.BoxPlot(all24["sdg1_2_mpi"])
     colors = site_cmap(6).colors
     fig = plt.figure(figsize=(16, 9)); ax = map_axes(fig)
-    gdf.assign(_c=bp.yb).plot(column="_c", cmap=site_cmap(6), vmin=0, vmax=5, ax=ax, edgecolor=BG, linewidth=0.25)
+    all24.assign(_c=bp.yb).plot(column="_c", cmap=site_cmap(6), vmin=0, vmax=5, ax=ax, edgecolor=BG, linewidth=0.25)
     deps.boundary.plot(ax=ax, color=SALT, linewidth=0.8, alpha=0.7); ax.set_axis_off()
-    lo = [gdf["sdg1_2_mpi"].min(), *bp.bins[:-1]]
     names = ["Low outliers", "Below Q1", "Q1 to median", "Median to Q3", "Above Q3", "High outliers"]
-    card_text(fig, "Poverty, box-plot breaks", "Multidimensional Poverty Index, 2012:\nquartiles and outliers")
+    card_text(fig, "Poverty, box-plot breaks", "Multidimensional Poverty Index, 2024:\nquartiles and outliers")
     swatches(fig, [(f"{n} ({(bp.yb == i).sum()})", colors[i]) for i, n in enumerate(names)], y=0.42)
     save_fig(fig, tools / "esda-dependence.webp")
 
     # esda_inequality: quintiles within departments
-    q = mapclassify.Quantiles(gdf["sdg1_2_mpi"], k=5)
+    q = mapclassify.Quantiles(all24["sdg1_2_mpi"], k=5)
     fig = plt.figure(figsize=(16, 9)); ax = map_axes(fig)
-    gdf.assign(_c=q.yb).plot(column="_c", cmap=site_cmap(5), ax=ax, edgecolor=BG, linewidth=0.25)
+    all24.assign(_c=q.yb).plot(column="_c", cmap=site_cmap(5), ax=ax, edgecolor=BG, linewidth=0.25)
     deps.boundary.plot(ax=ax, color=SALT, linewidth=1.4); ax.set_axis_off()
-    card_text(fig, "Inequality within and\nbetween departments", "Poverty quintiles, 2012, with the nine\ndepartments of the Theil decomposition")
-    lo = [gdf["sdg1_2_mpi"].min(), *q.bins[:-1]]
+    card_text(fig, "Inequality within and\nbetween departments", "Poverty quintiles, 2024, with the nine\ndepartments of the Theil decomposition")
+    lo = [all24["sdg1_2_mpi"].min(), *q.bins[:-1]]
     swatches(fig, [(f"{a:.2f} – {b:.2f}", c) for a, b, c in zip(lo, q.bins, site_cmap(5).colors)], y=0.38)
     save_fig(fig, tools / "esda-inequality.webp")
 
@@ -707,10 +714,24 @@ def notebook_cards(geo, plt) -> None:
     ax.plot(lim, lim, color=MUTED, linestyle="--", linewidth=1.2)
     ax.scatter(yv, pred, s=46, color=TURQUOISE, alpha=0.6, edgecolor="none")
     ax.set(xlim=lim, ylim=lim)
-    ax.set_xlabel("Observed MPI (2012)", fontsize=16); ax.set_ylabel("Out-of-fold predicted MPI", fontsize=16)
+    ax.set_xlabel(f"Observed MPI (2012), {len(yv)} municipalities", fontsize=16); ax.set_ylabel("Out-of-fold predicted MPI", fontsize=16)
     card_text(fig, "Poverty seen from space", f"XGBoost on 64 satellite embedding\ndimensions plus lights and population\n\nRandom 5-fold CV: R² = {r2_score(yv, pred):.2f}",
               'geo.load("embpw")', x=0.64)
     save_fig(fig, tools / "embeddings-mpi-ml.webp")
+
+    # sdg_dynamics: convergence of the Sustainable Development Index, ~2012 to ~2024
+    ids = geo.load("sdg", variables="index_sdg").pivot(index="geo_id", columns="year", values="index_sdg")
+    x, y = ids[2012].to_numpy(), (ids[2024] - ids[2012]).to_numpy()
+    fig = plt.figure(figsize=(16, 9)); ax = scatter_axes(fig, (0.08, 0.13, 0.5, 0.72))
+    ax.scatter(x, y, s=46, color=[FLAMINGO if v < 0 else TURQUOISE for v in y], alpha=0.65, edgecolor="none")
+    b, a = np.polyfit(x, y, 1); xs = np.linspace(x.min(), x.max(), 50)
+    ax.plot(xs, a + b * xs, color=SAND, linewidth=3)
+    ax.axhline(0, color=MUTED, linewidth=1, linestyle="--")
+    ax.set_xlabel("Sustainable Development Index, ~2012", fontsize=16)
+    ax.set_ylabel("Change, ~2012 to ~2024 (points)", fontsize=16)
+    card_text(fig, "Catching up, 2012–2024", f"Units that started lower gained more:\n{len(ids)} municipalities, r = {np.corrcoef(x, y)[0, 1]:.2f};\n"
+              f"the index rose in {(y > 0).sum()} of them", 'geo.load("sdg")', x=0.64)
+    save_fig(fig, tools / "sdg-dynamics.webp")
 
 
 # --- pillars -------------------------------------------------------------------------------

@@ -17,7 +17,7 @@ kernelspec:
 
 Part of the [GeoDevelopment Observatory of Bolivia](https://quarcs-lab.github.io/geo4bolivia/).
 
-This notebook is a hands-on tour of the observatory's data for Bolivia's 339 municipalities:
+This notebook is a hands-on tour of the observatory's data for Bolivia's 343 municipalities and indigenous autonomies:
 
 1. **Load data without the package**: every file is a plain URL
 2. **Load data with the package** `geo4bolivia`
@@ -42,6 +42,8 @@ if importlib.util.find_spec("geo4bolivia") is None:
 ```
 
 ```{code-cell} ipython3
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import geopandas as gpd
@@ -59,23 +61,33 @@ Every published file is a plain URL, so pandas, geopandas, R, Stata or Excel can
 ```{code-cell} ipython3
 BASE = "https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/"
 
-ntl = pd.read_csv(BASE + "data/municipality/ntl.csv")              # 339 municipalities x 9 years
-units = pd.read_csv(BASE + "geo/units.csv", dtype={"ine_code": str})   # 461 units at 4 scales
+# Inside a clone of the repository, read the local files instead (Colab uses the URLs)
+local = next((p for p in [Path.cwd(), *Path.cwd().parents] if (p / "geo" / "units.csv").is_file()), None)
+if local is not None:
+    BASE = local.as_posix() + "/"
+
+sdg01 = pd.read_csv(BASE + "data/municipality/sdg01.csv")              # 343 units x 2 periods
+units = pd.read_csv(BASE + "geo/units.csv", dtype={"ine_code": str})   # 466 units at 4 scales
 municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
 
-ntl.head()
+sdg01.head()
 ```
 
-```{code-cell} ipython3
-# Names come from geo/units.csv; every row also carries the ids of the units it lies in
-names = units.loc[units["scale"] == "municipality", ["geo_id", "department_id"]]
-ntl_2020 = municipalities.merge(ntl[ntl["year"] == 2020], on="geo_id").merge(names, on="geo_id")
+The SDG data come from the [Atlas de los ODS en Bolivia 2026](https://atlasods.sdsnbolivia.org/) (Andersen & Argandoña, SDSN Bolivia). Each indicator has two values, an initial one stored at **2012** and a final one stored at **2024**, the years of the last two censuses. The Multidimensional Poverty Index (`sdg1_2_mpi`, 0 to 1, higher = poorer) comes from the censuses themselves, so its values refer exactly to 2012 and 2024. With the same classes in both maps, the change is plain to see:
 
-ax = ntl_2020.plot(column="ln_t400NTLpc", cmap="magma", scheme="quantiles", k=5, legend=True,
-                   legend_kwds={"title": "Log lights per capita\n(trend), 2020", "loc": "lower left"},
-                   edgecolor="white", linewidth=0.1, figsize=(8, 8))
-ax.set_axis_off()
-ax.set_title("Municipalities of Bolivia: night-time lights per capita, 2020 (no package needed)");
+```{code-cell} ipython3
+mpi_map = municipalities.merge(sdg01[["geo_id", "year", "sdg1_2_mpi"]], on="geo_id")
+bins = {"bins": [0.05, 0.1, 0.2, 0.3, 0.6]}
+
+fig, axes = plt.subplots(1, 2, figsize=(13, 7))
+for ax, year in zip(axes, [2012, 2024]):
+    mpi_map[mpi_map["year"] == year].plot(
+        column="sdg1_2_mpi", cmap="YlOrRd", scheme="user_defined", classification_kwds=bins,
+        legend=True, legend_kwds={"title": f"MPI, {year}", "loc": "lower left"},
+        edgecolor="white", linewidth=0.1, ax=ax)
+    ax.set_axis_off()
+    ax.set_title(f"Multidimensional poverty, {year}")
+fig.suptitle("343 municipalities of Bolivia (no package needed)");
 ```
 
 ## 2. Load data with the package
@@ -89,24 +101,40 @@ geo.datasets()
 ```
 
 ```{code-cell} ipython3
-geo.dictionary("sdg01").head(8)     # every variable: description, unit, aggregation rule, source
+geo.dictionary("sdg01")     # every variable: label, description, unit, aggregation rule, source
 ```
 
-The SDG indicators come from the Municipal Atlas of the SDGs 2020, and each was measured in its own year (poverty in the 2012 census, infant mortality in 2016, ...). They are published as one dataset per goal (`sdg01` to `sdg17`: the goal's index and its indicators), and each indicator is stored **at its reference year**, so load one indicator with its year:
+The Atlas is published as one dataset per goal (`sdg01` to `sdg17`; it has no index for goals 12 and 14), each with the goal's index (`index_sdgN`, 0–100, higher = better) and its indicators, and a dataset `sdg` with the overall **Sustainable Development Index** (IDS, `index_sdg`), its ranking and the census population. Not every indicator was measured in a census year: the description of each variable gives its actual reference years (energy poverty, for example, refers to 2016 and 2024).
+
+`geometry=True` returns a GeoDataFrame, ready to map; `wide=` gives one column per period, convenient for changes:
 
 ```{code-cell} ipython3
-gdf = geo.load("sdg01", variables="sdg1_2_mpi", years=2012, geometry=True)   # a GeoDataFrame, ready to map
-ax = gdf.plot(column="sdg1_2_mpi", cmap="YlOrRd", scheme="quantiles", k=5, legend=True,
-              legend_kwds={"title": "MPI, 2012", "loc": "lower left"}, edgecolor="white", linewidth=0.1, figsize=(8, 8))
+ids = geo.load("sdg", variables="index_sdg", wide="index_sdg")
+ids["change"] = ids["index_sdg2024"] - ids["index_sdg2012"]
+
+gdf = geo.boundaries("municipality").merge(ids, on="geo_id")
+ax = gdf.plot(column="change", cmap="viridis", scheme="quantiles", k=5, legend=True,
+              legend_kwds={"title": "IDS points", "loc": "lower left"}, edgecolor="white", linewidth=0.1,
+              figsize=(8, 8))
 ax.set_axis_off()
-ax.set_title("Multidimensional Poverty Index, 2012 (geo.load with geometry=True)");
+ax.set_title("Change in the Sustainable Development Index, 2012-2024")
+ids.describe().round(1)
 ```
 
+The average municipality's IDS rose from 50.1 to 60.1 points (median change 9.9). Only San José de Chiquitos (Santa Cruz, -2.7) went backwards; Cruz de Machacamarca and Carangas (Oruro) gained about 20 points.
+
 ```{code-cell} ipython3
-# A window of years and a variable; or one row per unit with one column per year
+# The package can attach the boundaries itself; here the IDS of 2024, best and worst
+best = geo.load("sdg", variables=["index_sdg", "rank_sdg"], years=2024, geometry=True)
+pd.concat([best.nsmallest(3, "rank_sdg"), best.nlargest(3, "rank_sdg")])[["geo_id", "name", "index_sdg", "rank_sdg"]]
+```
+
+In 2024 the capitals Nuestra Señora de La Paz, Tarija and Sucre rank first; the last places go to TIOC-Raqaypampa, one of the four units created after 2012, and to Tinguipaya and Ocurí in Potosí.
+
+```{code-cell} ipython3
+# A window of years and a variable from another dataset
 lights = geo.load("ntl", years=(2012, 2016), variables=["ln_NTLpc"])
-wide = geo.load("pop", wide="pop")
-lights.head(3), wide.iloc[:3, :6]
+lights.head(3)
 ```
 
 ```{code-cell} ipython3
@@ -122,37 +150,57 @@ Each scale nests in the coarser ones, and each variable's metadata says how it m
 geo.scales()          # the registry of scales
 ```
 
+The census population is in the `sdg` dataset, in both census years:
+
 ```{code-cell} ipython3
-pop = geo.load("pop", years=2020)
-by_department = geo.aggregate(pop, to="department", dataset="pop")    # 339 municipalities -> 9 departments
-by_department.merge(geo.units("department")[["geo_id", "name"]], on="geo_id").sort_values("pop", ascending=False)
+census = geo.load("sdg", variables="population")
+by_department = geo.aggregate(census, to="department", dataset="sdg")    # 343 municipalities -> 9 departments
+by_department = by_department.pivot(index="geo_id", columns="year", values="population").reset_index()
+by_department["growth_%"] = (100 * (by_department[2024] / by_department[2012] - 1)).round(1)
+by_department.merge(geo.units("department")[["geo_id", "name"]], on="geo_id").sort_values(2024, ascending=False)
 ```
 
-Poverty is a rate, so its departmental value is a **population-weighted** mean. `weights=` brings the population of the same year:
+Santa Cruz overtook La Paz as the most populous department; Pando grew fastest (22%), Potosí and Chuquisaca slowest (4%).
+
+Poverty is a rate, so its departmental value is a **population-weighted** mean. `weights=` brings the census population of the same period:
 
 ```{code-cell} ipython3
-mpi = geo.load("sdg01", variables="sdg1_2_mpi", years=2012)
-mpi_dep = geo.aggregate(mpi, to="department", rules={"sdg1_2_mpi": "weighted_mean:pop"}, weights=geo.load("pop"))
+mpi = geo.load("sdg01", variables="sdg1_2_mpi")
+mpi_dep = geo.aggregate(mpi, to="department", rules={"sdg1_2_mpi": "weighted_mean:population"}, weights=census)
 mpi_dep = geo.boundaries("department").merge(mpi_dep, on="geo_id")
 
-ax = mpi_dep.plot(column="sdg1_2_mpi", cmap="YlOrRd", legend=True, edgecolor="white", figsize=(7, 7),
-                  legend_kwds={"label": "MPI 2012, population-weighted", "shrink": 0.6})
-for _, row in mpi_dep.iterrows():
-    p = row.geometry.representative_point()
-    ax.annotate(row["name"], (p.x, p.y), ha="center", fontsize=8)
-ax.set_axis_off()
-ax.set_title("Multidimensional poverty by department, 2012");
+fig, axes = plt.subplots(1, 2, figsize=(13, 7))
+for ax, year in zip(axes, [2012, 2024]):
+    d = mpi_dep[mpi_dep["year"] == year]
+    d.plot(column="sdg1_2_mpi", cmap="YlOrRd", vmin=0, vmax=mpi_dep["sdg1_2_mpi"].max(), legend=True,
+           edgecolor="white", ax=ax, legend_kwds={"label": "MPI, population-weighted", "shrink": 0.6})
+    for _, row in d.iterrows():
+        p = row.geometry.representative_point()
+        ax.annotate(f"{row['name']}\n{row['sdg1_2_mpi']:.3f}", (p.x, p.y), ha="center", fontsize=7)
+    ax.set_axis_off()
+    ax.set_title(f"Multidimensional poverty by department, {year}")
+plt.tight_layout()
 ```
 
-`geo.combine()` loads several datasets at one scale, aggregating finer ones on the way. Here lights and population meet poverty in 2012, and give a classic relation: brighter municipalities are less poor.
+```{code-cell} ipython3
+national = geo.aggregate(mpi, to="country", rules={"sdg1_2_mpi": "weighted_mean:population"}, weights=census)
+national
+```
+
+Multidimensional poverty fell sharply. The population-weighted national MPI dropped from 0.133 in 2012 to 0.033 in 2024, and each department's to between 18% and 32% of its 2012 value. In 2012 Pando (0.236), Beni, Potosí and Chuquisaca were the poorest departments and Tarija (0.079) the least poor; in 2024 Beni (0.072) and Potosí are the poorest and Santa Cruz (0.017) and Tarija the least poor.
+
+`geo.combine()` loads several datasets at one scale, aggregating finer ones on the way. Here night-time lights and WorldPop population meet poverty in 2012. Lights and WorldPop cover **333 of the 343 units**: they were computed on the older 339-unit map, so the six municipalities that have since lost territory and the four new units have no values. The inner merge keeps the 333. The relation is a classic one: brighter municipalities are less poor.
 
 ```{code-cell} ipython3
 panel = geo.combine(["ntl", "pop"], scale="municipality", years=2012).merge(mpi, on=["geo_id", "year"])
+print(f"units with lights, population and poverty: {len(panel)}")
 
 ax = panel.plot.scatter(x="ln_t400NTLpc", y="sdg1_2_mpi", s=np.sqrt(panel["pop"]) / 4, alpha=0.5, figsize=(6, 4))
 ax.set_xlabel("Log night-time lights per capita (trend), 2012"); ax.set_ylabel("Multidimensional Poverty Index, 2012")
 print(f"correlation: {panel['ln_t400NTLpc'].corr(panel['sdg1_2_mpi']):.2f}")
 ```
+
+The correlation is -0.54 across the 333 units.
 
 ## 4. Link your own table
 
@@ -163,7 +211,7 @@ The values below are **made up** for the demonstration; replace them with your o
 ```{code-cell} ipython3
 mine = pd.DataFrame({
     "Departamento": ["LA PAZ", "Cochabamba", "Santa Cruz", "Potosi", "Chuquisaca", "La Paz"],
-    "year":         [2020, 2020, 2020, 2020, 2020, 2021],
+    "year":         [2024, 2024, 2024, 2024, 2024, 2025],
     "clinics":      [412, 301, 388, 266, 190, 420],          # illustrative values
 })
 mine = geo.link(mine, scale="department", on="Departamento")
@@ -174,12 +222,18 @@ mine
 geo.check(mine, scale="department")        # [] = a valid panel: known ids, one row per unit and year
 ```
 
-Municipal statistics from INE (and every DS4Bolivia table) carry codes. Link them by code: INE's 6-digit `ine_code`, the same code as a number (`mun_id`), or DS4Bolivia's `asdf_id`.
+Municipal statistics from INE (and every DS4Bolivia table) carry codes. Link them by code: INE's 6-digit `ine_code`, the same code as a number (`mun_id`), or DS4Bolivia's `asdf_id`. The names follow the Atlas, so the capital is *Nuestra Señora de La Paz*:
 
 ```{code-cell} ipython3
 ine = pd.DataFrame({"codigo": [20101, 20105, 70101, 30101, 10101], "teachers": [9120, 6211, 11034, 5980, 2870]})
 geo.link(ine, scale="municipality", on="codigo", key="mun_id").merge(
     geo.units("municipality")[["geo_id", "name"]], on="geo_id")
+```
+
+Older spellings still link: by default `geo.link()` also tries `name_ds4bolivia` and `name_gadm`, so "La Paz" finds the capital.
+
+```{code-cell} ipython3
+geo.link(pd.DataFrame({"m": ["La Paz", "Potosi"]}), scale="municipality", on="m")
 ```
 
 A name shared by several municipalities, or a typo, stops with an explanation instead of silently linking the wrong unit:
@@ -221,18 +275,24 @@ access = geo.zonal("distance_to_main_cities.tif", scale="municipality", stats=["
 access.head()
 ```
 
-Is distance to the central axis associated with poverty? Join the new indicator to the poverty data:
+Is distance to the central axis associated with poverty, and has that changed? Join the new indicator to the poverty data of both periods:
 
 ```{code-cell} ipython3
 d = mpi.merge(access, on="geo_id")
-ax = d.plot.scatter(x="dist_axis_km_mean", y="sdg1_2_mpi", alpha=0.5, figsize=(6, 4))
-ax.set_xlabel("Mean distance to La Paz, Cochabamba or Santa Cruz (km)"); ax.set_ylabel("Multidimensional Poverty Index, 2012")
-print(f"correlation: {d['dist_axis_km_mean'].corr(d['sdg1_2_mpi']):.2f}")
+ax = d.plot.scatter(x="dist_axis_km_mean", y="sdg1_2_mpi", c=d["year"].map({2012: "tab:orange", 2024: "tab:blue"}),
+                    alpha=0.5, figsize=(6, 4))
+ax.set_xlabel("Mean distance to La Paz, Cochabamba or Santa Cruz (km)")
+ax.set_ylabel("Multidimensional Poverty Index")
+ax.set_title("Orange: 2012, blue: 2024")
+for year, g in d.groupby("year"):
+    print(f"{year}: correlation {g['dist_axis_km_mean'].corr(g['sdg1_2_mpi']):.2f}")
 ```
+
+Only weakly: municipalities far from the three cities were slightly poorer in 2012 (correlation 0.14), and by 2024 the association has almost vanished (0.04).
 
 ## 6. Interpolate to a grid and save
 
-Grids, watersheds or a newer municipality map do not nest in the administrative hierarchy. `geo.overlay()` moves data onto them by area weights. Totals (`extensive`) are split by area; rates (`intensive`) are area-weighted means.
+Grids, watersheds or a different municipality map do not nest in the administrative hierarchy. `geo.overlay()` moves data onto them by area weights. Totals (`extensive`) are split by area; rates (`intensive`) are area-weighted means.
 
 ```{code-cell} ipython3
 from shapely.geometry import box
@@ -245,12 +305,13 @@ cells = [box(x, y, x + size, y + size) for x in np.arange(gx0, gx1, size) for y 
 grid = gpd.GeoDataFrame({"cell": [f"c{i}" for i in range(len(cells))]}, geometry=cells, crs=crs)
 grid = grid[grid.intersects(country.geometry.iloc[0])].to_crs("EPSG:4326")
 
-on_grid = geo.overlay(pop, grid, extensive=["pop"], id_col="cell")
-print(f"municipalities: {pop['pop'].sum():,.0f}  grid: {on_grid['pop'].sum():,.0f}")
+census_2024 = census[census["year"] == 2024]
+on_grid = geo.overlay(census_2024, grid, extensive=["population"], id_col="cell")
+print(f"municipalities: {census_2024['population'].sum():,.0f}  grid: {on_grid['population'].sum():,.0f}")   # totals are kept
 
 ax = grid.merge(on_grid.rename(columns={"geo_id": "cell"}), on="cell").plot(
-    column="pop", cmap="magma_r", scheme="quantiles", k=6, figsize=(7, 7))
-ax.set_axis_off(); ax.set_title("Population 2020 on a 25 km grid (assumes even spread within municipalities)");
+    column="population", cmap="magma_r", scheme="quantiles", k=6, figsize=(7, 7))
+ax.set_axis_off(); ax.set_title("Census population 2024 on a 25 km grid (assumes even spread within municipalities)");
 ```
 
 Finally, save your indicator exactly like the published datasets: CSV, Parquet and a Frictionless datapackage describing every variable. It is then easy to share, reload or contribute to the observatory ([CONTRIBUTING_DATA.md](https://github.com/quarcs-lab/geo4bolivia/blob/main/CONTRIBUTING_DATA.md)).

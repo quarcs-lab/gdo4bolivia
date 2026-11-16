@@ -73,7 +73,8 @@ const signed = (v) => (v === null || v === undefined || Number.isNaN(v) ? 'No da
 // Classes of a change split at zero: Fisher-Jenks within the falls and within the rises
 const changeClasses = (present) => {
   const neg = present.filter((v) => v < 0), pos = present.filter((v) => v >= 0);
-  const kNeg = Math.min(3, new Set(neg).size), kPos = Math.min(3, new Set(pos).size);
+  const k = (v) => Math.min(3, new Set(v).size, Math.max(1, Math.floor(v.length / 5)));   // about 5+ units per class
+  const kNeg = neg.length ? k(neg) : 0, kPos = pos.length ? k(pos) : 0;
   const negBreaks = kNeg ? jenks(neg, kNeg) : [];
   const posBreaks = kPos ? jenks(pos, kPos) : [];
   return {
@@ -205,7 +206,9 @@ export default function IndicatorMap({ datasets, id = 'map' }) {
 
   const pick = (key) => (value) => setChoice((c) => ({ ...c, [key]: value }));
   const nameOf = useMemo(() => Object.fromEntries((state.units?.features || []).map((f) => [f.properties.geo_id, f.properties.name])), [state.units]);
-  const unit = variable?.unit && !variable.title.includes(variable.unit) ? ` (${variable.unit})` : '';
+  const unitInner = variable?.unit?.match(/\(([^)]*)\)/)?.[1];   // "index (0-100)" -> "0-100"
+  const unit = variable?.unit && !variable.title.includes(variable.unit) && !(unitInner && variable.title.includes(`(${unitInner})`))
+    ? ` (${variable.unit})` : '';
 
   return (
     <div>

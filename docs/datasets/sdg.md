@@ -61,6 +61,10 @@ df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/
 - The IDS and the ranking are not additive (`none`); `population` sums, and `urbanization` aggregates as a population-weighted mean (`geo.aggregate(geo.load("sdg"), to="department", dataset="sdg")`).
 - The goal indices and the 81 indicators are in the goal datasets `sdg01` ... `sdg17` (no 12 or 14).
 
+## Related notebooks
+
+- [Dynamics of sustainable development in Bolivia, 2012–2024](../../notebooks/sdg_dynamics.ipynb)
+
 ## Sources
 
 - Andersen, L. E., & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad Privada Boliviana, SDSN Bolivia. https://atlasods.sdsnbolivia.org/
