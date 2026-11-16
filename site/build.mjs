@@ -182,11 +182,12 @@ const itemLD = (item) => {
   }
   if (item.type === 'notebook') return { '@type': 'LearningResource', ...base, learningResourceType: 'Jupyter notebook' };
   if (item.type === 'app') return { '@type': 'WebApplication', ...base, applicationCategory: 'Map', operatingSystem: 'Web browser' };
+  if (item.type === 'project') return { '@type': 'ResearchProject', ...base, ...(item.links?.[0] ? { sameAs: item.links[0].url } : {}) };
   if (item.type === 'insight') return { '@type': 'ScholarlyArticle', ...base, headline: item.title, sameAs: item.doi, datePublished: item.date };
   if (item.type === 'event') return { '@type': 'Event', ...base, startDate: item.date };
   return { '@type': 'CreativeWork', ...base };
 };
-const SECTION_LABEL = { indicators: 'Indicators', tools: 'Tools', insights: 'Insights', events: 'Events' };
+const SECTION_LABEL = { indicators: 'Indicators', tools: 'Tools', projects: 'Projects', insights: 'Insights', events: 'Events' };
 const breadcrumb = (item) => ({
   '@type': 'BreadcrumbList', itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },

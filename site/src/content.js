@@ -1,4 +1,4 @@
-// Site content: constants, every indicator, tool, insight and event, the team and the citation.
+// Site content: constants, every indicator, tool, project, insight and event, the team and the citation.
 // Plain data (no JSX): the app renders it and site/build.mjs pre-renders a page for every item.
 // ====================================================================
 // Site constants
@@ -11,7 +11,7 @@ export const COLAB_EMPTY = 'https://colab.research.google.com/notebooks/empty.ip
 export const DEFAULT_TITLE = 'GeoDevelopment Observatory of Bolivia | GDO-Bolivia';
 export const SITE_NAME = 'GeoDevelopment Observatory of Bolivia';
 export const SHORT_NAME = 'GDO-Bolivia';
-export const SITE_DESCRIPTION = 'GDO-Bolivia is a public-access platform of open subnational indicators, notebooks, web apps, and research insights for monitoring sustainable regional development in Bolivia with satellite data and AI.';
+export const SITE_DESCRIPTION = 'GDO-Bolivia is a public-access platform of open subnational indicators, notebooks, web apps, research projects and insights for monitoring sustainable regional development in Bolivia with satellite data and AI.';
 // Authors of the observatory's own citations (the site's, and each dataset's on its page)
 export const CITE_AUTHORS = { apa: 'Mendez, C.', bibtex: 'Mendez, Carlos' };
 // Center and zoom of the interactive indicator maps
@@ -2312,6 +2312,56 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
       { label: 'Source code', url: REPO_URL + '/blob/main/apps/geoexplorer1v100bolivia.js', kind: 'github' },
     ],
     related: ['municipalities339-ntl', 'municipalities339-pop'],
+  },
+
+  // ---------------------------------------------------------------- Projects
+  // Card images are AI-generated illustrations (OpenAI gpt-image-1), drawn by scripts/project_images.py
+  {
+    id: 'sdg-atlas-bolivia', type: 'project', section: 'projects',
+    title: 'The subnational SDG Atlas of Bolivia',
+    summary: 'The Atlas of the Sustainable Development Goals in Bolivia measures how every municipality is progressing towards the 17 goals, with an index for each goal and the indicators behind it.',
+    description: 'The Atlas of the Sustainable Development Goals in Bolivia, led by SDSN Bolivia, measures the progress of each of Bolivia’s municipalities towards the 17 Sustainable Development Goals. For every goal it combines a set of indicators from censuses, surveys and administrative records into an index from 0 (worst situation) to 100 (targets met), so that municipalities can be compared goal by goal and their gaps located on the map. Its 2020 edition (Andersen, Canelas, Gonzales and Peñaranda) covers all 339 municipalities and is published in the observatory as fifteen goal datasets, sdg01 to sdg17, each with its index and indicators at their own reference years; the 2026 edition is online at the project’s website.',
+    team: 'SDSN Bolivia (Universidad Privada Boliviana)',
+    status: 'Atlas 2026 online; the 2020 edition is in the observatory',
+    citation: 'Andersen, L. E., Canelas, S., Gonzales, A., & Peñaranda, L. (2020). Atlas municipal de los Objetivos de Desarrollo Sostenible en Bolivia 2020. La Paz: Universidad Privada Boliviana, SDSN Bolivia.',
+    tags: ['SDGs', 'municipalities', 'atlas', 'sustainable development'],
+    image: 'images/projects/sdg-atlas-bolivia.webp',
+    imageAlt: 'Illustration of a map of Bolivia divided into municipalities, shaded in turquoise and rose tones, with small icons of development goals rising above it',
+    date: '2026-11-17', pinned: true,
+    links: [
+      { label: 'Visit the Atlas', url: 'https://atlasods.sdsnbolivia.org/', kind: 'external' },
+    ],
+    related: ['municipalities339-sdg01', 'municipalities339-sdg03', 'municipalities339-sdg04', 'human-capital-paper'],
+  },
+  {
+    id: 'regional-shocks-spillovers', type: 'project', section: 'projects',
+    title: 'Regional shocks and spillover effects',
+    summary: 'Synthetic control methods for regional shocks whose effects leak to neighbouring regions, with scspill, an open Python package that estimates both the direct effect and the spillovers.',
+    description: 'When a policy or a shock hits one region, its effects rarely stop at the border: neighbouring regions trade, migrate and invest across it. The standard synthetic control method builds a counterfactual for the treated region from untreated “donor” regions, and is biased when those donors are themselves affected. This project develops scspill, a Python package for synthetic control with spillovers, which estimates the effect on the treated region together with a spillover effect on each donor. It implements the Bayesian spatial-autoregressive model of Sakaguchi and Tagawa, with a single spillover intensity estimated by Metropolis within Gibbs, and the method of Cao and Dowd for a known exposure structure, with hypothesis tests, plots and a Monte Carlo engine. Worked case studies include California’s Proposition 99 and the 2011 secession of South Sudan.',
+    team: 'Carlos Mendez, Shosei Sakaguchi and Hayato Tagawa (QuaRCS lab)',
+    status: 'Ongoing; scspill 0.3.0 released',
+    citation: 'Mendez, C., Sakaguchi, S., & Tagawa, H. (2026). Synthetic Control Models with Spillovers in Python (version 0.3.0).',
+    tags: ['synthetic control', 'spillovers', 'causal inference', 'Python'],
+    image: 'images/projects/regional-shocks-spillovers.webp',
+    imageAlt: 'Illustration of a glowing treated region on a dark map of South America, with ripples of light spreading to the neighbouring regions',
+    date: '2026-11-17', pinned: true,
+    links: [
+      { label: 'Visit the project', url: 'https://quarcs-lab.github.io/scspill/', kind: 'external' },
+    ],
+    related: ['geometrics-package', 'expdpy-package', 'municipalities339-ntl'],
+  },
+  {
+    id: 'local-pollution-dynamics', type: 'project', section: 'projects',
+    title: 'Monitoring space-time dynamics of local pollution',
+    summary: 'Satellite observations of air pollution, followed across Bolivia’s municipalities, to see where pollution builds up, how it spreads and how it changes over time.',
+    description: 'This project monitors local air pollution across Bolivia with satellite data, following how it changes in space and over time at the municipal level: where it concentrates, how pollution in one place relates to its neighbours, and how its patterns shift over time. Its data and methods will be published in the observatory as they become available.',
+    status: 'In preparation',
+    tags: ['air pollution', 'remote sensing', 'space-time dynamics', 'environment'],
+    image: 'images/projects/local-pollution-dynamics.webp',
+    imageAlt: 'Illustration of a satellite above Bolivia at night, with drifting haze over the lowlands shaded from turquoise to rose',
+    date: '2026-11-17', pinned: true,
+    links: [],
+    related: ['municipalities339-ntl', 'municipalities339-pop', 'municipalities339-sdg13'],
   },
 
   // ---------------------------------------------------------------- Insights

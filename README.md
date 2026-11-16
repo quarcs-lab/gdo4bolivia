@@ -13,8 +13,8 @@
 
 The GeoDevelopment Observatory of Bolivia is a public-access platform for analyzing, monitoring and evaluating **sustainable regional development** in Bolivia, at every spatial scale: departments, provinces, municipalities, cities and grids. It has three parts:
 
-- **GeoDevelopment Indicators:** social, economic and environmental indicators from satellite imagery, censuses and administrative records, at every spatial scale.
-- **GeoDevelopment Tools:** Python packages, notebooks and web apps to load, build and analyze them.
+- **GeoDevelopment Indicators & Tools:** social, economic and environmental indicators from satellite imagery, censuses and administrative records, at every spatial scale, with the Python packages, notebooks and web apps to load, build and analyze them.
+- **GeoDevelopment Projects:** research projects built on the observatory: the subnational [SDG Atlas](https://atlasods.sdsnbolivia.org/), [regional shocks and spillover effects](https://quarcs-lab.github.io/scspill/) and monitoring the space-time dynamics of local pollution.
 - **GeoDevelopment Insights:** accessible research summaries.
 
 It serves:
@@ -157,6 +157,16 @@ Three pairs of municipalities share a name across departments: San Javier (Beni,
 
 ---
 
+## 🧭 GeoDevelopment Projects
+
+| Project | What it does |
+| --- | --- |
+| [The subnational SDG Atlas of Bolivia](https://atlasods.sdsnbolivia.org/) | SDSN Bolivia's municipal index for each Sustainable Development Goal; its 2020 edition is the `sdg01`…`sdg17` datasets |
+| [Regional shocks and spillover effects](https://quarcs-lab.github.io/scspill/) | `scspill`: synthetic control when a shock spills over to neighbouring regions |
+| Monitoring space-time dynamics of local pollution | satellite monitoring of local air pollution across municipalities (website coming soon) |
+
+---
+
 ## 💡 GeoDevelopment Insights
 
 Research that uses the municipal data will be summarised on the [website](https://quarcs-lab.github.io/geo4bolivia/#insights).
@@ -214,7 +224,7 @@ GDO-Bolivia was created from [geo4cambodia](https://github.com/quarcs-lab/geo4ca
 
 ### The website
 
-The site's sources are in `site/`: a React app (`site/src/app.jsx`) whose items (indicators, packages, notebooks, apps, insights, events) are entries of the `CONTENT_REGISTRY` array in `site/src/content.js`. `site/build.mjs` bundles it with esbuild and Tailwind and pre-renders a page for every item at `<section>/<id>/`, with its own preview card and structured data, plus the sitemap, the search index and the data of the interactive maps. The [website workflow](.github/workflows/pages.yml) builds and deploys it to GitHub Pages on every push to `main`. The maps draw geoBoundaries' public-domain municipal boundaries (GeoBolivia), prepared by `scripts/web_boundaries.py`.
+The site's sources are in `site/`: a React app (`site/src/app.jsx`) whose items (indicators, packages, notebooks, apps, projects, insights, events) are entries of the `CONTENT_REGISTRY` array in `site/src/content.js`. `site/build.mjs` bundles it with esbuild and Tailwind and pre-renders a page for every item at `<section>/<id>/`, with its own preview card and structured data, plus the sitemap, the search index and the data of the interactive maps. The [website workflow](.github/workflows/pages.yml) builds and deploys it to GitHub Pages on every push to `main`. The maps draw geoBoundaries' public-domain municipal boundaries (GeoBolivia), prepared by `scripts/web_boundaries.py`.
 
 ---
 
@@ -246,6 +256,6 @@ Please also cite the original source of each dataset you use. The citations are 
 
 ---
 
-**Disclaimer.** The indicators, tools and insights are the responsibility of the individual researchers and do not necessarily represent the views of their affiliated institutions or related organizations. Maps are for geo-statistical use only. They have a referential, informational character and do not represent an official definition of Bolivia's territorial boundaries.
+**Disclaimer.** The indicators, tools, projects and insights are the responsibility of the individual researchers and do not necessarily represent the views of their affiliated institutions or related organizations. Maps are for geo-statistical use only. They have a referential, informational character and do not represent an official definition of Bolivia's territorial boundaries.
 
 **License.** Code: [MIT](LICENSE). Data: [CC BY 4.0](LICENSE-DATA), except where an original source requires otherwise. The boundaries (`geo/boundaries/`) are geoBoundaries' (Runfola et al. 2020), from GeoBolivia, in the public domain. Each dataset's sources, their licenses and the credits they ask for are listed in its metadata, its page in `docs/datasets/` and its page on the website. The indicator maps use Esri's World Dark Gray Canvas basemap (Esri, HERE, Garmin, © OpenStreetMap contributors). Section illustrations come from the geo4cambodia template (generated with OpenAI image generation via Codex); satellite imagery in the hero and the section backgrounds is Sentinel-2 cloudless 2016 by EOX IT Services GmbH (CC BY 4.0), except the Laguna Verde background from Sentinel-2 cloudless 2024 (CC BY-NC-SA 4.0), and NASA Blue Marble (public domain).

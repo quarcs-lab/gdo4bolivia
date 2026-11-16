@@ -20,6 +20,7 @@ const IconWrapper = ({ size = 24, className = '', children, ...rest }) => (
 const PackageIcon = (p) => (<IconWrapper {...p}><path d="m7.5 4.27 9 5.15" /><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></IconWrapper>);
 const MapIcon = (p) => (<IconWrapper {...p}><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" /><line x1="8" y1="2" x2="8" y2="18" /><line x1="16" y1="6" x2="16" y2="22" /></IconWrapper>);
 const Database = (p) => (<IconWrapper {...p}><ellipse cx="12" cy="5" rx="9" ry="3" /><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" /><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" /></IconWrapper>);
+const FolderKanban = (p) => (<IconWrapper {...p}><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" /><path d="M8 10v4" /><path d="M12 10v2" /><path d="M16 10v6" /></IconWrapper>);
 const Terminal = (p) => (<IconWrapper {...p}><polyline points="4 17 10 11 4 5" /><line x1="12" y1="19" x2="20" y2="19" /></IconWrapper>);
 const BarChart2 = (p) => (<IconWrapper {...p}><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></IconWrapper>);
 const Globe = (p) => (<IconWrapper {...p}><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></IconWrapper>);
@@ -236,9 +237,10 @@ const byType = (types) => CONTENT_REGISTRY.filter((i) => types.includes(i.type))
   .sort((a, b) => (a.pinned !== b.pinned ? b.pinned - a.pinned : new Date(b.date) - new Date(a.date)));
 const itemHref = (item) => `${item.section}/${item.id}/`;
 
-// Insights and Events appear (in the menu too) once they have an item
-const HAS_SECTION = { insights: byType(['insight']).length > 0, events: byType(['event']).length > 0 };
-const SECTION_ORDER = ['about', 'indicators', 'tools', 'insights', 'events', 'team', 'community', 'cite', 'contact']
+// Projects, Insights and Events appear (in the menu too) once they have an item.
+// Indicators and tools share one landing section; their pages keep their own paths (indicators/<id>/, tools/<id>/).
+const HAS_SECTION = { projects: byType(['project']).length > 0, insights: byType(['insight']).length > 0, events: byType(['event']).length > 0 };
+const SECTION_ORDER = ['about', 'indicators', 'projects', 'insights', 'events', 'team', 'community', 'cite', 'contact']
   .filter((id) => HAS_SECTION[id] !== false);
 const sectionIndex = (id) => String(SECTION_ORDER.indexOf(id) + 1).padStart(2, '0');
 
@@ -246,6 +248,7 @@ const TYPE_STYLE = {
   indicator: { label: 'Indicator', text: 'text-teal-300', bg: 'bg-teal-400/10', ring: 'border-teal-400/30', glow: 'hover:border-teal-400/40', icon: Database },
   package: { label: 'Python package', text: 'text-sand-300', bg: 'bg-sand-400/10', ring: 'border-sand-400/30', glow: 'hover:border-sand-400/40', icon: PackageIcon },
   notebook: { label: 'Notebook', text: 'text-violet-300', bg: 'bg-violet-400/10', ring: 'border-violet-400/30', glow: 'hover:border-violet-400/40', icon: BookOpen },
+  project: { label: 'Project', text: 'text-sky-300', bg: 'bg-sky-400/10', ring: 'border-sky-400/30', glow: 'hover:border-sky-400/40', icon: FolderKanban },
   app: { label: 'Web app', text: 'text-orange-300', bg: 'bg-orange-400/10', ring: 'border-orange-400/30', glow: 'hover:border-orange-400/40', icon: Globe },
   insight: { label: 'Insight', text: 'text-rose-300', bg: 'bg-rose-400/10', ring: 'border-rose-400/30', glow: 'hover:border-rose-400/40', icon: Lightbulb },
   event: { label: 'Event', text: 'text-emerald-300', bg: 'bg-emerald-400/10', ring: 'border-emerald-400/30', glow: 'hover:border-emerald-400/40', icon: Calendar },
@@ -334,7 +337,7 @@ const SectionHeading = ({ index, eyebrow, title, emphasis, id, children, as = 'h
 const SECTION_BANDS = {
   about: { image: 'images/bands/laguna-verde-licancabur.webp', place: 'Laguna Verde · Licancabur', lat: -22.8, lng: -67.87, year: 2024 },
   indicators: { image: 'images/bands/lake-titicaca.webp', place: 'Lake Titicaca', lat: -16.05, lng: -69.05 },
-  tools: { image: 'images/bands/la-paz-el-alto.webp', place: 'La Paz · El Alto', lat: -16.51, lng: -68.15 },
+  projects: { image: 'images/bands/la-paz-el-alto.webp', place: 'La Paz · El Alto', lat: -16.51, lng: -68.15 },
   insights: { image: 'images/bands/santa-cruz-de-la-sierra.webp', place: 'Santa Cruz de la Sierra', lat: -17.78, lng: -63.18 },
   events: { image: 'images/bands/cochabamba-valley.webp', place: 'Cochabamba valley', lat: -17.42, lng: -66.15 },
   footer: { image: 'images/bands/rio-mamore-trinidad.webp', place: 'Río Mamoré near Trinidad', lat: -14.83, lng: -64.92 },
@@ -627,8 +630,8 @@ const SearchDialog = ({ open, onClose }) => {
 // ====================================================================
 const NAV_LINKS = [
   { name: 'About', id: 'about' },
-  { name: 'Indicators', id: 'indicators' },
-  { name: 'Tools', id: 'tools' },
+  { name: 'Indicators & tools', id: 'indicators' },
+  { name: 'Projects', id: 'projects' },
   { name: 'Insights', id: 'insights' },
   { name: 'Events', id: 'events' },
   { name: 'Team', id: 'team' },
@@ -1014,14 +1017,14 @@ const Hero = () => {
               Observing <span className="text-[#ff8597]">Bolivia's</span><br className="hidden sm:block" /> development<br className="hidden sm:block" /> <em className="gradient-text pr-2">from space.</em>
             </h1>
             <p className="text-lg md:text-xl text-salt-200 font-light leading-relaxed max-w-xl mb-10 [text-shadow:0_1px_12px_rgba(7,20,23,0.9)]">
-              Open indicators, AI-enhanced tools, and research insights for monitoring sustainable regional development across Bolivia.
+              Open indicators, AI-enhanced tools, research projects and insights for monitoring sustainable regional development across Bolivia.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <a href="#indicators" className="px-6 sm:px-8 py-3 rounded-lg bg-brand-rose hover:bg-brand-roseHover text-white font-bold text-base sm:text-lg transition-all hover:-translate-y-1 shadow-lg shadow-rose-950/40 flex items-center justify-center gap-2">
                 <Database size={20} /> Explore indicators
               </a>
-              <a href="#tools" className="px-6 sm:px-8 py-3 rounded-lg bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 font-bold text-base sm:text-lg transition-all hover:-translate-y-1 shadow-lg border border-white/20 flex items-center justify-center gap-2">
-                <Terminal size={20} /> Open the tools
+              <a href={HAS_SECTION.projects ? '#projects' : '#tools'} className="px-6 sm:px-8 py-3 rounded-lg bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 font-bold text-base sm:text-lg transition-all hover:-translate-y-1 shadow-lg border border-white/20 flex items-center justify-center gap-2">
+                <FolderKanban size={20} /> See the projects
               </a>
             </div>
           </div>
@@ -1080,11 +1083,11 @@ const Hero = () => {
 };
 
 const PILLARS = [
-  { title: 'GeoDevelopment Indicators', href: '#indicators', image: 'images/pillar-indicators.webp', icon: Database, accent: 'text-teal-300', border: 'hover:border-teal-400/40',
-    text: 'Harmonized municipal panels on poverty, health, education, infrastructure, night-time lights, population and satellite embeddings, ready to load in Python with one line of code.' },
-  { title: 'GeoDevelopment Tools', href: '#tools', image: 'images/pillar-tools.webp', icon: Terminal, accent: 'text-sand-300', border: 'hover:border-sand-400/40',
-    text: 'AI-enhanced Colab notebooks and Earth Engine apps to explore, map, and model the indicators, with no installation required.' },
-  { title: 'GeoDevelopment Insights', href: HAS_SECTION.insights ? '#insights' : '#tools', image: 'images/pillar-insights.webp', icon: Lightbulb, accent: 'text-rose-300', border: 'hover:border-rose-400/40',
+  { title: 'Indicators & Tools', href: '#indicators', image: 'images/pillar-indicators.webp', icon: Database, accent: 'text-teal-300', border: 'hover:border-teal-400/40',
+    text: 'Harmonized municipal panels on poverty, health, education, night-time lights, population and satellite embeddings, with the Python packages, Colab notebooks and Earth Engine apps to load, map and model them.' },
+  { title: 'GeoDevelopment Projects', href: HAS_SECTION.projects ? '#projects' : '#indicators', image: 'images/pillar-projects.webp', icon: FolderKanban, accent: 'text-sky-300', border: 'hover:border-sky-400/40',
+    text: 'Research projects that build on the observatory, from the subnational SDG Atlas to regional shocks and local pollution, each with its own website, data and methods.' },
+  { title: 'GeoDevelopment Insights', href: HAS_SECTION.insights ? '#insights' : '#indicators', image: 'images/pillar-insights.webp', icon: Lightbulb, accent: 'text-rose-300', border: 'hover:border-rose-400/40',
     text: 'Research that uses the observatory’s data, summarized in plain language with links to the papers, so every audience can learn from it.' },
 ];
 
@@ -1101,13 +1104,14 @@ const About = () => {
     { value: 4, label: 'spatial scales' },
     { value: '2001–2020', label: 'years covered' },
     { value: byType(['package', 'notebook', 'app']).length, label: 'packages, notebooks & apps' },
+    { value: byType(['project']).length, label: byType(['project']).length === 1 ? 'research project' : 'research projects' },
     { value: byType(['insight']).length, label: byType(['insight']).length === 1 ? 'research insight' : 'research insights' },
   ];
   return (
     <section id="about" aria-labelledby="about-title" className="relative border-t border-white/10">
       <SatelliteHeader band={SECTION_BANDS.about}>
         <SectionHeading index={sectionIndex('about')} eyebrow="About the observatory" title="From pixels" emphasis="to policy" id="about-title">
-          The GeoDevelopment Observatory of Bolivia (GDO-Bolivia) is a public-access platform for analyzing, monitoring, and evaluating sustainable regional development across Bolivia’s regions, at whatever scale the data allow. It brings together social, economic, and environmental indicators from satellite imagery, censuses, and administrative records; makes them explorable through AI-enhanced notebooks and web apps; and turns the results into insights anyone can use.
+          The GeoDevelopment Observatory of Bolivia (GDO-Bolivia) is a public-access platform for analyzing, monitoring, and evaluating sustainable regional development across Bolivia’s regions, at whatever scale the data allow. It brings together social, economic, and environmental indicators from satellite imagery, censuses, and administrative records; makes them explorable through AI-enhanced notebooks and web apps; puts them to work in research projects; and turns the results into insights anyone can use.
         </SectionHeading>
       </SatelliteHeader>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-24">
@@ -1136,7 +1140,7 @@ const About = () => {
         </div>
 
         <AnimateIn>
-          <dl className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-16">
+          <dl className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-16">
             {stats.map((s) => (
               <div key={s.label} className="rounded-xl bg-white/[0.03] border border-white/10 py-6 px-5 last:col-span-2 md:last:col-span-1">
                 <dt className="sr-only">{s.label}</dt>
@@ -1201,18 +1205,42 @@ const ItemCard = ({ item, showImage = true }) => {
   );
 };
 
+// Indicators and tools share one section: the cards are filtered by type, the database and code examples follow
+const TOOL_TYPES = ['package', 'notebook', 'app'];
 const IndicatorsSection = () => {
+  const [filter, setFilter] = useState('all');
   const items = byType(['indicator']);
+  const all = [...items, ...TOOL_TYPES.flatMap((t) => byType([t]))];
+  const shown = filter === 'all' ? all : filter === 'tools' ? all.filter((i) => TOOL_TYPES.includes(i.type)) : all.filter((i) => i.type === filter);
+  const count = (t) => all.filter((i) => i.type === t).length;
+  const options = [['all', `All (${all.length})`], ['indicator', `Indicators (${count('indicator')})`], ['package', `Packages (${count('package')})`],
+    ['notebook', `Notebooks (${count('notebook')})`], ['app', `Web apps (${count('app')})`]];
+  // "#tools" (old links, the tool pages' breadcrumbs) lands here with the tools selected
+  useEffect(() => {
+    const onHash = () => { if (window.location.hash === '#tools') setFilter('tools'); };
+    onHash();
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
   return (
     <section id="indicators" aria-labelledby="indicators-title" className="relative border-t border-white/10">
       <SatelliteHeader band={SECTION_BANDS.indicators}>
-        <SectionHeading index={sectionIndex('indicators')} eyebrow="GeoDevelopment Indicators" title="Subnational data," emphasis="ready to analyze" id="indicators-title">
-          Social, economic, and environmental indicators for Bolivia’s departments, provinces, municipalities and other regional units, from satellite imagery, censuses, and administrative records, documented variable by variable, with their sources and licenses.
+        <SectionHeading index={sectionIndex('indicators')} eyebrow="GeoDevelopment Indicators & Tools" title="Subnational data," emphasis="ready to analyze" id="indicators-title">
+          Social, economic, and environmental indicators for Bolivia’s departments, provinces, municipalities and other regional units, from satellite imagery, censuses, and administrative records, documented variable by variable, with their sources and licenses; and the Python packages, notebooks and web apps to load them, build new ones and model them, all running in your browser.
         </SectionHeading>
       </SatelliteHeader>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-24">
+        <span id="tools" className="block scroll-mt-24" aria-hidden="true"></span>
+        <div role="group" aria-label="Filter indicators and tools" className="flex flex-wrap gap-2 mb-10">
+          {options.map(([k, label]) => (
+            <button key={k} type="button" onClick={() => setFilter(k)} aria-pressed={filter === k || (filter === 'tools' && TOOL_TYPES.includes(k))}
+                    className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${filter === k || (filter === 'tools' && TOOL_TYPES.includes(k)) ? 'bg-brand-rose text-white shadow-sm' : 'bg-transparent text-salt-300 border border-white/15 hover:border-white/30 hover:text-white'}`}>
+              {label}
+            </button>
+          ))}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
-          {items.map((item, i) => <AnimateIn key={item.id} delay={i * 80}><ItemCard item={item} /></AnimateIn>)}
+          {shown.map((item, i) => <AnimateIn key={item.id} delay={(i % 3) * 80}><ItemCard item={item} /></AnimateIn>)}
         </div>
 
         {/* Database architecture */}
@@ -1283,30 +1311,18 @@ const IndicatorsSection = () => {
   );
 };
 
-const ToolsSection = () => {
-  const [filter, setFilter] = useState('all');
-  const all = byType(['package', 'notebook', 'app']);
-  const items = filter === 'all' ? all : all.filter((i) => i.type === filter);
-  const count = (t) => all.filter((i) => i.type === t).length;
-  const options = [['all', `All (${all.length})`], ['package', `Packages (${count('package')})`], ['notebook', `Notebooks (${count('notebook')})`], ['app', `Web apps (${count('app')})`]];
+const ProjectsSection = () => {
+  const items = byType(['project']);
   return (
-    <section id="tools" aria-labelledby="tools-title" className="relative border-t border-white/10">
-      <SatelliteHeader band={SECTION_BANDS.tools}>
-        <SectionHeading index={sectionIndex('tools')} eyebrow="GeoDevelopment Tools" title="Explore, map," emphasis="and model" id="tools-title">
-          Python packages, computational notebooks and web applications for loading the indicators, building new ones, analyzing patterns and extending research results, all running in your browser.
+    <section id="projects" aria-labelledby="projects-title" className="relative border-t border-white/10">
+      <SatelliteHeader band={SECTION_BANDS.projects}>
+        <SectionHeading index={sectionIndex('projects')} eyebrow="GeoDevelopment Projects" title="Research projects," emphasis="in action" id="projects-title">
+          Projects that put the observatory’s data and methods to work: atlases, new econometric tools and monitoring systems, each with its own website and team.
         </SectionHeading>
       </SatelliteHeader>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-24">
-        <div role="group" aria-label="Filter tools" className="flex flex-wrap gap-2 mb-10">
-          {options.map(([k, label]) => (
-            <button key={k} type="button" onClick={() => setFilter(k)} aria-pressed={filter === k}
-                    className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${filter === k ? 'bg-brand-rose text-white shadow-sm' : 'bg-transparent text-salt-300 border border-white/15 hover:border-white/30 hover:text-white'}`}>
-              {label}
-            </button>
-          ))}
-        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map((item, i) => <AnimateIn key={item.id} delay={(i % 3) * 80}><ItemCard item={item} /></AnimateIn>)}
+          {items.map((item, i) => <AnimateIn key={item.id} delay={i * 80}><ItemCard item={item} /></AnimateIn>)}
         </div>
       </div>
     </section>
@@ -1524,7 +1540,7 @@ const Footer = () => {
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-12">
           <div className="max-w-md">
             <Wordmark size="lg" />
-            <p className="text-salt-200 mt-5">Open data, tools, and insights for sustainable regional development in Bolivia.</p>
+            <p className="text-salt-200 mt-5">Open data, tools, projects and insights for sustainable regional development in Bolivia.</p>
             <BandCaption band={band} className="mt-8" />
           </div>
           <div className="flex flex-wrap gap-12 items-start">
@@ -1549,7 +1565,7 @@ const Footer = () => {
     </div>
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
       <div className="border-t border-white/10 pt-8 space-y-3 text-xs text-salt-400 leading-relaxed">
-        <p><strong className="text-salt-400">Disclaimer.</strong> The indicators, tools, and insights are the responsibility of the individual researchers and do not necessarily represent the views of their affiliated institutions or related organizations. Maps on this website are for geo-statistical use only and have a referential, informational character. They represent indicators spatially and do not constitute an official definition of Bolivia’s territorial boundaries.</p>
+        <p><strong className="text-salt-400">Disclaimer.</strong> The indicators, tools, projects and insights are the responsibility of the individual researchers and do not necessarily represent the views of their affiliated institutions or related organizations. Maps on this website are for geo-statistical use only and have a referential, informational character. They represent indicators spatially and do not constitute an official definition of Bolivia’s territorial boundaries.</p>
         <p><strong className="text-salt-400">Credits.</strong> The section illustrations and cards are rendered from the observatory’s data (scripts/site_images.py); the indicator maps (scripts/indicator_map.py) are drawn over Esri’s World Dark Gray Canvas basemap (Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS user community). The hero globe uses <a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">Sentinel-2 cloudless<span className="sr-only"> (opens in a new tab)</span></a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2016), licensed under CC BY 4.0, over NASA's Blue Marble Next Generation (public domain), and is rendered with globe.gl; the section and footer backgrounds are Sentinel-2 cloudless crops of Bolivia from the same source, except Laguna Verde, from the 2024 mosaic (contains modified Copernicus Sentinel data 2024, CC BY-NC-SA 4.0). The emblem shades the nine departments by multidimensional poverty inside a satellite’s orbit (scripts/site_images.py). App screenshots, figures, and photos belong to their respective authors. Code is released under the <a href={`${REPO_URL}/blob/main/LICENSE`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">MIT License<span className="sr-only"> (opens in a new tab)</span></a> and data under <a href={`${REPO_URL}/blob/main/LICENSE-DATA`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">CC BY 4.0<span className="sr-only"> (opens in a new tab)</span></a>, except where a source requires otherwise; the boundaries are geoBoundaries’ (GeoBolivia, public domain); each dataset page credits the original sources and their licenses.</p>
         <p>Found an error? <a href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">Open an issue<span className="sr-only"> (opens in a new tab)</span></a> or start a thread in <a href={`${REPO_URL}/discussions`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">GitHub Discussions<span className="sr-only"> (opens in a new tab)</span></a>.</p>
       </div>
@@ -1561,7 +1577,7 @@ const Footer = () => {
 // ====================================================================
 // Detail views
 // ====================================================================
-const SECTION_LABEL = { indicators: 'Indicators', tools: 'Tools', insights: 'Insights', events: 'Events' };
+const SECTION_LABEL = { indicators: 'Indicators', tools: 'Tools', projects: 'Projects', insights: 'Insights', events: 'Events' };
 
 const DetailShell = ({ item, children, aside, lead }) => {
   const headingRef = useRef(null);
@@ -2011,6 +2027,40 @@ const ToolDetail = ({ item }) => {
   );
 };
 
+const ProjectDetail = ({ item }) => {
+  const primary = (item.links || [])[0];
+  const image = <img src={item.image} alt={item.imageAlt} className="w-full h-auto transition-transform duration-500 group-hover:scale-[1.02]" />;
+  return (
+    <DetailShell item={item} aside={<>
+      <AsideCard title="Visit">
+        {primary
+          ? <div className="flex flex-col gap-2">{item.links.map((l, i) => <LinkButton key={l.url} link={l} primary={i === 0} />)}</div>
+          : <p className="text-sm text-salt-300">The project’s website is coming soon.</p>}
+      </AsideCard>
+      {(item.status || item.team) && (
+        <AsideCard title="Project">
+          <dl className="space-y-3 text-sm">
+            {item.status && <div><dt className="text-salt-400">Status</dt><dd className="text-white">{item.status}</dd></div>}
+            {item.team && <div><dt className="text-salt-400">Team</dt><dd className="text-white">{item.team}</dd></div>}
+          </dl>
+        </AsideCard>
+      )}
+      <AsideCard title="Topics"><div className="flex flex-wrap gap-1.5">{item.tags.map((t) => <Tag key={t} type={item.type}>{t}</Tag>)}</div></AsideCard>
+      <RelatedList ids={item.related} />
+    </>}>
+      {primary
+        ? <a href={primary.url} target="_blank" rel="noopener noreferrer" className="block rounded-xl overflow-hidden border border-white/10 bg-lagoon-900 group relative">
+            {image}
+            <span className="absolute bottom-4 right-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-lagoon-950/85 border border-white/15 text-sm font-semibold text-white">{primary.label} <ExternalLink size={14} /></span>
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
+        : <div className="rounded-xl overflow-hidden border border-white/10 bg-lagoon-900">{image}</div>}
+      <Block title="About this project" id="p-about"><p className="text-salt-300 leading-relaxed">{item.description}</p></Block>
+      {item.citation && <Block title="Cite this project" id="p-cite"><p className="text-salt-300 leading-relaxed">{item.citation}</p></Block>}
+    </DetailShell>
+  );
+};
+
 const InsightDetail = ({ item }) => {
   const videos = (item.media || []).filter((m) => m.kind === 'youtube');
   const audios = (item.media || []).filter((m) => m.kind === 'audio');
@@ -2127,6 +2177,7 @@ const DetailView = ({ route }) => {
   if (item.type === 'indicator') return <IndicatorDetail item={item} />;
   if (item.type === 'package') return <PackageDetail item={item} />;
   if (item.type === 'notebook' || item.type === 'app') return <ToolDetail item={item} />;
+  if (item.type === 'project') return <ProjectDetail item={item} />;
   if (item.type === 'insight') return <InsightDetail item={item} />;
   if (item.type === 'event') return <EventDetail item={item} />;
   return <NotFound />;
@@ -2140,7 +2191,7 @@ const Home = () => (
     <Hero />
     <About />
     <IndicatorsSection />
-    <ToolsSection />
+    {HAS_SECTION.projects && <ProjectsSection />}
     {HAS_SECTION.insights && <InsightsSection />}
     {HAS_SECTION.events && <EventsSection />}
     <TeamSection />
@@ -2158,7 +2209,7 @@ const App = () => {
 
   useEffect(() => {
     // "<base>/indicators/" and the like are sections of the landing page
-    if (route.view === 'detail' && !route.id && SECTION_ORDER.includes(route.section)) {
+    if (route.view === 'detail' && !route.id && (SECTION_ORDER.includes(route.section) || route.section === 'tools')) {
       navigate(`${BASE_PATH}#${route.section}`, true);
       return;
     }
