@@ -4,16 +4,16 @@
 
 ## Overview
 
-Annual night-time lights per capita for Bolivia's 339 municipalities, 2012–2020, in natural logs: the total VIIRS Day/Night Band radiance of each municipality divided by its population. A Hodrick–Prescott trend (λ = 400) of the same series isolates its long-run path. Night-time lights are a widely used proxy for local economic activity and electrification.
+Annual night-time lights per capita for 333 of Bolivia's 343 municipalities, 2012–2020, in natural logs: the total VIIRS Day/Night Band radiance of each municipality divided by its population. A Hodrick–Prescott trend (λ = 400) of the same series isolates its long-run path. Night-time lights are a widely used proxy for local economic activity and electrification.
 
 - **Dataset id:** `ntl`
 - **Categories:** Economy
 
 ## Scale: municipality
 
-- **Units:** 339 of 339 municipality units
-- **Period:** 2012–2020, annual (3,051 rows: one per unit and year)
-- **Source geometry:** DS4Bolivia polygons (bolivia339geoqueryFull, keyed by asdf_id), matched one-to-one to the 339 municipalities by area overlap
+- **Units:** 333 of 343 municipality units
+- **Period:** 2012–2020, annual (2,997 rows: one per unit and year)
+- **Source geometry:** DS4Bolivia polygons (bolivia339geoqueryFull, keyed by asdf_id), matched one-to-one to the 2015 map's municipalities by area overlap; only the 333 municipalities unchanged in the 343-unit map
 
 | File | Format |
 | --- | --- |
@@ -22,7 +22,7 @@ Annual night-time lights per capita for Bolivia's 339 municipalities, 2012–202
 
 | Variable | Label | Description | Unit | Coverage | Aggregation | Source |
 | --- | --- | --- | --- | --- | --- | --- |
-| `geo_id` | Municipality ID | Municipality geo ID (BO-DD-PP-MM) of the 339-unit municipality map, numbered as in GADM 4.1; its boundary in geo/boundaries/ comes from geoBoundaries (GeoBolivia, public domain). It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes. |  | 2012–2020 | — |  |
+| `geo_id` | Municipality ID | Municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; its boundary is in geo/boundaries/. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes. |  | 2012–2020 | — |  |
 | `year` | Year | Calendar year of the observation (2012–2020). The 2012 lights composite covers April 2012 to March 2013. |  | 2012–2020 | — |  |
 | `asdf_id` | DS4Bolivia polygon ID | ID (AidData asdf_id) of the geoBoundaries v4 ADM3 polygon on which DS4Bolivia computed the data, matched one-to-one to the municipality by area overlap. |  | 2012–2020 | — | DS4Bolivia |
 | `ln_NTLpc` | Log night-time lights per capita | Natural log of night-time radiance per person, ln(10⁸ × NTL / population). NTL is the sum over the municipality of the EOG Annual VIIRS Nighttime Lights V2 average radiance (background masked, 15 arc-seconds, nW/cm²/sr), extracted with AidData GeoQuery; population is the same year's WorldPop 1 km sum. Missing where no pixel remained lit after masking (2–15 municipalities a year). | log(10⁸ × nW/cm²/sr per person) | 2012–2020 | none | EOG VIIRS nighttime lights and WorldPop, via DS4Bolivia |
@@ -53,8 +53,9 @@ df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/
 
 ## Notes
 
+- The values belong to DS4Bolivia's polygons of the 2015 map, so they are published for the 333 municipalities whose territory is unchanged in the 343-unit map of 2025. The six municipalities that lost territory to the units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units (San Pedro de Macha, TIOC-Raqaypampa, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico) have no rows.
 - Both variables are logs of a ratio, so they cannot be summed or averaged up the hierarchy; their aggregation rule is `none`. Aggregate the levels instead, e.g. NTL = exp(ln_NTLpc) × pop, summed with `pop` from the population dataset.
-- Computed by DS4Bolivia on its own municipal polygons (`asdf_id`), geoBoundaries v4 polygons that differ slightly from the geoBoundaries gbOpen boundaries in geo/boundaries/.
+- Computed by DS4Bolivia on its own municipal polygons (`asdf_id`), geoBoundaries v4 polygons that differ slightly from the SDSN Bolivia 2025 boundaries in geo/boundaries/.
 - Population is the gridded estimate of the `pop` dataset.
 
 ## Related notebooks
@@ -74,7 +75,7 @@ df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/
 
 ## Recommended citation
 
-> GeoDevelopment Observatory of Bolivia (2026). Night-time lights per capita (339 municipalities, 2012–2020). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/ntl.md
+> GeoDevelopment Observatory of Bolivia (2026). Night-time lights per capita (333 of 343 municipalities, 2012–2020). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/ntl.md
 
 ## License
 

@@ -1,8 +1,8 @@
 {
   "name": "sdg02",
-  "title": "SDG 2: Zero hunger (Municipal Atlas of the SDGs 2020)",
-  "description": "The SDG 2 (Zero hunger) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) and the 4 indicators behind it, for Bolivia's 339 municipalities, with the Atlas population and urbanization rate as context. Each variable is stored at its own reference year, so the panel is sparse: a variable has values only in its year. The index is stored at 2016, the latest reference year of its indicators.",
-  "version": "1.0.0",
+  "title": "SDG 2: Zero hunger (SDG Atlas of Bolivia 2026)",
+  "description": "The SDG 2 (Zero hunger) index of the Atlas de los ODS en Bolivia 2026 (SDSN Bolivia) and the 7 indicators behind it, for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), at two points in time: near the 2012 census and near the 2024 census, stored as 2012 and 2024 so that their change can be studied.",
+  "version": "2.0.0",
   "licenses": [
     {
       "name": "CC-BY-4.0",
@@ -12,42 +12,29 @@
   ],
   "sources": [
     {
-      "title": "Andersen, L. E., Canelas, S., Gonzales, A., & Peñaranda, L. (2020). Atlas municipal de los Objetivos de Desarrollo Sostenible en Bolivia 2020. La Paz: Universidad Privada Boliviana, SDSN Bolivia.",
-      "path": "https://unsdsn.org/resources/municipal-atlas-of-the-sdgs-in-bolivia-2020",
+      "title": "Andersen, L. E., & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad Privada Boliviana, SDSN Bolivia.",
+      "path": "https://atlasods.sdsnbolivia.org/",
       "geo:role": "original",
-      "geo:creator": "Lykke E. Andersen, Stefano Canelas, Alejandra Gonzales and Lily Peñaranda (SDSN Bolivia, Universidad Privada Boliviana)",
-      "geo:homepage": "https://www.sdsnbolivia.org/Atlas",
+      "geo:creator": "Lykke E. Andersen and Fabiana Argandoña (SDSN Bolivia, Universidad Privada Boliviana)",
+      "geo:homepage": "https://atlasods.sdsnbolivia.org/",
       "geo:license": {
         "name": "LicenseRef-SDSN-Bolivia-permission",
         "title": "No open license stated (© Universidad Privada Boliviana); used and shared with the permission of SDSN Bolivia",
-        "path": "https://www.sdsnbolivia.org/Atlas"
+        "path": "https://atlasods.sdsnbolivia.org/"
       },
-      "geo:attribution": "Please cite the report and the data as: Andersen, L. E., Canelas, S., Gonzales, A., Peñaranda, L. (2020) Atlas municipal de los Objetivos de Desarrollo Sostenible en Bolivia 2020. La Paz: Universidad Privada Boliviana, SDSN Bolivia."
-    },
-    {
-      "title": "Mendez, C., Gonzales, E., Leoni, P., Andersen, L., & Peralta, H. (2026). DS4Bolivia: A Data Science Repository to Study GeoSpatial Development in Bolivia [Data set]. GitHub.",
-      "path": "https://github.com/quarcs-lab/ds4bolivia",
-      "geo:role": "intermediary",
-      "geo:creator": "Carlos Mendez, Erick Gonzales, Pedro Leoni, Lykke Andersen and Hernán Peralta",
-      "geo:license": {
-        "name": "MIT",
-        "title": "MIT License",
-        "path": "https://github.com/quarcs-lab/ds4bolivia/blob/master/LICENSE"
-      }
+      "geo:attribution": "Please cite the Atlas and its data as: Andersen, L.E. & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad Privada Boliviana, SDSN Bolivia."
     }
   ],
   "geo:categories": [
     "Social",
     "Economy"
   ],
-  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). SDG 2: Zero hunger, from the Municipal Atlas of the SDGs 2020 (339 municipalities). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/sdg02.md",
+  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). SDG 2: Zero hunger, from the Atlas de los ODS en Bolivia 2026 (343 municipalities, ~2012 and ~2024). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/sdg02.md",
   "geo:notes": [
-    "Reference years come from the variable labels. Indicators averaged over a period are stored at its midpoint, rounded down (e.g. average 2014–17 at 2015); the period is given in the description and `geo:year` holds the year used.",
-    "The SDG 2 index (`index_sdg2`) summarises indicators from different years; it is stored at 2016, the latest of them.",
-    "Load one indicator with its year, e.g. `geo.load(\"sdg02\", variables=\"index_sdg2\", years=2016)`, or every variable as a cross-section with `geo.load(\"sdg02\").groupby(\"geo_id\").first()`.",
-    "Most indicators are rates, shares or indices, so their aggregation rule is `none`. Population-weighted averages can be built with the `pop` dataset, which covers every reference year: `geo.aggregate(df, to=\"department\", rules={\"index_sdg2\": \"weighted_mean:pop\"}, weights=geo.load(\"pop\"))`.",
-    "In DS4Bolivia the rows of three homonym pairs (San Javier in Beni and Santa Cruz, El Puente in Tarija and Santa Cruz, Santa Rosa in Beni and Pando) are attached to the other polygon of the pair. Here the indicators are linked by INE code (`mun_id`), so each lies in its correct municipality; see raw/README.md.",
-    "`population_2020` is the Atlas (INE-based) population and differs from the gridded `pop` dataset."
+    "Both periods are stored at nominal years: 2012 for the Atlas's initial values (~2012) and 2024 for its final values (~2024). Each indicator's actual reference years differ (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) and are given in its description and in `geo:reference_years`.",
+    "Load one variable in both periods, e.g. `geo.load(\"sdg02\", variables=\"index_sdg2\")`, and its change with `df.pivot(index=\"geo_id\", columns=\"year\", values=\"index_sdg2\")`.",
+    "The units are the 343 municipalities and indigenous autonomies (GAIOC) of 2025. Four of them were created after the 2012 census (TIOC-Raqaypampa, San Pedro de Macha, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico); the Atlas gives them values in both periods.",
+    "The indicators are rates, shares, ratios or indices, so their aggregation rule is `none`. Population-weighted averages can use the census population of the `sdg` dataset: `geo.aggregate(df, to=\"department\", rules={\"index_sdg2\": \"weighted_mean:population\"}, weights=geo.load(\"sdg\", variables=\"population\"))`."
   ],
   "resources": [
     {
@@ -59,7 +46,7 @@
       "geo:scale": "municipality",
       "geo:period": [
         2012,
-        2020
+        2024
       ],
       "geo:path": "data/municipality/sdg02.csv",
       "geo:parquet": "data/municipality/sdg02.parquet",
@@ -70,7 +57,7 @@
             "name": "geo_id",
             "title": "Municipality ID",
             "type": "string",
-            "description": "GDO-Bolivia municipality geo ID (BO-DD-PP-MM) of the 339-unit municipality map, numbered as in GADM 4.1; its boundary in geo/boundaries/ comes from geoBoundaries (GeoBolivia, public domain). It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes.",
+            "description": "GDO-Bolivia municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; its boundary is in geo/boundaries/. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes.",
             "geo:role": "id",
             "constraints": {
               "required": true,
@@ -79,9 +66,9 @@
           },
           {
             "name": "year",
-            "title": "Year",
+            "title": "Period",
             "type": "integer",
-            "description": "Reference year of the values in the row. Each SDG Atlas variable is stored only at its own reference year (geo:year); indicators averaged over a period are stored at the period's midpoint, rounded down, and the goal index at the latest reference year of its indicators, so the panel is sparse.",
+            "description": "Period of the values in the row: 2012 holds the Atlas's initial values (near the 2012 census) and 2024 its final values (near the 2024 census). Each variable's actual reference years are given in its description and in geo:reference_years.",
             "geo:role": "time",
             "constraints": {
               "required": true
@@ -91,10 +78,10 @@
             "name": "mun_id",
             "title": "INE municipality code",
             "type": "integer",
-            "description": "Official municipality code of the National Statistics Institute (INE), DDPPMM (department, province, municipality) stored as an integer without the leading zero (e.g. 20101 = La Paz). The Atlas indicators are linked to geo_id through this code, which places DS4Bolivia's three swapped homonym pairs in their correct municipality.",
+            "description": "Official municipality code of the National Statistics Institute (INE), DDPPMM (department, province, municipality) stored as an integer without the leading zero (e.g. 20101 = Nuestra Señora de La Paz), as in the Atlas. The Atlas's rows are linked to geo_id through this code.",
             "geo:role": "source_key",
             "geo:units_column": "mun_id",
-            "geo:source": "INE via DS4Bolivia",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
             "constraints": {
               "required": true
             }
@@ -103,76 +90,113 @@
             "name": "index_sdg2",
             "title": "Zero hunger index (0-100)",
             "type": "number",
-            "description": "SDG 2 (Zero hunger) index of the Municipal Atlas of the SDGs in Bolivia 2020, on a 0-100 scale where 100 means the goal's targets are met (best value) and 0 the worst situation. Following the global SDG Index method (Lafortune et al., 2018), each of its 4 indicators is rescaled linearly to 0-100 between a worst value (generally the 2.5th-percentile tail of the municipal distribution) and a best value (the SDG target where one exists, otherwise the average of the five best municipalities, or expert judgement), with the direction set so that higher is always better and values beyond the bounds capped at 0 or 100; the index is the simple (equal-weight) mean of the available rescaled indicators. Components: Child chronic malnutrition (%); Obesity in women aged 15-49 (%); Average farm size (ha); Tractors per 1,000 farms. The components refer to different years; the observatory stores the index at 2016, the latest reference year among them. For the 15 almost fully urban municipalities, where the two farm indicators do not apply, it is the mean of the two nutrition indicators.",
+            "description": "SDG 2 (Zero hunger) index of the Atlas de los ODS en Bolivia 2026, on a 0-100 scale where 100 means the goal's targets are met and 0 the worst situation. Following the global SDG Index of SDSN, each of its 7 indicators is rescaled linearly to 0-100 between a worst and a best value (given in each indicator's description), with the direction set so that higher is always better and values beyond the bounds capped; the index is the simple mean of the available rescaled indicators. Components: Obesity in women 15-49 (%); Chronic malnutrition in children under 5 (%); Overweight in children under 5 (%); Anaemia in women 15-49 (%); Agricultural production (t per person per year); Agricultural yield (t per ha per year); Agricultural diversification index (0-1). Initial value (~2012) stored at 2012 and final value (~2024) at 2024; its components refer to different years around each census. Atlas: “Índice ODS2”.",
             "geo:unit": "index (0-100)",
-            "geo:year": 2016,
+            "geo:reference_years": {
+              "2012": "~2012",
+              "2024": "~2024"
+            },
             "geo:aggregation": "none",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
             "geo:sdg": 2
           },
           {
-            "name": "sdg2_2_cmc",
-            "title": "Child chronic malnutrition (%)",
+            "name": "sdg2_2_smu",
+            "title": "Obesity in women 15-49 (%)",
             "type": "number",
-            "description": "Percentage of children under 5 with chronic malnutrition (stunting) in 2016. The 2016 Demographic and Health Survey (EDSA, INE and Ministry of Health; table 24) is not representative by municipality, so the Atlas gives each municipality the rate of its department and poverty level (high, medium or low); municipalities in the same cell share one value. In the SDG 2 index it is normalised linearly between 52.6 (worst; 2.5th-percentile tail) and 0 (best; SDG target / leave no one behind), values beyond the bounds capped.",
-            "geo:unit": "% of children under 5",
-            "geo:year": 2016,
-            "geo:aggregation": "none",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020",
-            "geo:sdg": 2
-          },
-          {
-            "name": "sdg2_2_oww",
-            "title": "Obesity in women aged 15-49 (%)",
-            "type": "number",
-            "description": "Percentage of women aged 15-49 (not pregnant and without a birth in the two months before the survey) with obesity (BMI of 30 or more) in 2016, imputed to municipalities from the 2016 Demographic and Health Survey (EDSA, table 28) by department and poverty level. In the SDG 2 index it is normalised linearly between 32.8 (worst; 2.5th-percentile tail) and 11.3 (best; average of the top 5), values beyond the bounds capped.",
+            "description": "Percentage of women aged 15-49 (not pregnant and without a birth in the 2 months before the survey) with obesity (body mass index ≥ 30). Estimated from the INE Demographic and Health Survey (EDSA) of 2008 and 2023: the survey's national urban and rural prevalences are combined with each municipality's urbanization rate, P = P_rural + (P_urban − P_rural) × urbanization (0 = fully rural, 1 = fully urban), so municipal values differ only through urbanization. Source: INE, EDSA 2008 and 2023 (table 3.01.03.10). Initial value 2008 (stored at 2012) and final value 2023 (stored at 2024). In the SDG 2 index it is rescaled linearly to 0-100 between 38.2 (worst, 0) and 0 (best, 100), lower is better, values beyond the bounds capped; the Atlas counts the target as met at 10 and major challenges from 25 on. Atlas indicator 02_02_02_01_smu, “Porcentaje de mujeres con obesidad (15-49 años)” (Andersen & Argandoña 2026).",
             "geo:unit": "% of women 15-49",
-            "geo:year": 2016,
+            "geo:reference_years": {
+              "2012": "2008",
+              "2024": "2023"
+            },
             "geo:aggregation": "none",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
             "geo:sdg": 2
           },
           {
-            "name": "sdg2_4_pual",
-            "title": "Average farm size (ha)",
+            "name": "sdg2_2_dcn",
+            "title": "Chronic malnutrition in children under 5 (%)",
             "type": "number",
-            "description": "Average area per Agricultural Production Unit (UPA), in hectares, from the 2013 Agricultural Census (INE). Not applicable (missing) for 15 municipalities the Atlas treats as almost fully urban, mostly department capitals and metropolitan municipalities; the SDG 2 index then averages the remaining indicators. In the SDG 2 index it is normalised linearly between 0.43 (worst; 2.5th-percentile tail) and 30 (best; expert judgement: a 30 ha target; larger farms score no higher), values beyond the bounds capped.",
-            "geo:unit": "ha per farm",
-            "geo:year": 2013,
+            "description": "Percentage of children under 5 with chronic malnutrition (stunting). Estimated from the INE Demographic and Health Survey (EDSA) of 2008 and 2023: the survey's national urban and rural prevalences are combined with each municipality's urbanization rate, P = P_rural + (P_urban − P_rural) × urbanization (0 = fully rural, 1 = fully urban), so municipal values differ only through urbanization. Source: INE, EDSA 2008 and 2023 (table 3.01.03.03). Initial value 2008 (stored at 2012) and final value 2023 (stored at 2024). In the SDG 2 index it is rescaled linearly to 0-100 between 50.2 (worst, 0) and 0 (best, 100), lower is better, values beyond the bounds capped; the Atlas counts the target as met at 7.5 and major challenges from 15 on. Atlas indicator 02_02_02_02_dcn, “Porcentaje de niñas y niños con desnutrición crónica (< 5 años)” (Andersen & Argandoña 2026).",
+            "geo:unit": "% of children under 5",
+            "geo:reference_years": {
+              "2012": "2008",
+              "2024": "2023"
+            },
             "geo:aggregation": "none",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
             "geo:sdg": 2
           },
           {
-            "name": "sdg2_4_td",
-            "title": "Tractors per 1,000 farms",
+            "name": "sdg2_2_osn",
+            "title": "Overweight in children under 5 (%)",
             "type": "number",
-            "description": "Number of tractors per 1,000 Agricultural Production Units (UPAs), from the 2013 Agricultural Census (INE). Not applicable (missing) for the 15 almost fully urban municipalities. In the SDG 2 index it is normalised linearly between 0 (worst; 2.5th-percentile tail) and 673.4 (best; average of the top 5), values beyond the bounds capped.",
-            "geo:unit": "tractors per 1,000 farms",
-            "geo:year": 2013,
+            "description": "Percentage of children under 5 who are overweight. Estimated from the INE Demographic and Health Survey (EDSA) of 2008 and 2023: the survey's national urban and rural prevalences are combined with each municipality's urbanization rate, P = P_rural + (P_urban − P_rural) × urbanization (0 = fully rural, 1 = fully urban), so municipal values differ only through urbanization. Source: INE, EDSA 2008 and 2023 (table 3.01.03.03). Initial value 2008 (stored at 2012) and final value 2023 (stored at 2024). In the SDG 2 index it is rescaled linearly to 0-100 between 11.8 (worst, 0) and 0 (best, 100), lower is better, values beyond the bounds capped; the Atlas counts the target as met at 3.5 and major challenges from 10 on. Atlas indicator 02_02_02_03_osn, “Porcentaje de niñas y niños con sobrepeso (< 5 años)” (Andersen & Argandoña 2026).",
+            "geo:unit": "% of children under 5",
+            "geo:reference_years": {
+              "2012": "2008",
+              "2024": "2023"
+            },
             "geo:aggregation": "none",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
             "geo:sdg": 2
           },
           {
-            "name": "population_2020",
-            "title": "Population (persons)",
+            "name": "sdg2_2_pam",
+            "title": "Anaemia in women 15-49 (%)",
             "type": "number",
-            "description": "Estimated municipal population in 2020 (persons), as printed in the Atlas municipal profiles (\"Población estimada, 2020\"). The Atlas does not name the source; the 339 values sum to 11,633,371, exactly INE's 2020 national population projection (Revisión 2020 series), so they are presumably INE's municipal projections. Not an input of any goal index. Differs from the gridded WorldPop-based pop dataset.",
-            "geo:unit": "persons",
-            "geo:year": 2020,
-            "geo:aggregation": "sum",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020"
+            "description": "Percentage of women aged 15-49 with anaemia of any degree. Estimated from the INE Demographic and Health Survey (EDSA) of 2008 and 2023: the survey's national urban and rural prevalences are combined with each municipality's urbanization rate, P = P_rural + (P_urban − P_rural) × urbanization (0 = fully rural, 1 = fully urban), so municipal values differ only through urbanization. Source: INE, EDSA 2008 and 2023 (table 3.01.03.06). Initial value 2008 (stored at 2012) and final value 2023 (stored at 2024). In the SDG 2 index it is rescaled linearly to 0-100 between 70.4 (worst, 0) and 0 (best, 100), lower is better, values beyond the bounds capped; the Atlas counts the target as met at 18 and major challenges from 38 on. Atlas indicator 02_02_03_04_pam, “Porcentaje de mujeres con anemia (15-49 años)” (Andersen & Argandoña 2026).",
+            "geo:unit": "% of women 15-49",
+            "geo:reference_years": {
+              "2012": "2008",
+              "2024": "2023"
+            },
+            "geo:aggregation": "none",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 2
           },
           {
-            "name": "urbano_2012",
-            "title": "Urbanization rate (%)",
+            "name": "sdg2_3_pac",
+            "title": "Agricultural production (t per person per year)",
             "type": "number",
-            "description": "Share of the municipal population living in urban areas in 2012 (%), as printed in the Atlas municipal profiles (\"Tasa de urbanización, 2012\"), from the 2012 Population and Housing Census (INE). INE counts as urban the localities with 2,000 or more inhabitants, which is why 175 municipalities have a rate of 0. Not an input of any goal index (the Atlas treats 15 almost fully urban municipalities as having no applicable farm indicators for SDG 2; 11 of them are 95% or more urban by this rate, while Sucre, Tiquipaya and Potosí are 91–92% and Yunguyo de Litoral 0%).",
-            "geo:unit": "%",
-            "geo:year": 2012,
+            "description": "Agricultural production per person: the tonnes of all crops produced in the municipality divided by its population, averaged over three years. Only for municipalities with an urbanization rate below 95%. Source: the Integrated Productive Information System (SIIP, 2024), municipal agricultural production. Initial value average 2013–2015 (stored at 2012) and final value average 2022–2024 (stored at 2024). Missing for 19 of the 343 units in the initial period and 21 in the final one. In the SDG 2 index it is rescaled linearly to 0-100 between 0 (worst, 0) and 6.3 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 3 and major challenges from 1.8 on. Atlas indicator 02_03_01_05_pac, “Producción agrícola (t/persona/año)” (Andersen & Argandoña 2026).",
+            "geo:unit": "tonnes per person per year",
+            "geo:reference_years": {
+              "2012": "average 2013–2015",
+              "2024": "average 2022–2024"
+            },
             "geo:aggregation": "none",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020"
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 2
+          },
+          {
+            "name": "sdg2_3_rpa",
+            "title": "Agricultural yield (t per ha per year)",
+            "type": "number",
+            "description": "Agricultural yield: the tonnes of all crops produced divided by the total cultivated area in hectares, averaged over three years. Only for municipalities with an urbanization rate below 95%. Source: the Integrated Productive Information System (SIIP, 2024), municipal agricultural production. Initial value average 2013–2015 (stored at 2012) and final value average 2022–2024 (stored at 2024). Missing for 20 of the 343 units in each period. In the SDG 2 index it is rescaled linearly to 0-100 between 0 (worst, 0) and 7 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 2.5 and major challenges from 1.5 on. Atlas indicator 02_03_01_06_rpa, “Rendimiento de la producción agrícola (t/ha/año)” (Andersen & Argandoña 2026).",
+            "geo:unit": "tonnes per hectare per year",
+            "geo:reference_years": {
+              "2012": "average 2013–2015",
+              "2024": "average 2022–2024"
+            },
+            "geo:aggregation": "none",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 2
+          },
+          {
+            "name": "sdg2_5_idp",
+            "title": "Agricultural diversification index (0-1)",
+            "type": "number",
+            "description": "Diversification of agricultural production: Shannon evenness of the crops' shares in total production (the Shannon-Wiener index −Σ p_i ln p_i divided by ln S, S the number of crops grown), averaged over three years; 1 means production spread evenly over many crops. Only for municipalities with an urbanization rate below 95%. Source: the Integrated Productive Information System (SIIP, 2024), municipal agricultural production. Initial value average 2013–2015 (stored at 2012) and final value average 2022–2024 (stored at 2024). Missing for 19 of the 343 units in the initial period and 21 in the final one. In the SDG 2 index it is rescaled linearly to 0-100 between 0 (worst, 0) and 1 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 0.65 and major challenges from 0.2 on. Atlas indicator 02_05_01_07_idp, “Índice de diversificación productiva agrícola” (Andersen & Argandoña 2026).",
+            "geo:unit": "index (0-1)",
+            "geo:reference_years": {
+              "2012": "average 2013–2015",
+              "2024": "average 2022–2024"
+            },
+            "geo:aggregation": "none",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 2
           }
         ],
         "primaryKey": [
@@ -182,9 +206,13 @@
       }
     }
   ],
-  "geo:updated": "2026-10-30",
+  "geo:updated": "2026-11-17",
   "geo:map": {
     "variable": "index_sdg2",
-    "year": 2016
+    "year": 2024,
+    "panels": [
+      2012,
+      2024
+    ]
   }
 }

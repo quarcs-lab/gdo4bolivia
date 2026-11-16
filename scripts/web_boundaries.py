@@ -2,7 +2,7 @@
 
     uv run python scripts/web_boundaries.py [--tolerance METRES] [--digits N]
 
-``geo/boundaries/`` holds geoBoundaries' public-domain polygons (``build/geo.py``), lightly
+``geo/boundaries/`` holds SDSN Bolivia's 2025 municipal polygons (``build/geo.py``), lightly
 simplified for analysis. The browser needs far fewer vertices, so the municipalities are
 simplified again as a coverage (shared borders stay shared, so no slivers or gaps appear),
 snapped to a grid of ``--digits`` decimals in longitude/latitude, and written with ``geo_id``

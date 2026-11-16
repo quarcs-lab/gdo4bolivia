@@ -1,8 +1,8 @@
 {
   "name": "sdg04",
-  "title": "SDG 4: Quality education (Municipal Atlas of the SDGs 2020)",
-  "description": "The SDG 4 (Quality education) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) and the 6 indicators behind it, for Bolivia's 339 municipalities, with the Atlas population and urbanization rate as context. Each variable is stored at its own reference year, so the panel is sparse: a variable has values only in its year. The index is stored at 2017, the latest reference year of its indicators.",
-  "version": "1.0.0",
+  "title": "SDG 4: Quality education (SDG Atlas of Bolivia 2026)",
+  "description": "The SDG 4 (Quality education) index of the Atlas de los ODS en Bolivia 2026 (SDSN Bolivia) and the 11 indicators behind it, for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), at two points in time: near the 2012 census and near the 2024 census, stored as 2012 and 2024 so that their change can be studied.",
+  "version": "2.0.0",
   "licenses": [
     {
       "name": "CC-BY-4.0",
@@ -12,41 +12,28 @@
   ],
   "sources": [
     {
-      "title": "Andersen, L. E., Canelas, S., Gonzales, A., & Peñaranda, L. (2020). Atlas municipal de los Objetivos de Desarrollo Sostenible en Bolivia 2020. La Paz: Universidad Privada Boliviana, SDSN Bolivia.",
-      "path": "https://unsdsn.org/resources/municipal-atlas-of-the-sdgs-in-bolivia-2020",
+      "title": "Andersen, L. E., & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad Privada Boliviana, SDSN Bolivia.",
+      "path": "https://atlasods.sdsnbolivia.org/",
       "geo:role": "original",
-      "geo:creator": "Lykke E. Andersen, Stefano Canelas, Alejandra Gonzales and Lily Peñaranda (SDSN Bolivia, Universidad Privada Boliviana)",
-      "geo:homepage": "https://www.sdsnbolivia.org/Atlas",
+      "geo:creator": "Lykke E. Andersen and Fabiana Argandoña (SDSN Bolivia, Universidad Privada Boliviana)",
+      "geo:homepage": "https://atlasods.sdsnbolivia.org/",
       "geo:license": {
         "name": "LicenseRef-SDSN-Bolivia-permission",
         "title": "No open license stated (© Universidad Privada Boliviana); used and shared with the permission of SDSN Bolivia",
-        "path": "https://www.sdsnbolivia.org/Atlas"
+        "path": "https://atlasods.sdsnbolivia.org/"
       },
-      "geo:attribution": "Please cite the report and the data as: Andersen, L. E., Canelas, S., Gonzales, A., Peñaranda, L. (2020) Atlas municipal de los Objetivos de Desarrollo Sostenible en Bolivia 2020. La Paz: Universidad Privada Boliviana, SDSN Bolivia."
-    },
-    {
-      "title": "Mendez, C., Gonzales, E., Leoni, P., Andersen, L., & Peralta, H. (2026). DS4Bolivia: A Data Science Repository to Study GeoSpatial Development in Bolivia [Data set]. GitHub.",
-      "path": "https://github.com/quarcs-lab/ds4bolivia",
-      "geo:role": "intermediary",
-      "geo:creator": "Carlos Mendez, Erick Gonzales, Pedro Leoni, Lykke Andersen and Hernán Peralta",
-      "geo:license": {
-        "name": "MIT",
-        "title": "MIT License",
-        "path": "https://github.com/quarcs-lab/ds4bolivia/blob/master/LICENSE"
-      }
+      "geo:attribution": "Please cite the Atlas and its data as: Andersen, L.E. & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad Privada Boliviana, SDSN Bolivia."
     }
   ],
   "geo:categories": [
     "Social"
   ],
-  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). SDG 4: Quality education, from the Municipal Atlas of the SDGs 2020 (339 municipalities). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/sdg04.md",
+  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). SDG 4: Quality education, from the Atlas de los ODS en Bolivia 2026 (343 municipalities, ~2012 and ~2024). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/sdg04.md",
   "geo:notes": [
-    "Reference years come from the variable labels. Indicators averaged over a period are stored at its midpoint, rounded down (e.g. average 2014–17 at 2015); the period is given in the description and `geo:year` holds the year used.",
-    "The SDG 4 index (`index_sdg4`) summarises indicators from different years; it is stored at 2017, the latest of them.",
-    "Load one indicator with its year, e.g. `geo.load(\"sdg04\", variables=\"index_sdg4\", years=2017)`, or every variable as a cross-section with `geo.load(\"sdg04\").groupby(\"geo_id\").first()`.",
-    "Most indicators are rates, shares or indices, so their aggregation rule is `none`. Population-weighted averages can be built with the `pop` dataset, which covers every reference year: `geo.aggregate(df, to=\"department\", rules={\"index_sdg4\": \"weighted_mean:pop\"}, weights=geo.load(\"pop\"))`.",
-    "In DS4Bolivia the rows of three homonym pairs (San Javier in Beni and Santa Cruz, El Puente in Tarija and Santa Cruz, Santa Rosa in Beni and Pando) are attached to the other polygon of the pair. Here the indicators are linked by INE code (`mun_id`), so each lies in its correct municipality; see raw/README.md.",
-    "`population_2020` is the Atlas (INE-based) population and differs from the gridded `pop` dataset."
+    "Both periods are stored at nominal years: 2012 for the Atlas's initial values (~2012) and 2024 for its final values (~2024). Each indicator's actual reference years differ (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) and are given in its description and in `geo:reference_years`.",
+    "Load one variable in both periods, e.g. `geo.load(\"sdg04\", variables=\"index_sdg4\")`, and its change with `df.pivot(index=\"geo_id\", columns=\"year\", values=\"index_sdg4\")`.",
+    "The units are the 343 municipalities and indigenous autonomies (GAIOC) of 2025. Four of them were created after the 2012 census (TIOC-Raqaypampa, San Pedro de Macha, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico); the Atlas gives them values in both periods.",
+    "The indicators are rates, shares, ratios or indices, so their aggregation rule is `none`. Population-weighted averages can use the census population of the `sdg` dataset: `geo.aggregate(df, to=\"department\", rules={\"index_sdg4\": \"weighted_mean:population\"}, weights=geo.load(\"sdg\", variables=\"population\"))`."
   ],
   "resources": [
     {
@@ -58,7 +45,7 @@
       "geo:scale": "municipality",
       "geo:period": [
         2012,
-        2020
+        2024
       ],
       "geo:path": "data/municipality/sdg04.csv",
       "geo:parquet": "data/municipality/sdg04.parquet",
@@ -69,7 +56,7 @@
             "name": "geo_id",
             "title": "Municipality ID",
             "type": "string",
-            "description": "GDO-Bolivia municipality geo ID (BO-DD-PP-MM) of the 339-unit municipality map, numbered as in GADM 4.1; its boundary in geo/boundaries/ comes from geoBoundaries (GeoBolivia, public domain). It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes.",
+            "description": "GDO-Bolivia municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; its boundary is in geo/boundaries/. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes.",
             "geo:role": "id",
             "constraints": {
               "required": true,
@@ -78,9 +65,9 @@
           },
           {
             "name": "year",
-            "title": "Year",
+            "title": "Period",
             "type": "integer",
-            "description": "Reference year of the values in the row. Each SDG Atlas variable is stored only at its own reference year (geo:year); indicators averaged over a period are stored at the period's midpoint, rounded down, and the goal index at the latest reference year of its indicators, so the panel is sparse.",
+            "description": "Period of the values in the row: 2012 holds the Atlas's initial values (near the 2012 census) and 2024 its final values (near the 2024 census). Each variable's actual reference years are given in its description and in geo:reference_years.",
             "geo:role": "time",
             "constraints": {
               "required": true
@@ -90,10 +77,10 @@
             "name": "mun_id",
             "title": "INE municipality code",
             "type": "integer",
-            "description": "Official municipality code of the National Statistics Institute (INE), DDPPMM (department, province, municipality) stored as an integer without the leading zero (e.g. 20101 = La Paz). The Atlas indicators are linked to geo_id through this code, which places DS4Bolivia's three swapped homonym pairs in their correct municipality.",
+            "description": "Official municipality code of the National Statistics Institute (INE), DDPPMM (department, province, municipality) stored as an integer without the leading zero (e.g. 20101 = Nuestra Señora de La Paz), as in the Atlas. The Atlas's rows are linked to geo_id through this code.",
             "geo:role": "source_key",
             "geo:units_column": "mun_id",
-            "geo:source": "INE via DS4Bolivia",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
             "constraints": {
               "required": true
             }
@@ -102,98 +89,169 @@
             "name": "index_sdg4",
             "title": "Quality education index (0-100)",
             "type": "number",
-            "description": "SDG 4 (Quality education) index of the Municipal Atlas of the SDGs in Bolivia 2020, on a 0-100 scale where 100 means the goal's targets are met (best value) and 0 the worst situation. Following the global SDG Index method (Lafortune et al., 2018), each of its 6 indicators is rescaled linearly to 0-100 between a worst value (generally the 2.5th-percentile tail of the municipal distribution) and a best value (the SDG target where one exists, otherwise the average of the five best municipalities, or expert judgement), with the direction set so that higher is always better and values beyond the bounds capped at 0 or 100; the index is the simple (equal-weight) mean of the available rescaled indicators. Components: Secondary dropout rate, boys (%); Secondary dropout rate, girls (%); Adults with higher education (%); Literacy rate, age 15+ (%); Qualified pre-primary teachers (%); Qualified secondary teachers (%). The components refer to different years; the observatory stores the index at 2017, the latest reference year among them.",
+            "description": "SDG 4 (Quality education) index of the Atlas de los ODS en Bolivia 2026, on a 0-100 scale where 100 means the goal's targets are met and 0 the worst situation. Following the global SDG Index of SDSN, each of its 11 indicators is rescaled linearly to 0-100 between a worst and a best value (given in each indicator's description), with the direction set so that higher is always better and values beyond the bounds capped; the index is the simple mean of the available rescaled indicators. Components: Secondary-school dropout rate, girls (%); Secondary-school dropout rate, boys (%); Pre-school attendance, girls 4-5 (%); Pre-school attendance, boys 4-5 (%); Years of education, women 25-35; Years of education, men 25-35; Higher education, women 19+ (%); Higher education, men 19+ (%); Literacy rate, 15+ (%); Qualified teachers, initial level (%); Qualified teachers, secondary level (%). Initial value (~2012) stored at 2012 and final value (~2024) at 2024; its components refer to different years around each census. Atlas: “Índice ODS4”.",
             "geo:unit": "index (0-100)",
-            "geo:year": 2017,
+            "geo:reference_years": {
+              "2012": "~2012",
+              "2024": "~2024"
+            },
             "geo:aggregation": "none",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
             "geo:sdg": 4
           },
           {
-            "name": "sdg4_1_ssdrm",
-            "title": "Secondary dropout rate, boys (%)",
+            "name": "sdg4_1_asm",
+            "title": "Secondary-school dropout rate, girls (%)",
             "type": "number",
-            "description": "Secondary-school dropout rate of male students in 2017: dropouts divided by enrolment (%), official administrative records of the Ministry of Education (Educational Statistics and Indicators System, SEIE, seie.minedu.gob.bo). In the SDG 4 index it is normalised linearly between 9.7 (worst; 2.5th-percentile tail) and 0 (best; leave no one behind / average of the top 5), values beyond the bounds capped.",
-            "geo:unit": "% of enrolled",
-            "geo:year": 2017,
+            "description": "Annual dropout rate of girls in secondary school (grades 1-6): dropouts divided by enrolment, averaged over the years of the period. Source: the Ministry of Education's Education Statistics and Indicators System (SIE). Initial value average 2012–2014 (stored at 2012) and final value average 2022–2023 (stored at 2024). Missing for 4 of the 343 units in each period. In the SDG 4 index it is rescaled linearly to 0-100 between 26 (worst, 0) and 0 (best, 100), lower is better, values beyond the bounds capped; the Atlas counts the target as met at 3 and major challenges from 6 on. Atlas indicator 04_01_02_01_asm, “Tasa de abandono en secundaria, mujeres (%)” (Andersen & Argandoña 2026).",
+            "geo:unit": "% of enrolled girls",
+            "geo:reference_years": {
+              "2012": "average 2012–2014",
+              "2024": "average 2022–2023"
+            },
             "geo:aggregation": "none",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
             "geo:sdg": 4
           },
           {
-            "name": "sdg4_1_ssdrf",
-            "title": "Secondary dropout rate, girls (%)",
+            "name": "sdg4_1_ash",
+            "title": "Secondary-school dropout rate, boys (%)",
             "type": "number",
-            "description": "Secondary-school dropout rate of female students in 2017: dropouts divided by enrolment (%), official administrative records of the Ministry of Education (SEIE, seie.minedu.gob.bo). In the SDG 4 index it is normalised linearly between 9.7 (worst; 2.5th-percentile tail) and 0 (best; leave no one behind / average of the top 5), values beyond the bounds capped.",
-            "geo:unit": "% of enrolled",
-            "geo:year": 2017,
+            "description": "Annual dropout rate of boys in secondary school (grades 1-6): dropouts divided by enrolment, averaged over the years of the period. Source: the Ministry of Education's Education Statistics and Indicators System (SIE). Initial value average 2012–2014 (stored at 2012) and final value average 2022–2024 (stored at 2024). Missing for 4 of the 343 units in the initial period and 5 in the final one. In the SDG 4 index it is rescaled linearly to 0-100 between 26 (worst, 0) and 0 (best, 100), lower is better, values beyond the bounds capped; the Atlas counts the target as met at 3 and major challenges from 6 on. Atlas indicator 04_01_02_02_ash, “Tasa de abandono en secundaria, hombres (%)” (Andersen & Argandoña 2026).",
+            "geo:unit": "% of enrolled boys",
+            "geo:reference_years": {
+              "2012": "average 2012–2014",
+              "2024": "average 2022–2024"
+            },
             "geo:aggregation": "none",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
             "geo:sdg": 4
           },
           {
-            "name": "sdg4_4_phe",
-            "title": "Adults with higher education (%)",
+            "name": "sdg4_2_tam",
+            "title": "Pre-school attendance, girls 4-5 (%)",
             "type": "number",
-            "description": "Percentage of the population aged 19 or older that has reached higher (tertiary) education, 2012, official INE indicator from the 2012 Population and Housing Census (INE). In the SDG 4 index it is normalised linearly between 2.8 (worst; 2.5th-percentile tail) and 36.9 (best; average of the top 5), values beyond the bounds capped.",
-            "geo:unit": "% of population 19+",
-            "geo:year": 2012,
+            "description": "Percentage of girls aged 4-5 who attend a pre-school or initial-education establishment. Source: INE tabulations of the INE Population and Housing Censuses of 2012 and 2024. Initial value 2012 (stored at 2012) and final value 2024 (stored at 2024). In the SDG 4 index it is rescaled linearly to 0-100 between 0 (worst, 0) and 100 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 90 and major challenges from 70 on. Atlas indicator 04_02_02_03_tam, “Porcentaje de niñas de 4 a 5 años que asisten a algún establecimiento preescolar” (Andersen & Argandoña 2026).",
+            "geo:unit": "% of girls 4-5",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2024"
+            },
             "geo:aggregation": "none",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
             "geo:sdg": 4
           },
           {
-            "name": "sdg4_6_lr",
-            "title": "Literacy rate, age 15+ (%)",
+            "name": "sdg4_2_tah",
+            "title": "Pre-school attendance, boys 4-5 (%)",
             "type": "number",
-            "description": "Literacy rate of people aged 15 or older, 2012, official INE indicator from the 2012 Population and Housing Census (INE). In the SDG 4 index it is normalised linearly between 71.2 (worst; 2.5th-percentile tail) and 99.8 (best; average of the top 5), values beyond the bounds capped.",
-            "geo:unit": "% of population 15+",
-            "geo:year": 2012,
+            "description": "Percentage of boys aged 4-5 who attend a pre-school or initial-education establishment. Source: INE tabulations of the INE Population and Housing Censuses of 2012 and 2024. Initial value 2012 (stored at 2012) and final value 2024 (stored at 2024). In the SDG 4 index it is rescaled linearly to 0-100 between 0 (worst, 0) and 100 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 90 and major challenges from 70 on. Atlas indicator 04_02_02_04_tah, “Porcentaje de niños de 4 a 5 años que asisten a algún establecimiento preescolar” (Andersen & Argandoña 2026).",
+            "geo:unit": "% of boys 4-5",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2024"
+            },
             "geo:aggregation": "none",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
             "geo:sdg": 4
           },
           {
-            "name": "sdg4_c_qti",
-            "title": "Qualified pre-primary teachers (%)",
+            "name": "sdg4_3_aem",
+            "title": "Years of education, women 25-35",
             "type": "number",
-            "description": "Percentage of qualified teachers at the initial (pre-primary) level, 2016, official data of the Ministry of Education (SEIE, seie.minedu.gob.bo). The Atlas does not define \"qualified\". In the SDG 4 index it is normalised linearly between 0 (worst; 2.5th-percentile tail) and 100 (best; average of the top 5), values beyond the bounds capped.",
+            "description": "Average years of education of women aged 25-35. Source: own calculation of the Atlas from the INE Population and Housing Censuses of 2012 and 2024. Initial value 2012 (stored at 2012) and final value 2024 (stored at 2024). In the SDG 4 index it is rescaled linearly to 0-100 between 4.8 (worst, 0) and 14.9 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 12 and major challenges from 6 on. Atlas indicator 04_03_02_05_aem, “Promedio de años de educación, mujeres (25 a 35 años)” (Andersen & Argandoña 2026).",
+            "geo:unit": "years",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2024"
+            },
+            "geo:aggregation": "none",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 4
+          },
+          {
+            "name": "sdg4_3_aeh",
+            "title": "Years of education, men 25-35",
+            "type": "number",
+            "description": "Average years of education of men aged 25-35. Source: own calculation of the Atlas from the INE Population and Housing Censuses of 2012 and 2024. Initial value 2012 (stored at 2012) and final value 2024 (stored at 2024). In the SDG 4 index it is rescaled linearly to 0-100 between 4.8 (worst, 0) and 14.9 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 12 and major challenges from 6 on. Atlas indicator 04_03_02_06_aeh, “Promedio de años de educación, hombres (25 a 35 años)” (Andersen & Argandoña 2026).",
+            "geo:unit": "years",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2024"
+            },
+            "geo:aggregation": "none",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 4
+          },
+          {
+            "name": "sdg4_3_esm",
+            "title": "Higher education, women 19+ (%)",
+            "type": "number",
+            "description": "Percentage of women aged 19 or more who have reached higher (tertiary) education. Source: INE tabulations of the INE Population and Housing Censuses of 2012 and 2024. Initial value 2012 (stored at 2012) and final value 2024 (stored at 2024). In the SDG 4 index it is rescaled linearly to 0-100 between 1.6 (worst, 0) and 49.8 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 20 and major challenges from 10 on. Atlas indicator 04_03_04_07_esm, “Porcentaje de mujeres con educación superior (≥ 19 años)” (Andersen & Argandoña 2026).",
+            "geo:unit": "% of women 19+",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2024"
+            },
+            "geo:aggregation": "none",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 4
+          },
+          {
+            "name": "sdg4_3_esh",
+            "title": "Higher education, men 19+ (%)",
+            "type": "number",
+            "description": "Percentage of men aged 19 or more who have reached higher (tertiary) education. Source: INE tabulations of the INE Population and Housing Censuses of 2012 and 2024. Initial value 2012 (stored at 2012) and final value 2024 (stored at 2024). In the SDG 4 index it is rescaled linearly to 0-100 between 1.6 (worst, 0) and 49.8 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 20 and major challenges from 10 on. Atlas indicator 04_03_04_08_esh, “Porcentaje de hombres con educación superior (≥ 19 años)” (Andersen & Argandoña 2026).",
+            "geo:unit": "% of men 19+",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2024"
+            },
+            "geo:aggregation": "none",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 4
+          },
+          {
+            "name": "sdg4_6_alf",
+            "title": "Literacy rate, 15+ (%)",
+            "type": "number",
+            "description": "Percentage of people aged 15 or more who can read and write. Source: INE tabulations of the INE Population and Housing Censuses of 2012 and 2024. Initial value 2012 (stored at 2012) and final value 2024 (stored at 2024). In the SDG 4 index it is rescaled linearly to 0-100 between 75.6 (worst, 0) and 100 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 95 and major challenges from 85 on. Atlas indicator 04_06_01_09_alf, “Tasa de alfabetización (>15 años) (%)” (Andersen & Argandoña 2026).",
+            "geo:unit": "% of people 15+",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2024"
+            },
+            "geo:aggregation": "none",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 4
+          },
+          {
+            "name": "sdg4_10_pci",
+            "title": "Qualified teachers, initial level (%)",
+            "type": "number",
+            "description": "Percentage of initial-level (pre-school) teachers with training specific to that level, averaged over the years of the period. Source: Ministry of Education. Initial value average 2012–2014 (stored at 2012) and final value average 2022–2024 (stored at 2024). Missing for 67 of the 343 units in the initial period and 55 in the final one. In the SDG 4 index it is rescaled linearly to 0-100 between 12 (worst, 0) and 100 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 96.9 and major challenges from 42.3 on. Atlas indicator 04_10_01_10_pci, “Porcentaje de profesores calificados en el nivel inicial” (Andersen & Argandoña 2026).",
             "geo:unit": "% of teachers",
-            "geo:year": 2016,
+            "geo:reference_years": {
+              "2012": "average 2012–2014",
+              "2024": "average 2022–2024"
+            },
             "geo:aggregation": "none",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
             "geo:sdg": 4
           },
           {
-            "name": "sdg4_c_qts",
-            "title": "Qualified secondary teachers (%)",
+            "name": "sdg4_10_pcs",
+            "title": "Qualified teachers, secondary level (%)",
             "type": "number",
-            "description": "Percentage of qualified teachers at the secondary level, 2016, official data of the Ministry of Education (SEIE, seie.minedu.gob.bo). The Atlas does not define \"qualified\". In the SDG 4 index it is normalised linearly between 0 (worst; 2.5th-percentile tail) and 100 (best; average of the top 5), values beyond the bounds capped.",
+            "description": "Percentage of secondary-level teachers with training specific to that level, averaged over the years of the period. Source: Ministry of Education. Initial value average 2012–2014 (stored at 2012) and final value average 2022–2024 (stored at 2024). Missing for 7 of the 343 units in the initial period and 5 in the final one. In the SDG 4 index it is rescaled linearly to 0-100 between 5.9 (worst, 0) and 100 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 96.9 and major challenges from 42.3 on. Atlas indicator 04_10_01_11_pcs, “Porcentaje de profesores calificados en el nivel secundario” (Andersen & Argandoña 2026).",
             "geo:unit": "% of teachers",
-            "geo:year": 2016,
+            "geo:reference_years": {
+              "2012": "average 2012–2014",
+              "2024": "average 2022–2024"
+            },
             "geo:aggregation": "none",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
             "geo:sdg": 4
-          },
-          {
-            "name": "population_2020",
-            "title": "Population (persons)",
-            "type": "number",
-            "description": "Estimated municipal population in 2020 (persons), as printed in the Atlas municipal profiles (\"Población estimada, 2020\"). The Atlas does not name the source; the 339 values sum to 11,633,371, exactly INE's 2020 national population projection (Revisión 2020 series), so they are presumably INE's municipal projections. Not an input of any goal index. Differs from the gridded WorldPop-based pop dataset.",
-            "geo:unit": "persons",
-            "geo:year": 2020,
-            "geo:aggregation": "sum",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020"
-          },
-          {
-            "name": "urbano_2012",
-            "title": "Urbanization rate (%)",
-            "type": "number",
-            "description": "Share of the municipal population living in urban areas in 2012 (%), as printed in the Atlas municipal profiles (\"Tasa de urbanización, 2012\"), from the 2012 Population and Housing Census (INE). INE counts as urban the localities with 2,000 or more inhabitants, which is why 175 municipalities have a rate of 0. Not an input of any goal index (the Atlas treats 15 almost fully urban municipalities as having no applicable farm indicators for SDG 2; 11 of them are 95% or more urban by this rate, while Sucre, Tiquipaya and Potosí are 91–92% and Yunguyo de Litoral 0%).",
-            "geo:unit": "%",
-            "geo:year": 2012,
-            "geo:aggregation": "none",
-            "geo:source": "Municipal Atlas of the SDGs in Bolivia 2020"
           }
         ],
         "primaryKey": [
@@ -203,9 +261,13 @@
       }
     }
   ],
-  "geo:updated": "2026-10-30",
+  "geo:updated": "2026-11-17",
   "geo:map": {
     "variable": "index_sdg4",
-    "year": 2017
+    "year": 2024,
+    "panels": [
+      2012,
+      2024
+    ]
   }
 }

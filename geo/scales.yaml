@@ -2,17 +2,20 @@
 #
 # Every unit at every scale has a geo ID matching `id_pattern`. Administrative
 # IDs are numbered as in GADM 4.1 and nest by prefix: BO > BO-04 (La Paz)
-# > BO-04-17 (Murillo) > BO-04-17-04 (La Paz municipality). The boundaries are
-# geoBoundaries' (gbOpen ADM3, from GeoBolivia, public domain): the municipalities,
-# and every coarser scale as the exact union of its municipalities. `parent` is the next
+# > BO-04-17 (Murillo) > BO-04-17-04 (Nuestra Señora de La Paz). The boundaries are
+# SDSN Bolivia's municipal map of December 2025 (343 municipalities and indigenous
+# autonomies, used with SDSN Bolivia's permission), and every coarser scale is the exact
+# union of its municipalities. `parent` is the next
 # coarser scale that a unit nests in exactly; units of a scale with
 # `parent: null` (grids, or a municipality map of another vintage) are linked to
 # others by area-weighted spatial overlay instead.
 #
-# Municipality maps change over time as new municipalities are created. Each map
-# (vintage) is its own scale with its own ID prefix and boundaries, so data
-# published on one map are never silently relabelled onto another; see
-# CONTRIBUTING_DATA.md, "Add a municipality map of another vintage".
+# Municipality maps change over time as new municipalities are created. Since version
+# 0.4 `municipality` is the 343-unit map of the Atlas de los ODS 2026; the 339 units of
+# the 2015 map kept their IDs and the four new ones were numbered after them. Data that
+# belong to an older map's polygons (pop, ntl, emb) are published only for the units
+# whose polygon did not change. See CONTRIBUTING_DATA.md, "Add a municipality map of
+# another vintage".
 #
 # status: active  -> units, boundaries and crosswalks are published in geo/
 #         planned -> the scale and its ID scheme are reserved; no units yet
@@ -24,7 +27,7 @@ country:
   parent: null
   id_pattern: '^BO$'
   example: BO
-  source: union of the geoBoundaries municipalities
+  source: union of the SDSN Bolivia 2025 municipalities
   status: active
 
 department:
@@ -35,7 +38,7 @@ department:
   id_pattern: '^BO-\d{2}$'
   example: BO-04            # La Paz (INE code 02)
   digits: 2
-  source: union of the geoBoundaries municipalities (numbered as GADM 4.1 level 1)
+  source: union of the SDSN Bolivia 2025 municipalities (numbered as GADM 4.1 level 1)
   status: active
 
 province:
@@ -46,18 +49,19 @@ province:
   id_pattern: '^BO-\d{2}-\d{2}$'
   example: BO-04-17         # Murillo
   digits: 2
-  source: union of the geoBoundaries municipalities (numbered as GADM 4.1 level 2; 112 provinces)
+  source: union of the SDSN Bolivia 2025 municipalities (numbered as GADM 4.1 level 2, plus BO-03-09 for the Territorio Indígena Multiétnico; 113 provinces)
   status: active
 
 municipality:
-  label: Municipality (339)
+  label: Municipality (343)
   kind: admin
   level: 3
   parent: province
   id_pattern: '^BO-\d{2}-\d{2}-\d{2}$'
-  example: BO-04-17-04      # La Paz (seat of government)
+  example: BO-04-17-04      # Nuestra Señora de La Paz (seat of government)
   digits: 2
-  source: geoBoundaries gbOpen ADM3 (GeoBolivia, public domain), numbered as GADM 4.1 level 3
+  source: SDSN Bolivia (2025), Límites Municipales Bolivia 2025 (343 municipalities and GAIOC), numbered as GADM 4.1 level 3
+    plus four units created after GADM's map
   status: active
 
 municipality_ine:

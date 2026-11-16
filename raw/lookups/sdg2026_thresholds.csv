@@ -1,0 +1,82 @@
+code,n,goal,indicator,best,green,red,worst,green_criterion,bounds_criterion
+01_02_02_01_mpi,1,1,Índice de Pobreza Multidimensional,0.0,0.066,0.23,0.563,"Meta 1.2 Para 2030, reducir al menos a la mitad la proporción de personas que viven en la pobreza en todas sus dimensiones con arreglo a las definiciones nacionales.",Límite natural / Máximo observado
+01_04_01_02_eep,2,1,Tasa de pobreza energética (\% de viviendas),0.0,15.0,50.0,100.0,Atlas Municipal de los ODS 2020,Límites naturales
+01_04_01_03_nbi,3,1,Porcentaje de la población con Necesidades Básicas Insatisfechas,0.0,15.0,50.0,100.0,Atlas Municipal de los ODS 2020,Límites naturales
+01_04_02_04_ssb,4,1,Porcentaje de hogares con acceso a los 3 servicios básicos,100.0,85.0,50.0,0.0,Atlas Municipal de los ODS 2020,Límites naturales
+02_02_02_01_smu,5,2,Porcentaje de mujeres con obesidad (15-49 años),0.0,10.0,25.0,38.2,SDG Index Global,Límite natural / Máximo observado
+02_02_02_02_dcn,6,2,Porcentaje de niñas y niños con desnutrición crónica (< 5 años),0.0,7.5,15.0,50.2,SDG Index Global,Límite natural / Máximo observado
+02_02_02_03_osn,7,2,Porcentaje de niñas y niños con sobrepeso (< 5 años),0.0,3.5,10.0,11.8,Plan sectorial de desarrollo integral para vivir bien - Sector Salud 2021-2025,Límite natural / Máximo observado
+02_02_03_04_pam,8,2,Porcentaje de mujeres con anemia (15-49 años),0.0,18.0,38.0,70.4,"Organización Mundial de la Salud (Plan on maternal, infant and young child nutrition)",Límite natural / Máximo observado
+02_03_01_05_pac,9,2,Producción agrícola (t/persona/ año),6.3,3.0,1.8,0.0,"Meta 2.3 del ODS 2, duplicar la productividad agrícola",Eliminación de 40 outliers (de 686 obs.) / Límite natural
+02_03_01_06_rpa,10,2,Rendimiento de la producción agrícola (t/ha/año),7.0,2.5,1.5,0.0,SDG Index Global,Índice global / Límite natural
+02_05_01_07_idp,11,2,Índice de diversificación productiva agrícola,1.0,0.65,0.2,0.0,Promedio + desviación estándar,Límites naturales
+03_01_02_01_cpp,12,3,Porcentaje de partos atendidos por personal de salud calificado,100.0,90.0,70.0,0.0,SDG Index Global,Límites naturales
+03_02_01_02_tmi,13,3,"Tasa de mortalidad infantil (<1 año, por 1,000 nacidos vivos)",1.1,12.0,20.0,39.7,Atlas Municipal de los ODS 2020,Límites naturales
+03_02_01_03_tmn,14,3,"Tasa de mortalidad en la niñez (<5 años, por 1,000 nacidos vivos)",2.6,25.0,50.0,130.1,SDG Index Global,Límites naturales
+03_03_01_04_vih,15,3,"Incidencia de VIH (por 1,000,000 habitantes)",0.0,15.0,155.0,721.5,10\% del promedio nacional del 2012,Límite natural / Eliminación de 9 outliers (de 686 obs.)
+03_03_02_05_tub,16,3,"Incidencia de tuberculosis (por 100,000 habitantes)",0.0,10.0,75.0,199.2,SDG Index Global,Límite natural / Eliminación de 9 outliers (de 686 obs.)
+03_03_03_06_vec,17,3,Índice de enfermedades transmitidas por vectores,0.0,0.0,0.3,0.68,Metas de los programas nacionales e internacionales,Límite natural / Máximo observado
+03_07_02_07_tfa,18,3,Paridez media en adolescentes (15 a 19 años),0.0,0.1,0.5,0.71,Promedio - desviación estándar,Límite natural / Eliminación de 14 outliers (de 686 obs.)
+04_01_02_01_asm,19,4,"Tasa de abandono en secundaria, mujeres (\%)",0.0,3.0,6.0,26.0,Atlas Municipal de los ODS 2020,Límite natural / Eliminación de 14 outliers (de 677 obs.)
+04_01_02_02_ash,20,4,"Tasa de abandono en secundaria, hombres (\%)",0.0,3.0,6.0,26.0,Atlas Municipal de los ODS 2020,Límite natural / Eliminación de 5 outliers (de 677 obs.)
+04_02_02_03_tam,21,4,Porcentaje de niñas de 4 a 5 años que asisten a algún establecimiento preescolar,100.0,90.0,70.0,0.0,SDG Index Global,Límites naturales
+04_02_02_04_tah,22,4,Porcentaje de niños de 4 a 5 años que asisten a algún establecimiento preescolar,100.0,90.0,70.0,0.0,SDG Index Global,Límites naturales
+04_03_02_05_aem,23,4,"Promedio de años de educación, mujeres (25 a 35 años)",14.9,12.0,6.0,4.8,Criterio de expertos con base en el Panorama Social de América Latina 2019 de CEPAL,Máximo observado / Mínimo observado
+04_03_02_06_aeh,24,4,"Promedio de años de educación, hombres (25 a 35 años)",14.9,12.0,6.0,4.8,Criterio de expertos con base en el Panorama Social de América Latina 2019 de CEPAL,Máximo observado / Mínimo observado
+04_03_04_07_esm,25,4,Porcentaje de mujeres con educación superior (  años),49.8,20.0,10.0,1.6,Atlas Municipal de los ODS 2020,Eliminación de 5 outliers (de 686 obs.) / Mínimo observado
+04_03_04_08_esh,26,4,Porcentaje de hombres con educación superior (  años),49.8,20.0,10.0,1.6,Atlas Municipal de los ODS 2020,Eliminación de 5 outliers (de 686 obs.) / Mínimo observado
+04_06_01_09_alf,27,4,Tasa de alfabetización (>15 años) (\%),100.0,95.0,85.0,75.6,SDG Index Global,Máximo observado / Eliminación de 9 outliers (de 686 obs.)
+04_10_01_10_pci,28,4,Porcentaje de profesores calificados en el nivel inicial,100.0,96.9,42.3,12.0,Atlas Municipal de los ODS 2020,Límite natural / Mínimo observado
+04_10_01_11_pcs,29,4,Porcentaje de profesores calificados en el nivel secundario,100.0,96.9,42.3,5.9,Atlas Municipal de los ODS 2020,Límite natural / Mínimo observado
+05_01_01_01_pga,30,5,Paridad de género en abandono escolar en secundaria,1.0,1.0,0.5,0.0,Paridad alcanzada,Límites naturales
+05_01_01_02_pgm,31,5,Paridad de género en el Índice de Pobreza Multidimensional,1.0,1.0,0.5,0.0,Paridad alcanzada,Límites naturales
+05_01_01_03_pge,32,5,Paridad de género en años de educación de jóvenes (25 a 35 años),1.0,1.0,0.5,0.0,Paridad alcanzada,Límites naturales
+05_01_01_04_pgp,33,5,Paridad de género en la tasa global de participación,1.0,0.8,0.6,0.0,Paridad alcanzada con base en las metas de la tasa global de participación de mujeres y hombres,Límites naturales
+05_04_01_05_phc,34,5,Paridad de género en labores del hogar o labores de cuidado,1.0,1.0,0.5,0.0,Paridad alcanzada,Límites naturales
+05_05_01_06_acm,35,5,Porcentaje de concejales electos que son mujeres,50.0,40.0,20.0,0.0,SDG Index Global,Límites naturales
+06_01_01_01_cap,36,6,Porcentaje de la población con cobertura de agua potable,100.0,98.0,80.0,21.4,SDG Index Global,Límite natural / Eliminación de 14 outliers (de 686 obs.)
+06_02_01_02_cas,37,6,Porcentaje de la población con cobertura de saneamiento,100.0,95.0,75.0,2.7,SDG Index Global,Límite natural / Eliminación de 14 outliers (de 686 obs.)
+06_03_01_03_tar,38,6,Porcentaje de aguas servidas con tratamiento de aguas residuales,100.0,50.0,15.0,0.0,SDG Index Global,Límites naturales
+07_01_01_01_cep,39,7,Consumo de electricidad residencial (kWh/persona/año),523.0,500.0,50.0,0.0,International Energy Agency. (2020). Defining energy access: 2020 methodology.,Eliminación de 16 outliers (de 686 obs.) / Límite natural
+07_01_01_02_cae,40,7,Porcentaje de la población con cobertura de energía eléctrica,100.0,98.0,80.0,0.0,SDG Index Global,Límites naturales
+07_01_01_03_mcc,41,7,Porcentaje de medidores eléctricos residenciales con consumo cero (6 meses o más),0.0,4.5,24.9,69.0,Atlas Municipal de los ODS 2020,Límite natural / Máximo observado
+07_01_02_04_elc,42,7,Porcentaje de la población con energía limpia para cocinar,100.0,85.0,50.0,0.0,SDG Index Global,Límites naturales
+08_05_02_01_tgm,43,8,"Tasa global de participación, mujeres (  años) (\%)",89.7,66.5,43.7,36.1,Promedio + desviación estándar,Máximo observado / Eliminación de 9 outliers (de 686 obs.)
+08_05_02_02_tgh,44,8,"Tasa global de participación, hombres (  años) (\%)",92.9,85.8,74.5,68.6,Promedio + desviación estándar,Máximo observado / Eliminación de 9 outliers (de 686 obs.)
+08_06_01_03_etm,45,8,"Mujeres que no estudian, ni participan en el mercado laboral (15-24 años) (\%)",4.8,10.0,15.0,45.9,SDG Index Global,Límites naturales
+08_06_01_04_eth,46,8,"Hombres que no estudian, ni participan en el mercado laboral (15-24 años) (\%)",1.9,10.0,15.0,38.6,SDG Index Global,Límites naturales
+08_09_02_05_pot,47,8,Porcentaje de población ocupada en actividades económicas relacionadas con el turismo,10.0,10.0,2.5,0.0,Criterio nacional / meta sectorial de referencia del PSDI Turismo 2021-2025,Meta nacional / Límite natural
+08_09_02_06_pbt,48,8,Porcentaje del PIB que corresponde al Turismo,10.0,10.0,2.5,0.0,Criterio nacional / meta sectorial de referencia del PSDI Turismo 2021-2025,Meta nacional / Límite natural
+08_10_02_07_dsb,49,8,"Densidad de puntos de atención financiera (por 100,000 habitantes)",88.7,18.0,5.0,0.0,Atlas Municipal de los ODS 2020,Eliminación de 14 outliers (de 686 obs.) / Límite natural
+09_01_01_01_vpc,50,9,Número de vías fundamentales que atraviesan el municipio,3.0,2.0,0.0,0.0,Promedio de los valores del 2012,Eliminación de 3 outliers (de 686 obs.) / Límite natural
+09_08_01_02_ci,51,9,Porcentaje de hogares con acceso a internet fijo o móvil,100.0,65.0,20.0,0.0,Criterio de expertos con base en UIT (Unión Internacional de Telecomunicaciones),Límites naturales
+09_08_01_03_drb,52,9,"Densidad de radio bases (por 1,000 habitantes)",3.0,3.0,0.05,0.0,Promedio + 3*desviación estándar,Eliminación de 14 outliers (de 686 obs.) / Límite natural
+09_08_01_04_tfc,53,9,Porcentaje de hogares con cobertura de telefonía fija o celular,100.0,75.0,40.0,0.0,Atlas Municipal de los ODS 2020,Límites naturales
+10_02_01_01_esp,54,10,Porcentaje de la población que no habla español,1.0,5.0,30.0,48.1,Atlas Municipal de los ODS 2020,Límites naturales
+10_02_01_02_pel,55,10,Paridad de pobreza multidimensional según condición étnica-lingüística,1.0,1.0,0.5,0.0,Paridad alcanzada,Límites naturales
+10_02_01_03_mre,56,10,Paridad de pobreza multidimensional según condición de migración,1.0,1.0,0.5,0.0,Paridad alcanzada,Límites naturales
+10_02_01_04_tpm,57,10,Paridad de pobreza multidimensional para adultos mayores,1.0,1.0,0.5,0.0,Paridad alcanzada,Límites naturales
+10_02_01_05_gip,58,10,Coeficiente de Gini del Índice de Pobreza Multidimensional,0.0,0.05,0.15,1.0,Atlas Municipal de los ODS 2020,Límites naturales
+10_04_02_06_gin,59,10,Coeficiente de Gini de años de educación,0.0,0.31,0.47,1.0,Atlas Municipal de los ODS 2020,Límites naturales
+11_01_01_01_thm,60,11,Porcentaje de hogares con hacinamiento,12.6,15.0,30.0,68.2,Atlas Municipal de los ODS 2020,Mínimo observado / Eliminación de 9 outliers (de 686 obs.)
+11_01_01_02_ssb,61,11,Porcentaje de hogares sin servicio sanitario o baño,0.0,15.0,50.0,100.0,Atlas Municipal de los ODS 2020,Límites naturales
+11_01_01_03_ava,62,11,Porcentaje de viviendas adecuadas,100.0,85.0,50.0,0.0,Promedio + 3*desviación estándar,Límites naturales
+11_02_01_04_atc,63,11,"Asientos disponibles en transporte colectivo (por 1,000 habitantes)",342.0,93.0,5.0,0.0,Atlas Municipal de los ODS 2020,Eliminación de 40 outliers (de 686 obs.) / Límite natural
+11_06_01_05_ipr,64,11,Inversión y gasto público municipal en residuos sólidos (Bs./persona/año),287.7,200.0,50.0,0.0,"BID, 2023. Sostenibilidad financiera de la gestión de residuos sólidos en América Latina y el Caribe",Máximo observado / Límite natural
+11_06_01_06_srr,65,11,Porcentaje de viviendas con servicio de recolección de residuos sólidos,100.0,90.0,10.0,0.0,Criterio de expertos,Límites naturales
+11_06_02_07_ica,66,11,Concentración media anual de PM2.5 ,5.0,10.0,25.0,31.0,Criterios y metas de la OMS,Criterio OMS / Máximo observado
+13_01_01_01_fec,67,13,Intensidad de afectación por eventos climáticos extremos (\%),0.0,5.0,40.0,87.6,Criterio de expertos. Umbral rojo: Promedio nacional,Límite natural / Eliminación de 40 outliers (de 686 obs.)
+13_01_03_02_icc,68,13,Índice de vulnerabilidad al cambio climático,0.0,0.9,2.1,3.0,Atlas Municipal de los ODS 2020,Límite natural / Máximo observado
+13_02_02_03_epb,69,13,Emisiones de CO2 por pérdida de bosque (  /persona),0.0,2.0,4.0,44.9,Atlas Municipal de los ODS 2020,Límite natural / Percentil 90 (de 686 obs.)
+13_02_02_04_ect,70,13,Emisiones de CO2 por transporte (  /persona),0.0,2.0,4.0,5.9,SDG Index Global,Límite natural / Eliminación de 5 outliers (de 686 obs.)
+13_02_02_05_eci,71,13,Emisiones de CO2 por degradación por incendios (  persona),0.0,2.0,4.0,38.6,SDG Index Global,Límite natural / Percentil 90 (de 686 obs.)
+15_01_02_01_sap,72,15,Porcentaje de superficie declarada como área protegida,60.0,25.0,5.0,0.0,SDG Index Global,Eliminación de 40 outliers (de 686 obs.) / Límite natural
+15_02_01_02_tpb,73,15,Tasa promedio de pérdida de bosque (\%),0.0,0.05,2.0,7.3,SDG Index Global,Límite natural / Eliminación de 5 outliers (de 380 obs.)
+15_05_02_03_pbd,74,15,Índice de pérdida de biodiversidad por deforestación,0.0,0.0,0.87,2.0,Promedio - desviación estándar,Límite natural / Eliminación de 5 outliers (de 380 obs.)
+15_05_02_04_pbi,75,15,Índice de pérdida de biodiversidad por incendios,0.0,0.0,7.27,9.1,Promedio - desviación estándar,Límite natural / Eliminación de 40 outliers (de 686 obs.)
+16_01_01_01_thp,76,16,"Tasa de homicidios registrados (por 100,000 habitantes)",0.0,1.5,4.0,9.0,SDG Index Global,Límite natural / Eliminación de 9 outliers (de 686 obs.)
+16_06_01_02_cep,77,16,Capacidad de ejecución del presupuesto programado (\%),94.9,90.0,60.0,17.7,"Atlas Municipal de los ODS. Umbral rojo: Barja, 2025. Viabilidad Municipal en Bolivia",Máximo observado / Mínimo observado
+16_07_02_03_tcs,78,16,Cantidad anual de conflictos sociales,0.0,0.0,10.0,16.3,Criterio de expertos con base en la Agenda 2030 para el Desarrollo Sostenible de ONU,Límite natural / Eliminación de 14 outliers (de 686 obs.)
+16_09_01_04_nic,79,16,Porcentaje de niñas y niños inscritos en registro civil,100.0,98.0,75.0,66.2,SDG Index Global,Límite natural / Mínimo observado
+17_01_02_01_iil,80,17,Porcentaje de ingresos municipales provenientes de fuentes locales,51.7,50.0,10.0,0.0,Objetivo PDESA,Eliminación de 14 outliers (de 686 obs.) / Límite natural
+17_18_01_02_ipc,81,17,Inversión pública (Bs./persona),1526.0,1000.0,250.0,0.0,Criterio de expertos,Eliminación de 14 outliers (de 686 obs.) / Límite natural

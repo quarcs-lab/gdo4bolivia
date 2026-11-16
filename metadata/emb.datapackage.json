@@ -1,7 +1,7 @@
 {
   "name": "emb",
   "title": "Satellite embeddings 2017 (area-weighted)",
-  "description": "Sixty-four satellite embedding dimensions (A00–A63) for Bolivia's 339 municipalities in 2017: the area-weighted mean, over each municipality, of the annual 10 m embeddings from the Google Satellite Embedding dataset (AlphaEarth Foundations), which summarise Sentinel-2, Landsat and other imagery. The dimensions are abstract features, designed as inputs to machine-learning models, e.g. to predict poverty.",
+  "description": "Sixty-four satellite embedding dimensions (A00–A63) for 333 of Bolivia's 343 municipalities in 2017: the area-weighted mean, over each municipality, of the annual 10 m embeddings from the Google Satellite Embedding dataset (AlphaEarth Foundations), which summarise Sentinel-2, Landsat and other imagery. The dimensions are abstract features, designed as inputs to machine-learning models, e.g. to predict poverty.",
   "version": "1.0.0",
   "licenses": [
     {
@@ -53,10 +53,11 @@
     "Environment",
     "Economy"
   ],
-  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). Satellite embeddings 2017, area-weighted (339 municipalities). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/emb.md",
+  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). Satellite embeddings 2017, area-weighted (333 of 343 municipalities). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/emb.md",
   "geo:notes": [
+    "The values belong to DS4Bolivia's polygons of the 2015 map, so they are published for the 333 municipalities whose territory is unchanged in the 343-unit map of 2025. The six municipalities that lost territory to the units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units (San Pedro de Macha, TIOC-Raqaypampa, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico) have no rows.",
     "The dimensions are not interpretable one by one and should not be aggregated; their aggregation rule is `none`.",
-    "Computed by DS4Bolivia in Google Earth Engine on its own municipal polygons (`asdf_id`), geoBoundaries v4 polygons that differ slightly from the geoBoundaries gbOpen boundaries in geo/boundaries/.",
+    "Computed by DS4Bolivia in Google Earth Engine on its own municipal polygons (`asdf_id`), geoBoundaries v4 polygons that differ slightly from the SDSN Bolivia 2025 boundaries in geo/boundaries/.",
     "Every 10 m pixel counts the same (code/aggregate-satellite-embedings-to-adm.js in DS4Bolivia). For the population-weighted version, see the `embpw` dataset."
   ],
   "geo:notebooks": [
@@ -79,7 +80,7 @@
       ],
       "geo:path": "data/municipality/emb.csv",
       "geo:parquet": "data/municipality/emb.parquet",
-      "geo:source_geometry": "DS4Bolivia polygons (bolivia339geoqueryFull, keyed by asdf_id), matched one-to-one to the 339 municipalities by area overlap",
+      "geo:source_geometry": "DS4Bolivia polygons (bolivia339geoqueryFull, keyed by asdf_id), matched one-to-one to the 2015 map's municipalities by area overlap; only the 333 municipalities unchanged in the 343-unit map",
       "schema": {
         "primaryKey": [
           "geo_id",
@@ -90,7 +91,7 @@
             "name": "geo_id",
             "title": "Municipality ID",
             "type": "string",
-            "description": "Municipality geo ID (BO-DD-PP-MM) of the 339-unit municipality map, numbered as in GADM 4.1; its boundary in geo/boundaries/ comes from geoBoundaries (GeoBolivia, public domain). It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes.",
+            "description": "Municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; its boundary is in geo/boundaries/. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes.",
             "geo:role": "id",
             "constraints": {
               "required": true,
@@ -699,7 +700,7 @@
       }
     }
   ],
-  "geo:updated": "2026-10-29",
+  "geo:updated": "2026-11-17",
   "geo:map": {
     "variable": "A00",
     "year": 2017

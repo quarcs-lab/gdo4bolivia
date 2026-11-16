@@ -2,6 +2,7 @@
   "datasets": [
     "pop",
     "ntl",
+    "sdg",
     "sdg01",
     "sdg02",
     "sdg03",
