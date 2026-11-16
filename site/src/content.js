@@ -16,9 +16,28 @@ export const SITE_DESCRIPTION = 'GDO-Bolivia is a public-access platform of open
 export const CITE_AUTHORS = { apa: 'Mendez, C.', bibtex: 'Mendez, Carlos' };
 // Center and zoom of the interactive indicator maps
 export const MAP_VIEW = { center: [-16.3, -64.6], zoom: 5 };
-// Retired pages ("<section>/<id>") and the page that replaced each one
+// Retired pages ("<section>/<id>") and the page that replaced each one. Version 0.4 moved to the
+// 343-unit municipal map of the SDG Atlas 2026 (page ids municipalities339-* -> municipalities343-*).
 export const REDIRECTS = {
-  'indicators/municipalities339-sdg': 'indicators/municipalities339-sdg01',
+  'indicators/municipalities339-sdg': 'indicators/municipalities343-sdg',   // the combined SDG page of 0.2
+  'indicators/municipalities339-ntl': 'indicators/municipalities343-ntl',
+  'indicators/municipalities339-pop': 'indicators/municipalities343-pop',
+  'indicators/municipalities339-emb': 'indicators/municipalities343-emb',
+  'indicators/municipalities339-sdg01': 'indicators/municipalities343-sdg01',
+  'indicators/municipalities339-sdg02': 'indicators/municipalities343-sdg02',
+  'indicators/municipalities339-sdg03': 'indicators/municipalities343-sdg03',
+  'indicators/municipalities339-sdg04': 'indicators/municipalities343-sdg04',
+  'indicators/municipalities339-sdg05': 'indicators/municipalities343-sdg05',
+  'indicators/municipalities339-sdg06': 'indicators/municipalities343-sdg06',
+  'indicators/municipalities339-sdg07': 'indicators/municipalities343-sdg07',
+  'indicators/municipalities339-sdg08': 'indicators/municipalities343-sdg08',
+  'indicators/municipalities339-sdg09': 'indicators/municipalities343-sdg09',
+  'indicators/municipalities339-sdg10': 'indicators/municipalities343-sdg10',
+  'indicators/municipalities339-sdg11': 'indicators/municipalities343-sdg11',
+  'indicators/municipalities339-sdg13': 'indicators/municipalities343-sdg13',
+  'indicators/municipalities339-sdg15': 'indicators/municipalities343-sdg15',
+  'indicators/municipalities339-sdg16': 'indicators/municipalities343-sdg16',
+  'indicators/municipalities339-sdg17': 'indicators/municipalities343-sdg17',
 };
 
 // ====================================================================
@@ -32,37 +51,153 @@ import plotly.express as px`;
 export const CONTENT_REGISTRY = [
   // ---------------------------------------------------------------- Indicators
   {
-    id: 'municipalities339-sdg01', type: 'indicator', section: 'indicators',
-    title: 'SDG 1: No poverty',
-    scope: '339 municipalities · 4 indicators and the SDG 1 index · 2012–2020',
-    summary: 'The SDG 1 (No poverty) index of the Municipal Atlas of the SDGs and its four indicators, multidimensional poverty, unsatisfied basic needs, extreme energy poverty and access to basic services, for every municipality.',
-    description: 'The SDG 1 (No poverty) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) for all 339 municipalities, with the four indicators behind it: the Alkire-Foster multidimensional poverty index (0–1, nine household deprivations), the share of the population with unsatisfied basic needs and the share of households with access to all three basic services (electricity, water and sanitation), all three from the 2012 Population and Housing Census (INE), and extreme energy poverty, the share of dwellings that consumed under 210 kWh a year or had no electricity, from electricity-meter records of 2016. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Extreme energy poverty is missing for 24 municipalities, whose index is the mean of the other three. Because its indicators refer to 2012 and 2016, the index is stored at 2016. The Atlas population (2020) and urbanization rate (2012) are included as context; they are not inputs of the index.',
-    geography: 'Municipality', units: 339, period: '2012–2020', frequency: 'One reference year per indicator', key: 'geo_id', idExample: 'BO-04-17-04',
-    categories: ['Social'], tags: ['SDGs', 'poverty', 'multidimensional poverty', 'basic services', 'census'],
-    image: 'images/indicators/sdg01.webp',
-    imageAlt: 'Map of the No poverty index (0-100) in 2016 across 339 Bolivian municipalities in three natural-break classes: high around Santa Cruz, in the Chiquitania, the Chaco of Tarija and the main cities, middle across most of Beni and Pando, low on the altiplano of La Paz and Oruro, in the northern Potosí and Chuquisaca valleys, the south-western corner of Potosí and northern Pando',
-    mapAlt: 'Map of the No poverty index (0-100) in 2016 across 339 Bolivian municipalities in three natural-break classes: high around Santa Cruz, in the Chiquitania, the Chaco of Tarija and the main cities, middle across most of Beni and Pando, low on the altiplano of La Paz and Oruro, in the northern Potosí and Chuquisaca valleys, the south-western corner of Potosí and northern Pando. Legend: High 57.0 to 90.5 (61 municipalities), Middle 31.0 to 57.0 (128), Low 0.1 to 31.0 (150).',
-    map: 'images/indicators/sdg01-map.webp',
-    date: '2026-10-30', pinned: true, dataset: 'sdg01',
-    notice: 'Each variable has values only in its reference year: load the index with its year, geo.load("sdg01", variables="index_sdg1", years=2016), which is the latest year of its indicators (2012 and 2016). In DS4Bolivia the rows of three pairs of homonym municipalities (San Javier, El Puente, Santa Rosa) were attached to the wrong polygon of each pair; here every row is linked by INE code to its own municipality.',
+    id: 'municipalities343-sdg', type: 'indicator', section: 'indicators',
+    title: "Sustainable Development Index (IDS)",
+    scope: "343 municipalities · 81 indicators of 15 SDGs in one index · ~2012 and ~2024",
+    summary: "The Sustainable Development Index (IDS) of the SDG Atlas of Bolivia 2026, which summarises 81 indicators of 15 goals, and its national ranking, for every municipality near 2012 and near 2024.",
+    description: "The Sustainable Development Index (IDS, Índice de Desarrollo Sostenible) of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), near the 2012 census and near the 2024 census, with its national ranking. The IDS summarises 81 indicators of 15 Sustainable Development Goals (all but SDG 12 and 14): each indicator is rescaled between a worst and a best value set by the Atlas (0 = worst, 100 = target met), each goal index is the mean of its rescaled indicators, and the IDS is the simple mean of the 15 goal indices, following the global SDG Index of SDSN. Between the two periods the median IDS went from 49.6 to 59.8; it rose in 342 of the 343 units, and the units that started lowest gained the most, a process of territorial convergence. The census population of 2012 and 2024 and the 2024 urbanization rate are included as context and as weights. The goal indices and their indicators are in the fifteen goal datasets, sdg01 to sdg17.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Social", "Economy", "Environment", "Institutions"], tags: ["SDGs", "SDG Atlas 2026", "sustainable development", "convergence", "ranking"],
+    image: 'images/indicators/sdg.webp',
+    imageAlt: "Map of the Sustainable Development Index, IDS (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 60.5 – 77.3 (151); Middle 51.7 – 60.5 (173); Low 37.2 – 51.7 (19). Highest: Nuestra Señora de La Paz, Tarija and Sucre.",
+    mapAlt: "Two maps of the Sustainable Development Index, IDS (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 60.5 – 77.3 (21 units near 2012, 151 near 2024); Middle 51.7 – 60.5 (93 units near 2012, 173 near 2024); Low 37.2 – 51.7 (229 units near 2012, 19 near 2024). Highest near 2024: Nuestra Señora de La Paz, Tarija and Sucre.",
+    map: 'images/indicators/sdg-map.webp',
+    date: '2026-11-17', pinned: true, dataset: 'sdg',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
 
-# The SDG 1 index (0-100, higher is better), stored at 2016
-gdf = geo.load("sdg01", variables="index_sdg1", years=2016, geometry=True)
+# The Sustainable Development Index (0-100, higher is better), ~2024
+gdf = geo.load("sdg", variables="index_sdg", years=2024, geometry=True)
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg": "Sustainable Development Index (0-100)"},
+          title="Sustainable Development Index (IDS), ~2024").show()
+
+# Convergence: units that started lower gained more
+df = geo.load("sdg", variables="index_sdg")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg")
+wide = wide.add_prefix("y")
+wide["change"] = wide["y2024"] - wide["y2012"]
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="change", hover_name="name",
+           labels={"y2012": "IDS, ~2012", "change": "Change in the IDS (points)"},
+           title="Initial IDS and its change, ~2012 to ~2024")`,
+      pandas: `import pandas as pd
+import geopandas as gpd
+import plotly.express as px
+
+# No geo4bolivia needed: every file is a plain URL
+BASE = "${RAW_URL}"
+df = pd.read_csv(BASE + "data/municipality/sdg.csv")  # geo_id, year, index_sdg, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+
+ids = df.loc[df["year"] == 2024, ["geo_id", "index_sdg", "rank_sdg"]]
+gdf = municipalities.merge(ids, on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg": "Sustainable Development Index (0-100)"},
+          title="Sustainable Development Index (IDS), ~2024")`,
+    },
+    examples: [
+      {
+        title: "Which goals moved",
+        text: "Averages each of the 15 goal indices over the municipalities in the two periods: the goals that advanced most and the ones that went back.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+goals = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 16, 17]
+rows = []
+for g in goals:
+    df = geo.load(f"sdg{g:02d}", variables=f"index_sdg{g}")
+    for year, part in df.groupby("year"):
+        rows.append({"goal": f"SDG {g}", "period": f"~{year}",
+                     "index": part[f"index_sdg{g}"].mean()})
+px.scatter(pd.DataFrame(rows), x="index", y="goal", color="period",
+           labels={"index": "Mean goal index (0-100)", "goal": ""},
+           title="The 15 goal indices, ~2012 and ~2024")`,
+      },
+      {
+        title: "Ranking mobility",
+        text: "Plots each unit's national rank in the two periods: units above the diagonal fell in the ranking, units below it climbed.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg", variables="rank_sdg")
+wide = df.pivot(index="geo_id", columns="year", values="rank_sdg")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Rank ~2012 (1 = best)", "y2024": "Rank ~2024"},
+           title="IDS national ranking, ~2012 and ~2024")`,
+      },
+      {
+        title: "Rank the departments",
+        text: "Averages the IDS within each department, weighting municipalities by their census population, in both periods.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg")
+dep = geo.aggregate(df, to="department", variables=["index_sdg"],
+                    rules={"index_sdg": "weighted_mean:population"})
+dep["department"] = dep["geo_id"].map(
+    geo.units("department").set_index("geo_id")["name"])
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg"), x="index_sdg", y="department",
+           color="period",
+           labels={"index_sdg": "IDS (population-weighted)"},
+           title="Sustainable Development Index by department")`,
+      },
+      {
+        title: "Where progress reached most people",
+        text: "Multiplies each unit's gain in the IDS by its 2024 population, the Atlas's “massive progress” measure: big cities lead even where their gains were moderate.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg")
+wide = df.pivot(index="geo_id", columns="year", values=["index_sdg", "population"])
+gain = wide[("index_sdg", 2024)] - wide[("index_sdg", 2012)]
+out = (gain * wide[("population", 2024)]).rename("points").reset_index()
+names = geo.units("municipality").set_index("geo_id")["name"]
+out["name"] = out["geo_id"].map(names)
+px.bar(out.nlargest(12, "points"), x="points", y="name",
+       labels={"points": "Gain in the IDS × population 2024", "name": ""},
+       title="Units with the largest population-weighted progress")`,
+      },
+    ],
+  },
+  {
+    id: 'municipalities343-sdg01', type: 'indicator', section: 'indicators',
+    title: "SDG 1: No poverty",
+    scope: "343 municipalities · 4 indicators and the SDG 1 index · ~2012 and ~2024",
+    summary: "The SDG 1 (No poverty) index of the SDG Atlas of Bolivia 2026 and its 4 indicators, multidimensional poverty, unsatisfied basic needs, energy poverty and access to the three basic services, for every municipality near 2012 and near 2024.",
+    description: "The SDG 1 (No poverty) index of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), with the 4 indicators behind it: multidimensional poverty index (0-1) (2012 and 2024); energy poverty (% of dwellings) (2016 and 2024); unsatisfied basic needs (% of population) (2012 and 2024); access to the 3 basic services (% of households) (2012 and 2024). Every indicator is measured twice, near the 2012 census and near the 2024 census, and the observatory stores the two values as 2012 and 2024 so that their change can be studied. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value set by the Atlas, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Between the two periods the median index went from 32.8 to 53.9, and it rose in 340 of the 343 units.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Social"], tags: ["SDGs", "SDG Atlas 2026", "poverty", "multidimensional poverty", "basic services"],
+    image: 'images/indicators/sdg01.webp',
+    imageAlt: "Map of the No poverty index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 55.9 – 91.7 (155); Middle 34.1 – 55.9 (152); Low 0.7 – 34.1 (36). Highest: Nuestra Señora de La Paz, Bermejo and Colcapirhua.",
+    mapAlt: "Two maps of the No poverty index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 55.9 – 91.7 (55 units near 2012, 155 near 2024); Middle 34.1 – 55.9 (107 units near 2012, 152 near 2024); Low 0.7 – 34.1 (181 units near 2012, 36 near 2024). Highest near 2024: Nuestra Señora de La Paz, Bermejo and Colcapirhua.",
+    map: 'images/indicators/sdg01-map.webp',
+    date: '2026-11-17', pinned: true, dataset: 'sdg01',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
+    code: {
+      python: `${PYTHON_SETUP}
+
+# The SDG 1 index (0-100, higher is better), ~2024
+gdf = geo.load("sdg01", variables="index_sdg1", years=2024, geometry=True)
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="index_sdg1", hover_name="name",
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg1": "No poverty index (0-100)"},
-          title="SDG 1: No poverty index, 2016").show()
+          title="SDG 1: No poverty index, ~2024").show()
 
-# Every variable at its own year: multidimensional poverty (2012) vs the index
-df = geo.load("sdg01").groupby("geo_id", as_index=False).first()
-df["name"] = df["geo_id"].map(geo.units("municipality").set_index("geo_id")["name"])
-px.scatter(df, x="sdg1_2_mpi", y="index_sdg1", hover_name="name",
-           labels={"sdg1_2_mpi": "Multidimensional poverty index",
-                   "index_sdg1": "No poverty index (0-100)"},
-           title="Multidimensional poverty (2012) and the SDG 1 index")`,
+# The two periods: initial (~2012) and final (~2024) values
+df = geo.load("sdg01", variables="index_sdg1")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg1")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
+           title="SDG 1: No poverty index, ~2012 and ~2024")`,
       pandas: `import pandas as pd
 import geopandas as gpd
 import plotly.express as px
@@ -72,24 +207,40 @@ BASE = "${RAW_URL}"
 df = pd.read_csv(BASE + "data/municipality/sdg01.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
 
-index = df.loc[df["year"] == 2016, ["geo_id", "index_sdg1"]]
+index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg1"]]
 gdf = municipalities.merge(index, on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="index_sdg1", hover_name="name",
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg1": "No poverty index (0-100)"},
-          title="SDG 1: No poverty index, 2016")`,
+          title="SDG 1: No poverty index, ~2024")`,
     },
     examples: [
       {
-        title: 'Compute the index from its indicators',
-        text: 'Rescales each indicator between the Atlas bounds (worst, best), caps it to 0-100 and averages the available ones, which reproduces the published SDG 1 index.',
+        title: "Map the change, ~2012 to ~2024",
+        text: "Subtracts the initial index from the final one: positive values mark the municipalities that moved closer to the goal's targets.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg01", variables="index_sdg1")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg1")
+wide["change"] = wide[2024] - wide[2012]
+gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+                                           on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="change", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"change": "Change in the index (points)"},
+          title="SDG 1: change in the index, ~2012 to ~2024")`,
+      },
+      {
+        title: "Recompute the index from its indicators",
+        text: "Rescales each indicator between the Atlas's worst and best values (Cuadro 21), caps it to 0-100 and averages the available ones, which reproduces the published index.",
         code: `${PYTHON_SETUP}
 import pandas as pd
 
-df = geo.load("sdg01").groupby("geo_id").first()  # each indicator at its year
-bounds = {"sdg1_1_eepr": (94.9, 0), "sdg1_1_ubn": (96.7, 0),  # (worst, best)
-          "sdg1_2_mpi": (0.391, 0), "sdg1_4_abs": (0, 100)}
+df = geo.load("sdg01", years=2024).set_index("geo_id")
+bounds = {"sdg1_2_mpi": (0.563, 0), "sdg1_4_eep": (100, 0), "sdg1_4_nbi": (100, 0),
+          "sdg1_4_ssb": (0, 100)}  # (worst, best)
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
@@ -97,43 +248,45 @@ df["name"] = geo.units("municipality").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg1", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg1": "No poverty index (0-100)"},
-           title="Recomputed vs published SDG 1 index")`,
+           title="Recomputed vs published SDG 1 index, ~2024")`,
       },
       {
-        title: 'Which indicator pulls the index down',
-        text: 'Compares the mean rescaled score (0-100) of each indicator across municipalities: the lowest one is where the goal is furthest away.',
+        title: "Which indicators moved",
+        text: "Compares the mean rescaled score (0-100) of each indicator in the two periods: the gap between the dots is the progress, and the lowest dots are where the goal is furthest away.",
         code: `${PYTHON_SETUP}
 import pandas as pd
 
-df = geo.load("sdg01").groupby("geo_id").first()
-bounds = {"sdg1_1_eepr": (94.9, 0), "sdg1_1_ubn": (96.7, 0),
-          "sdg1_2_mpi": (0.391, 0), "sdg1_4_abs": (0, 100)}
+df = geo.load("sdg01")
+bounds = {"sdg1_2_mpi": (0.563, 0), "sdg1_4_eep": (100, 0), "sdg1_4_nbi": (100, 0),
+          "sdg1_4_ssb": (0, 100)}  # (worst, best)
 labels = geo.dictionary("sdg01").set_index("variable")["label"]
-rows = [{"indicator": labels[v],
-         "score": (100 * (df[v] - w) / (b - w)).clip(0, 100).mean()}
-        for v, (w, b) in bounds.items()]
-px.bar(pd.DataFrame(rows).sort_values("score"), x="score", y="indicator",
-       labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
-       title="SDG 1 indicators: distance to the target")`,
+rows = [{"indicator": labels[v], "period": f"~{year}",
+         "score": (100 * (part[v] - w) / (b - w)).clip(0, 100).mean()}
+        for year, part in df.groupby("year") for v, (w, b) in bounds.items()]
+px.scatter(pd.DataFrame(rows), x="score", y="indicator", color="period",
+           labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
+           title="SDG 1 indicators, ~2012 and ~2024")`,
       },
       {
-        title: 'Rank the departments',
-        text: 'Averages the index within each department, weighting municipalities by their 2016 gridded population.',
+        title: "Rank the departments",
+        text: "Averages the index within each department, weighting municipalities by their census population, in both periods.",
         code: `${PYTHON_SETUP}
 
-df = geo.load("sdg01", variables="index_sdg1", years=2016)
+df = geo.load("sdg01", variables="index_sdg1")
 dep = geo.aggregate(df, to="department",
-                    rules={"index_sdg1": "weighted_mean:pop"},
-                    weights=geo.load("pop"))
+                    rules={"index_sdg1": "weighted_mean:population"},
+                    weights=geo.load("sdg", variables="population"))
 dep["department"] = dep["geo_id"].map(
     geo.units("department").set_index("geo_id")["name"])
-px.bar(dep.sort_values("index_sdg1"), x="index_sdg1", y="department",
-       labels={"index_sdg1": "No poverty index (population-weighted)"},
-       title="SDG 1 index by department, 2016")`,
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg1"), x="index_sdg1", y="department",
+           color="period",
+           labels={"index_sdg1": "Index (population-weighted)"},
+           title="SDG 1 index by department, ~2012 and ~2024")`,
       },
       {
-        title: 'Poverty and night-time lights',
-        text: 'Links multidimensional poverty in 2012 with the trend of night-time lights per capita in the same year from the observatory’s ntl dataset.',
+        title: "Poverty and night-time lights",
+        text: "Links multidimensional poverty near 2012 with the trend of night-time lights per capita in 2012 from the observatory's ntl dataset (333 municipalities whose territory did not change).",
         code: `${PYTHON_SETUP}
 
 mpi = geo.load("sdg01", variables="sdg1_2_mpi", years=2012)
@@ -148,37 +301,38 @@ px.scatter(df, x="ln_t400NTLpc", y="sdg1_2_mpi", hover_name="name",
     ],
   },
   {
-    id: 'municipalities339-sdg02', type: 'indicator', section: 'indicators',
-    title: 'SDG 2: Zero hunger',
-    scope: '339 municipalities · 4 indicators and the SDG 2 index · 2012–2020',
-    summary: 'The Zero hunger index of the Municipal Atlas of the SDGs and its four indicators of child malnutrition, obesity in women, farm size and tractors, for every municipality.',
-    description: 'The SDG 2 (Zero hunger) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) for all 339 municipalities, on a 0–100 scale where 100 means the targets are met, with the four indicators behind it: chronic malnutrition among children under 5 and obesity among women aged 15–49 (2016 Demographic and Health Survey, EDSA), and the average farm size and tractors per 1,000 farms (2013 Agricultural Census, INE). Each indicator is rescaled linearly to 0–100 between a worst and a best value, so that higher is always better and values beyond the bounds are capped, and the index is the simple mean of the available rescaled indicators. The survey is not representative by municipality, so the two nutrition indicators are imputed by department and poverty level and municipalities in the same cell share one value. The two farm indicators are missing for 15 almost fully urban municipalities, where the index averages the two nutrition indicators. The index is stored at 2016, the latest year of its indicators; the Atlas population (2020) and urbanization rate (2012 census) are included as context.',
-    geography: 'Municipality', units: 339, period: '2012–2020', frequency: 'One reference year per indicator', key: 'geo_id', idExample: 'BO-04-17-04',
-    categories: ['Social', 'Economy'], tags: ['SDGs', 'hunger', 'malnutrition', 'agriculture', 'municipalities'],
+    id: 'municipalities343-sdg02', type: 'indicator', section: 'indicators',
+    title: "SDG 2: Zero hunger",
+    scope: "343 municipalities · 7 indicators and the SDG 2 index · ~2012 and ~2024",
+    summary: "The SDG 2 (Zero hunger) index of the SDG Atlas of Bolivia 2026 and its 7 indicators, stunting and overweight in children, obesity and anaemia in women, and agricultural production, yield and diversification, for every municipality near 2012 and near 2024.",
+    description: "The SDG 2 (Zero hunger) index of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), with the 7 indicators behind it: obesity in women 15-49 (%) (2008 and 2023); chronic malnutrition in children under 5 (%) (2008 and 2023); overweight in children under 5 (%) (2008 and 2023); anaemia in women 15-49 (%) (2008 and 2023); agricultural production (t per person per year) (average 2013–2015 and average 2022–2024); agricultural yield (t per ha per year) (average 2013–2015 and average 2022–2024); agricultural diversification index (0-1) (average 2013–2015 and average 2022–2024). Every indicator is measured twice, near the 2012 census and near the 2024 census, and the observatory stores the two values as 2012 and 2024 so that their change can be studied. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value set by the Atlas, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Between the two periods the median index went from 38.4 to 38.8, and it rose in 174 of the 343 units. Some indicators are missing for part of the units (Agricultural production (t per person per year), Agricultural yield (t per ha per year) and Agricultural diversification index (0-1)); the index averages the available ones.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Social", "Economy"], tags: ["SDGs", "SDG Atlas 2026", "hunger", "malnutrition", "agriculture"],
     image: 'images/indicators/sdg02.webp',
-    imageAlt: 'Map of the Zero hunger index (0-100) in 2016 across 339 Bolivian municipalities in three natural-break classes: high in the Santa Cruz lowlands, Pando and parts of Beni, low across the highland valleys of Cochabamba, northern Potosí, Chuquisaca and Tarija, the La Paz altiplano near Lake Titicaca and southern Potosí',
+    imageAlt: "Map of the Zero hunger index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 43.4 – 56.8 (74); Middle 35.6 – 43.4 (190); Low 20.8 – 35.6 (79). Highest: Alto Beni, Santa Rosa and Puerto Villarroel.",
+    mapAlt: "Two maps of the Zero hunger index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 43.4 – 56.8 (113 units near 2012, 74 near 2024); Middle 35.6 – 43.4 (113 units near 2012, 190 near 2024); Low 20.8 – 35.6 (117 units near 2012, 79 near 2024). Highest near 2024: Alto Beni, Santa Rosa and Puerto Villarroel.",
     map: 'images/indicators/sdg02-map.webp',
-    mapAlt: 'Map of the Zero hunger index (0-100) in 2016 across 339 Bolivian municipalities in three natural-break classes: high in the Santa Cruz lowlands, Pando and parts of Beni, low across the highland valleys of Cochabamba, northern Potosí, Chuquisaca and Tarija, the La Paz altiplano near Lake Titicaca and southern Potosí. Legend: High 51.4 to 71.4 (56 municipalities), Middle 38.7 to 51.4 (110), Low 21.4 to 38.7 (173).',
-    date: '2026-10-30', pinned: false, dataset: 'sdg02',
-    notice: 'Each variable has values only in its reference year: load the index with its year, geo.load("sdg02", variables="index_sdg2", years=2016), or every variable as a cross-section with geo.load("sdg02").groupby("geo_id").first(). The index is stored at 2016, the latest year of its indicators (the farm indicators are from 2013).',
+    date: '2026-11-17', pinned: false, dataset: 'sdg02',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
 
-# The Zero hunger index in 2016, with municipal boundaries
-gdf = geo.load("sdg02", variables="index_sdg2", years=2016, geometry=True)
+# The SDG 2 index (0-100, higher is better), ~2024
+gdf = geo.load("sdg02", variables="index_sdg2", years=2024, geometry=True)
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="index_sdg2", hover_name="name",
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg2": "Zero hunger index (0-100)"},
-          title="SDG 2: Zero hunger index, 2016").show()
+          title="SDG 2: Zero hunger index, ~2024").show()
 
-# Every variable at its own year: one row per municipality
-df = geo.load("sdg02").groupby("geo_id", as_index=False).first()
-df["name"] = df["geo_id"].map(geo.units("municipality").set_index("geo_id")["name"])
-px.scatter(df, x="sdg2_2_cmc", y="index_sdg2", hover_name="name",
-           labels={"sdg2_2_cmc": "Child chronic malnutrition (%)",
-                   "index_sdg2": "Zero hunger index (0-100)"},
-           title="Child malnutrition and the Zero hunger index")`,
+# The two periods: initial (~2012) and final (~2024) values
+df = geo.load("sdg02", variables="index_sdg2")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg2")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
+           title="SDG 2: Zero hunger index, ~2012 and ~2024")`,
       pandas: `import pandas as pd
 import geopandas as gpd
 import plotly.express as px
@@ -188,1703 +342,1686 @@ BASE = "${RAW_URL}"
 df = pd.read_csv(BASE + "data/municipality/sdg02.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
 
-index = df.loc[df["year"] == 2016, ["geo_id", "index_sdg2"]]
+index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg2"]]
 gdf = municipalities.merge(index, on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="index_sdg2", hover_name="name",
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg2": "Zero hunger index (0-100)"},
-          title="SDG 2: Zero hunger index, 2016")`,
+          title="SDG 2: Zero hunger index, ~2024")`,
     },
     examples: [
       {
-        title: 'Compute the index from its indicators',
-        text: 'Rescales each indicator between its worst and best value, caps it at 0 and 100 and averages the available scores, which reproduces the published Zero hunger index.',
+        title: "Map the change, ~2012 to ~2024",
+        text: "Subtracts the initial index from the final one: positive values mark the municipalities that moved closer to the goal's targets.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg02", variables="index_sdg2")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg2")
+wide["change"] = wide[2024] - wide[2012]
+gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+                                           on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="change", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"change": "Change in the index (points)"},
+          title="SDG 2: change in the index, ~2012 to ~2024")`,
+      },
+      {
+        title: "Recompute the index from its indicators",
+        text: "Rescales each indicator between the Atlas's worst and best values (Cuadro 21), caps it to 0-100 and averages the available ones, which reproduces the published index.",
         code: `${PYTHON_SETUP}
 import pandas as pd
 
-# Worst and best value of each indicator (Atlas, Cuadro 17)
-bounds = {"sdg2_2_cmc": (52.6, 0.0), "sdg2_2_oww": (32.8, 11.3),
-          "sdg2_4_pual": (0.43, 30.0), "sdg2_4_td": (0.0, 673.4)}
-
-df = geo.load("sdg02").groupby("geo_id").first()  # each variable at its year
-scores = pd.DataFrame({v: 100 * (df[v] - worst) / (best - worst)
-                       for v, (worst, best) in bounds.items()}).clip(0, 100)
-df["computed"] = scores.mean(axis=1)  # skips missing farm indicators
+df = geo.load("sdg02", years=2024).set_index("geo_id")
+bounds = {"sdg2_2_smu": (38.2, 0), "sdg2_2_dcn": (50.2, 0), "sdg2_2_osn": (11.8, 0),
+          "sdg2_2_pam": (70.4, 0), "sdg2_3_pac": (0, 6.3), "sdg2_3_rpa":
+          (0, 7), "sdg2_5_idp": (0, 1)}  # (worst, best)
+scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
+                       for v, (w, b) in bounds.items()}).clip(0, 100)
+df["computed"] = scores.mean(axis=1)  # skips missing indicators
 df["name"] = geo.units("municipality").set_index("geo_id")["name"]
-px.scatter(df, x="index_sdg2", y="computed", hover_name="name",
-           labels={"index_sdg2": "Zero hunger index (0-100), published",
-                   "computed": "Zero hunger index (0-100), computed"},
-           title="Recomputing the SDG 2 index")`,
+px.scatter(df, x="computed", y="index_sdg2", hover_name="name",
+           labels={"computed": "Computed from the indicators",
+                   "index_sdg2": "Zero hunger index (0-100)"},
+           title="Recomputed vs published SDG 2 index, ~2024")`,
       },
       {
-        title: 'Which indicator holds the index back',
-        text: 'Averages each indicator’s 0–100 score over the municipalities: the lowest bar is the indicator furthest from its target.',
+        title: "Which indicators moved",
+        text: "Compares the mean rescaled score (0-100) of each indicator in the two periods: the gap between the dots is the progress, and the lowest dots are where the goal is furthest away.",
         code: `${PYTHON_SETUP}
 import pandas as pd
 
-bounds = {"sdg2_2_cmc": (52.6, 0.0), "sdg2_2_oww": (32.8, 11.3),
-          "sdg2_4_pual": (0.43, 30.0), "sdg2_4_td": (0.0, 673.4)}
-labels = {"sdg2_2_cmc": "Child chronic malnutrition (%)",
-          "sdg2_2_oww": "Obesity in women aged 15-49 (%)",
-          "sdg2_4_pual": "Average farm size (ha)",
-          "sdg2_4_td": "Tractors per 1,000 farms"}
-
-df = geo.load("sdg02").groupby("geo_id").first()
-score = pd.DataFrame({labels[v]: 100 * (df[v] - worst) / (best - worst)
-                      for v, (worst, best) in bounds.items()}).clip(0, 100)
-mean = score.mean().rename_axis("indicator").reset_index(name="score")
-px.bar(mean.sort_values("score"), x="score", y="indicator",
-       labels={"score": "Mean score (0-100)", "indicator": ""},
-       title="Average distance to the SDG 2 targets")`,
+df = geo.load("sdg02")
+bounds = {"sdg2_2_smu": (38.2, 0), "sdg2_2_dcn": (50.2, 0), "sdg2_2_osn": (11.8, 0),
+          "sdg2_2_pam": (70.4, 0), "sdg2_3_pac": (0, 6.3), "sdg2_3_rpa":
+          (0, 7), "sdg2_5_idp": (0, 1)}  # (worst, best)
+labels = geo.dictionary("sdg02").set_index("variable")["label"]
+rows = [{"indicator": labels[v], "period": f"~{year}",
+         "score": (100 * (part[v] - w) / (b - w)).clip(0, 100).mean()}
+        for year, part in df.groupby("year") for v, (w, b) in bounds.items()]
+px.scatter(pd.DataFrame(rows), x="score", y="indicator", color="period",
+           labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
+           title="SDG 2 indicators, ~2012 and ~2024")`,
       },
       {
-        title: 'Rank the departments',
-        text: 'Aggregates the index to the nine departments as population-weighted means, using the gridded population of 2016.',
+        title: "Rank the departments",
+        text: "Averages the index within each department, weighting municipalities by their census population, in both periods.",
         code: `${PYTHON_SETUP}
 
-df = geo.load("sdg02", variables="index_sdg2", years=2016)
-dep = geo.aggregate(df, to="department", rules={"index_sdg2": "weighted_mean:pop"},
-                    weights=geo.load("pop"))
+df = geo.load("sdg02", variables="index_sdg2")
+dep = geo.aggregate(df, to="department",
+                    rules={"index_sdg2": "weighted_mean:population"},
+                    weights=geo.load("sdg", variables="population"))
 dep["department"] = dep["geo_id"].map(
     geo.units("department").set_index("geo_id")["name"])
-px.bar(dep.sort_values("index_sdg2"), x="index_sdg2", y="department",
-       labels={"index_sdg2": "Zero hunger index (0-100), population-weighted",
-               "department": ""},
-       title="SDG 2 index by department, 2016")`,
-      },
-      {
-        title: 'Zero hunger and night-time lights',
-        text: 'Links the index with the observatory’s night-time lights per capita of the same year, a proxy for local economic activity.',
-        code: `${PYTHON_SETUP}
-
-sdg = geo.load("sdg02", variables="index_sdg2", years=2016)
-ntl = geo.load("ntl", variables="ln_t400NTLpc", years=2016)
-df = sdg.merge(ntl, on=["geo_id", "year"])
-df["name"] = df["geo_id"].map(geo.units("municipality").set_index("geo_id")["name"])
-px.scatter(df, x="ln_t400NTLpc", y="index_sdg2", hover_name="name",
-           labels={"ln_t400NTLpc": "Log night-time lights per capita (trend)",
-                   "index_sdg2": "Zero hunger index (0-100)"},
-           title="Zero hunger and night-time lights, 2016")`,
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg2"), x="index_sdg2", y="department",
+           color="period",
+           labels={"index_sdg2": "Index (population-weighted)"},
+           title="SDG 2 index by department, ~2012 and ~2024")`,
       },
     ],
   },
   {
-    id: 'municipalities339-sdg03', type: 'indicator', section: 'indicators',
-    title: 'SDG 3: Good health and well-being',
-    scope: '339 municipalities · 9 indicators and the SDG 3 index · 2010–2018',
-    summary: 'The SDG 3 index of the Municipal Atlas of the SDGs and its nine indicators of births, child mortality, infectious diseases and adolescent fertility.',
-    description: 'The SDG 3 (Good health and well-being) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) for all 339 municipalities, with the nine indicators behind it: institutional birth coverage and adolescent fertility (2008–2012 averages from the 2012 census, stored at 2010), infant and under-five mortality (UDAPE estimates for 2016), Chagas infestation and tuberculosis incidence (2017), dengue incidence (2018), and malaria and HIV incidence (2014–2017 averages, stored at 2015), the last five from Ministry of Health programmes via the National Health Information System (SNIS). Each indicator is rescaled to 0–100 between a worst and a best value (higher is always better, values beyond the bounds capped), and the index, from 0 to 100 where 100 means the targets are met, is the simple mean of the rescaled indicators. Infant and under-five mortality are almost perfectly correlated (0.99), so child mortality carries double weight in the index. The Atlas population in 2020 and the urbanization rate in 2012 are included as context; no values are missing.',
-    geography: 'Municipality', units: 339, period: '2010–2018', frequency: 'One reference year per indicator', key: 'geo_id', idExample: 'BO-04-17-04',
-    categories: ['Social'], tags: ['SDGs', 'health', 'child mortality', 'infectious diseases', 'municipalities'],
+    id: 'municipalities343-sdg03', type: 'indicator', section: 'indicators',
+    title: "SDG 3: Good health and well-being",
+    scope: "343 municipalities · 7 indicators and the SDG 3 index · ~2012 and ~2024",
+    summary: "The SDG 3 (Good health and well-being) index of the SDG Atlas of Bolivia 2026 and its 7 indicators, skilled birth attendance, infant and under-5 mortality, HIV, tuberculosis and vector-borne diseases, and adolescent fertility, for every municipality near 2012 and near 2024.",
+    description: "The SDG 3 (Good health and well-being) index of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), with the 7 indicators behind it: births attended by skilled health personnel (%) (2012 and 2024); infant mortality (per 1,000 live births) (2008 and 2023); under-5 mortality (per 1,000 live births) (2008 and 2023); HIV incidence (per million people) (average 2011–2013 and average 2022–2024); tuberculosis incidence (per 100,000 people) (average 2011–2013 and average 2022–2024); vector-borne disease index (0-1) (average 2011–2013 and average 2022–2024); mean parity of adolescent women 15-19 (children per woman) (2012 and 2024). Every indicator is measured twice, near the 2012 census and near the 2024 census, and the observatory stores the two values as 2012 and 2024 so that their change can be studied. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value set by the Atlas, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Between the two periods the median index went from 65.6 to 81.2, and it rose in 312 of the 343 units.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Social"], tags: ["SDGs", "SDG Atlas 2026", "health", "child mortality", "infectious diseases"],
     image: 'images/indicators/sdg03.webp',
-    imageAlt: 'Map of the Good health index (0-100) in 2018 across 339 Bolivian municipalities in three natural-break classes: high across the eastern lowlands of Santa Cruz, Beni and the Chaco, low in Pando, the northern Potosí valleys and the southwest of Potosí',
+    imageAlt: "Map of the Good health and well-being index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 78.3 – 98.9 (207); Middle 64.6 – 78.3 (111); Low 43.6 – 64.6 (25). Highest: Villa Gualberto Villarroel, Carangas and Postrervalle.",
+    mapAlt: "Two maps of the Good health and well-being index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 78.3 – 98.9 (53 units near 2012, 207 near 2024); Middle 64.6 – 78.3 (128 units near 2012, 111 near 2024); Low 43.6 – 64.6 (162 units near 2012, 25 near 2024). Highest near 2024: Villa Gualberto Villarroel, Carangas and Postrervalle.",
     map: 'images/indicators/sdg03-map.webp',
-    mapAlt: 'Map of the Good health index (0-100) in 2018 across 339 Bolivian municipalities in three natural-break classes: high across the eastern lowlands of Santa Cruz, Beni and the Chaco, low in Pando, the northern Potosí valleys and the southwest of Potosí. Legend: High 77.3 to 89.0 (154 municipalities), Middle 68.0 to 77.3 (124), Low 50.2 to 68.0 (61).',
-    date: '2026-10-30', pinned: false, dataset: 'sdg03',
-    notice: 'Each variable has values only in its reference year: load the index with its year, e.g. geo.load("sdg03", variables="index_sdg3", years=2018), or every variable as a cross-section with geo.load("sdg03").groupby("geo_id").first(). The index is stored at 2018, the latest reference year of its indicators.',
+    date: '2026-11-17', pinned: false, dataset: 'sdg03',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
 
-# The SDG 3 index at its reference year, with municipal boundaries
-gdf = geo.load("sdg03", variables="index_sdg3", years=2018, geometry=True)
+# The SDG 3 index (0-100, higher is better), ~2024
+gdf = geo.load("sdg03", variables="index_sdg3", years=2024, geometry=True)
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="index_sdg3", hover_name="name",
           center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg3": "Good health index (0-100)"},
-          title="SDG 3: Good health and well-being, 2018").show()
+          labels={"index_sdg3": "Good health and well-being index (0-100)"},
+          title="SDG 3: Good health and well-being index, ~2024").show()
 
-# The index across the municipalities of each department
-units = geo.units("municipality").set_index("geo_id")
-names = geo.units("department").set_index("geo_id")["name"]
-gdf["department"] = gdf["geo_id"].map(units["department_id"]).map(names)
-px.box(gdf, x="department", y="index_sdg3", hover_name="name",
-       labels={"index_sdg3": "Good health index (0-100)"},
-       title="SDG 3 index by department, 2018")`,
+# The two periods: initial (~2012) and final (~2024) values
+df = geo.load("sdg03", variables="index_sdg3")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg3")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
+           title="SDG 3: Good health and well-being index, ~2012 and ~2024")`,
       pandas: `import pandas as pd
 import geopandas as gpd
 import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg03.csv")  # geo_id, year, variables
+df = pd.read_csv(BASE + "data/municipality/sdg03.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
 
-index = df.loc[df["year"] == 2018, ["geo_id", "index_sdg3"]]
+index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg3"]]
 gdf = municipalities.merge(index, on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="index_sdg3", hover_name="name",
           center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg3": "Good health index (0-100)"},
-          title="SDG 3: Good health and well-being, 2018")`,
+          labels={"index_sdg3": "Good health and well-being index (0-100)"},
+          title="SDG 3: Good health and well-being index, ~2024")`,
     },
     examples: [
       {
-        title: 'Compute the index from its indicators',
-        text: 'Rescales the nine indicators between the Atlas bounds, averages them and reproduces the published SDG 3 index (correlation above 0.9999).',
+        title: "Map the change, ~2012 to ~2024",
+        text: "Subtracts the initial index from the final one: positive values mark the municipalities that moved closer to the goal's targets.",
         code: `${PYTHON_SETUP}
 
-# Each indicator at its own reference year: one row per municipality
-df = geo.load("sdg03").groupby("geo_id").first()
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
-
-# Atlas bounds [worst, best]: rescale to 0-100 (100 = best), cap, average
-bounds = {"sdg3_1_idca": [15.7, 100.0], "sdg3_2_imr": [60.0, 12.0],
-          "sdg3_2_mrc": [80.0, 25.0], "sdg3_3_cdir": [10.4, 0.0],
-          "sdg3_3_di": [4.89, 0.0], "sdg3_3_imr": [25.8, 0.0],
-          "sdg3_3_ti": [158.7, 0.0], "sdg3_3_hivi": [416.7, 0.0],
-          "sdg3_7_afr": [156.7, 0.0]}
-scores = df[list(bounds)].copy()
-for var, (worst, best) in bounds.items():
-    scores[var] = (100 * (df[var] - worst) / (best - worst)).clip(0, 100)
-df["computed"] = scores.mean(axis=1)
-print("correlation:", df["computed"].corr(df["index_sdg3"]))
-
-px.scatter(df, x="index_sdg3", y="computed", hover_name="name",
-           labels={"index_sdg3": "Good health index (0-100), published",
-                   "computed": "Index computed from its 9 indicators"},
-           title="Reproducing the SDG 3 index")`,
-      },
-      {
-        title: 'Which indicator pulls the index down',
-        text: 'Shows the average rescaled score (0–100) of each indicator across the 339 municipalities: the lowest bars lower the index the most.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg03").groupby("geo_id").first()
-labels = geo.dictionary("sdg03").set_index("variable")["label"]
-
-# Atlas bounds [worst, best]
-bounds = {"sdg3_1_idca": [15.7, 100.0], "sdg3_2_imr": [60.0, 12.0],
-          "sdg3_2_mrc": [80.0, 25.0], "sdg3_3_cdir": [10.4, 0.0],
-          "sdg3_3_di": [4.89, 0.0], "sdg3_3_imr": [25.8, 0.0],
-          "sdg3_3_ti": [158.7, 0.0], "sdg3_3_hivi": [416.7, 0.0],
-          "sdg3_7_afr": [156.7, 0.0]}
-scores = df[list(bounds)].copy()
-for var, (worst, best) in bounds.items():
-    scores[var] = (100 * (df[var] - worst) / (best - worst)).clip(0, 100)
-
-mean = scores.mean().rename("score").rename_axis("variable").reset_index()
-mean["indicator"] = mean["variable"].map(labels)
-px.bar(mean.sort_values("score"), x="score", y="indicator",
-       labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
-       title="SDG 3: average score of each indicator")`,
-      },
-      {
-        title: 'Rank the departments',
-        text: 'Ranks the nine departments by the population-weighted mean of the SDG 3 index, with WorldPop population as weights.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg03", variables="index_sdg3", years=2018)
-dep = geo.aggregate(df, to="department",
-                    rules={"index_sdg3": "weighted_mean:pop"},
-                    weights=geo.load("pop"))
-names = geo.units("department").set_index("geo_id")["name"]
-dep["department"] = dep["geo_id"].map(names)
-px.bar(dep.sort_values("index_sdg3"), x="index_sdg3", y="department",
-       labels={"index_sdg3": "Good health index (0-100), population-weighted"},
-       title="SDG 3 index by department, 2018")`,
-      },
-      {
-        title: 'Births in health facilities and infant mortality',
-        text: 'Plots infant mortality (2016) against institutional birth coverage (2008–2012 average) for every municipality, coloured by department.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg03").groupby("geo_id", as_index=False).first()
-units = geo.units("municipality").set_index("geo_id")
-names = geo.units("department").set_index("geo_id")["name"]
-df["name"] = df["geo_id"].map(units["name"])
-df["department"] = df["geo_id"].map(units["department_id"]).map(names)
-px.scatter(df, x="sdg3_1_idca", y="sdg3_2_imr", color="department",
-           hover_name="name",
-           labels={"sdg3_1_idca": "Institutional birth coverage (%)",
-                   "sdg3_2_imr": "Infant mortality (per 1,000 births)"},
-           title="Births in health facilities and infant mortality")`,
-      },
-    ],
-  },
-  {
-    id: 'municipalities339-sdg04', type: 'indicator', section: 'indicators',
-    title: 'SDG 4: Quality education',
-    scope: '339 municipalities · 6 indicators and the SDG 4 index · 2012–2020',
-    summary: 'The Municipal Atlas’s SDG 4 index of quality education and its six indicators of school dropout, adult education, literacy and qualified teachers, each stored at the year it was measured.',
-    description: 'The SDG 4 (Quality education) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) for all 339 municipalities, on a 0–100 scale where 100 means the goal’s targets are met, together with the six indicators behind it: the secondary-school dropout rates of boys and girls (2017) and the shares of qualified pre-primary and secondary teachers (2016), from the Ministry of Education’s administrative records (SEIE), and the share of adults aged 19 or older with higher education and the literacy rate of people aged 15 or older, from the 2012 Population and Housing Census (INE). Each indicator is rescaled linearly to 0–100 between a worst and a best value, so that higher is always better and values beyond the bounds are capped, and the index is the simple mean of the available rescaled indicators. The Atlas does not define a “qualified” teacher. Because its indicators refer to 2012, 2016 and 2017, the index is stored at 2017, the latest of them. The Atlas’s 2020 population and 2012 urbanization rate are included as context; they are not inputs of the index.',
-    geography: 'Municipality', units: 339, period: '2012–2020', frequency: 'One reference year per indicator', key: 'geo_id', idExample: 'BO-04-17-04',
-    categories: ['Social'], tags: ['SDGs', 'education', 'literacy', 'school dropout', 'municipalities'],
-    image: 'images/indicators/sdg04.webp',
-    imageAlt: 'Map of the Quality education index (0-100) in 2017 across 339 Bolivian municipalities in three natural-break classes: high on the altiplano of La Paz, Oruro and southern Potosí and in the main cities, low in Pando, parts of Beni and the northern Potosí, Chuquisaca and southern Cochabamba valleys',
-    map: 'images/indicators/sdg04-map.webp',
-    mapAlt: 'Map of the Quality education index (0-100) in 2017 across 339 Bolivian municipalities in three natural-break classes: high on the altiplano of La Paz, Oruro and southern Potosí and in the main cities, low in Pando, parts of Beni and the northern Potosí, Chuquisaca and southern Cochabamba valleys. Legend: High 57.1 to 85.8 (143 municipalities), Middle 41.7 to 57.1 (139), Low 12.4 to 41.7 (57).',
-    date: '2026-10-30', pinned: false, dataset: 'sdg04',
-    notice: 'Each variable has values only in its reference year: load the index with its year, e.g. geo.load("sdg04", variables="index_sdg4", years=2017), or every variable as a cross-section with geo.load("sdg04").groupby("geo_id").first(). The index is stored at 2017, the latest reference year of its indicators.',
-    code: {
-      python: `${PYTHON_SETUP}
-
-# The SDG 4 index in its reference year, with municipal boundaries
-gdf = geo.load("sdg04", variables="index_sdg4", years=2017, geometry=True)
+df = geo.load("sdg03", variables="index_sdg3")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg3")
+wide["change"] = wide[2024] - wide[2012]
+gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+                                           on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg4", hover_name="name",
+          color="change", hover_name="name",
           center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg4": "Quality education index (0-100)"},
-          title="SDG 4: Quality education, 2017").show()
-
-# The index's spread within each department
-units = geo.units("municipality").set_index("geo_id")
-names = geo.units("department").set_index("geo_id")["name"]
-gdf["department"] = gdf["geo_id"].map(units["department_id"]).map(names)
-px.box(gdf, x="department", y="index_sdg4", hover_name="name",
-       labels={"index_sdg4": "Quality education index (0-100)"},
-       title="SDG 4 index by department, 2017")`,
-      pandas: `import pandas as pd
-import geopandas as gpd
-import plotly.express as px
-
-# No geo4bolivia needed: every file is a plain URL
-BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg04.csv")  # geo_id, year, variables
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
-
-index = df.loc[df["year"] == 2017, ["geo_id", "index_sdg4"]]
-gdf = municipalities.merge(index, on="geo_id")
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg4", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg4": "Quality education index (0-100)"},
-          title="SDG 4: Quality education, 2017")`,
-    },
-    examples: [
-      {
-        title: 'Compute the index from its indicators',
-        text: 'Rescales each indicator between the Atlas’s worst and best values, averages them and checks the result against the published SDG 4 index.',
-        code: `${PYTHON_SETUP}
-
-# Worst and best value of each indicator (Atlas, Cuadro 17)
-bounds = {"sdg4_1_ssdrm": (9.7, 0), "sdg4_1_ssdrf": (9.7, 0),
-          "sdg4_4_phe": (2.8, 36.9), "sdg4_6_lr": (71.2, 99.8),
-          "sdg4_c_qti": (0, 100), "sdg4_c_qts": (0, 100)}
-
-# Every variable at its own year, one row per municipality
-df = geo.load("sdg04").groupby("geo_id").first()
-scores = df[list(bounds)].copy()
-for var, (worst, best) in bounds.items():
-    scores[var] = (100 * (df[var] - worst) / (best - worst)).clip(0, 100)
-df["computed"] = scores.mean(axis=1)   # mean of the available indicators
-
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
-px.scatter(df, x="index_sdg4", y="computed", hover_name="name",
-           labels={"index_sdg4": "Published SDG 4 index",
-                   "computed": "Computed SDG 4 index"},
-           title="Reproducing the SDG 4 index")`,
+          labels={"change": "Change in the index (points)"},
+          title="SDG 3: change in the index, ~2012 to ~2024")`,
       },
       {
-        title: 'Which indicator holds the index back',
-        text: 'Compares the average rescaled score (0–100) of the six indicators across municipalities, showing which ones pull the SDG 4 index down most.',
-        code: `${PYTHON_SETUP}
-
-bounds = {"sdg4_1_ssdrm": (9.7, 0), "sdg4_1_ssdrf": (9.7, 0),
-          "sdg4_4_phe": (2.8, 36.9), "sdg4_6_lr": (71.2, 99.8),
-          "sdg4_c_qti": (0, 100), "sdg4_c_qts": (0, 100)}
-df = geo.load("sdg04").groupby("geo_id").first()
-scores = df[list(bounds)].copy()
-for var, (worst, best) in bounds.items():
-    scores[var] = (100 * (df[var] - worst) / (best - worst)).clip(0, 100)
-
-# Mean score of each indicator, labelled from the dictionary
-labels = geo.dictionary("sdg04").set_index("variable")["label"]
-mean = scores.mean().rename(labels).rename_axis("indicator")
-mean = mean.reset_index(name="score").sort_values("score")
-px.bar(mean, x="score", y="indicator",
-       labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
-       title="SDG 4 indicators: average score across municipalities")`,
-      },
-      {
-        title: 'Boys’ and girls’ dropout',
-        text: 'Plots the secondary dropout rates of boys and girls in 2017, municipality by municipality, coloured by the SDG 4 index.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg04", years=2017)
-df["name"] = df["geo_id"].map(geo.units("municipality").set_index("geo_id")["name"])
-px.scatter(df, x="sdg4_1_ssdrf", y="sdg4_1_ssdrm", color="index_sdg4",
-           hover_name="name",
-           labels={"sdg4_1_ssdrf": "Secondary dropout rate, girls (%)",
-                   "sdg4_1_ssdrm": "Secondary dropout rate, boys (%)",
-                   "index_sdg4": "Quality education index (0-100)"},
-           title="Secondary dropout of boys and girls, 2017")`,
-      },
-      {
-        title: 'Rank the departments',
-        text: 'Averages the SDG 4 index by department, weighting each municipality by its gridded population in 2017.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg04", variables="index_sdg4", years=2017)
-dep = geo.aggregate(df, to="department",
-                    rules={"index_sdg4": "weighted_mean:pop"},
-                    weights=geo.load("pop"))
-names = geo.units("department").set_index("geo_id")["name"]
-dep["department"] = dep["geo_id"].map(names)
-px.bar(dep.sort_values("index_sdg4"), x="index_sdg4", y="department",
-       labels={"index_sdg4": "Quality education index (population-weighted)"},
-       title="SDG 4 index by department, 2017")`,
-      },
-    ],
-  },
-  {
-    id: 'municipalities339-sdg05', type: 'indicator', section: 'indicators',
-    title: 'SDG 5: Gender equality',
-    scope: '339 municipalities · 4 indicators and the SDG 5 index · 2012–2020',
-    summary: 'The SDG 5 gender equality index of the Municipal Atlas of the SDGs and its four gender parity indicators in schooling, poverty and work, for every municipality.',
-    description: 'The SDG 5 (Gender equality) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) for all 339 municipalities, with the four gender parity indicators behind it: parity in secondary-school dropout (2017, Ministry of Education records), and parity in years of schooling of people aged 25–35, in multidimensional poverty by sex of the household head and in labour-force participation (all 2012, from the Population and Housing Census, INE). Each indicator is rescaled to 0–100 between a worst and a best value (parity, or the average of the best municipalities), so that higher is always better and values beyond the bounds are capped, and the index is the simple mean of the available rescaled indicators: 100 means the targets are met. The index is stored at 2017, the latest year of its indicators. The parity indicators are published with one decimal only, so they reproduce the index only approximately. Labour participation parity is missing for Huachacalla. The Atlas’s 2020 population and 2012 urbanization rate are included as context.',
-    geography: 'Municipality', units: 339, period: '2012–2020', frequency: 'One reference year per indicator', key: 'geo_id', idExample: 'BO-04-17-04',
-    categories: ['Social'], tags: ['SDGs', 'gender', 'gender parity', 'municipalities', 'census'],
-    image: 'images/indicators/sdg05.webp',
-    imageAlt: 'Map of the gender equality index (0-100) in 2017 across 339 Bolivian municipalities in three natural-break classes: high across much of Beni, Tarija and the southern altiplano of Oruro and Potosí, middle across most of Santa Cruz, Pando and the Cochabamba and Chuquisaca valleys, low in clusters on the La Paz altiplano around Lake Titicaca and in the highlands of Oruro, Cochabamba and northern Potosí',
-    map: 'images/indicators/sdg05-map.webp',
-    mapAlt: 'Map of the gender equality index (0-100) in 2017 across 339 Bolivian municipalities in three natural-break classes: high across much of Beni, Tarija and the southern altiplano of Oruro and Potosí, middle across most of Santa Cruz, Pando and the Cochabamba and Chuquisaca valleys, low in clusters on the La Paz altiplano around Lake Titicaca and in the highlands of Oruro, Cochabamba and northern Potosí. Legend: High 77.8 to 93.5 (109 municipalities), Middle 65.2 to 77.8 (162), Low 37.8 to 65.2 (68).',
-    date: '2026-10-30', pinned: false, dataset: 'sdg05',
-    notice: 'Each variable has values only in its reference year: load the index with its year, e.g. geo.load("sdg05", variables="index_sdg5", years=2017). The index is stored at 2017, the latest reference year of its indicators (three of the four refer to 2012).',
-    code: {
-      python: `${PYTHON_SETUP}
-
-# The SDG 5 index in its reference year, with municipal boundaries
-gdf = geo.load("sdg05", variables="index_sdg5", years=2017, geometry=True)
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg5", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg5": "Gender equality index (0-100)"},
-          title="SDG 5: Gender equality, 2017").show()
-
-# Municipal values by department
-names = geo.units("department").set_index("geo_id")["name"]
-gdf["department"] = gdf["geo_id"].str[:5].map(names)
-px.box(gdf, x="department", y="index_sdg5", hover_name="name",
-       labels={"index_sdg5": "Gender equality index (0-100)"},
-       title="Gender equality index by department, 2017")`,
-      pandas: `import pandas as pd
-import geopandas as gpd
-import plotly.express as px
-
-# No geo4bolivia needed: every file is a plain URL
-BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg05.csv")  # geo_id, year, indicators
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
-
-index = df.loc[df["year"] == 2017, ["geo_id", "index_sdg5"]]
-gdf = municipalities.merge(index, on="geo_id")
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg5", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg5": "Gender equality index (0-100)"},
-          title="SDG 5: Gender equality, 2017")`,
-    },
-    examples: [
-      {
-        title: 'Compute the index from its indicators',
-        text: 'Rescales each parity indicator between its worst and best value, caps it at 0–100 and averages them, then compares the result with the published index; the match is close but approximate (r = 0.965, mean absolute difference 2.2 points), because the parity indicators are published with one decimal and the Atlas computed the index from unrounded values.',
+        title: "Recompute the index from its indicators",
+        text: "Rescales each indicator between the Atlas's worst and best values (Cuadro 21), caps it to 0-100 and averages the available ones, which reproduces the published index.",
         code: `${PYTHON_SETUP}
 import pandas as pd
 
-# Atlas bounds of each component: (worst, best)
-bounds = {"sdg5_1_gpsd": (0, 1), "sdg5_1_gpyp": (0.6, 1),
-          "sdg5_1_gpmpi": (0.623, 1), "sdg5_5_gpop": (0.42, 0.95)}
+df = geo.load("sdg03", years=2024).set_index("geo_id")
+bounds = {"sdg3_1_cpp": (0, 100), "sdg3_2_tmi": (39.7, 1.1), "sdg3_2_tmn": (130.1,
+          2.6), "sdg3_3_vih": (721.5, 0), "sdg3_3_tub": (199.2, 0),
+          "sdg3_3_vec": (0.68, 0), "sdg3_7_tfa": (0.71, 0)}  # (worst, best)
+scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
+                       for v, (w, b) in bounds.items()}).clip(0, 100)
+df["computed"] = scores.mean(axis=1)  # skips missing indicators
+df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(df, x="computed", y="index_sdg3", hover_name="name",
+           labels={"computed": "Computed from the indicators",
+                   "index_sdg3": "Good health and well-being index (0-100)"},
+           title="Recomputed vs published SDG 3 index, ~2024")`,
+      },
+      {
+        title: "Which indicators moved",
+        text: "Compares the mean rescaled score (0-100) of each indicator in the two periods: the gap between the dots is the progress, and the lowest dots are where the goal is furthest away.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
 
-# Cross-section: each component at its own reference year
-df = geo.load("sdg05").groupby("geo_id").first()
-score = pd.DataFrame({v: (100 * (df[v] - w) / (b - w)).clip(0, 100)
-                      for v, (w, b) in bounds.items()})
-df["computed"] = score.mean(axis=1)    # missing components are skipped
+df = geo.load("sdg03")
+bounds = {"sdg3_1_cpp": (0, 100), "sdg3_2_tmi": (39.7, 1.1), "sdg3_2_tmn": (130.1,
+          2.6), "sdg3_3_vih": (721.5, 0), "sdg3_3_tub": (199.2, 0),
+          "sdg3_3_vec": (0.68, 0), "sdg3_7_tfa": (0.71, 0)}  # (worst, best)
+labels = geo.dictionary("sdg03").set_index("variable")["label"]
+rows = [{"indicator": labels[v], "period": f"~{year}",
+         "score": (100 * (part[v] - w) / (b - w)).clip(0, 100).mean()}
+        for year, part in df.groupby("year") for v, (w, b) in bounds.items()]
+px.scatter(pd.DataFrame(rows), x="score", y="indicator", color="period",
+           labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
+           title="SDG 3 indicators, ~2012 and ~2024")`,
+      },
+      {
+        title: "Rank the departments",
+        text: "Averages the index within each department, weighting municipalities by their census population, in both periods.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg03", variables="index_sdg3")
+dep = geo.aggregate(df, to="department",
+                    rules={"index_sdg3": "weighted_mean:population"},
+                    weights=geo.load("sdg", variables="population"))
+dep["department"] = dep["geo_id"].map(
+    geo.units("department").set_index("geo_id")["name"])
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg3"), x="index_sdg3", y="department",
+           color="period",
+           labels={"index_sdg3": "Index (population-weighted)"},
+           title="SDG 3 index by department, ~2012 and ~2024")`,
+      },
+    ],
+  },
+  {
+    id: 'municipalities343-sdg04', type: 'indicator', section: 'indicators',
+    title: "SDG 4: Quality education",
+    scope: "343 municipalities · 11 indicators and the SDG 4 index · ~2012 and ~2024",
+    summary: "The SDG 4 (Quality education) index of the SDG Atlas of Bolivia 2026 and its 11 indicators, secondary-school dropout, pre-school attendance, years of education and higher education of women and men, literacy and qualified teachers, for every municipality near 2012 and near 2024.",
+    description: "The SDG 4 (Quality education) index of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), with the 11 indicators behind it: secondary-school dropout rate, girls (%) (average 2012–2014 and average 2022–2023); secondary-school dropout rate, boys (%) (average 2012–2014 and average 2022–2024); pre-school attendance, girls 4-5 (%) (2012 and 2024); pre-school attendance, boys 4-5 (%) (2012 and 2024); years of education, women 25-35 (2012 and 2024); years of education, men 25-35 (2012 and 2024); higher education, women 19+ (%) (2012 and 2024); higher education, men 19+ (%) (2012 and 2024); literacy rate, 15+ (%) (2012 and 2024); qualified teachers, initial level (%) (average 2012–2014 and average 2022–2024); qualified teachers, secondary level (%) (average 2012–2014 and average 2022–2024). Every indicator is measured twice, near the 2012 census and near the 2024 census, and the observatory stores the two values as 2012 and 2024 so that their change can be studied. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value set by the Atlas, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Between the two periods the median index went from 47.6 to 69.5, and it rose in 343 of the 343 units. Some indicators are missing for part of the units (Secondary-school dropout rate, girls (%), Secondary-school dropout rate, boys (%), Qualified teachers, initial level (%) and Qualified teachers, secondary level (%)); the index averages the available ones.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Social"], tags: ["SDGs", "SDG Atlas 2026", "education", "literacy", "school dropout"],
+    image: 'images/indicators/sdg04.webp',
+    imageAlt: "Map of the Quality education index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 62.4 – 94.7 (274); Middle 45.5 – 62.4 (67); Low 18.6 – 45.5 (2). Highest: Nuestra Señora de La Paz, Colcapirhua and Oruro.",
+    mapAlt: "Two maps of the Quality education index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 62.4 – 94.7 (25 units near 2012, 274 near 2024); Middle 45.5 – 62.4 (182 units near 2012, 67 near 2024); Low 18.6 – 45.5 (136 units near 2012, 2 near 2024). Highest near 2024: Nuestra Señora de La Paz, Colcapirhua and Oruro.",
+    map: 'images/indicators/sdg04-map.webp',
+    date: '2026-11-17', pinned: false, dataset: 'sdg04',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
+    code: {
+      python: `${PYTHON_SETUP}
+
+# The SDG 4 index (0-100, higher is better), ~2024
+gdf = geo.load("sdg04", variables="index_sdg4", years=2024, geometry=True)
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg4", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg4": "Quality education index (0-100)"},
+          title="SDG 4: Quality education index, ~2024").show()
+
+# The two periods: initial (~2012) and final (~2024) values
+df = geo.load("sdg04", variables="index_sdg4")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg4")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
+           title="SDG 4: Quality education index, ~2012 and ~2024")`,
+      pandas: `import pandas as pd
+import geopandas as gpd
+import plotly.express as px
+
+# No geo4bolivia needed: every file is a plain URL
+BASE = "${RAW_URL}"
+df = pd.read_csv(BASE + "data/municipality/sdg04.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+
+index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg4"]]
+gdf = municipalities.merge(index, on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg4", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg4": "Quality education index (0-100)"},
+          title="SDG 4: Quality education index, ~2024")`,
+    },
+    examples: [
+      {
+        title: "Map the change, ~2012 to ~2024",
+        text: "Subtracts the initial index from the final one: positive values mark the municipalities that moved closer to the goal's targets.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg04", variables="index_sdg4")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg4")
+wide["change"] = wide[2024] - wide[2012]
+gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+                                           on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="change", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"change": "Change in the index (points)"},
+          title="SDG 4: change in the index, ~2012 to ~2024")`,
+      },
+      {
+        title: "Recompute the index from its indicators",
+        text: "Rescales each indicator between the Atlas's worst and best values (Cuadro 21), caps it to 0-100 and averages the available ones, which reproduces the published index.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg04", years=2024).set_index("geo_id")
+bounds = {"sdg4_1_asm": (26, 0), "sdg4_1_ash": (26, 0), "sdg4_2_tam": (0, 100),
+          "sdg4_2_tah": (0, 100), "sdg4_3_aem": (4.8, 14.9), "sdg4_3_aeh":
+          (4.8, 14.9), "sdg4_3_esm": (1.6, 49.8), "sdg4_3_esh": (1.6,
+          49.8), "sdg4_6_alf": (75.6, 100), "sdg4_10_pci": (12, 100),
+          "sdg4_10_pcs": (5.9, 100)}  # (worst, best)
+scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
+                       for v, (w, b) in bounds.items()}).clip(0, 100)
+df["computed"] = scores.mean(axis=1)  # skips missing indicators
+df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(df, x="computed", y="index_sdg4", hover_name="name",
+           labels={"computed": "Computed from the indicators",
+                   "index_sdg4": "Quality education index (0-100)"},
+           title="Recomputed vs published SDG 4 index, ~2024")`,
+      },
+      {
+        title: "Which indicators moved",
+        text: "Compares the mean rescaled score (0-100) of each indicator in the two periods: the gap between the dots is the progress, and the lowest dots are where the goal is furthest away.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg04")
+bounds = {"sdg4_1_asm": (26, 0), "sdg4_1_ash": (26, 0), "sdg4_2_tam": (0, 100),
+          "sdg4_2_tah": (0, 100), "sdg4_3_aem": (4.8, 14.9), "sdg4_3_aeh":
+          (4.8, 14.9), "sdg4_3_esm": (1.6, 49.8), "sdg4_3_esh": (1.6,
+          49.8), "sdg4_6_alf": (75.6, 100), "sdg4_10_pci": (12, 100),
+          "sdg4_10_pcs": (5.9, 100)}  # (worst, best)
+labels = geo.dictionary("sdg04").set_index("variable")["label"]
+rows = [{"indicator": labels[v], "period": f"~{year}",
+         "score": (100 * (part[v] - w) / (b - w)).clip(0, 100).mean()}
+        for year, part in df.groupby("year") for v, (w, b) in bounds.items()]
+px.scatter(pd.DataFrame(rows), x="score", y="indicator", color="period",
+           labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
+           title="SDG 4 indicators, ~2012 and ~2024")`,
+      },
+      {
+        title: "Rank the departments",
+        text: "Averages the index within each department, weighting municipalities by their census population, in both periods.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg04", variables="index_sdg4")
+dep = geo.aggregate(df, to="department",
+                    rules={"index_sdg4": "weighted_mean:population"},
+                    weights=geo.load("sdg", variables="population"))
+dep["department"] = dep["geo_id"].map(
+    geo.units("department").set_index("geo_id")["name"])
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg4"), x="index_sdg4", y="department",
+           color="period",
+           labels={"index_sdg4": "Index (population-weighted)"},
+           title="SDG 4 index by department, ~2012 and ~2024")`,
+      },
+    ],
+  },
+  {
+    id: 'municipalities343-sdg05', type: 'indicator', section: 'indicators',
+    title: "SDG 5: Gender equality",
+    scope: "343 municipalities · 6 indicators and the SDG 5 index · ~2012 and ~2024",
+    summary: "The SDG 5 (Gender equality) index of the SDG Atlas of Bolivia 2026 and its 6 indicators, gender parity in school dropout, poverty, education, labour participation and care work, and women among elected councillors, for every municipality near 2012 and near 2024.",
+    description: "The SDG 5 (Gender equality) index of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), with the 6 indicators behind it: gender parity in secondary dropout (boys/girls) (average 2012–2014 and average 2022–2024); gender parity in multidimensional poverty (male/female head) (2012 and 2024); gender parity in years of education, 25-35 (women/men) (2012 and 2024); gender parity in labour-force participation (women/men) (2012 and 2024); gender parity in domestic and care work, 15-24 (men/women) (2012 and 2024); women among elected councillors (%) (2015 and 2021). Every indicator is measured twice, near the 2012 census and near the 2024 census, and the observatory stores the two values as 2012 and 2024 so that their change can be studied. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value set by the Atlas, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Between the two periods the median index went from 73.5 to 81.9, and it rose in 322 of the 343 units. Some indicators are missing for part of the units (Gender parity in secondary dropout (boys/girls) and Women among elected councillors (%)); the index averages the available ones.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Social"], tags: ["SDGs", "SDG Atlas 2026", "gender", "gender parity", "political representation"],
+    image: 'images/indicators/sdg05.webp',
+    imageAlt: "Map of the Gender equality index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 80.3 – 95.0 (223); Middle 73.0 – 80.3 (103); Low 56.6 – 73.0 (17). Highest: Papel Pampa, Tacachi and El Choro.",
+    mapAlt: "Two maps of the Gender equality index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 80.3 – 95.0 (9 units near 2012, 223 near 2024); Middle 73.0 – 80.3 (174 units near 2012, 103 near 2024); Low 56.6 – 73.0 (160 units near 2012, 17 near 2024). Highest near 2024: Papel Pampa, Tacachi and El Choro.",
+    map: 'images/indicators/sdg05-map.webp',
+    date: '2026-11-17', pinned: false, dataset: 'sdg05',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
+    code: {
+      python: `${PYTHON_SETUP}
+
+# The SDG 5 index (0-100, higher is better), ~2024
+gdf = geo.load("sdg05", variables="index_sdg5", years=2024, geometry=True)
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg5", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg5": "Gender equality index (0-100)"},
+          title="SDG 5: Gender equality index, ~2024").show()
+
+# The two periods: initial (~2012) and final (~2024) values
+df = geo.load("sdg05", variables="index_sdg5")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg5")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
+           title="SDG 5: Gender equality index, ~2012 and ~2024")`,
+      pandas: `import pandas as pd
+import geopandas as gpd
+import plotly.express as px
+
+# No geo4bolivia needed: every file is a plain URL
+BASE = "${RAW_URL}"
+df = pd.read_csv(BASE + "data/municipality/sdg05.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+
+index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg5"]]
+gdf = municipalities.merge(index, on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg5", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg5": "Gender equality index (0-100)"},
+          title="SDG 5: Gender equality index, ~2024")`,
+    },
+    examples: [
+      {
+        title: "Map the change, ~2012 to ~2024",
+        text: "Subtracts the initial index from the final one: positive values mark the municipalities that moved closer to the goal's targets.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg05", variables="index_sdg5")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg5")
+wide["change"] = wide[2024] - wide[2012]
+gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+                                           on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="change", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"change": "Change in the index (points)"},
+          title="SDG 5: change in the index, ~2012 to ~2024")`,
+      },
+      {
+        title: "Recompute the index from its indicators",
+        text: "Rescales each indicator between the Atlas's worst and best values (Cuadro 21), caps it to 0-100 and averages the available ones, which reproduces the published index.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg05", years=2024).set_index("geo_id")
+bounds = {"sdg5_1_pga": (0, 1), "sdg5_1_pgm": (0, 1), "sdg5_1_pge": (0, 1),
+          "sdg5_1_pgp": (0, 1), "sdg5_4_phc": (0, 1), "sdg5_5_acm": (0,
+          50)}  # (worst, best)
+scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
+                       for v, (w, b) in bounds.items()}).clip(0, 100)
+df["computed"] = scores.mean(axis=1)  # skips missing indicators
 df["name"] = geo.units("municipality").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg5", hover_name="name",
-           labels={"computed": "Computed index",
+           labels={"computed": "Computed from the indicators",
                    "index_sdg5": "Gender equality index (0-100)"},
-           title="SDG 5 index: computed vs published")`,
+           title="Recomputed vs published SDG 5 index, ~2024")`,
       },
       {
-        title: 'Which indicator holds the index back',
-        text: 'Averages the rescaled score of each indicator over the municipalities: parity in labour participation is furthest from its target.',
+        title: "Which indicators moved",
+        text: "Compares the mean rescaled score (0-100) of each indicator in the two periods: the gap between the dots is the progress, and the lowest dots are where the goal is furthest away.",
         code: `${PYTHON_SETUP}
 import pandas as pd
 
-bounds = {"sdg5_1_gpsd": (0, 1), "sdg5_1_gpyp": (0.6, 1),
-          "sdg5_1_gpmpi": (0.623, 1), "sdg5_5_gpop": (0.42, 0.95)}
-df = geo.load("sdg05").groupby("geo_id").first()
+df = geo.load("sdg05")
+bounds = {"sdg5_1_pga": (0, 1), "sdg5_1_pgm": (0, 1), "sdg5_1_pge": (0, 1),
+          "sdg5_1_pgp": (0, 1), "sdg5_4_phc": (0, 1), "sdg5_5_acm": (0,
+          50)}  # (worst, best)
 labels = geo.dictionary("sdg05").set_index("variable")["label"]
-
-scores = pd.DataFrame({
-    "indicator": [labels[v] for v in bounds],
-    "score": [(100 * (df[v] - w) / (b - w)).clip(0, 100).mean()
-              for v, (w, b) in bounds.items()],
-})
-px.bar(scores.sort_values("score"), x="score", y="indicator",
-       labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
-       title="SDG 5 components: distance to target")`,
+rows = [{"indicator": labels[v], "period": f"~{year}",
+         "score": (100 * (part[v] - w) / (b - w)).clip(0, 100).mean()}
+        for year, part in df.groupby("year") for v, (w, b) in bounds.items()]
+px.scatter(pd.DataFrame(rows), x="score", y="indicator", color="period",
+           labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
+           title="SDG 5 indicators, ~2012 and ~2024")`,
       },
       {
-        title: 'Rank the departments',
-        text: 'Aggregates the index to departments as population-weighted means.',
+        title: "Rank the departments",
+        text: "Averages the index within each department, weighting municipalities by their census population, in both periods.",
         code: `${PYTHON_SETUP}
 
-df = geo.load("sdg05", variables="index_sdg5", years=2017)
+df = geo.load("sdg05", variables="index_sdg5")
 dep = geo.aggregate(df, to="department",
-                    rules={"index_sdg5": "weighted_mean:pop"},
-                    weights=geo.load("pop"))
-names = geo.units("department").set_index("geo_id")["name"]
-dep["department"] = dep["geo_id"].map(names)
-px.bar(dep.sort_values("index_sdg5"), x="index_sdg5", y="department",
-       labels={"index_sdg5": "Gender equality index (population-weighted)"},
-       title="SDG 5 index by department, 2017")`,
-      },
-      {
-        title: 'Women’s work and urbanization',
-        text: 'Plots gender parity in labour participation against the urbanization rate, both from the 2012 census.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg05", variables=["sdg5_5_gpop", "urbano_2012"], years=2012)
-df["name"] = df["geo_id"].map(geo.units("municipality").set_index("geo_id")["name"])
-px.scatter(df, x="urbano_2012", y="sdg5_5_gpop", hover_name="name",
-           labels={"urbano_2012": "Urbanization rate (%)",
-                   "sdg5_5_gpop": "Gender parity in labour participation"},
-           title="Gender parity in labour participation and urbanization, 2012")`,
-      },
-    ],
-  },
-  {
-    id: 'municipalities339-sdg06', type: 'indicator', section: 'indicators',
-    title: 'SDG 6: Clean water and sanitation',
-    scope: '339 municipalities · 3 indicators and the SDG 6 index · 2012–2020',
-    summary: 'The SDG 6 index of the Municipal Atlas of the SDGs and its three indicators of drinking water, sanitation and wastewater treatment in 2017, for every Bolivian municipality.',
-    description: 'The SDG 6 (Clean water and sanitation) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) for all 339 municipalities, with the three indicators behind it, all for 2017: drinking water coverage and sanitation coverage (% of the population, unpublished official data of the Vice-Ministry of Drinking Water and Basic Sanitation, whose methodology the Atlas does not describe) and the share of wastewater treated (from the 2018 performance study of the regulated water and sewerage providers by the water regulator AAPS and the Ministry of Environment and Water). Each indicator is rescaled linearly to 0–100 between a worst and a best value, capped at both ends so that higher is always better, and the index (0–100, 100 = targets met) is the simple mean of the rescaled indicators. Treated wastewater is 0 in 311 municipalities and above 100 in six, as in the source. The Atlas population (2020) and urbanization rate (2012 census) are included as context; they are not inputs of the index.',
-    geography: 'Municipality', units: 339, period: '2012–2020', frequency: 'One reference year per indicator', key: 'geo_id', idExample: 'BO-04-17-04',
-    categories: ['Social', 'Environment'], tags: ['SDGs', 'water', 'sanitation', 'wastewater', 'municipalities'],
-    image: 'images/indicators/sdg06.webp',
-    imageAlt: 'Map of the Clean water and sanitation index (0-100) in 2017 across 339 Bolivian municipalities in three natural-break classes: high in Tarija and the Chaco and in a few municipalities of Santa Cruz and the main cities, middle across most of the lowlands of Santa Cruz, Beni and Pando, low across the altiplano and valleys of La Paz, Oruro, Cochabamba, Potosí and Chuquisaca and in parts of Beni and Pando',
-    map: 'images/indicators/sdg06-map.webp',
-    mapAlt: 'Map of the Clean water and sanitation index (0-100) in 2017 across 339 Bolivian municipalities in three natural-break classes: high in Tarija and the Chaco and in a few municipalities of Santa Cruz and the main cities, middle across most of the lowlands of Santa Cruz, Beni and Pando, low across the altiplano and valleys of La Paz, Oruro, Cochabamba, Potosí and Chuquisaca and in parts of Beni and Pando. Legend: High 55.8 to 95.0 (27 municipalities), Middle 30.9 to 55.8 (179), Low 0.0 to 30.9 (133).',
-    date: '2026-10-30', pinned: false, dataset: 'sdg06',
-    notice: 'Each variable has values only in its reference year: load the index with its year, e.g. geo.load("sdg06", variables="index_sdg6", years=2017). The index is stored at 2017, the latest reference year of its indicators.',
-    code: {
-      python: `${PYTHON_SETUP}
-
-# The SDG 6 index in 2017, with municipal boundaries
-gdf = geo.load("sdg06", variables="index_sdg6", years=2017, geometry=True)
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg6", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg6": "Clean water and sanitation index (0-100)"},
-          title="SDG 6: Clean water and sanitation, 2017").show()
-
-# Drinking water against sanitation coverage
-df = geo.load("sdg06", years=2017)
-df["name"] = df["geo_id"].map(geo.units("municipality").set_index("geo_id")["name"])
-px.scatter(df, x="sdg6_1_dwc", y="sdg6_2_sc", hover_name="name",
-           labels={"sdg6_1_dwc": "Drinking water coverage (%)",
-                   "sdg6_2_sc": "Sanitation coverage (%)"},
-           title="Water and sanitation coverage, 2017")`,
-      pandas: `import pandas as pd
-import geopandas as gpd
-import plotly.express as px
-
-# No geo4bolivia needed: every file is a plain URL
-BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg06.csv")   # geo_id, year, variables
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
-
-index = df.loc[df["year"] == 2017, ["geo_id", "index_sdg6"]]
-gdf = municipalities.merge(index, on="geo_id")
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg6", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg6": "Clean water and sanitation index (0-100)"},
-          title="SDG 6: Clean water and sanitation, 2017")`,
-    },
-    examples: [
-      {
-        title: 'Compute the index from its indicators',
-        text: 'Rescales each indicator between its worst and best value, caps it at 0 and 100, averages the three and checks the result against the published SDG 6 index.',
-        code: `${PYTHON_SETUP}
-import pandas as pd
-
-# Worst and best values of each indicator (Atlas, Cuadro 17)
-bounds = {"sdg6_1_dwc": (28.4, 100), "sdg6_2_sc": (5.7, 100),
-          "sdg6_3_wwt": (0, 100)}
-
-df = geo.load("sdg06").groupby("geo_id").first()   # each variable at its year
-scores = pd.DataFrame({v: (100 * (df[v] - w) / (b - w)).clip(0, 100)
-                       for v, (w, b) in bounds.items()})
-df["computed"] = scores.mean(axis=1)
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
-print(df["computed"].corr(df["index_sdg6"]))
-
-px.scatter(df, x="computed", y="index_sdg6", hover_name="name",
-           labels={"computed": "Computed index",
-                   "index_sdg6": "Clean water and sanitation index (0-100)"},
-           title="Computed vs published SDG 6 index")`,
-      },
-      {
-        title: 'Which indicator holds the index back',
-        text: 'Shows the average rescaled score (0–100) of each indicator across the 339 municipalities: treated wastewater, zero in most of them, pulls the index down most.',
-        code: `${PYTHON_SETUP}
-import pandas as pd
-
-bounds = {"sdg6_1_dwc": (28.4, 100), "sdg6_2_sc": (5.7, 100),
-          "sdg6_3_wwt": (0, 100)}
-labels = {"sdg6_1_dwc": "Drinking water coverage (%)",
-          "sdg6_2_sc": "Sanitation coverage (%)",
-          "sdg6_3_wwt": "Wastewater treated (%)"}
-
-df = geo.load("sdg06", years=2017)
-rows = [{"indicator": labels[v],
-         "score": (100 * (df[v] - w) / (b - w)).clip(0, 100).mean()}
-        for v, (w, b) in bounds.items()]
-px.bar(pd.DataFrame(rows), x="score", y="indicator",
-       labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
-       title="Average score of each SDG 6 indicator, 2017")`,
-      },
-      {
-        title: 'Rank the departments',
-        text: 'Ranks the nine departments by their population-weighted SDG 6 index.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg06", variables="index_sdg6", years=2017)
-dep = geo.aggregate(df, to="department",
-                    rules={"index_sdg6": "weighted_mean:pop"},
-                    weights=geo.load("pop"))
-names = geo.units("department").set_index("geo_id")["name"]
-dep["department"] = dep["geo_id"].map(names)
-px.bar(dep.sort_values("index_sdg6"), x="index_sdg6", y="department",
-       labels={"index_sdg6": "Clean water and sanitation index (0-100)"},
-       title="SDG 6 index by department (population-weighted), 2017")`,
-      },
-      {
-        title: 'Urbanization and sanitation',
-        text: 'Plots sanitation coverage in 2017 against the 2012 urbanization rate, coloured by department.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg06").groupby("geo_id", as_index=False).first()
-units = geo.units("municipality").set_index("geo_id")
-departments = geo.units("department").set_index("geo_id")["name"]
-df["name"] = df["geo_id"].map(units["name"])
-df["department"] = df["geo_id"].map(units["department_id"]).map(departments)
-px.scatter(df, x="urbano_2012", y="sdg6_2_sc", color="department",
-           hover_name="name",
-           labels={"urbano_2012": "Urbanization rate (%)",
-                   "sdg6_2_sc": "Sanitation coverage (%)"},
-           title="Urbanization (2012) and sanitation coverage (2017)")`,
-      },
-    ],
-  },
-  {
-    id: 'municipalities339-sdg07', type: 'indicator', section: 'indicators',
-    title: 'SDG 7: Affordable and clean energy',
-    scope: '339 municipalities · 4 indicators and the SDG 7 index · 2012–2016',
-    summary: 'The SDG 7 clean energy index and its four indicators of electricity coverage, residential electricity use, clean cooking energy and energy CO2 emissions per person.',
-    description: 'The SDG 7 (Affordable and clean energy) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) for all 339 municipalities, on a 0–100 scale where 100 means the goal’s targets are met, with the four indicators behind it: electricity coverage (% of the population) and clean cooking energy (% of households cooking with electricity, piped natural gas or LPG), both from the 2012 Population and Housing Census (INE), and residential electricity use (kWh per person) and energy-related CO2 emissions (t per person), both for 2016 from Andersen, Branisa & Calderón (2019). Each indicator is rescaled to 0–100 between a worst and a best value, with higher always better and values beyond the bounds capped, and the index is the simple mean of the rescaled indicators. Every municipality has all four indicators. The indicators refer to different years, so each is stored at its own reference year and the index at 2016, the latest of them. The Atlas population (2020) and urbanization rate (2012) are included as context.',
-    geography: 'Municipality', units: 339, period: '2012–2016', frequency: 'One reference year per indicator', key: 'geo_id', idExample: 'BO-04-17-04',
-    categories: ['Economy', 'Environment'], tags: ['SDGs', 'energy', 'electricity', 'CO2 emissions', 'municipalities'],
-    image: 'images/indicators/sdg07.webp',
-    imageAlt: 'Map of the Clean energy index (0-100) in 2016 across 339 Bolivian municipalities in three natural-break classes: high in the departmental capitals and their metropolitan areas (Santa Cruz, La Paz and El Alto, the Cochabamba valley, Tarija, Trinidad, Cobija), low in the northern Potosí and Chuquisaca valleys, the rural altiplano of La Paz and Oruro and Charagua in the Chaco',
-    map: 'images/indicators/sdg07-map.webp',
-    mapAlt: 'Map of the Clean energy index (0-100) in 2016 across 339 Bolivian municipalities in three natural-break classes: high in the departmental capitals and their metropolitan areas (Santa Cruz, La Paz and El Alto, the Cochabamba valley, Tarija, Trinidad, Cobija), low in the northern Potosí and Chuquisaca valleys, the rural altiplano of La Paz and Oruro and Charagua in the Chaco. Legend: High 63.4 to 96.5 (74 municipalities), Middle 45.5 to 63.4 (142), Low 24.9 to 45.5 (123).',
-    date: '2026-10-30', pinned: false, dataset: 'sdg07',
-    notice: 'Each variable has values only in its reference year: load the index with its year, e.g. geo.load("sdg07", variables="index_sdg7", years=2016). The index is stored at 2016, the latest reference year of its indicators (two of them are from 2012).',
-    code: {
-      python: `${PYTHON_SETUP}
-
-# The SDG 7 index in 2016, with municipal boundaries
-gdf = geo.load("sdg07", variables="index_sdg7", years=2016, geometry=True)
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg7", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg7": "Clean energy index (0-100)"},
-          title="SDG 7: Affordable and clean energy, 2016").show()
-
-# Electricity coverage (2012) against clean cooking energy (2012)
-df = geo.load("sdg07", years=2012)
-df["name"] = df["geo_id"].map(geo.units("municipality").set_index("geo_id")["name"])
-px.scatter(df, x="sdg7_1_ec", y="sdg7_1_cce", hover_name="name",
-           labels={"sdg7_1_ec": "Electricity coverage (%)",
-                   "sdg7_1_cce": "Clean cooking energy (% of households)"},
-           title="Electricity and clean cooking, 2012")`,
-      pandas: `import pandas as pd
-import geopandas as gpd
-import plotly.express as px
-
-# No geo4bolivia needed: every file is a plain URL
-BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg07.csv")  # geo_id, year, variables
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
-
-index = df.loc[df["year"] == 2016, ["geo_id", "index_sdg7"]]
-gdf = municipalities.merge(index, on="geo_id")
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg7", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg7": "Clean energy index (0-100)"},
-          title="SDG 7: Affordable and clean energy, 2016")`,
-    },
-    examples: [
-      {
-        title: 'Compute the index from its indicators',
-        text: 'Rescales each indicator between the Atlas’s worst and best values, caps it at 0–100 and averages the four, which reproduces the published SDG 7 index to within 0.2 points.',
-        code: `${PYTHON_SETUP}
-
-# Every variable at its own reference year, one row per municipality
-df = geo.load("sdg07").groupby("geo_id").first()
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
-
-# Worst and best values of each indicator (Atlas, Cuadro 17)
-bounds = {"sdg7_1_ec": (25.6, 100), "sdg7_1_rec": (9, 563),
-          "sdg7_1_cce": (6.9, 97), "sdg7_3_co2epc": (8, 0)}
-scores = df[list(bounds)].copy()
-for var, (worst, best) in bounds.items():
-    scores[var] = (100 * (df[var] - worst) / (best - worst)).clip(0, 100)
-df["computed"] = scores.mean(axis=1)    # missing indicators are skipped
-
-px.scatter(df, x="computed", y="index_sdg7", hover_name="name",
-           labels={"computed": "Computed index (0-100)",
-                   "index_sdg7": "Clean energy index (0-100)"},
-           title="SDG 7 index: computed vs published")`,
-      },
-      {
-        title: 'Which indicator holds the index back',
-        text: 'Averages each indicator’s 0–100 score over the municipalities: residential electricity use scores lowest, energy CO2 emissions highest.',
-        code: `${PYTHON_SETUP}
-import pandas as pd
-
-df = geo.load("sdg07").groupby("geo_id").first()
-bounds = {"sdg7_1_ec": (25.6, 100), "sdg7_1_rec": (9, 563),
-          "sdg7_1_cce": (6.9, 97), "sdg7_3_co2epc": (8, 0)}
-labels = {"sdg7_1_ec": "Electricity coverage (%)",
-          "sdg7_1_rec": "Residential electricity use (kWh per person)",
-          "sdg7_1_cce": "Clean cooking energy (% of households)",
-          "sdg7_3_co2epc": "Energy CO2 emissions (t per person)"}
-rows = []
-for var, (worst, best) in bounds.items():
-    score = (100 * (df[var] - worst) / (best - worst)).clip(0, 100)
-    rows.append({"indicator": labels[var], "score": score.mean()})
-px.bar(pd.DataFrame(rows).sort_values("score"), x="score", y="indicator",
-       labels={"score": "Mean score (0-100)", "indicator": ""},
-       title="SDG 7: mean score of each indicator")`,
-      },
-      {
-        title: 'Rank the departments',
-        text: 'Averages the index by department, weighting each municipality by its gridded population in 2016.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg07", variables="index_sdg7", years=2016)
-dep = geo.aggregate(df, to="department",
-                    rules={"index_sdg7": "weighted_mean:pop"},
-                    weights=geo.load("pop"))
-names = geo.units("department").set_index("geo_id")["name"]
-dep["department"] = dep["geo_id"].map(names)
-px.bar(dep.sort_values("index_sdg7"), x="index_sdg7", y="department",
-       labels={"index_sdg7": "Clean energy index (0-100, population-weighted)"},
-       title="SDG 7 index by department, 2016")`,
-      },
-      {
-        title: 'Clean energy and night-time lights',
-        text: 'Links the 2016 index with the observatory’s night-time lights per capita for the same year.',
-        code: `${PYTHON_SETUP}
-
-sdg = geo.load("sdg07", variables="index_sdg7", years=2016)
-ntl = geo.load("ntl", variables="ln_t400NTLpc", years=2016)
-df = sdg.merge(ntl, on=["geo_id", "year"])
-df["name"] = df["geo_id"].map(geo.units("municipality").set_index("geo_id")["name"])
-px.scatter(df, x="ln_t400NTLpc", y="index_sdg7", hover_name="name",
-           labels={"ln_t400NTLpc": "Log night-time lights per capita (trend)",
-                   "index_sdg7": "Clean energy index (0-100)"},
-           title="Clean energy and night-time lights, 2016")`,
-      },
-    ],
-  },
-  {
-    id: 'municipalities339-sdg08', type: 'indicator', section: 'indicators',
-    title: 'SDG 8: Decent work and economic growth',
-    scope: '339 municipalities · 7 indicators and the SDG 8 index · 2012–2018',
-    summary: 'The SDG 8 index of decent work and economic growth for the 339 municipalities, with its seven indicators of labour participation, youth inactivity, idle electricity meters, bank branches and migration intermediation.',
-    description: 'The SDG 8 (Decent work and economic growth) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) and the seven indicators behind it, for all 339 municipalities. Four come from the 2012 Population and Housing Census (INE): the labour participation rates of men and women aged 10 or older and the shares of young men and women aged 15–24 who neither study nor take part in the labour market. The others are the share of residential electricity meters with zero consumption in May 2016 (Andersen, Branisa & Calderón, 2019), commercial bank branches per 100,000 people in 2018 (ASFI and INE projections) and an index of intermediation in internal migration built from the 2012 census (Rocha-Portugal, Vera-Cossío & Wanderley, 2020). The index runs from 0 to 100, where 100 means the targets are met: each indicator is rescaled linearly between a worst and a best value, capped at 0 and 100, and the index is the simple mean of the available rescaled indicators. The zero-consumption meters are missing for 23 municipalities, whose index averages the other six. Because the indicators refer to different years, the index is stored at 2018, the latest of them. The Atlas population (2020) and urbanization rate (2012) are included as context.',
-    geography: 'Municipality', units: 339, period: '2012–2018', frequency: 'One reference year per indicator', key: 'geo_id', idExample: 'BO-04-17-04',
-    categories: ['Economy'], tags: ['SDGs', 'employment', 'labour participation', 'financial inclusion', 'municipalities'],
-    image: 'images/indicators/sdg08.webp',
-    imageAlt: 'Map of the Decent work and growth index (0-100) in 2018 across 339 Bolivian municipalities in three natural-break classes: high in the Yungas of La Paz, the Chapare and the cities of La Paz, El Alto, Cochabamba, Santa Cruz de la Sierra and Tarija, low in Pando, the western altiplano of Oruro, southwestern Potosí and the Chaco and Chiquitanía of Santa Cruz',
-    map: 'images/indicators/sdg08-map.webp',
-    mapAlt: 'Map of the Decent work and growth index (0-100) in 2018 across 339 Bolivian municipalities in three natural-break classes: high in the Yungas of La Paz, the Chapare and the cities of La Paz, El Alto, Cochabamba, Santa Cruz de la Sierra and Tarija, low in Pando, the western altiplano of Oruro, southwestern Potosí and the Chaco and Chiquitanía of Santa Cruz. Legend: High 51.8 to 72.5 (85 municipalities), Middle 38.5 to 51.8 (162), Low 14.9 to 38.5 (92).',
-    date: '2026-10-30', pinned: false, dataset: 'sdg08',
-    notice: 'Each variable has values only in its reference year: load one with its year, e.g. geo.load("sdg08", variables="index_sdg8", years=2018). The index is stored at 2018, the latest reference year of its indicators.',
-    code: {
-      python: `${PYTHON_SETUP}
-
-# The SDG 8 index (stored at 2018), with municipal boundaries
-gdf = geo.load("sdg08", variables="index_sdg8", years=2018, geometry=True)
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg8", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg8": "Decent work and growth index (0-100)"},
-          title="SDG 8: Decent work and economic growth, 2018").show()
-
-# Every variable at its own year: bank branches and the index
-df = geo.load("sdg08").groupby("geo_id", as_index=False).first()
-df["name"] = df["geo_id"].map(geo.units("municipality").set_index("geo_id")["name"])
-px.scatter(df, x="sdg8_10_dbb", y="index_sdg8", hover_name="name",
-           labels={"sdg8_10_dbb": "Bank branches per 100,000 people",
-                   "index_sdg8": "Decent work and growth index (0-100)"},
-           title="Bank branches (2018) and the SDG 8 index")`,
-      pandas: `import pandas as pd
-import geopandas as gpd
-import plotly.express as px
-
-# No geo4bolivia needed: every file is a plain URL
-BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg08.csv")   # geo_id, year, variables
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
-
-index = df.loc[df["year"] == 2018, ["geo_id", "index_sdg8"]].dropna()
-gdf = municipalities.merge(index, on="geo_id")
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg8", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg8": "Decent work and growth index (0-100)"},
-          title="SDG 8: Decent work and economic growth, 2018")`,
-    },
-    examples: [
-      {
-        title: 'Compute the index from its indicators',
-        text: 'Rescales the seven indicators between the Atlas bounds and averages them, which reproduces the published SDG 8 index.',
-        code: `${PYTHON_SETUP}
-import pandas as pd
-
-df = geo.load("sdg08").groupby("geo_id").first()   # each variable at its year
-bounds = {"sdg8_4_rem": (39.1, 0.3), "sdg8_5_oprm": (61.2, 83.0),
-          "sdg8_5_ofrm": (30.6, 75.2), "sdg8_6_mlm": (40.0, 8.0),
-          "sdg8_6_wlm": (40.0, 8.0), "sdg8_10_dbb": (0.0, 60.0),
-          "sdg8_11_idi": (0.01, 13.26)}            # (worst, best) per indicator
-scores = pd.DataFrame({v: (100 * (df[v] - w) / (b - w)).clip(0, 100)
-                       for v, (w, b) in bounds.items()})
-df["computed"] = scores.mean(axis=1)              # missing indicators skipped
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
-px.scatter(df, x="computed", y="index_sdg8", hover_name="name",
-           labels={"computed": "Computed index (0-100)",
-                   "index_sdg8": "Decent work and growth index (0-100)"},
-           title="SDG 8 index: computed vs published")`,
-      },
-      {
-        title: 'Which indicator holds the index back',
-        text: 'Averages each indicator’s 0–100 score over the municipalities to show which ones pull the SDG 8 index down most.',
-        code: `${PYTHON_SETUP}
-import pandas as pd
-
-df = geo.load("sdg08").groupby("geo_id").first()
-bounds = {"sdg8_4_rem": (39.1, 0.3), "sdg8_5_oprm": (61.2, 83.0),
-          "sdg8_5_ofrm": (30.6, 75.2), "sdg8_6_mlm": (40.0, 8.0),
-          "sdg8_6_wlm": (40.0, 8.0), "sdg8_10_dbb": (0.0, 60.0),
-          "sdg8_11_idi": (0.01, 13.26)}
-scores = pd.DataFrame({v: (100 * (df[v] - w) / (b - w)).clip(0, 100)
-                       for v, (w, b) in bounds.items()})
-labels = geo.dictionary("sdg08").set_index("variable")["label"]
-mean = scores.mean().rename("score").rename_axis("variable").reset_index()
-mean["indicator"] = mean["variable"].map(labels)
-px.bar(mean.sort_values("score"), x="score", y="indicator",
-       labels={"score": "Mean score (0-100, 100 = target met)", "indicator": ""},
-       title="SDG 8: mean score of each indicator")`,
-      },
-      {
-        title: 'Women’s and men’s labour participation',
-        text: 'Compares the labour participation rates of women and men in 2012, municipality by municipality and by department.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg08", variables=["sdg8_5_oprm", "sdg8_5_ofrm"], years=2012)
-units = geo.units("municipality").set_index("geo_id")
-departments = geo.units("department").set_index("geo_id")["name"]
-df["name"] = df["geo_id"].map(units["name"])
-df["department"] = df["geo_id"].map(units["department_id"]).map(departments)
-px.scatter(df, x="sdg8_5_oprm", y="sdg8_5_ofrm", color="department",
-           hover_name="name",
-           labels={"sdg8_5_oprm": "Male labour participation rate (%)",
-                   "sdg8_5_ofrm": "Female labour participation rate (%)"},
-           title="Labour participation of women and men, 2012")`,
-      },
-      {
-        title: 'Rank the departments',
-        text: 'Averages the SDG 8 index over each department’s municipalities, weighted by their population in 2018.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg08", variables="index_sdg8", years=2018)
-dep = geo.aggregate(df, to="department", rules={"index_sdg8": "weighted_mean:pop"},
-                    weights=geo.load("pop"))
-dep["department"] = dep["geo_id"].map(geo.units("department")
-                                      .set_index("geo_id")["name"])
-px.bar(dep.sort_values("index_sdg8"), x="index_sdg8", y="department",
-       labels={"index_sdg8": "Decent work and growth index (population-weighted)"},
-       title="SDG 8 index by department, 2018")`,
-      },
-    ],
-  },
-  {
-    id: 'municipalities339-sdg09', type: 'indicator', section: 'indicators',
-    title: 'SDG 9: Industry, innovation and infrastructure',
-    scope: '339 municipalities · 5 indicators and the SDG 9 index · 2012–2019',
-    summary: 'The SDG 9 index of the Municipal Atlas of the SDGs and its five indicators of road and rail links, phone access, mobile antennas and school technology, for every municipality.',
-    description: 'The SDG 9 (Industry, innovation and infrastructure) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) and the five indicators behind it, for all 339 municipalities: the number of railways and primary roads of the national trunk network entering or leaving the municipality (2019, Conservación Internacional Bolivia), the share of households with a fixed or mobile phone (2012 census, INE), and three AGETIC measures for 2016: mobile radio base stations per 1,000 people, Kuaa laptops per 100 school-age people and the share of public schools with technology floors. The index runs from 0 (worst) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value, capped at 0 and 100, and the index is the simple mean of the available rescaled indicators. Schools with technology floors is missing for 16 municipalities, whose index averages the other four. The components refer to different years, so the index is stored at 2019, the latest of them. The Atlas population (2020) and urbanization rate (2012) are included as context.',
-    geography: 'Municipality', units: 339, period: '2012–2019', frequency: 'One reference year per indicator', key: 'geo_id', idExample: 'BO-04-17-04',
-    categories: ['Economy'], tags: ['SDGs', 'infrastructure', 'roads', 'telecommunications', 'municipalities'],
-    image: 'images/indicators/sdg09.webp',
-    imageAlt: 'Map of the Industry and infrastructure index (0-100) in 2019 across 339 Bolivian municipalities in three natural-break classes: high in Tarija and along the La Paz–Oruro–Cochabamba–Santa Cruz corridor, low in Pando, the rural valleys of Chuquisaca, northern Potosí and Cochabamba, and parts of northern La Paz',
-    map: 'images/indicators/sdg09-map.webp',
-    mapAlt: 'Map of the Industry and infrastructure index (0-100) in 2019 across 339 Bolivian municipalities in three natural-break classes: high in Tarija and along the La Paz–Oruro–Cochabamba–Santa Cruz corridor, low in Pando, the rural valleys of Chuquisaca, northern Potosí and Cochabamba, and parts of northern La Paz. Legend: High 46.8 to 78.9 (80 municipalities), Middle 28.6 to 46.8 (136), Low 0.6 to 28.6 (123).',
-    date: '2026-10-30', pinned: false, dataset: 'sdg09',
-    notice: 'Each variable has values only in its reference year: load the index with its year, e.g. geo.load("sdg09", variables="index_sdg9", years=2019). The index is stored at 2019, the latest reference year of its indicators (2012, 2016 and 2019).',
-    code: {
-      python: `${PYTHON_SETUP}
-
-# The SDG 9 index at its reference year, with municipal boundaries
-gdf = geo.load("sdg09", variables="index_sdg9", years=2019, geometry=True)
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg9", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg9": "Industry and infrastructure index (0-100)"},
-          title="SDG 9 index, 2019").show()
-
-# The index by department
-names = geo.units("department").set_index("geo_id")["name"]
-gdf["department"] = gdf["geo_id"].str[:5].map(names)    # BO-DD
-px.box(gdf, x="department", y="index_sdg9", hover_name="name",
-       labels={"index_sdg9": "Industry and infrastructure index (0-100)"},
-       title="SDG 9 index by department, 2019")`,
-      pandas: `import pandas as pd
-import geopandas as gpd
-import plotly.express as px
-
-# No geo4bolivia needed: every file is a plain URL
-BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg09.csv")
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
-
-index = df.loc[df["year"] == 2019, ["geo_id", "index_sdg9"]]
-gdf = municipalities.merge(index, on="geo_id")
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg9", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg9": "Industry and infrastructure index (0-100)"},
-          title="SDG 9 index, 2019")`,
-    },
-    examples: [
-      {
-        title: 'Compute the index from its indicators',
-        text: 'Rescales each indicator between the Atlas worst and best values, averages them and checks the result against the published SDG 9 index.',
-        code: `${PYTHON_SETUP}
-
-import pandas as pd
-
-# Every variable at its own reference year: one row per municipality
-df = geo.load("sdg09").groupby("geo_id").first()
-names = geo.units("municipality").set_index("geo_id")["name"]
-df["name"] = df.index.map(names)
-
-# Atlas bounds of each indicator: [worst, best]
-bounds = {"sdg9_1_routes": [0.0, 2.0], "sdg9_5_cd": [0.0, 6.5],
-          "sdg9_5_eutf": [0.0, 80.0], "sdg9_c_mnc": [8.4, 100.0],
-          "sdg9_c_drb": [0.3, 11.4]}
-scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
-                       for v, (w, b) in bounds.items()}).clip(0, 100)
-df["computed"] = scores.mean(axis=1)    # missing indicators are skipped
-
-px.scatter(df, x="computed", y="index_sdg9", hover_name="name",
-           labels={"computed": "Computed index (0-100)",
-                   "index_sdg9": "Industry and infrastructure index (0-100)"},
-           title="SDG 9 index: computed vs published")`,
-      },
-      {
-        title: 'Which indicator pulls the index down',
-        text: 'Averages each indicator’s 0–100 score across municipalities to show where the goal is furthest from its target.',
-        code: `${PYTHON_SETUP}
-
-import pandas as pd
-
-df = geo.load("sdg09").groupby("geo_id").first()
-bounds = {"sdg9_1_routes": [0.0, 2.0], "sdg9_5_cd": [0.0, 6.5],
-          "sdg9_5_eutf": [0.0, 80.0], "sdg9_c_mnc": [8.4, 100.0],
-          "sdg9_c_drb": [0.3, 11.4]}
-scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
-                       for v, (w, b) in bounds.items()}).clip(0, 100)
-
-labels = geo.dictionary("sdg09").set_index("variable")["label"]
-mean = scores.mean().rename_axis("variable").reset_index(name="score")
-mean["indicator"] = mean["variable"].map(labels)
-px.bar(mean.sort_values("score"), x="score", y="indicator",
-       labels={"score": "Mean score (0-100)", "indicator": ""},
-       title="Mean SDG 9 indicator scores across municipalities")`,
-      },
-      {
-        title: 'Departments ranked by population-weighted index',
-        text: 'Aggregates the municipal index to departments, weighting each municipality by its 2019 population.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg09", variables="index_sdg9", years=2019)
-dep = geo.aggregate(df, to="department",
-                    rules={"index_sdg9": "weighted_mean:pop"},
-                    weights=geo.load("pop"))
-names = geo.units("department").set_index("geo_id")["name"]
-dep["department"] = dep["geo_id"].map(names)
-px.bar(dep.sort_values("index_sdg9"), x="index_sdg9", y="department",
-       labels={"index_sdg9": "Industry and infrastructure index (0-100)"},
-       title="SDG 9 index by department (population-weighted), 2019")`,
-      },
-      {
-        title: 'Infrastructure and night-time lights',
-        text: 'Links the SDG 9 index to the trend of night-time lights per capita in 2019, a satellite proxy for economic activity.',
-        code: `${PYTHON_SETUP}
-
-sdg = geo.load("sdg09", variables="index_sdg9", years=2019)
-ntl = geo.load("ntl", variables="ln_t400NTLpc", years=2019)
-df = sdg.merge(ntl, on=["geo_id", "year"])
-names = geo.units("municipality").set_index("geo_id")["name"]
-df["name"] = df["geo_id"].map(names)
-px.scatter(df, x="ln_t400NTLpc", y="index_sdg9", hover_name="name",
-           labels={"ln_t400NTLpc": "Log lights per capita (trend)",
-                   "index_sdg9": "Industry and infrastructure index (0-100)"},
-           title="SDG 9 index and night-time lights, 2019")`,
-      },
-    ],
-  },
-  {
-    id: 'municipalities339-sdg10', type: 'indicator', section: 'indicators',
-    title: 'SDG 10: Reduced inequalities',
-    scope: '339 municipalities · 3 indicators and the SDG 10 index · 2012–2020',
-    summary: 'The Atlas’s SDG 10 index for every municipality, built from inequality in schooling, inequality in household electricity use and the share of people who do not speak Spanish.',
-    description: 'The SDG 10 (Reduced inequalities) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) for all 339 municipalities, on a 0–100 scale where 100 means the goal’s targets are met, with the three indicators behind it: the Gini coefficient of years of schooling of people aged 25–65 and the share of the population aged 3 or older who do not speak Spanish, both from the 2012 Population and Housing Census (INE), and the inequality of residential electricity consumption per household in 2016, a generalised entropy index GE(-1) from electricity-meter records (Andersen, Branisa & Calderón, 2019). Each indicator is rescaled linearly to 0–100 between a worst and a best value, capped at both ends, and the index is the simple mean of the available rescaled indicators. Electricity inequality is missing for 24 municipalities, whose index averages the other two, and its values are on the Atlas’s own scale (apparently GE(-1) × 100). The index is stored at 2016, the latest year of its indicators; the Atlas’s 2020 population and 2012 urbanization rate are included as context.',
-    geography: 'Municipality', units: 339, period: '2012–2020', frequency: 'One reference year per indicator', key: 'geo_id', idExample: 'BO-04-17-04',
-    categories: ['Social'], tags: ['SDGs', 'inequality', 'education', 'electricity', 'language'],
-    image: 'images/indicators/sdg10.webp',
-    imageAlt: 'Map of the Reduced inequalities index (0-100) in 2016 across 339 Bolivian municipalities in three natural-break classes: high on the altiplano of La Paz and Oruro and in southwestern Potosí, low in the valleys of Cochabamba, northern Potosí and Chuquisaca and in central Santa Cruz',
-    map: 'images/indicators/sdg10-map.webp',
-    mapAlt: 'Map of the Reduced inequalities index (0-100) in 2016 across 339 Bolivian municipalities in three natural-break classes: high on the altiplano of La Paz and Oruro and in southwestern Potosí, low in the valleys of Cochabamba, northern Potosí and Chuquisaca and in central Santa Cruz. Legend: High 73.4 to 95.7 (107 municipalities), Middle 55.1 to 73.4 (154), Low 10.3 to 55.1 (78).',
-    date: '2026-10-30', pinned: false, dataset: 'sdg10',
-    notice: 'Each variable has values only in its reference year: load the index with its year, e.g. geo.load("sdg10", variables="index_sdg10", years=2016). The index is stored at 2016, the latest year of its indicators (two of them refer to 2012).',
-    code: {
-      python: `${PYTHON_SETUP}
-
-# The SDG 10 index in its year, with municipal boundaries
-gdf = geo.load("sdg10", variables="index_sdg10", years=2016, geometry=True)
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg10", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg10": "Reduced inequalities index (0-100)"},
-          title="SDG 10: Reduced inequalities, 2016").show()
-
-# Schooling inequality against the index (each variable at its own year)
-cs = geo.load("sdg10").groupby("geo_id", as_index=False).first()
-cs["name"] = cs["geo_id"].map(geo.units("municipality").set_index("geo_id")["name"])
-px.scatter(cs, x="sdg10_2_gcye", y="index_sdg10", hover_name="name",
-           labels={"sdg10_2_gcye": "Gini of years of schooling",
-                   "index_sdg10": "Reduced inequalities index (0-100)"},
-           title="Schooling inequality and the SDG 10 index")`,
-      pandas: `import pandas as pd
-import geopandas as gpd
-import plotly.express as px
-
-# No geo4bolivia needed: every file is a plain URL
-BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg10.csv")  # geo_id, year, variables
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
-
-index = df.loc[df["year"] == 2016, ["geo_id", "index_sdg10"]]
-gdf = municipalities.merge(index, on="geo_id")
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg10", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg10": "Reduced inequalities index (0-100)"},
-          title="SDG 10: Reduced inequalities, 2016")`,
-    },
-    examples: [
-      {
-        title: 'Compute the index from its indicators',
-        text: 'Rescales each indicator between the Atlas’s worst and best values, averages the available scores and compares the result with the published index (they match to within 0.7 points, from the rounding of the published Gini).',
-        code: `${PYTHON_SETUP}
-
-# Atlas bounds for each indicator: [worst, best]
-bounds = {"sdg10_2_gcye": [0.578, 0.214],
-          "sdg10_2_iec": [228.0, 11.0],
-          "sdg10_2_nssp": [51.8, 1.1]}
-cs = geo.load("sdg10").groupby("geo_id").first()   # each variable at its year
-scores = cs[list(bounds)].copy()
-for var, (worst, best) in bounds.items():
-    scores[var] = (100 * (cs[var] - worst) / (best - worst)).clip(0, 100)
-cs["computed"] = scores.mean(axis=1)               # missing indicators skipped
-cs["name"] = geo.units("municipality").set_index("geo_id")["name"]
-print(cs["computed"].corr(cs["index_sdg10"]))
-px.scatter(cs, x="index_sdg10", y="computed", hover_name="name",
-           labels={"index_sdg10": "Published index (0-100)",
-                   "computed": "Computed index (0-100)"},
-           title="SDG 10 index: computed vs published")`,
-      },
-      {
-        title: 'Which indicator pulls the index down',
-        text: 'Shows the average rescaled score (0–100) of each indicator across municipalities: the lower the score, the further the municipalities are from the target.',
-        code: `${PYTHON_SETUP}
-import pandas as pd
-
-bounds = {"sdg10_2_gcye": [0.578, 0.214],
-          "sdg10_2_iec": [228.0, 11.0],
-          "sdg10_2_nssp": [51.8, 1.1]}
-labels = geo.dictionary("sdg10").set_index("variable")["label"]
-cs = geo.load("sdg10").groupby("geo_id").first()
-rows = []
-for var, (worst, best) in bounds.items():
-    score = (100 * (cs[var] - worst) / (best - worst)).clip(0, 100)
-    rows.append({"indicator": labels[var], "score": score.mean()})
-px.bar(pd.DataFrame(rows).sort_values("score"), x="score", y="indicator",
-       labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
-       title="SDG 10: average score by indicator")`,
-      },
-      {
-        title: 'Rank the departments',
-        text: 'Ranks the nine departments by the population-weighted mean of the SDG 10 index in 2016.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg10", variables="index_sdg10", years=2016)
-dep = geo.aggregate(df, to="department",
-                    rules={"index_sdg10": "weighted_mean:pop"},
-                    weights=geo.load("pop"))
-names = geo.units("department").set_index("geo_id")["name"]
-dep["department"] = dep["geo_id"].map(names)
-px.bar(dep.sort_values("index_sdg10"), x="index_sdg10", y="department",
-       labels={"index_sdg10": "Reduced inequalities index (population-weighted)",
-               "department": ""},
-       title="SDG 10 index by department, 2016")`,
-      },
-      {
-        title: 'Language and schooling inequality',
-        text: 'Compares the share of people who do not speak Spanish with the Gini of years of schooling in 2012, by department.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg10", variables=["sdg10_2_nssp", "sdg10_2_gcye"], years=2012)
-units = geo.units("municipality").set_index("geo_id")
-names = geo.units("department").set_index("geo_id")["name"]
-df["name"] = df["geo_id"].map(units["name"])
-df["department"] = df["geo_id"].map(units["department_id"]).map(names)
-px.scatter(df, x="sdg10_2_nssp", y="sdg10_2_gcye", color="department",
-           hover_name="name",
-           labels={"sdg10_2_nssp": "Non-Spanish speakers, age 3+ (%)",
-                   "sdg10_2_gcye": "Gini of years of schooling"},
-           title="Language and schooling inequality, 2012")`,
-      },
-    ],
-  },
-  {
-    id: 'municipalities339-sdg11', type: 'indicator', section: 'indicators',
-    title: 'SDG 11: Sustainable cities and communities',
-    scope: '339 municipalities · 3 indicators and the SDG 11 index · 2012–2020',
-    summary: 'The SDG 11 index of the Municipal Atlas of the SDGs for every municipality, with its three indicators of housing, sanitation and public transport.',
-    description: 'The SDG 11 (Sustainable cities and communities) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) for all 339 municipalities, on a 0–100 scale where 100 means the targets are met. It summarises three indicators: the overcrowding rate and the share of households without a toilet, both from the 2012 Population and Housing Census (INE), and public transport seats per 1,000 people, from the municipal vehicle register (RUAT) and the cable car and municipal bus fleets, labelled 2017 by the Atlas. Each indicator is rescaled to 0–100 between a worst and a best value, capped at the bounds, and the index is the simple mean of the rescaled indicators. Every municipality has all three, but 184 have no registered public transport seats, so that component scores 0 for most of the country. The index is stored at 2017, the latest year of its indicators; the Atlas population (2020) and urbanization rate (2012) are included as context.',
-    geography: 'Municipality', units: 339, period: '2012–2020', frequency: 'One reference year per indicator', key: 'geo_id', idExample: 'BO-04-17-04',
-    categories: ['Social'], tags: ['SDGs', 'cities', 'housing', 'public transport', 'municipalities'],
-    image: 'images/indicators/sdg11.webp',
-    imageAlt: 'Map of the Sustainable cities index (0-100) in 2017 across 339 Bolivian municipalities in three natural-break classes: high in La Paz and El Alto, the Cochabamba valley, the cities of Oruro and Potosí, around Santa Cruz and in much of Tarija, low across the western Oruro altiplano, northern Potosí, the Chuquisaca valleys and Charagua in the Chaco',
-    map: 'images/indicators/sdg11-map.webp',
-    mapAlt: 'Map of the Sustainable cities index (0-100) in 2017 across 339 Bolivian municipalities in three natural-break classes: high in La Paz and El Alto, the Cochabamba valley, the cities of Oruro and Potosí, around Santa Cruz and in much of Tarija, low across the western Oruro altiplano, northern Potosí, the Chuquisaca valleys and Charagua in the Chaco. Legend: High 47.6 to 94.8 (58 municipalities), Middle 31.1 to 47.6 (183), Low 3.0 to 31.1 (98).',
-    date: '2026-10-30', pinned: false, dataset: 'sdg11',
-    notice: 'Each variable has values only in its reference year: load the index with its year, e.g. geo.load("sdg11", variables="index_sdg11", years=2017). The index is stored at 2017, the latest reference year of its indicators.',
-    code: {
-      python: `${PYTHON_SETUP}
-
-# The SDG 11 index in 2017, with municipal boundaries
-gdf = geo.load("sdg11", variables="index_sdg11", years=2017, geometry=True)
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg11", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg11": "Sustainable cities index (0-100)"},
-          title="SDG 11: Sustainable cities and communities, 2017").show()
-
-# Overcrowding and households without a toilet (both 2012)
-df = geo.load("sdg11", years=2012)
-df["name"] = df["geo_id"].map(geo.units("municipality").set_index("geo_id")["name"])
-px.scatter(df, x="sdg11_1_hno", y="sdg11_1_hocr", hover_name="name",
-           labels={"sdg11_1_hno": "Households without a toilet (%)",
-                   "sdg11_1_hocr": "Overcrowding rate (% of households)"},
-           title="Overcrowding and sanitation, 2012")`,
-      pandas: `import pandas as pd
-import geopandas as gpd
-import plotly.express as px
-
-# No geo4bolivia needed: every file is a plain URL
-BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg11.csv")  # geo_id, year, variables
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
-
-index = df.loc[df["year"] == 2017, ["geo_id", "index_sdg11"]]
-gdf = municipalities.merge(index, on="geo_id")
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg11", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg11": "Sustainable cities index (0-100)"},
-          title="SDG 11: Sustainable cities and communities, 2017")`,
-    },
-    examples: [
-      {
-        title: 'Compute the index from its indicators',
-        text: 'Rescales each indicator to 0–100 between the Atlas bounds, averages them and recovers the published SDG 11 index.',
-        code: `${PYTHON_SETUP}
-
-# Each indicator at its own year: one row per municipality
-cs = geo.load("sdg11").groupby("geo_id").first()
-bounds = {"sdg11_1_hocr": (55.0, 10.0),   # (worst, best)
-          "sdg11_1_hno": (94.8, 5.5),
-          "sdg11_2_samt": (0.0, 843.8)}
-scores = cs[list(bounds)].copy()
-for var, (worst, best) in bounds.items():
-    scores[var] = (100 * (cs[var] - worst) / (best - worst)).clip(0, 100)
-cs["computed"] = scores.mean(axis=1)
-cs["name"] = geo.units("municipality").set_index("geo_id")["name"]
-print(cs[["computed", "index_sdg11"]].corr().iloc[0, 1])
-px.scatter(cs, x="index_sdg11", y="computed", hover_name="name",
-           labels={"index_sdg11": "Sustainable cities index (0-100)",
-                   "computed": "Computed index (0-100)"},
-           title="SDG 11 index: computed vs published")`,
-      },
-      {
-        title: 'Which indicator holds the index back',
-        text: 'Shows the average rescaled score of each indicator: public transport scores far below housing and sanitation.',
-        code: `${PYTHON_SETUP}
-import pandas as pd
-
-cs = geo.load("sdg11").groupby("geo_id").first()
-bounds = {"sdg11_1_hocr": (55.0, 10.0), "sdg11_1_hno": (94.8, 5.5),
-          "sdg11_2_samt": (0.0, 843.8)}
-labels = {"sdg11_1_hocr": "Overcrowding rate",
-          "sdg11_1_hno": "Households without a toilet",
-          "sdg11_2_samt": "Public transport seats"}
-rows = []
-for var, (worst, best) in bounds.items():
-    score = (100 * (cs[var] - worst) / (best - worst)).clip(0, 100)
-    rows.append({"indicator": labels[var], "score": score.mean()})
-px.bar(pd.DataFrame(rows), x="score", y="indicator",
-       labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
-       title="SDG 11 components: mean score across municipalities")`,
-      },
-      {
-        title: 'Rank the departments',
-        text: 'Averages the SDG 11 index by department, weighting each municipality by its population.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg11", variables="index_sdg11", years=2017)
-dep = geo.aggregate(df, to="department",
-                    rules={"index_sdg11": "weighted_mean:pop"},
-                    weights=geo.load("pop"))
-names = geo.units("department").set_index("geo_id")["name"]
-dep["department"] = dep["geo_id"].map(names)
-px.bar(dep.sort_values("index_sdg11"), x="index_sdg11", y="department",
-       labels={"index_sdg11": "Sustainable cities index (population-weighted)"},
-       title="SDG 11 index by department, 2017")`,
-      },
-      {
-        title: 'Link the index with night-time lights',
-        text: 'Compares the SDG 11 index with log night-time lights per capita in the same year.',
-        code: `${PYTHON_SETUP}
-
-sdg = geo.load("sdg11", variables="index_sdg11", years=2017)
-ntl = geo.load("ntl", variables="ln_t400NTLpc", years=2017)
-df = sdg.merge(ntl, on=["geo_id", "year"])
-df["name"] = df["geo_id"].map(geo.units("municipality").set_index("geo_id")["name"])
-px.scatter(df, x="ln_t400NTLpc", y="index_sdg11", hover_name="name",
-           labels={"ln_t400NTLpc": "Log night-time lights per capita (trend)",
-                   "index_sdg11": "Sustainable cities index (0-100)"},
-           title="SDG 11 index and night-time lights, 2017")`,
-      },
-    ],
-  },
-  {
-    id: 'municipalities339-sdg13', type: 'indicator', section: 'indicators',
-    title: 'SDG 13: Climate action',
-    scope: '339 municipalities · 3 indicators and the SDG 13 index · 2012–2020',
-    summary: 'The SDG 13 (Climate action) index of the Municipal Atlas of the SDGs 2020 and its three indicators, climate change vulnerability, CO₂ emissions per person and deforestation, for every municipality.',
-    description: 'The SDG 13 (Climate action) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) for all 339 municipalities, with the three indicators behind it: the climate change vulnerability index (2015, from Conservación Internacional Bolivia’s Climate Change Atlas), total CO₂ emissions per person from deforestation and from burning natural gas, gasoline and diesel (2016), and the annual deforestation rate as a share of the 2015 forest area (average of 2016–2018, stored at 2017). The Atlas population in 2020 and the 2012 census urbanization rate are included as context. Each indicator is rescaled to 0–100 between a worst and a best value, capped at the bounds so that higher is always better, and the index is the simple mean of the rescaled indicators. The index is stored at 2017, the latest reference year of its indicators. The vulnerability index is published with one decimal, which leaves small residuals when the index is recomputed.',
-    geography: 'Municipality', units: 339, period: '2012–2020', frequency: 'One reference year per indicator', key: 'geo_id', idExample: 'BO-04-17-04',
-    categories: ['Environment'], tags: ['SDGs', 'climate change', 'CO₂ emissions', 'deforestation', 'municipalities'],
-    image: 'images/indicators/sdg13.webp',
-    imageAlt: 'Map of the Climate action index (0-100) in 2017 across 339 Bolivian municipalities in three natural-break classes: high around Lake Titicaca, the La Paz altiplano and the Cochabamba valley, middle across the rest of the altiplano, the southern valleys and the Chaco, low across the lowlands of Pando, Beni, northern La Paz, Santa Cruz and the Cochabamba tropics',
-    map: 'images/indicators/sdg13-map.webp',
-    mapAlt: 'Map of the Climate action index (0-100) in 2017 across 339 Bolivian municipalities in three natural-break classes: high around Lake Titicaca, the La Paz altiplano and the Cochabamba valley, middle across the rest of the altiplano, the southern valleys and the Chaco, low across the lowlands of Pando, Beni, northern La Paz, Santa Cruz and the Cochabamba tropics. Legend: High 80.6 to 99.8 (95 municipalities), Middle 61.2 to 80.6 (166), Low 11.9 to 61.2 (78).',
-    date: '2026-10-30', pinned: false, dataset: 'sdg13',
-    notice: 'Each variable has values only in its reference year: load one with its year, e.g. geo.load("sdg13", variables="index_sdg13", years=2017). The index is stored at 2017, the latest reference year of its indicators.',
-    code: {
-      python: `${PYTHON_SETUP}
-
-# The SDG 13 index in 2017, with municipal boundaries
-gdf = geo.load("sdg13", variables="index_sdg13", years=2017, geometry=True)
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg13", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg13": "Climate action index (0-100)"},
-          title="SDG 13: Climate action, 2017").show()
-
-# Deforestation rate against the index
-df = geo.load("sdg13", variables=["sdg13_2_dra", "index_sdg13"], years=2017)
-df["name"] = df["geo_id"].map(geo.units("municipality").set_index("geo_id")["name"])
-px.scatter(df, x="sdg13_2_dra", y="index_sdg13", hover_name="name",
-           labels={"sdg13_2_dra": "Deforestation rate (% of forest)",
-                   "index_sdg13": "Climate action index (0-100)"},
-           title="Deforestation and the SDG 13 index, 2017")`,
-      pandas: `import pandas as pd
-import geopandas as gpd
-import plotly.express as px
-
-# No geo4bolivia needed: every file is a plain URL
-BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg13.csv")    # geo_id, year, variables
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
-
-index = df.loc[df["year"] == 2017, ["geo_id", "index_sdg13"]]
-gdf = municipalities.merge(index, on="geo_id")
-px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg13", hover_name="name",
-          center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg13": "Climate action index (0-100)"},
-          title="SDG 13: Climate action, 2017")`,
-    },
-    examples: [
-      {
-        title: 'Compute the index from its indicators',
-        text: 'Rescales each indicator between the Atlas’s worst and best values, caps it at 0–100 and averages, reproducing the published SDG 13 index (small residuals come from the one-decimal vulnerability index).',
-        code: `${PYTHON_SETUP}
-import pandas as pd
-
-# Each variable at its own reference year, one row per municipality
-df = geo.load("sdg13").groupby("geo_id").first()
-bounds = {"sdg13_1_ccvi": (2.97, 0), "sdg13_2_tco2e": (23.7, 0.02),
-          "sdg13_2_dra": (5.44, 0)}                      # (worst, best)
-scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
-                       for v, (w, b) in bounds.items()}).clip(0, 100)
-df["computed"] = scores.mean(axis=1)
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
-px.scatter(df, x="computed", y="index_sdg13", hover_name="name",
-           labels={"computed": "Computed index",
-                   "index_sdg13": "Climate action index (0-100)"},
-           title="SDG 13 index: computed vs published")`,
-      },
-      {
-        title: 'Which indicator holds the index down',
-        text: 'Averages the rescaled score of each indicator across municipalities to show where the goal is furthest from its target.',
-        code: `${PYTHON_SETUP}
-import pandas as pd
-
-df = geo.load("sdg13").groupby("geo_id").first()
-bounds = {"sdg13_1_ccvi": (2.97, 0), "sdg13_2_tco2e": (23.7, 0.02),
-          "sdg13_2_dra": (5.44, 0)}                      # (worst, best)
-scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
-                       for v, (w, b) in bounds.items()}).clip(0, 100)
-labels = {"sdg13_1_ccvi": "Climate change vulnerability index",
-          "sdg13_2_tco2e": "Total CO2 emissions (t per person)",
-          "sdg13_2_dra": "Deforestation rate (% of forest)"}
-mean = scores.mean().rename(labels).reset_index()
-mean.columns = ["indicator", "score"]
-px.bar(mean.sort_values("score"), x="score", y="indicator",
-       labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
-       title="SDG 13: mean score of each indicator")`,
-      },
-      {
-        title: 'Rank the departments',
-        text: 'Aggregates the index to the nine departments as a population-weighted mean, using the observatory’s gridded population.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg13", variables="index_sdg13", years=2017)
-dep = geo.aggregate(df, to="department", rules={"index_sdg13": "weighted_mean:pop"},
-                    weights=geo.load("pop"))
+                    rules={"index_sdg5": "weighted_mean:population"},
+                    weights=geo.load("sdg", variables="population"))
 dep["department"] = dep["geo_id"].map(
     geo.units("department").set_index("geo_id")["name"])
-px.bar(dep.sort_values("index_sdg13"), x="index_sdg13", y="department",
-       labels={"index_sdg13": "Climate action index (population-weighted)"},
-       title="SDG 13 index by department, 2017")`,
-      },
-      {
-        title: 'Emissions and deforestation',
-        text: 'Plots each municipality’s deforestation rate against its CO₂ emissions per person, which include the emissions from burning cleared forest.',
-        code: `${PYTHON_SETUP}
-
-df = geo.load("sdg13").groupby("geo_id", as_index=False).first()
-units = geo.units("municipality").set_index("geo_id")
-df["name"] = df["geo_id"].map(units["name"])
-df["department"] = df["geo_id"].map(units["department_id"]).map(
-    geo.units("department").set_index("geo_id")["name"])
-px.scatter(df, x="sdg13_2_dra", y="sdg13_2_tco2e", color="department",
-           hover_name="name",
-           labels={"sdg13_2_dra": "Deforestation rate (% of forest)",
-                   "sdg13_2_tco2e": "Total CO2 emissions (t per person)"},
-           title="Deforestation and CO2 emissions per person")`,
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg5"), x="index_sdg5", y="department",
+           color="period",
+           labels={"index_sdg5": "Index (population-weighted)"},
+           title="SDG 5 index by department, ~2012 and ~2024")`,
       },
     ],
   },
   {
-    id: 'municipalities339-sdg15', type: 'indicator', section: 'indicators',
-    title: 'SDG 15: Life on land',
-    scope: '339 municipalities · 2 indicators and the SDG 15 index · 2012–2020',
-    summary: 'The Life on land index of the Municipal Atlas of the SDGs for 339 municipalities, built from the share of protected area and biodiversity loss from deforestation.',
-    description: 'The SDG 15 (Life on land) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) and the two indicators behind it, for all 339 municipalities: the legally declared protected area as a share of the municipal area (2019, computed by Conservación Internacional Bolivia) and a biodiversity loss index due to deforestation that weights deforested habitat by the number of species living there (average of 2016–2018, stored at 2017). Each indicator is rescaled linearly to 0–100 between a worst and a best value (higher is always better, values beyond the bounds capped), and the index, on a 0–100 scale where 100 means the targets are met, is the simple mean of the two scores; it is stored at 2019, the latest of its indicators’ years. With only two components the index bunches at a few values: 147 municipalities have no protected area and no measured biodiversity loss, which gives a score of 0 and one of 100 and an index of exactly 50, while 4 municipalities reach 100 and 2 score 0. The dataset also holds the Atlas population for 2020 and the 2012 urbanization rate as context; they are not inputs of the index.',
-    geography: 'Municipality', units: 339, period: '2012–2020', frequency: 'One reference year per indicator', key: 'geo_id', idExample: 'BO-04-17-04',
-    categories: ['Environment'], tags: ['SDGs', 'protected areas', 'deforestation', 'biodiversity', 'municipalities'],
-    image: 'images/indicators/sdg15.webp',
-    imageAlt: 'Map of the Life on land index (0-100) in 2019 across 339 Bolivian municipalities in three natural-break classes: high in northern La Paz, the Cochabamba tropics and Tunari range, the Chaco and the Pantanal, low along the Santa Cruz agricultural frontier, Alto Beni, Colomi and Cobija; most of the highlands and valleys sit in the middle class at an index of 50',
-    map: 'images/indicators/sdg15-map.webp',
-    mapAlt: 'Map of the Life on land index (0-100) in 2019 across 339 Bolivian municipalities in three natural-break classes: high in northern La Paz, the Cochabamba tropics and Tunari range, the Chaco and the Pantanal, low along the Santa Cruz agricultural frontier, Alto Beni, Colomi and Cobija; most of the highlands and valleys sit in the middle class at an index of 50. Legend: High 68.9 to 100.0 (53 municipalities), Middle 33.3 to 68.9 (259), Low 0.0 to 33.3 (27).',
-    date: '2026-10-30', pinned: false, dataset: 'sdg15',
-    notice: 'Each variable has values only in its reference year: load the index with geo.load("sdg15", variables="index_sdg15", years=2019), or every variable as a cross-section with geo.load("sdg15").groupby("geo_id").first(). The index is stored at 2019, the latest year of its two indicators.',
+    id: 'municipalities343-sdg06', type: 'indicator', section: 'indicators',
+    title: "SDG 6: Clean water and sanitation",
+    scope: "343 municipalities · 3 indicators and the SDG 6 index · ~2012 and ~2024",
+    summary: "The SDG 6 (Clean water and sanitation) index of the SDG Atlas of Bolivia 2026 and its 3 indicators, drinking water, sanitation and wastewater treatment, for every municipality near 2012 and near 2024.",
+    description: "The SDG 6 (Clean water and sanitation) index of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), with the 3 indicators behind it: drinking-water coverage (% of population) (2012 and 2024); sanitation coverage (% of population) (2012 and 2024); wastewater treated (%) (2013 and 2024). Every indicator is measured twice, near the 2012 census and near the 2024 census, and the observatory stores the two values as 2012 and 2024 so that their change can be studied. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value set by the Atlas, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Between the two periods the median index went from 25.5 to 40.9, and it rose in 335 of the 343 units.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Social", "Environment"], tags: ["SDGs", "SDG Atlas 2026", "water", "sanitation", "wastewater"],
+    image: 'images/indicators/sdg06.webp',
+    imageAlt: "Map of the Clean water and sanitation index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 45.8 – 86.9 (110); Middle 26.9 – 45.8 (206); Low 0.0 – 26.9 (27). Highest: Yacuiba, Porongo and Vallegrande.",
+    mapAlt: "Two maps of the Clean water and sanitation index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 45.8 – 86.9 (17 units near 2012, 110 near 2024); Middle 26.9 – 45.8 (136 units near 2012, 206 near 2024); Low 0.0 – 26.9 (190 units near 2012, 27 near 2024). Highest near 2024: Yacuiba, Porongo and Vallegrande.",
+    map: 'images/indicators/sdg06-map.webp',
+    date: '2026-11-17', pinned: false, dataset: 'sdg06',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
 
-# The Life on land index in 2019, with municipal boundaries
-gdf = geo.load("sdg15", variables="index_sdg15", years=2019, geometry=True)
+# The SDG 6 index (0-100, higher is better), ~2024
+gdf = geo.load("sdg06", variables="index_sdg6", years=2024, geometry=True)
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg15", hover_name="name",
+          color="index_sdg6", hover_name="name",
           center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg15": "Life on land index (0-100)"},
-          title="SDG 15: Life on land, 2019").show()
+          labels={"index_sdg6": "Clean water and sanitation index (0-100)"},
+          title="SDG 6: Clean water and sanitation index, ~2024").show()
 
-# Its distribution: many municipalities score exactly 50
-px.histogram(gdf, x="index_sdg15", nbins=40,
-       labels={"index_sdg15": "Life on land index (0-100)"},
-       title="Distribution of the SDG 15 index, 2019")`,
+# The two periods: initial (~2012) and final (~2024) values
+df = geo.load("sdg06", variables="index_sdg6")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg6")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
+           title="SDG 6: Clean water and sanitation index, ~2012 and ~2024")`,
       pandas: `import pandas as pd
 import geopandas as gpd
 import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg15.csv")  # geo_id, year, variables
+df = pd.read_csv(BASE + "data/municipality/sdg06.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
 
-index = df.loc[df["year"] == 2019, ["geo_id", "index_sdg15"]]
+index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg6"]]
 gdf = municipalities.merge(index, on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="index_sdg15", hover_name="name",
+          color="index_sdg6", hover_name="name",
           center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg15": "Life on land index (0-100)"},
-          title="SDG 15: Life on land, 2019")`,
+          labels={"index_sdg6": "Clean water and sanitation index (0-100)"},
+          title="SDG 6: Clean water and sanitation index, ~2024")`,
     },
     examples: [
       {
-        title: 'Compute the index from its indicators',
-        text: 'Rescales the two indicators between the Atlas’s worst and best values, caps them at 0 and 100, averages them and reproduces the published index.',
+        title: "Map the change, ~2012 to ~2024",
+        text: "Subtracts the initial index from the final one: positive values mark the municipalities that moved closer to the goal's targets.",
         code: `${PYTHON_SETUP}
 
+df = geo.load("sdg06", variables="index_sdg6")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg6")
+wide["change"] = wide[2024] - wide[2012]
+gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+                                           on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="change", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"change": "Change in the index (points)"},
+          title="SDG 6: change in the index, ~2012 to ~2024")`,
+      },
+      {
+        title: "Recompute the index from its indicators",
+        text: "Rescales each indicator between the Atlas's worst and best values (Cuadro 21), caps it to 0-100 and averages the available ones, which reproduces the published index.",
+        code: `${PYTHON_SETUP}
 import pandas as pd
 
-# Each indicator at its own reference year
-df = geo.load("sdg15").groupby("geo_id").first()
-names = geo.units("municipality").set_index("geo_id")["name"]
-
-# Worst and best values of each indicator (Atlas)
-bounds = {"sdg15_1_pa": (0, 50), "sdg15_5_blr": (1.117, 0)}
+df = geo.load("sdg06", years=2024).set_index("geo_id")
+bounds = {"sdg6_1_cap": (21.4, 100), "sdg6_2_cas": (2.7, 100), "sdg6_3_tar": (0,
+          100)}  # (worst, best)
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
-df["computed"] = scores.mean(axis=1)
-df["name"] = df.index.map(names)
-print(df[["computed", "index_sdg15"]].corr())
-
-px.scatter(df, x="index_sdg15", y="computed", hover_name="name",
-           labels={"index_sdg15": "Life on land index (0-100)",
-                   "computed": "Computed index"},
-           title="SDG 15 index: computed vs published")`,
+df["computed"] = scores.mean(axis=1)  # skips missing indicators
+df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(df, x="computed", y="index_sdg6", hover_name="name",
+           labels={"computed": "Computed from the indicators",
+                   "index_sdg6": "Clean water and sanitation index (0-100)"},
+           title="Recomputed vs published SDG 6 index, ~2024")`,
       },
       {
-        title: 'Which indicator pulls the index down',
-        text: 'Compares the mean 0–100 score of the two indicators in each department, showing that the protected-area score (19 on average) pulls the index down far more than biodiversity loss (89).',
+        title: "Which indicators moved",
+        text: "Compares the mean rescaled score (0-100) of each indicator in the two periods: the gap between the dots is the progress, and the lowest dots are where the goal is furthest away.",
         code: `${PYTHON_SETUP}
+import pandas as pd
 
-df = geo.load("sdg15").groupby("geo_id", as_index=False).first()
-bounds = {"sdg15_1_pa": (0, 50), "sdg15_5_blr": (1.117, 0)}
-labels = {"sdg15_1_pa": "Protected areas (% of area)",
-          "sdg15_5_blr": "Biodiversity loss from deforestation"}
-for v, (w, b) in bounds.items():
-    df[labels[v]] = (100 * (df[v] - w) / (b - w)).clip(0, 100)
-
-units = geo.units("municipality").set_index("geo_id")
-deps = geo.units("department").set_index("geo_id")["name"]
-df["department"] = df["geo_id"].map(units["department_id"]).map(deps)
-long = df.melt(id_vars="department", value_vars=list(labels.values()),
-               var_name="indicator", value_name="score")
-mean = long.groupby(["department", "indicator"], as_index=False)["score"].mean()
-px.bar(mean, x="score", y="department", color="indicator", barmode="group",
-       labels={"score": "Mean score (0-100)"},
-       title="SDG 15 indicator scores by department")`,
+df = geo.load("sdg06")
+bounds = {"sdg6_1_cap": (21.4, 100), "sdg6_2_cas": (2.7, 100), "sdg6_3_tar": (0,
+          100)}  # (worst, best)
+labels = geo.dictionary("sdg06").set_index("variable")["label"]
+rows = [{"indicator": labels[v], "period": f"~{year}",
+         "score": (100 * (part[v] - w) / (b - w)).clip(0, 100).mean()}
+        for year, part in df.groupby("year") for v, (w, b) in bounds.items()]
+px.scatter(pd.DataFrame(rows), x="score", y="indicator", color="period",
+           labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
+           title="SDG 6 indicators, ~2012 and ~2024")`,
       },
       {
-        title: 'Rank departments by population-weighted index',
-        text: 'Averages the municipal index within each department, weighting by population in 2019.',
+        title: "Rank the departments",
+        text: "Averages the index within each department, weighting municipalities by their census population, in both periods.",
         code: `${PYTHON_SETUP}
 
-df = geo.load("sdg15", variables="index_sdg15", years=2019)
+df = geo.load("sdg06", variables="index_sdg6")
 dep = geo.aggregate(df, to="department",
-                    rules={"index_sdg15": "weighted_mean:pop"},
-                    weights=geo.load("pop"))
-names = geo.units("department").set_index("geo_id")["name"]
-dep["department"] = dep["geo_id"].map(names)
-px.bar(dep.sort_values("index_sdg15"), x="index_sdg15", y="department",
-       labels={"index_sdg15": "Life on land index (population-weighted)"},
-       title="SDG 15 index by department, 2019")`,
+                    rules={"index_sdg6": "weighted_mean:population"},
+                    weights=geo.load("sdg", variables="population"))
+dep["department"] = dep["geo_id"].map(
+    geo.units("department").set_index("geo_id")["name"])
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg6"), x="index_sdg6", y="department",
+           color="period",
+           labels={"index_sdg6": "Index (population-weighted)"},
+           title="SDG 6 index by department, ~2012 and ~2024")`,
       },
+    ],
+  },
+  {
+    id: 'municipalities343-sdg07', type: 'indicator', section: 'indicators',
+    title: "SDG 7: Affordable and clean energy",
+    scope: "343 municipalities · 4 indicators and the SDG 7 index · ~2012 and ~2024",
+    summary: "The SDG 7 (Affordable and clean energy) index of the SDG Atlas of Bolivia 2026 and its 4 indicators, electricity coverage and use, idle electricity meters and clean cooking energy, for every municipality near 2012 and near 2024.",
+    description: "The SDG 7 (Affordable and clean energy) index of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), with the 4 indicators behind it: residential electricity consumption (kWh per person per year) (2016 and 2024); electricity coverage (% of population) (2012 and 2024); residential meters with zero consumption for 6+ months (%) (2016 and 2024); clean cooking energy (% of population) (2012 and 2024). Every indicator is measured twice, near the 2012 census and near the 2024 census, and the observatory stores the two values as 2012 and 2024 so that their change can be studied. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value set by the Atlas, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Between the two periods the median index went from 51.1 to 61.8, and it rose in 315 of the 343 units. Some indicators are missing for part of the units (Residential meters with zero consumption for 6+ months (%)); the index averages the available ones.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Economy", "Environment"], tags: ["SDGs", "SDG Atlas 2026", "energy", "electricity", "clean cooking"],
+    image: 'images/indicators/sdg07.webp',
+    imageAlt: "Map of the Affordable and clean energy index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 70.8 – 98.5 (99); Middle 50.3 – 70.8 (158); Low 9.4 – 50.3 (86). Highest: Trinidad, Cobija and Santa Cruz de la Sierra.",
+    mapAlt: "Two maps of the Affordable and clean energy index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 70.8 – 98.5 (59 units near 2012, 99 near 2024); Middle 50.3 – 70.8 (124 units near 2012, 158 near 2024); Low 9.4 – 50.3 (160 units near 2012, 86 near 2024). Highest near 2024: Trinidad, Cobija and Santa Cruz de la Sierra.",
+    map: 'images/indicators/sdg07-map.webp',
+    date: '2026-11-17', pinned: false, dataset: 'sdg07',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
+    code: {
+      python: `${PYTHON_SETUP}
+
+# The SDG 7 index (0-100, higher is better), ~2024
+gdf = geo.load("sdg07", variables="index_sdg7", years=2024, geometry=True)
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg7", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg7": "Affordable and clean energy index (0-100)"},
+          title="SDG 7: Affordable and clean energy index, ~2024").show()
+
+# The two periods: initial (~2012) and final (~2024) values
+df = geo.load("sdg07", variables="index_sdg7")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg7")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
+           title="SDG 7: Affordable and clean energy index, ~2012 and ~2024")`,
+      pandas: `import pandas as pd
+import geopandas as gpd
+import plotly.express as px
+
+# No geo4bolivia needed: every file is a plain URL
+BASE = "${RAW_URL}"
+df = pd.read_csv(BASE + "data/municipality/sdg07.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+
+index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg7"]]
+gdf = municipalities.merge(index, on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg7", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg7": "Affordable and clean energy index (0-100)"},
+          title="SDG 7: Affordable and clean energy index, ~2024")`,
+    },
+    examples: [
       {
-        title: 'Protected areas against biodiversity loss',
-        text: 'Plots the two indicators against each other, coloured by the index, to see which combination of protection and deforestation sets each municipality’s score.',
+        title: "Map the change, ~2012 to ~2024",
+        text: "Subtracts the initial index from the final one: positive values mark the municipalities that moved closer to the goal's targets.",
         code: `${PYTHON_SETUP}
 
-df = geo.load("sdg15").groupby("geo_id").first()
-df["name"] = df.index.map(geo.units("municipality").set_index("geo_id")["name"])
-px.scatter(df, x="sdg15_1_pa", y="sdg15_5_blr", color="index_sdg15",
-           hover_name="name",
-           labels={"sdg15_1_pa": "Protected areas (% of area)",
-                   "sdg15_5_blr": "Biodiversity loss from deforestation",
+df = geo.load("sdg07", variables="index_sdg7")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg7")
+wide["change"] = wide[2024] - wide[2012]
+gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+                                           on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="change", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"change": "Change in the index (points)"},
+          title="SDG 7: change in the index, ~2012 to ~2024")`,
+      },
+      {
+        title: "Recompute the index from its indicators",
+        text: "Rescales each indicator between the Atlas's worst and best values (Cuadro 21), caps it to 0-100 and averages the available ones, which reproduces the published index.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg07", years=2024).set_index("geo_id")
+bounds = {"sdg7_1_cep": (0, 523), "sdg7_1_cae": (0, 100), "sdg7_1_mcc": (69, 0),
+          "sdg7_1_elc": (0, 100)}  # (worst, best)
+scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
+                       for v, (w, b) in bounds.items()}).clip(0, 100)
+df["computed"] = scores.mean(axis=1)  # skips missing indicators
+df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(df, x="computed", y="index_sdg7", hover_name="name",
+           labels={"computed": "Computed from the indicators",
+                   "index_sdg7": "Affordable and clean energy index (0-100)"},
+           title="Recomputed vs published SDG 7 index, ~2024")`,
+      },
+      {
+        title: "Which indicators moved",
+        text: "Compares the mean rescaled score (0-100) of each indicator in the two periods: the gap between the dots is the progress, and the lowest dots are where the goal is furthest away.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg07")
+bounds = {"sdg7_1_cep": (0, 523), "sdg7_1_cae": (0, 100), "sdg7_1_mcc": (69, 0),
+          "sdg7_1_elc": (0, 100)}  # (worst, best)
+labels = geo.dictionary("sdg07").set_index("variable")["label"]
+rows = [{"indicator": labels[v], "period": f"~{year}",
+         "score": (100 * (part[v] - w) / (b - w)).clip(0, 100).mean()}
+        for year, part in df.groupby("year") for v, (w, b) in bounds.items()]
+px.scatter(pd.DataFrame(rows), x="score", y="indicator", color="period",
+           labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
+           title="SDG 7 indicators, ~2012 and ~2024")`,
+      },
+      {
+        title: "Rank the departments",
+        text: "Averages the index within each department, weighting municipalities by their census population, in both periods.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg07", variables="index_sdg7")
+dep = geo.aggregate(df, to="department",
+                    rules={"index_sdg7": "weighted_mean:population"},
+                    weights=geo.load("sdg", variables="population"))
+dep["department"] = dep["geo_id"].map(
+    geo.units("department").set_index("geo_id")["name"])
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg7"), x="index_sdg7", y="department",
+           color="period",
+           labels={"index_sdg7": "Index (population-weighted)"},
+           title="SDG 7 index by department, ~2012 and ~2024")`,
+      },
+    ],
+  },
+  {
+    id: 'municipalities343-sdg08', type: 'indicator', section: 'indicators',
+    title: "SDG 8: Decent work and economic growth",
+    scope: "343 municipalities · 7 indicators and the SDG 8 index · ~2012 and ~2024",
+    summary: "The SDG 8 (Decent work and economic growth) index of the SDG Atlas of Bolivia 2026 and its 7 indicators, labour participation and youth outside education and work, by sex, tourism employment and GDP, and financial access points, for every municipality near 2012 and near 2024.",
+    description: "The SDG 8 (Decent work and economic growth) index of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), with the 7 indicators behind it: labour-force participation rate, women 14+ (%) (2012 and 2024); labour-force participation rate, men 14+ (%) (2012 and 2024); young women not in education or the labour force, 15-24 (%) (2012 and 2024); young men not in education or the labour force, 15-24 (%) (2012 and 2024); employment in tourism-related activities (%) (2012 and 2024); tourism share of GDP (%) (2016 and 2025); financial access points (per 100,000 people) (2012 and 2024). Every indicator is measured twice, near the 2012 census and near the 2024 census, and the observatory stores the two values as 2012 and 2024 so that their change can be studied. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value set by the Atlas, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Between the two periods the median index went from 35.2 to 52.9, and it rose in 339 of the 343 units. Some indicators are missing for part of the units (Tourism share of GDP (%)); the index averages the available ones.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Economy"], tags: ["SDGs", "SDG Atlas 2026", "employment", "labour participation", "financial inclusion"],
+    image: 'images/indicators/sdg08.webp',
+    imageAlt: "Map of the Decent work and economic growth index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 55.4 – 82.0 (132); Middle 39.7 – 55.4 (190); Low 7.8 – 39.7 (21). Highest: Copacabana, Samaipata and Puerto Menor de Rurrenabaque.",
+    mapAlt: "Two maps of the Decent work and economic growth index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 55.4 – 82.0 (5 units near 2012, 132 near 2024); Middle 39.7 – 55.4 (93 units near 2012, 190 near 2024); Low 7.8 – 39.7 (245 units near 2012, 21 near 2024). Highest near 2024: Copacabana, Samaipata and Puerto Menor de Rurrenabaque.",
+    map: 'images/indicators/sdg08-map.webp',
+    date: '2026-11-17', pinned: false, dataset: 'sdg08',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
+    code: {
+      python: `${PYTHON_SETUP}
+
+# The SDG 8 index (0-100, higher is better), ~2024
+gdf = geo.load("sdg08", variables="index_sdg8", years=2024, geometry=True)
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg8", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg8": "Decent work and economic growth index (0-100)"},
+          title="SDG 8: Decent work and economic growth index, ~2024").show()
+
+# The two periods: initial (~2012) and final (~2024) values
+df = geo.load("sdg08", variables="index_sdg8")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg8")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
+           title="SDG 8: Decent work and economic growth index, ~2012 and ~2024")`,
+      pandas: `import pandas as pd
+import geopandas as gpd
+import plotly.express as px
+
+# No geo4bolivia needed: every file is a plain URL
+BASE = "${RAW_URL}"
+df = pd.read_csv(BASE + "data/municipality/sdg08.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+
+index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg8"]]
+gdf = municipalities.merge(index, on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg8", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg8": "Decent work and economic growth index (0-100)"},
+          title="SDG 8: Decent work and economic growth index, ~2024")`,
+    },
+    examples: [
+      {
+        title: "Map the change, ~2012 to ~2024",
+        text: "Subtracts the initial index from the final one: positive values mark the municipalities that moved closer to the goal's targets.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg08", variables="index_sdg8")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg8")
+wide["change"] = wide[2024] - wide[2012]
+gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+                                           on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="change", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"change": "Change in the index (points)"},
+          title="SDG 8: change in the index, ~2012 to ~2024")`,
+      },
+      {
+        title: "Recompute the index from its indicators",
+        text: "Rescales each indicator between the Atlas's worst and best values (Cuadro 21), caps it to 0-100 and averages the available ones, which reproduces the published index.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg08", years=2024).set_index("geo_id")
+bounds = {"sdg8_5_tgm": (36.1, 89.7), "sdg8_5_tgh": (68.6, 92.9), "sdg8_6_etm":
+          (45.9, 4.8), "sdg8_6_eth": (38.6, 1.9), "sdg8_9_pot": (0, 10),
+          "sdg8_9_pbt": (0, 10), "sdg8_10_dsb": (0, 88.7)}  # (worst, best)
+scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
+                       for v, (w, b) in bounds.items()}).clip(0, 100)
+df["computed"] = scores.mean(axis=1)  # skips missing indicators
+df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(df, x="computed", y="index_sdg8", hover_name="name",
+           labels={"computed": "Computed from the indicators",
+                   "index_sdg8": "Decent work and economic growth index (0-100)"},
+           title="Recomputed vs published SDG 8 index, ~2024")`,
+      },
+      {
+        title: "Which indicators moved",
+        text: "Compares the mean rescaled score (0-100) of each indicator in the two periods: the gap between the dots is the progress, and the lowest dots are where the goal is furthest away.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg08")
+bounds = {"sdg8_5_tgm": (36.1, 89.7), "sdg8_5_tgh": (68.6, 92.9), "sdg8_6_etm":
+          (45.9, 4.8), "sdg8_6_eth": (38.6, 1.9), "sdg8_9_pot": (0, 10),
+          "sdg8_9_pbt": (0, 10), "sdg8_10_dsb": (0, 88.7)}  # (worst, best)
+labels = geo.dictionary("sdg08").set_index("variable")["label"]
+rows = [{"indicator": labels[v], "period": f"~{year}",
+         "score": (100 * (part[v] - w) / (b - w)).clip(0, 100).mean()}
+        for year, part in df.groupby("year") for v, (w, b) in bounds.items()]
+px.scatter(pd.DataFrame(rows), x="score", y="indicator", color="period",
+           labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
+           title="SDG 8 indicators, ~2012 and ~2024")`,
+      },
+      {
+        title: "Rank the departments",
+        text: "Averages the index within each department, weighting municipalities by their census population, in both periods.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg08", variables="index_sdg8")
+dep = geo.aggregate(df, to="department",
+                    rules={"index_sdg8": "weighted_mean:population"},
+                    weights=geo.load("sdg", variables="population"))
+dep["department"] = dep["geo_id"].map(
+    geo.units("department").set_index("geo_id")["name"])
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg8"), x="index_sdg8", y="department",
+           color="period",
+           labels={"index_sdg8": "Index (population-weighted)"},
+           title="SDG 8 index by department, ~2012 and ~2024")`,
+      },
+    ],
+  },
+  {
+    id: 'municipalities343-sdg09', type: 'indicator', section: 'indicators',
+    title: "SDG 9: Industry, innovation and infrastructure",
+    scope: "343 municipalities · 4 indicators and the SDG 9 index · ~2012 and ~2024",
+    summary: "The SDG 9 (Industry, innovation and infrastructure) index of the SDG Atlas of Bolivia 2026 and its 4 indicators, trunk roads, internet access, telephones and mobile base stations, for every municipality near 2012 and near 2024.",
+    description: "The SDG 9 (Industry, innovation and infrastructure) index of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), with the 4 indicators behind it: trunk roads crossing the municipality (number) (2012 and 2024); internet access, fixed or mobile (% of households) (2012 and 2024); mobile base stations (per 1,000 people) (2012 and 2024); fixed or mobile telephone (% of households) (2012 and 2024). Every indicator is measured twice, near the 2012 census and near the 2024 census, and the observatory stores the two values as 2012 and 2024 so that their change can be studied. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value set by the Atlas, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Between the two periods the median index went from 21.2 to 51.8, and it rose in 343 of the 343 units.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Economy"], tags: ["SDGs", "SDG Atlas 2026", "infrastructure", "internet", "telecommunications"],
+    image: 'images/indicators/sdg09.webp',
+    imageAlt: "Map of the Industry, innovation and infrastructure index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 48.4 – 78.8 (217); Middle 27.3 – 48.4 (126); Low 1.3 – 27.3 (0). Highest: Nuestra Señora de La Paz, Padcaya and Curahuara de Carangas.",
+    mapAlt: "Two maps of the Industry, innovation and infrastructure index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 48.4 – 78.8 (5 units near 2012, 217 near 2024); Middle 27.3 – 48.4 (92 units near 2012, 126 near 2024); Low 1.3 – 27.3 (246 units near 2012, 0 near 2024). Highest near 2024: Nuestra Señora de La Paz, Padcaya and Curahuara de Carangas.",
+    map: 'images/indicators/sdg09-map.webp',
+    date: '2026-11-17', pinned: false, dataset: 'sdg09',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
+    code: {
+      python: `${PYTHON_SETUP}
+
+# The SDG 9 index (0-100, higher is better), ~2024
+gdf = geo.load("sdg09", variables="index_sdg9", years=2024, geometry=True)
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg9", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg9": "Index (0-100)"},
+          title="SDG 9 index, ~2024").show()
+
+# The two periods: initial (~2012) and final (~2024) values
+df = geo.load("sdg09", variables="index_sdg9")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg9")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
+           title="SDG 9 index, ~2012 and ~2024")`,
+      pandas: `import pandas as pd
+import geopandas as gpd
+import plotly.express as px
+
+# No geo4bolivia needed: every file is a plain URL
+BASE = "${RAW_URL}"
+df = pd.read_csv(BASE + "data/municipality/sdg09.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+
+index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg9"]]
+gdf = municipalities.merge(index, on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg9", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg9": "Index (0-100)"},
+          title="SDG 9 index, ~2024")`,
+    },
+    examples: [
+      {
+        title: "Map the change, ~2012 to ~2024",
+        text: "Subtracts the initial index from the final one: positive values mark the municipalities that moved closer to the goal's targets.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg09", variables="index_sdg9")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg9")
+wide["change"] = wide[2024] - wide[2012]
+gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+                                           on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="change", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"change": "Change in the index (points)"},
+          title="SDG 9: change in the index, ~2012 to ~2024")`,
+      },
+      {
+        title: "Recompute the index from its indicators",
+        text: "Rescales each indicator between the Atlas's worst and best values (Cuadro 21), caps it to 0-100 and averages the available ones, which reproduces the published index.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg09", years=2024).set_index("geo_id")
+bounds = {"sdg9_1_vpc": (0, 3), "sdg9_8_ci": (0, 100), "sdg9_8_drb": (0, 3),
+          "sdg9_8_tfc": (0, 100)}  # (worst, best)
+scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
+                       for v, (w, b) in bounds.items()}).clip(0, 100)
+df["computed"] = scores.mean(axis=1)  # skips missing indicators
+df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(df, x="computed", y="index_sdg9", hover_name="name",
+           labels={"computed": "Computed from the indicators",
+                   "index_sdg9": "Index (0-100)"},
+           title="Recomputed vs published SDG 9 index, ~2024")`,
+      },
+      {
+        title: "Which indicators moved",
+        text: "Compares the mean rescaled score (0-100) of each indicator in the two periods: the gap between the dots is the progress, and the lowest dots are where the goal is furthest away.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg09")
+bounds = {"sdg9_1_vpc": (0, 3), "sdg9_8_ci": (0, 100), "sdg9_8_drb": (0, 3),
+          "sdg9_8_tfc": (0, 100)}  # (worst, best)
+labels = geo.dictionary("sdg09").set_index("variable")["label"]
+rows = [{"indicator": labels[v], "period": f"~{year}",
+         "score": (100 * (part[v] - w) / (b - w)).clip(0, 100).mean()}
+        for year, part in df.groupby("year") for v, (w, b) in bounds.items()]
+px.scatter(pd.DataFrame(rows), x="score", y="indicator", color="period",
+           labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
+           title="SDG 9 indicators, ~2012 and ~2024")`,
+      },
+      {
+        title: "Rank the departments",
+        text: "Averages the index within each department, weighting municipalities by their census population, in both periods.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg09", variables="index_sdg9")
+dep = geo.aggregate(df, to="department",
+                    rules={"index_sdg9": "weighted_mean:population"},
+                    weights=geo.load("sdg", variables="population"))
+dep["department"] = dep["geo_id"].map(
+    geo.units("department").set_index("geo_id")["name"])
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg9"), x="index_sdg9", y="department",
+           color="period",
+           labels={"index_sdg9": "Index (population-weighted)"},
+           title="SDG 9 index by department, ~2012 and ~2024")`,
+      },
+    ],
+  },
+  {
+    id: 'municipalities343-sdg10', type: 'indicator', section: 'indicators',
+    title: "SDG 10: Reduced inequalities",
+    scope: "343 municipalities · 6 indicators and the SDG 10 index · ~2012 and ~2024",
+    summary: "The SDG 10 (Reduced inequalities) index of the SDG Atlas of Bolivia 2026 and its 6 indicators, people who do not speak Spanish, poverty gaps by ethnicity, migration and age, and the Gini coefficients of poverty and education, for every municipality near 2012 and near 2024.",
+    description: "The SDG 10 (Reduced inequalities) index of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), with the 6 indicators behind it: population that does not speak Spanish (%) (2012 and 2024); parity of multidimensional poverty by ethnicity and language (non-indigenous/indigenous) (2012 and 2024); parity of multidimensional poverty by migration (non-migrant/migrant) (2012 and 2024); parity of multidimensional poverty for older people (younger/older head) (2012 and 2024); gini coefficient of multidimensional poverty (0-1) (2012 and 2024); gini coefficient of years of education, 25-65 (0-1) (2012 and 2024). Every indicator is measured twice, near the 2012 census and near the 2024 census, and the observatory stores the two values as 2012 and 2024 so that their change can be studied. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value set by the Atlas, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Between the two periods the median index went from 80.8 to 81.1, and it rose in 212 of the 343 units.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Social"], tags: ["SDGs", "SDG Atlas 2026", "inequality", "language", "poverty gaps"],
+    image: 'images/indicators/sdg10.webp',
+    imageAlt: "Map of the Reduced inequalities index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 82.6 – 95.2 (135); Middle 73.7 – 82.6 (166); Low 59.6 – 73.7 (42). Highest: Yunguyo del Litoral, Cobija and Riberalta.",
+    mapAlt: "Two maps of the Reduced inequalities index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 82.6 – 95.2 (143 units near 2012, 135 near 2024); Middle 73.7 – 82.6 (116 units near 2012, 166 near 2024); Low 59.6 – 73.7 (84 units near 2012, 42 near 2024). Highest near 2024: Yunguyo del Litoral, Cobija and Riberalta.",
+    map: 'images/indicators/sdg10-map.webp',
+    date: '2026-11-17', pinned: false, dataset: 'sdg10',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
+    code: {
+      python: `${PYTHON_SETUP}
+
+# The SDG 10 index (0-100, higher is better), ~2024
+gdf = geo.load("sdg10", variables="index_sdg10", years=2024, geometry=True)
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg10", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg10": "Reduced inequalities index (0-100)"},
+          title="SDG 10: Reduced inequalities index, ~2024").show()
+
+# The two periods: initial (~2012) and final (~2024) values
+df = geo.load("sdg10", variables="index_sdg10")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg10")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
+           title="SDG 10: Reduced inequalities index, ~2012 and ~2024")`,
+      pandas: `import pandas as pd
+import geopandas as gpd
+import plotly.express as px
+
+# No geo4bolivia needed: every file is a plain URL
+BASE = "${RAW_URL}"
+df = pd.read_csv(BASE + "data/municipality/sdg10.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+
+index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg10"]]
+gdf = municipalities.merge(index, on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg10", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg10": "Reduced inequalities index (0-100)"},
+          title="SDG 10: Reduced inequalities index, ~2024")`,
+    },
+    examples: [
+      {
+        title: "Map the change, ~2012 to ~2024",
+        text: "Subtracts the initial index from the final one: positive values mark the municipalities that moved closer to the goal's targets.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg10", variables="index_sdg10")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg10")
+wide["change"] = wide[2024] - wide[2012]
+gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+                                           on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="change", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"change": "Change in the index (points)"},
+          title="SDG 10: change in the index, ~2012 to ~2024")`,
+      },
+      {
+        title: "Recompute the index from its indicators",
+        text: "Rescales each indicator between the Atlas's worst and best values (Cuadro 21), caps it to 0-100 and averages the available ones, which reproduces the published index.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg10", years=2024).set_index("geo_id")
+bounds = {"sdg10_2_esp": (48.1, 1), "sdg10_2_pel": (0, 1), "sdg10_2_mre": (0, 1),
+          "sdg10_2_tpm": (0, 1), "sdg10_2_gip": (1, 0), "sdg10_4_gin": (1,
+          0)}  # (worst, best)
+scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
+                       for v, (w, b) in bounds.items()}).clip(0, 100)
+df["computed"] = scores.mean(axis=1)  # skips missing indicators
+df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(df, x="computed", y="index_sdg10", hover_name="name",
+           labels={"computed": "Computed from the indicators",
+                   "index_sdg10": "Reduced inequalities index (0-100)"},
+           title="Recomputed vs published SDG 10 index, ~2024")`,
+      },
+      {
+        title: "Which indicators moved",
+        text: "Compares the mean rescaled score (0-100) of each indicator in the two periods: the gap between the dots is the progress, and the lowest dots are where the goal is furthest away.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg10")
+bounds = {"sdg10_2_esp": (48.1, 1), "sdg10_2_pel": (0, 1), "sdg10_2_mre": (0, 1),
+          "sdg10_2_tpm": (0, 1), "sdg10_2_gip": (1, 0), "sdg10_4_gin": (1,
+          0)}  # (worst, best)
+labels = geo.dictionary("sdg10").set_index("variable")["label"]
+rows = [{"indicator": labels[v], "period": f"~{year}",
+         "score": (100 * (part[v] - w) / (b - w)).clip(0, 100).mean()}
+        for year, part in df.groupby("year") for v, (w, b) in bounds.items()]
+px.scatter(pd.DataFrame(rows), x="score", y="indicator", color="period",
+           labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
+           title="SDG 10 indicators, ~2012 and ~2024")`,
+      },
+      {
+        title: "Rank the departments",
+        text: "Averages the index within each department, weighting municipalities by their census population, in both periods.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg10", variables="index_sdg10")
+dep = geo.aggregate(df, to="department",
+                    rules={"index_sdg10": "weighted_mean:population"},
+                    weights=geo.load("sdg", variables="population"))
+dep["department"] = dep["geo_id"].map(
+    geo.units("department").set_index("geo_id")["name"])
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg10"), x="index_sdg10", y="department",
+           color="period",
+           labels={"index_sdg10": "Index (population-weighted)"},
+           title="SDG 10 index by department, ~2012 and ~2024")`,
+      },
+    ],
+  },
+  {
+    id: 'municipalities343-sdg11', type: 'indicator', section: 'indicators',
+    title: "SDG 11: Sustainable cities and communities",
+    scope: "343 municipalities · 7 indicators and the SDG 11 index · ~2012 and ~2024",
+    summary: "The SDG 11 (Sustainable cities and communities) index of the SDG Atlas of Bolivia 2026 and its 7 indicators, overcrowding, toilets, adequate housing, public transport, solid-waste spending and collection, and PM2.5 pollution, for every municipality near 2012 and near 2024.",
+    description: "The SDG 11 (Sustainable cities and communities) index of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), with the 7 indicators behind it: overcrowded households (%) (2012 and 2024); households without a toilet (%) (2012 and 2024); adequate housing (% of dwellings) (2012 and 2024); public-transport seats (per 1,000 people) (2012 and 2024); public spending on solid waste (Bs per person per year) (average 2012–2014 and average 2022–2024); solid-waste collection (% of dwellings) (2012 and 2024); PM2.5 concentration (µg/m³) (average 2010–2012 and average 2021–2023). Every indicator is measured twice, near the 2012 census and near the 2024 census, and the observatory stores the two values as 2012 and 2024 so that their change can be studied. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value set by the Atlas, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Between the two periods the median index went from 26.0 to 37.2, and it rose in 340 of the 343 units.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Social"], tags: ["SDGs", "SDG Atlas 2026", "cities", "housing", "air pollution"],
+    image: 'images/indicators/sdg11.webp',
+    imageAlt: "Map of the Sustainable cities and communities index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 48.9 – 88.1 (60); Middle 30.7 – 48.9 (192); Low 7.6 – 30.7 (91). Highest: Nuestra Señora de La Paz, El Alto and Tarija.",
+    mapAlt: "Two maps of the Sustainable cities and communities index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 48.9 – 88.1 (16 units near 2012, 60 near 2024); Middle 30.7 – 48.9 (83 units near 2012, 192 near 2024); Low 7.6 – 30.7 (244 units near 2012, 91 near 2024). Highest near 2024: Nuestra Señora de La Paz, El Alto and Tarija.",
+    map: 'images/indicators/sdg11-map.webp',
+    date: '2026-11-17', pinned: false, dataset: 'sdg11',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
+    code: {
+      python: `${PYTHON_SETUP}
+
+# The SDG 11 index (0-100, higher is better), ~2024
+gdf = geo.load("sdg11", variables="index_sdg11", years=2024, geometry=True)
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg11", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg11": "Index (0-100)"},
+          title="SDG 11: Sustainable cities and communities index, ~2024").show()
+
+# The two periods: initial (~2012) and final (~2024) values
+df = geo.load("sdg11", variables="index_sdg11")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg11")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
+           title="SDG 11 index, ~2012 and ~2024")`,
+      pandas: `import pandas as pd
+import geopandas as gpd
+import plotly.express as px
+
+# No geo4bolivia needed: every file is a plain URL
+BASE = "${RAW_URL}"
+df = pd.read_csv(BASE + "data/municipality/sdg11.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+
+index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg11"]]
+gdf = municipalities.merge(index, on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg11", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg11": "Index (0-100)"},
+          title="SDG 11: Sustainable cities and communities index, ~2024")`,
+    },
+    examples: [
+      {
+        title: "Map the change, ~2012 to ~2024",
+        text: "Subtracts the initial index from the final one: positive values mark the municipalities that moved closer to the goal's targets.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg11", variables="index_sdg11")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg11")
+wide["change"] = wide[2024] - wide[2012]
+gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+                                           on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="change", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"change": "Change in the index (points)"},
+          title="SDG 11: change in the index, ~2012 to ~2024")`,
+      },
+      {
+        title: "Recompute the index from its indicators",
+        text: "Rescales each indicator between the Atlas's worst and best values (Cuadro 21), caps it to 0-100 and averages the available ones, which reproduces the published index.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg11", years=2024).set_index("geo_id")
+bounds = {"sdg11_1_thm": (68.2, 12.6), "sdg11_1_ssb": (100, 0), "sdg11_1_ava": (0,
+          100), "sdg11_2_atc": (0, 342), "sdg11_6_ipr": (0, 287.7),
+          "sdg11_6_srr": (0, 100), "sdg11_6_ica": (31, 5)}  # (worst, best)
+scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
+                       for v, (w, b) in bounds.items()}).clip(0, 100)
+df["computed"] = scores.mean(axis=1)  # skips missing indicators
+df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(df, x="computed", y="index_sdg11", hover_name="name",
+           labels={"computed": "Computed from the indicators",
+                   "index_sdg11": "Index (0-100)"},
+           title="Recomputed vs published SDG 11 index, ~2024")`,
+      },
+      {
+        title: "Which indicators moved",
+        text: "Compares the mean rescaled score (0-100) of each indicator in the two periods: the gap between the dots is the progress, and the lowest dots are where the goal is furthest away.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg11")
+bounds = {"sdg11_1_thm": (68.2, 12.6), "sdg11_1_ssb": (100, 0), "sdg11_1_ava": (0,
+          100), "sdg11_2_atc": (0, 342), "sdg11_6_ipr": (0, 287.7),
+          "sdg11_6_srr": (0, 100), "sdg11_6_ica": (31, 5)}  # (worst, best)
+labels = geo.dictionary("sdg11").set_index("variable")["label"]
+rows = [{"indicator": labels[v], "period": f"~{year}",
+         "score": (100 * (part[v] - w) / (b - w)).clip(0, 100).mean()}
+        for year, part in df.groupby("year") for v, (w, b) in bounds.items()]
+px.scatter(pd.DataFrame(rows), x="score", y="indicator", color="period",
+           labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
+           title="SDG 11 indicators, ~2012 and ~2024")`,
+      },
+      {
+        title: "Rank the departments",
+        text: "Averages the index within each department, weighting municipalities by their census population, in both periods.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg11", variables="index_sdg11")
+dep = geo.aggregate(df, to="department",
+                    rules={"index_sdg11": "weighted_mean:population"},
+                    weights=geo.load("sdg", variables="population"))
+dep["department"] = dep["geo_id"].map(
+    geo.units("department").set_index("geo_id")["name"])
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg11"), x="index_sdg11", y="department",
+           color="period",
+           labels={"index_sdg11": "Index (population-weighted)"},
+           title="SDG 11 index by department, ~2012 and ~2024")`,
+      },
+    ],
+  },
+  {
+    id: 'municipalities343-sdg13', type: 'indicator', section: 'indicators',
+    title: "SDG 13: Climate action",
+    scope: "343 municipalities · 5 indicators and the SDG 13 index · ~2012 and ~2024",
+    summary: "The SDG 13 (Climate action) index of the SDG Atlas of Bolivia 2026 and its 5 indicators, families hit by extreme climate events, climate-change vulnerability and CO2 emissions from forest loss, transport and fires, for every municipality near 2012 and near 2024.",
+    description: "The SDG 13 (Climate action) index of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), with the 5 indicators behind it: families affected by extreme climate events (%) (average 2011–2013 and average 2021–2023); climate-change vulnerability index (0-3) (2012 and 2024); CO2 emissions from forest loss (t per person per year) (average 2011–2013 and average 2021–2023); CO2 emissions from transport (t per person per year) (2015 and 2024); CO2 emissions from fires (t per person per year) (average 2011–2013 and average 2020–2022). Every indicator is measured twice, near the 2012 census and near the 2024 census, and the observatory stores the two values as 2012 and 2024 so that their change can be studied. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value set by the Atlas, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Between the two periods the median index went from 82.6 to 72.8, and it rose in 75 of the 343 units. Some indicators are missing for part of the units (CO2 emissions from forest loss (t per person per year)); the index averages the available ones.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Environment"], tags: ["SDGs", "SDG Atlas 2026", "climate change", "CO₂ emissions", "extreme events"],
+    image: 'images/indicators/sdg13.webp',
+    imageAlt: "Map of the Climate action index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 78.6 – 100.0 (118); Middle 61.2 – 78.6 (149); Low 27.4 – 61.2 (76). Highest: El Alto, Villazón and Sipesipe.",
+    mapAlt: "Two maps of the Climate action index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 78.6 – 100.0 (243 units near 2012, 118 near 2024); Middle 61.2 – 78.6 (60 units near 2012, 149 near 2024); Low 27.4 – 61.2 (40 units near 2012, 76 near 2024). Highest near 2024: El Alto, Villazón and Sipesipe.",
+    map: 'images/indicators/sdg13-map.webp',
+    date: '2026-11-17', pinned: false, dataset: 'sdg13',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
+    code: {
+      python: `${PYTHON_SETUP}
+
+# The SDG 13 index (0-100, higher is better), ~2024
+gdf = geo.load("sdg13", variables="index_sdg13", years=2024, geometry=True)
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg13", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg13": "Climate action index (0-100)"},
+          title="SDG 13: Climate action index, ~2024").show()
+
+# The two periods: initial (~2012) and final (~2024) values
+df = geo.load("sdg13", variables="index_sdg13")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg13")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
+           title="SDG 13: Climate action index, ~2012 and ~2024")`,
+      pandas: `import pandas as pd
+import geopandas as gpd
+import plotly.express as px
+
+# No geo4bolivia needed: every file is a plain URL
+BASE = "${RAW_URL}"
+df = pd.read_csv(BASE + "data/municipality/sdg13.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+
+index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg13"]]
+gdf = municipalities.merge(index, on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg13", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg13": "Climate action index (0-100)"},
+          title="SDG 13: Climate action index, ~2024")`,
+    },
+    examples: [
+      {
+        title: "Map the change, ~2012 to ~2024",
+        text: "Subtracts the initial index from the final one: positive values mark the municipalities that moved closer to the goal's targets.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg13", variables="index_sdg13")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg13")
+wide["change"] = wide[2024] - wide[2012]
+gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+                                           on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="change", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"change": "Change in the index (points)"},
+          title="SDG 13: change in the index, ~2012 to ~2024")`,
+      },
+      {
+        title: "Recompute the index from its indicators",
+        text: "Rescales each indicator between the Atlas's worst and best values (Cuadro 21), caps it to 0-100 and averages the available ones, which reproduces the published index.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg13", years=2024).set_index("geo_id")
+bounds = {"sdg13_1_fec": (87.6, 0), "sdg13_1_icc": (3, 0), "sdg13_2_epb": (44.9, 0),
+          "sdg13_2_ect": (5.9, 0), "sdg13_2_eci": (38.6, 0)}  # (worst, best)
+scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
+                       for v, (w, b) in bounds.items()}).clip(0, 100)
+df["computed"] = scores.mean(axis=1)  # skips missing indicators
+df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(df, x="computed", y="index_sdg13", hover_name="name",
+           labels={"computed": "Computed from the indicators",
+                   "index_sdg13": "Climate action index (0-100)"},
+           title="Recomputed vs published SDG 13 index, ~2024")`,
+      },
+      {
+        title: "Which indicators moved",
+        text: "Compares the mean rescaled score (0-100) of each indicator in the two periods: the gap between the dots is the progress, and the lowest dots are where the goal is furthest away.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg13")
+bounds = {"sdg13_1_fec": (87.6, 0), "sdg13_1_icc": (3, 0), "sdg13_2_epb": (44.9, 0),
+          "sdg13_2_ect": (5.9, 0), "sdg13_2_eci": (38.6, 0)}  # (worst, best)
+labels = geo.dictionary("sdg13").set_index("variable")["label"]
+rows = [{"indicator": labels[v], "period": f"~{year}",
+         "score": (100 * (part[v] - w) / (b - w)).clip(0, 100).mean()}
+        for year, part in df.groupby("year") for v, (w, b) in bounds.items()]
+px.scatter(pd.DataFrame(rows), x="score", y="indicator", color="period",
+           labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
+           title="SDG 13 indicators, ~2012 and ~2024")`,
+      },
+      {
+        title: "Rank the departments",
+        text: "Averages the index within each department, weighting municipalities by their census population, in both periods.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg13", variables="index_sdg13")
+dep = geo.aggregate(df, to="department",
+                    rules={"index_sdg13": "weighted_mean:population"},
+                    weights=geo.load("sdg", variables="population"))
+dep["department"] = dep["geo_id"].map(
+    geo.units("department").set_index("geo_id")["name"])
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg13"), x="index_sdg13", y="department",
+           color="period",
+           labels={"index_sdg13": "Index (population-weighted)"},
+           title="SDG 13 index by department, ~2012 and ~2024")`,
+      },
+    ],
+  },
+  {
+    id: 'municipalities343-sdg15', type: 'indicator', section: 'indicators',
+    title: "SDG 15: Life on land",
+    scope: "343 municipalities · 4 indicators and the SDG 15 index · ~2012 and ~2024",
+    summary: "The SDG 15 (Life on land) index of the SDG Atlas of Bolivia 2026 and its 4 indicators, protected areas, forest loss and biodiversity loss from deforestation and fires, for every municipality near 2012 and near 2024.",
+    description: "The SDG 15 (Life on land) index of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), with the 4 indicators behind it: area declared protected (%) (2012 and 2025); forest loss rate (% per year) (average 2012–2014 and average 2022–2024); biodiversity loss from deforestation (index) (2012 and 2024); biodiversity loss from fires (index) (2012 and 2024). Every indicator is measured twice, near the 2012 census and near the 2024 census, and the observatory stores the two values as 2012 and 2024 so that their change can be studied. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value set by the Atlas, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Between the two periods the median index went from 55.5 to 54.2, and it rose in 103 of the 343 units. Some indicators are missing for part of the units (Forest loss rate (% per year) and Biodiversity loss from deforestation (index)); the index averages the available ones.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Environment"], tags: ["SDGs", "SDG Atlas 2026", "protected areas", "deforestation", "biodiversity"],
+    image: 'images/indicators/sdg15.webp',
+    imageAlt: "Map of the Life on land index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 81.0 – 100.0 (56); Middle 60.1 – 81.0 (95); Low 9.0 – 60.1 (192). Highest: Eucaliptus, Santos Mercado and Nueva Esperanza.",
+    mapAlt: "Two maps of the Life on land index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 81.0 – 100.0 (50 units near 2012, 56 near 2024); Middle 60.1 – 81.0 (111 units near 2012, 95 near 2024); Low 9.0 – 60.1 (182 units near 2012, 192 near 2024). Highest near 2024: Eucaliptus, Santos Mercado and Nueva Esperanza.",
+    map: 'images/indicators/sdg15-map.webp',
+    date: '2026-11-17', pinned: false, dataset: 'sdg15',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
+    code: {
+      python: `${PYTHON_SETUP}
+
+# The SDG 15 index (0-100, higher is better), ~2024
+gdf = geo.load("sdg15", variables="index_sdg15", years=2024, geometry=True)
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg15", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg15": "Life on land index (0-100)"},
+          title="SDG 15: Life on land index, ~2024").show()
+
+# The two periods: initial (~2012) and final (~2024) values
+df = geo.load("sdg15", variables="index_sdg15")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg15")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
+           title="SDG 15: Life on land index, ~2012 and ~2024")`,
+      pandas: `import pandas as pd
+import geopandas as gpd
+import plotly.express as px
+
+# No geo4bolivia needed: every file is a plain URL
+BASE = "${RAW_URL}"
+df = pd.read_csv(BASE + "data/municipality/sdg15.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+
+index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg15"]]
+gdf = municipalities.merge(index, on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="index_sdg15", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"index_sdg15": "Life on land index (0-100)"},
+          title="SDG 15: Life on land index, ~2024")`,
+    },
+    examples: [
+      {
+        title: "Map the change, ~2012 to ~2024",
+        text: "Subtracts the initial index from the final one: positive values mark the municipalities that moved closer to the goal's targets.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg15", variables="index_sdg15")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg15")
+wide["change"] = wide[2024] - wide[2012]
+gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+                                           on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="change", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"change": "Change in the index (points)"},
+          title="SDG 15: change in the index, ~2012 to ~2024")`,
+      },
+      {
+        title: "Recompute the index from its indicators",
+        text: "Rescales each indicator between the Atlas's worst and best values (Cuadro 21), caps it to 0-100 and averages the available ones, which reproduces the published index.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg15", years=2024).set_index("geo_id")
+bounds = {"sdg15_1_sap": (0, 60), "sdg15_2_tpb": (7.3, 0), "sdg15_5_pbd": (2, 0),
+          "sdg15_5_pbi": (9.1, 0)}  # (worst, best)
+scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
+                       for v, (w, b) in bounds.items()}).clip(0, 100)
+df["computed"] = scores.mean(axis=1)  # skips missing indicators
+df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(df, x="computed", y="index_sdg15", hover_name="name",
+           labels={"computed": "Computed from the indicators",
                    "index_sdg15": "Life on land index (0-100)"},
-           title="Protected areas and biodiversity loss")`,
+           title="Recomputed vs published SDG 15 index, ~2024")`,
+      },
+      {
+        title: "Which indicators moved",
+        text: "Compares the mean rescaled score (0-100) of each indicator in the two periods: the gap between the dots is the progress, and the lowest dots are where the goal is furthest away.",
+        code: `${PYTHON_SETUP}
+import pandas as pd
+
+df = geo.load("sdg15")
+bounds = {"sdg15_1_sap": (0, 60), "sdg15_2_tpb": (7.3, 0), "sdg15_5_pbd": (2, 0),
+          "sdg15_5_pbi": (9.1, 0)}  # (worst, best)
+labels = geo.dictionary("sdg15").set_index("variable")["label"]
+rows = [{"indicator": labels[v], "period": f"~{year}",
+         "score": (100 * (part[v] - w) / (b - w)).clip(0, 100).mean()}
+        for year, part in df.groupby("year") for v, (w, b) in bounds.items()]
+px.scatter(pd.DataFrame(rows), x="score", y="indicator", color="period",
+           labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
+           title="SDG 15 indicators, ~2012 and ~2024")`,
+      },
+      {
+        title: "Rank the departments",
+        text: "Averages the index within each department, weighting municipalities by their census population, in both periods.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg15", variables="index_sdg15")
+dep = geo.aggregate(df, to="department",
+                    rules={"index_sdg15": "weighted_mean:population"},
+                    weights=geo.load("sdg", variables="population"))
+dep["department"] = dep["geo_id"].map(
+    geo.units("department").set_index("geo_id")["name"])
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg15"), x="index_sdg15", y="department",
+           color="period",
+           labels={"index_sdg15": "Index (population-weighted)"},
+           title="SDG 15 index by department, ~2012 and ~2024")`,
       },
     ],
   },
   {
-    id: 'municipalities339-sdg16', type: 'indicator', section: 'indicators',
-    title: 'SDG 16: Peace, justice and strong institutions',
-    scope: '339 municipalities · 3 indicators and the SDG 16 index · 2012–2017',
-    summary: 'The SDG 16 index of the 339 municipalities, built from homicide rates, municipal budget execution and birth registration of children under 5.',
-    description: 'The SDG 16 (Peace, justice and strong institutions) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) for all 339 municipalities, on a 0–100 scale where 100 means the targets are met, with its three indicators: the homicide rate per 100,000 inhabitants (average of 2015–2017, from police statistics compiled by the Bolivian Observatory of Citizen Security and Fight against Drugs, stored at 2016), the municipal government’s budget execution in 2017 (executed over programmed budget, from the Ministry of Economy and Public Finance) and the share of children under 5 whose birth is registered (2012 census, INE). Each indicator is rescaled linearly to 0–100 between a worst and a best value, with values beyond the bounds capped, and the index is the simple mean of the rescaled indicators. The indicators refer to different years, so the index is stored at 2017, the latest of them. No values are missing; 253 municipalities recorded no homicide over 2015–2017, and one reports a budget execution above 100%, capped in the index. The dataset also holds the Atlas’s 2020 population and 2012 urbanization rate as context.',
-    geography: 'Municipality', units: 339, period: '2012–2017', frequency: 'One reference year per indicator', key: 'geo_id', idExample: 'BO-04-17-04',
-    categories: ['Institutions'], tags: ['SDGs', 'SDG 16', 'homicides', 'municipal finance', 'birth registration', 'municipalities'],
+    id: 'municipalities343-sdg16', type: 'indicator', section: 'indicators',
+    title: "SDG 16: Peace, justice and strong institutions",
+    scope: "343 municipalities · 4 indicators and the SDG 16 index · ~2012 and ~2024",
+    summary: "The SDG 16 (Peace, justice and strong institutions) index of the SDG Atlas of Bolivia 2026 and its 4 indicators, homicides, municipal budget execution, social conflicts and birth registration, for every municipality near 2012 and near 2024.",
+    description: "The SDG 16 (Peace, justice and strong institutions) index of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), with the 4 indicators behind it: homicide rate (per 100,000 people) (average 2017–2019 and average 2022–2024); budget execution (%) (average 2011–2013 and average 2021–2023); social conflicts (events per year) (average 2018–2020 and average 2022–2024); children under 5 in the civil registry (%) (2012 and 2024). Every indicator is measured twice, near the 2012 census and near the 2024 census, and the observatory stores the two values as 2012 and 2024 so that their change can be studied. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value set by the Atlas, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Between the two periods the median index went from 77.5 to 85.5, and it rose in 272 of the 343 units.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Institutions"], tags: ["SDGs", "SDG Atlas 2026", "homicides", "municipal finance", "birth registration"],
     image: 'images/indicators/sdg16.webp',
-    imageAlt: 'Map of the Peace, justice, institutions index (0-100) in 2017 across 339 Bolivian municipalities in three natural-break classes: high across most of Chuquisaca and highland La Paz, low in scattered municipalities of Beni and Pando, the Cochabamba valley, El Alto, the eastern Santa Cruz border and the salt-flat municipalities of western Oruro and Potosí',
+    imageAlt: "Map of the Peace, justice and strong institutions index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 82.1 – 96.3 (211); Middle 66.9 – 82.1 (72); Low 32.9 – 66.9 (60). Highest: San Pedro, Tomina and Porvenir.",
+    mapAlt: "Two maps of the Peace, justice and strong institutions index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 82.1 – 96.3 (79 units near 2012, 211 near 2024); Middle 66.9 – 82.1 (190 units near 2012, 72 near 2024); Low 32.9 – 66.9 (74 units near 2012, 60 near 2024). Highest near 2024: San Pedro, Tomina and Porvenir.",
     map: 'images/indicators/sdg16-map.webp',
-    mapAlt: 'Map of the Peace, justice, institutions index (0-100) in 2017 across 339 Bolivian municipalities in three natural-break classes: high across most of Chuquisaca and highland La Paz, low in scattered municipalities of Beni and Pando, the Cochabamba valley, El Alto, the eastern Santa Cruz border and the salt-flat municipalities of western Oruro and Potosí. Legend: High 76.9 to 93.7 (141 municipalities), Middle 63.8 to 76.9 (148), Low 32.7 to 63.8 (50).',
-    date: '2026-10-30', pinned: false, dataset: 'sdg16',
-    notice: 'Each variable has values only in its reference year: load the index with its year, e.g. geo.load("sdg16", variables="index_sdg16", years=2017), or every variable as a cross-section with geo.load("sdg16").groupby("geo_id").first(). The index is stored at 2017, the latest year of its indicators (homicides 2015–2017, budget execution 2017, birth registration 2012).',
+    date: '2026-11-17', pinned: false, dataset: 'sdg16',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
 
-# The SDG 16 index (stored at 2017), with municipal boundaries
-gdf = geo.load("sdg16", variables="index_sdg16", years=2017, geometry=True)
+# The SDG 16 index (0-100, higher is better), ~2024
+gdf = geo.load("sdg16", variables="index_sdg16", years=2024, geometry=True)
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="index_sdg16", hover_name="name",
           center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg16": "Peace, justice, institutions index (0-100)"},
-          title="SDG 16 index, 2017").show()
+          labels={"index_sdg16": "Index (0-100)"},
+          title="SDG 16 index, ~2024").show()
 
-# The index by department
-deps = geo.units("department").set_index("geo_id")["name"]
-gdf["department"] = gdf["geo_id"].str[:5].map(deps)
-px.box(gdf, x="department", y="index_sdg16", hover_name="name",
-       labels={"index_sdg16": "Peace, justice, institutions index (0-100)"},
-       title="SDG 16 index by department, 2017")`,
+# The two periods: initial (~2012) and final (~2024) values
+df = geo.load("sdg16", variables="index_sdg16")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg16")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
+           title="SDG 16 index, ~2012 and ~2024")`,
       pandas: `import pandas as pd
 import geopandas as gpd
 import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg16.csv")   # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/municipality/sdg16.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
 
-index = df.loc[df["year"] == 2017, ["geo_id", "index_sdg16"]]
+index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg16"]]
 gdf = municipalities.merge(index, on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="index_sdg16", hover_name="name",
           center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg16": "Peace, justice, institutions index (0-100)"},
-          title="SDG 16 index, 2017")`,
+          labels={"index_sdg16": "Index (0-100)"},
+          title="SDG 16 index, ~2024")`,
     },
     examples: [
       {
-        title: 'Compute the index from its indicators',
-        text: 'Rescales each indicator between the Atlas’s worst and best values, caps it at 0 and 100, averages the three scores and compares the result with the published SDG 16 index.',
+        title: "Map the change, ~2012 to ~2024",
+        text: "Subtracts the initial index from the final one: positive values mark the municipalities that moved closer to the goal's targets.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg16", variables="index_sdg16")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg16")
+wide["change"] = wide[2024] - wide[2012]
+gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+                                           on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="change", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"change": "Change in the index (points)"},
+          title="SDG 16: change in the index, ~2012 to ~2024")`,
+      },
+      {
+        title: "Recompute the index from its indicators",
+        text: "Rescales each indicator between the Atlas's worst and best values (Cuadro 21), caps it to 0-100 and averages the available ones, which reproduces the published index.",
         code: `${PYTHON_SETUP}
 import pandas as pd
 
-df = geo.load("sdg16").groupby("geo_id").first()    # each variable at its own year
-names = geo.units("municipality").set_index("geo_id")["name"]
-df["name"] = df.index.map(names)
-
-# Worst and best values of each indicator (Atlas, Cuadro 17)
-bounds = {"sdg16_1_rhr": (8.3, 0), "sdg16_6_pbec": (34.8, 100),
-          "sdg16_9_cr": (50, 100)}
+df = geo.load("sdg16", years=2024).set_index("geo_id")
+bounds = {"sdg16_1_thp": (9, 0), "sdg16_6_cep": (17.7, 94.9), "sdg16_7_tcs": (16.3,
+          0), "sdg16_9_nic": (66.2, 100)}  # (worst, best)
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
-df["computed"] = scores.mean(axis=1)
-
+df["computed"] = scores.mean(axis=1)  # skips missing indicators
+df["name"] = geo.units("municipality").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg16", hover_name="name",
-           labels={"computed": "Computed index (0-100)",
-                   "index_sdg16": "Peace, justice, institutions index (0-100)"},
-           title="Computed vs published SDG 16 index")`,
+           labels={"computed": "Computed from the indicators",
+                   "index_sdg16": "Index (0-100)"},
+           title="Recomputed vs published SDG 16 index, ~2024")`,
       },
       {
-        title: 'Which indicator pulls the index down',
-        text: 'Shows the average 0–100 score of each indicator across the 339 municipalities: the lower the bar, the further municipalities are from that target.',
+        title: "Which indicators moved",
+        text: "Compares the mean rescaled score (0-100) of each indicator in the two periods: the gap between the dots is the progress, and the lowest dots are where the goal is furthest away.",
         code: `${PYTHON_SETUP}
 import pandas as pd
 
-df = geo.load("sdg16").groupby("geo_id").first()
-bounds = {"sdg16_1_rhr": (8.3, 0), "sdg16_6_pbec": (34.8, 100),
-          "sdg16_9_cr": (50, 100)}
-scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
-                       for v, (w, b) in bounds.items()}).clip(0, 100)
-
-labels = {"sdg16_1_rhr": "Homicide rate (per 100,000)",
-          "sdg16_6_pbec": "Budget execution (%)",
-          "sdg16_9_cr": "Birth registration, under 5 (%)"}
-mean = scores.mean().rename(labels).reset_index()
-mean.columns = ["indicator", "score"]
-px.bar(mean.sort_values("score"), x="score", y="indicator",
-       labels={"score": "Mean score (0-100)", "indicator": ""},
-       title="Average SDG 16 score by indicator")`,
+df = geo.load("sdg16")
+bounds = {"sdg16_1_thp": (9, 0), "sdg16_6_cep": (17.7, 94.9), "sdg16_7_tcs": (16.3,
+          0), "sdg16_9_nic": (66.2, 100)}  # (worst, best)
+labels = geo.dictionary("sdg16").set_index("variable")["label"]
+rows = [{"indicator": labels[v], "period": f"~{year}",
+         "score": (100 * (part[v] - w) / (b - w)).clip(0, 100).mean()}
+        for year, part in df.groupby("year") for v, (w, b) in bounds.items()]
+px.scatter(pd.DataFrame(rows), x="score", y="indicator", color="period",
+           labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
+           title="SDG 16 indicators, ~2012 and ~2024")`,
       },
       {
-        title: 'Rank the departments by population-weighted index',
-        text: 'Averages the municipal SDG 16 index within each department, weighting each municipality by its 2017 gridded population.',
+        title: "Rank the departments",
+        text: "Averages the index within each department, weighting municipalities by their census population, in both periods.",
         code: `${PYTHON_SETUP}
 
-df = geo.load("sdg16", variables="index_sdg16", years=2017)
-dep = geo.aggregate(df, to="department", rules={"index_sdg16": "weighted_mean:pop"},
-                    weights=geo.load("pop"))
-names = geo.units("department").set_index("geo_id")["name"]
-dep["department"] = dep["geo_id"].map(names)
-px.bar(dep.sort_values("index_sdg16"), x="index_sdg16", y="department",
-       labels={"index_sdg16": "Peace, justice, institutions index (0-100)"},
-       title="SDG 16 index by department (population-weighted), 2017")`,
-      },
-      {
-        title: 'Budget execution and night-time lights',
-        text: 'Plots municipal budget execution in 2017 against the trend of log night-time lights per capita in the same year, to see whether brighter, richer municipalities execute more of their budget.',
-        code: `${PYTHON_SETUP}
-
-sdg = geo.load("sdg16", variables="sdg16_6_pbec", years=2017)
-ntl = geo.load("ntl", variables="ln_t400NTLpc", years=2017)
-df = sdg.merge(ntl, on=["geo_id", "year"])
-names = geo.units("municipality").set_index("geo_id")["name"]
-df["name"] = df["geo_id"].map(names)
-px.scatter(df, x="ln_t400NTLpc", y="sdg16_6_pbec", hover_name="name",
-           labels={"ln_t400NTLpc": "Log night-time lights per capita (trend)",
-                   "sdg16_6_pbec": "Budget execution (%)"},
-           title="Budget execution and night-time lights, 2017")`,
+df = geo.load("sdg16", variables="index_sdg16")
+dep = geo.aggregate(df, to="department",
+                    rules={"index_sdg16": "weighted_mean:population"},
+                    weights=geo.load("sdg", variables="population"))
+dep["department"] = dep["geo_id"].map(
+    geo.units("department").set_index("geo_id")["name"])
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg16"), x="index_sdg16", y="department",
+           color="period",
+           labels={"index_sdg16": "Index (population-weighted)"},
+           title="SDG 16 index by department, ~2012 and ~2024")`,
       },
     ],
   },
   {
-    id: 'municipalities339-sdg17', type: 'indicator', section: 'indicators',
-    title: 'SDG 17: Partnerships for the goals',
-    scope: '339 municipalities · 2 indicators and the SDG 17 index · 2012–2020',
-    summary: 'The SDG 17 index of the Municipal Atlas of the SDGs and its two indicators of municipal finance, local tax revenue and public investment per capita, in 2017.',
-    description: 'The SDG 17 (Partnerships for the goals) index of the Municipal Atlas of the Sustainable Development Goals in Bolivia 2020 (SDSN Bolivia) for all 339 municipalities, with the two indicators behind it, both for 2017 and from Ministry of Economy and Public Finance data: the share of municipal revenue that comes from local taxes (the rest comes mainly from central-government transfers) and public investment per capita in bolivianos. The index runs from 0 (worst) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value, capped at 0 and 100, and the index is their simple mean. Local taxes are a small share of revenue in most municipalities (median 0.6%), so the index is low across most of the country. The Atlas does not state which population divides public investment. The Atlas population (2020) and urbanization rate (2012) are included as context; they are not inputs of the index.',
-    geography: 'Municipality', units: 339, period: '2012–2020', frequency: 'One reference year per indicator', key: 'geo_id', idExample: 'BO-04-17-04',
-    categories: ['Institutions'], tags: ['SDGs', 'municipal finance', 'local taxes', 'public investment', 'municipalities'],
+    id: 'municipalities343-sdg17', type: 'indicator', section: 'indicators',
+    title: "SDG 17: Partnerships for the goals",
+    scope: "343 municipalities · 2 indicators and the SDG 17 index · ~2012 and ~2024",
+    summary: "The SDG 17 (Partnerships for the goals) index of the SDG Atlas of Bolivia 2026 and its 2 indicators, municipal revenue from local sources and public investment per person, for every municipality near 2012 and near 2024.",
+    description: "The SDG 17 (Partnerships for the goals) index of the Atlas de los ODS en Bolivia 2026 (Andersen and Argandoña, SDSN Bolivia) for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), with the 2 indicators behind it: municipal revenue from local sources (%) (average 2011–2013 and average 2021–2023); public investment (Bs per person) (2012 and 2023). Every indicator is measured twice, near the 2012 census and near the 2024 census, and the observatory stores the two values as 2012 and 2024 so that their change can be studied. The index runs from 0 (worst situation) to 100 (targets met): each indicator is rescaled linearly between a worst and a best value set by the Atlas, capped, so that higher is always better, and the index is the simple mean of the available rescaled indicators. Between the two periods the median index went from 25.0 to 30.1, and it rose in 195 of the 343 units. Some indicators are missing for part of the units (Municipal revenue from local sources (%) and Public investment (Bs per person)); the index averages the available ones.",
+    geography: 'Municipality', units: 343, period: '~2012 and ~2024', frequency: 'Two periods (initial ~2012, final ~2024)', key: 'geo_id', idExample: 'BO-04-17-04',
+    categories: ["Institutions"], tags: ["SDGs", "SDG Atlas 2026", "municipal finance", "local taxes", "public investment"],
     image: 'images/indicators/sdg17.webp',
-    imageAlt: 'Map of the Partnerships index (0-100) in 2017 across 339 Bolivian municipalities in three natural-break classes: high around Santa Cruz de la Sierra, La Paz and Cochabamba, in Puerto Quijarro and in a few municipalities of the southwestern altiplano of Oruro and Potosí; middle in parts of Tarija, southern Potosí and Pando; low across most of the country',
-    mapAlt: 'Map of the Partnerships index (0-100) in 2017 across 339 Bolivian municipalities in three natural-break classes: high around Santa Cruz de la Sierra, La Paz and Cochabamba, in Puerto Quijarro and in a few municipalities of the southwestern altiplano of Oruro and Potosí; middle in parts of Tarija, southern Potosí and Pando; low across most of the country. Legend: High 36.9 to 65.2 (14 municipalities), Middle 16.3 to 36.9 (85), Low 0.0 to 16.3 (240).',
+    imageAlt: "Map of the Partnerships for the goals index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 46.1 – 100.0 (83); Middle 24.5 – 46.1 (125); Low 0.0 – 24.5 (135). Highest: Carangas, La Rivera and Coipasa.",
+    mapAlt: "Two maps of the Partnerships for the goals index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 46.1 – 100.0 (51 units near 2012, 83 near 2024); Middle 24.5 – 46.1 (124 units near 2012, 125 near 2024); Low 0.0 – 24.5 (168 units near 2012, 135 near 2024). Highest near 2024: Carangas, La Rivera and Coipasa.",
     map: 'images/indicators/sdg17-map.webp',
-    date: '2026-10-30', pinned: false, dataset: 'sdg17',
-    notice: 'Each variable has values only in its reference year: load the index with geo.load("sdg17", variables="index_sdg17", years=2017). The index is stored at 2017, the latest (here the only) reference year of its indicators.',
+    date: '2026-11-17', pinned: false, dataset: 'sdg17',
+    notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
 
-# The SDG 17 index in 2017, with municipal boundaries
-gdf = geo.load("sdg17", variables="index_sdg17", years=2017, geometry=True)
+# The SDG 17 index (0-100, higher is better), ~2024
+gdf = geo.load("sdg17", variables="index_sdg17", years=2024, geometry=True)
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="index_sdg17", hover_name="name",
           center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg17": "Partnerships index (0-100)"},
-          title="SDG 17: Partnerships for the goals, 2017").show()
+          labels={"index_sdg17": "Partnerships for the goals index (0-100)"},
+          title="SDG 17: Partnerships for the goals index, ~2024").show()
 
-# Its two indicators: local taxes and public investment
-df = geo.load("sdg17", years=2017, geometry=True)
-px.scatter(df, x="sdg17_5_pipc", y="sdg17_1_pmtax", hover_name="name",
-           labels={"sdg17_5_pipc": "Public investment per capita (Bs)",
-                   "sdg17_1_pmtax": "Revenue from local taxes (%)"},
-           title="Local taxes and public investment, 2017")`,
+# The two periods: initial (~2012) and final (~2024) values
+df = geo.load("sdg17", variables="index_sdg17")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg17")
+wide = wide.add_prefix("y")
+wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(wide, x="y2012", y="y2024", hover_name="name",
+           labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
+           title="SDG 17: Partnerships for the goals index, ~2012 and ~2024")`,
       pandas: `import pandas as pd
 import geopandas as gpd
 import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg17.csv")  # geo_id, year, variables
+df = pd.read_csv(BASE + "data/municipality/sdg17.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
 
-index = df.loc[df["year"] == 2017, ["geo_id", "index_sdg17"]]
+index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg17"]]
 gdf = municipalities.merge(index, on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="index_sdg17", hover_name="name",
           center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"index_sdg17": "Partnerships index (0-100)"},
-          title="SDG 17: Partnerships for the goals, 2017")`,
+          labels={"index_sdg17": "Partnerships for the goals index (0-100)"},
+          title="SDG 17: Partnerships for the goals index, ~2024")`,
     },
     examples: [
       {
-        title: 'Compute the index from its indicators',
-        text: 'Rescales each indicator between the Atlas worst and best values, caps it at 0 and 100, averages the two and checks the result against the published index.',
+        title: "Map the change, ~2012 to ~2024",
+        text: "Subtracts the initial index from the final one: positive values mark the municipalities that moved closer to the goal's targets.",
+        code: `${PYTHON_SETUP}
+
+df = geo.load("sdg17", variables="index_sdg17")
+wide = df.pivot(index="geo_id", columns="year", values="index_sdg17")
+wide["change"] = wide[2024] - wide[2012]
+gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+                                           on="geo_id")
+px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
+          color="change", hover_name="name",
+          center={"lat": -16.3, "lon": -64}, zoom=4,
+          labels={"change": "Change in the index (points)"},
+          title="SDG 17: change in the index, ~2012 to ~2024")`,
+      },
+      {
+        title: "Recompute the index from its indicators",
+        text: "Rescales each indicator between the Atlas's worst and best values (Cuadro 21), caps it to 0-100 and averages the available ones, which reproduces the published index.",
         code: `${PYTHON_SETUP}
 import pandas as pd
 
-# Every variable at its own reference year, one row per municipality
-df = geo.load("sdg17").groupby("geo_id").first()
-bounds = {"sdg17_1_pmtax": (0.0, 40.5),     # (worst, best) of each indicator
-          "sdg17_5_pipc": (144.0, 3563.0)}
-scores = pd.DataFrame({v: (100 * (df[v] - w) / (b - w)).clip(0, 100)
-                       for v, (w, b) in bounds.items()})
-df["computed"] = scores.mean(axis=1)        # missing indicators are skipped
-df["name"] = df.index.map(geo.units("municipality").set_index("geo_id")["name"])
-r = df["computed"].corr(df["index_sdg17"])
-px.scatter(df, x="index_sdg17", y="computed", hover_name="name",
-           labels={"index_sdg17": "Partnerships index (0-100)",
-                   "computed": "Computed index (0-100)"},
-           title=f"Computed vs published SDG 17 index (r = {r:.4f})")`,
+df = geo.load("sdg17", years=2024).set_index("geo_id")
+bounds = {"sdg17_1_iil": (0, 51.7), "sdg17_18_ipc": (0, 1526)}  # (worst, best)
+scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
+                       for v, (w, b) in bounds.items()}).clip(0, 100)
+df["computed"] = scores.mean(axis=1)  # skips missing indicators
+df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+px.scatter(df, x="computed", y="index_sdg17", hover_name="name",
+           labels={"computed": "Computed from the indicators",
+                   "index_sdg17": "Partnerships for the goals index (0-100)"},
+           title="Recomputed vs published SDG 17 index, ~2024")`,
       },
       {
-        title: 'Which indicator holds the index down',
-        text: 'Averages the rescaled score of each indicator over the 339 municipalities: local tax revenue scores far lower than public investment.',
+        title: "Which indicators moved",
+        text: "Compares the mean rescaled score (0-100) of each indicator in the two periods: the gap between the dots is the progress, and the lowest dots are where the goal is furthest away.",
         code: `${PYTHON_SETUP}
+import pandas as pd
 
-df = geo.load("sdg17", years=2017)
-bounds = {"sdg17_1_pmtax": (0.0, 40.5), "sdg17_5_pipc": (144.0, 3563.0)}
-labels = {"sdg17_1_pmtax": "Revenue from local taxes (%)",
-          "sdg17_5_pipc": "Public investment per capita (Bs)"}
-rows = [{"indicator": labels[v],
-         "score": (100 * (df[v] - w) / (b - w)).clip(0, 100).mean()}
-        for v, (w, b) in bounds.items()]
-px.bar(rows, x="score", y="indicator",
-       labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
-       title="Mean score of each SDG 17 indicator, 2017")`,
+df = geo.load("sdg17")
+bounds = {"sdg17_1_iil": (0, 51.7), "sdg17_18_ipc": (0, 1526)}  # (worst, best)
+labels = geo.dictionary("sdg17").set_index("variable")["label"]
+rows = [{"indicator": labels[v], "period": f"~{year}",
+         "score": (100 * (part[v] - w) / (b - w)).clip(0, 100).mean()}
+        for year, part in df.groupby("year") for v, (w, b) in bounds.items()]
+px.scatter(pd.DataFrame(rows), x="score", y="indicator", color="period",
+           labels={"score": "Mean rescaled score (0-100)", "indicator": ""},
+           title="SDG 17 indicators, ~2012 and ~2024")`,
       },
       {
-        title: 'Rank the departments',
-        text: 'Ranks the nine departments by the population-weighted mean of the SDG 17 index.',
+        title: "Rank the departments",
+        text: "Averages the index within each department, weighting municipalities by their census population, in both periods.",
         code: `${PYTHON_SETUP}
 
-df = geo.load("sdg17", variables="index_sdg17", years=2017)
-dep = geo.aggregate(df, to="department", rules={"index_sdg17": "weighted_mean:pop"},
-                    weights=geo.load("pop"))
-names = geo.units("department").set_index("geo_id")["name"]
-dep["department"] = dep["geo_id"].map(names)
-px.bar(dep.sort_values("index_sdg17"), x="index_sdg17", y="department",
-       labels={"index_sdg17": "Partnerships index (0-100), population-weighted"},
-       title="SDG 17 index by department, 2017")`,
-      },
-      {
-        title: 'Link with night-time lights',
-        text: 'Plots the share of revenue from local taxes against night-time lights per capita in 2017, a proxy for local economic activity.',
-        code: `${PYTHON_SETUP}
-
-sdg = geo.load("sdg17", variables="sdg17_1_pmtax", years=2017)
-ntl = geo.load("ntl", variables="ln_t400NTLpc", years=2017)
-df = sdg.merge(ntl, on=["geo_id", "year"])
-df["name"] = df["geo_id"].map(geo.units("municipality").set_index("geo_id")["name"])
-px.scatter(df, x="ln_t400NTLpc", y="sdg17_1_pmtax", hover_name="name",
-           labels={"ln_t400NTLpc": "Log night-time lights per capita (trend)",
-                   "sdg17_1_pmtax": "Revenue from local taxes (%)"},
-           title="Local taxes and night-time lights, 2017")`,
+df = geo.load("sdg17", variables="index_sdg17")
+dep = geo.aggregate(df, to="department",
+                    rules={"index_sdg17": "weighted_mean:population"},
+                    weights=geo.load("sdg", variables="population"))
+dep["department"] = dep["geo_id"].map(
+    geo.units("department").set_index("geo_id")["name"])
+dep["period"] = "~" + dep["year"].astype(str)
+px.scatter(dep.sort_values("index_sdg17"), x="index_sdg17", y="department",
+           color="period",
+           labels={"index_sdg17": "Index (population-weighted)"},
+           title="SDG 17 index by department, ~2012 and ~2024")`,
       },
     ],
   },
   {
-    id: 'municipalities339-ntl', type: 'indicator', section: 'indicators',
+    id: 'municipalities343-ntl', type: 'indicator', section: 'indicators',
     title: 'Night-time lights per capita',
-    scope: '339 municipalities · 2012–2020',
+    scope: '333 of 343 municipalities · 2012–2020',
     summary: 'Nine years of VIIRS night-time lights per person for every municipality, with a long-run trend: a satellite proxy for local economic activity.',
-    description: 'Annual night-time lights per capita for Bolivia’s 339 municipalities from 2012 to 2020: the summed radiance of the Earth Observation Group’s annual VIIRS night-time lights (version 2, background masked) over each municipality, divided by its WorldPop population, in natural logs. A Hodrick–Prescott trend (λ = 400) of the same series separates the long-run path from year-to-year noise; it is complete for every municipality, while the raw log is missing where a municipality had no measurable light. Night-time lights track electrification and economic activity where official local statistics are scarce.',
-    geography: 'Municipality', units: 339, period: '2012–2020', frequency: 'Annual', key: 'geo_id', idExample: 'BO-04-17-04',
+    description: 'Annual night-time lights per capita for 333 of Bolivia’s 343 municipalities from 2012 to 2020: the summed radiance of the Earth Observation Group’s annual VIIRS night-time lights (version 2, background masked) over each municipality, divided by its WorldPop population, in natural logs. A Hodrick–Prescott trend (λ = 400) of the same series separates the long-run path from year-to-year noise; it is complete for every municipality, while the raw log is missing where a municipality had no measurable light. Night-time lights track electrification and economic activity where official local statistics are scarce. The values were computed on DS4Bolivia’s polygons of the 2015 municipal map, so they are published for the 333 municipalities whose territory did not change; the six that lost territory to the four units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units have no data.',
+    geography: 'Municipality', units: 343, period: '2012–2020', frequency: 'Annual', key: 'geo_id', idExample: 'BO-04-17-04',
     categories: ['Economy'], tags: ['night-time lights', 'VIIRS', 'remote sensing', 'panel data'],
     image: 'images/indicators/ntl.webp',
-    imageAlt: 'Map of log night-time lights per capita in 2020 across 339 Bolivian municipalities in three natural-break classes: highest across Santa Cruz, the Chaco and the southern altiplano, lowest in northern La Paz, parts of Pando and clusters in the Potosí and Chuquisaca valleys',
+    imageAlt: 'Map of log night-time lights per capita in 2020 across 343 Bolivian municipalities and indigenous autonomies in three natural-break classes: highest across Santa Cruz, the Chaco and the southern altiplano, lowest in northern La Paz, parts of Pando and clusters in the Potosí and Chuquisaca valleys',
     map: 'images/indicators/ntl-map.webp',
-    mapAlt: 'Map of log night-time lights per capita in 2020 across 339 Bolivian municipalities in three natural-break classes: highest across Santa Cruz, the Chaco and the southern altiplano, lowest in northern La Paz, parts of Pando and clusters in the Potosí and Chuquisaca valleys. Legend: High 14.5 to 17.9 (109 municipalities), Middle 13.0 to 14.5 (147), Low 10.5 to 13.0 (78), no data 5.',
+    mapAlt: 'Map of log night-time lights per capita in 2020 across 343 Bolivian municipalities and indigenous autonomies in three natural-break classes: highest across Santa Cruz, the Chaco and the southern altiplano, lowest in northern La Paz, parts of Pando and clusters in the Potosí and Chuquisaca valleys. Legend: High 14.5 to 17.9 (108 municipalities), Middle 13.0 to 14.5 (143), Low 10.5 to 13.0 (77), no data 15.',
     date: '2026-10-28', pinned: false, dataset: 'ntl',
     code: {
       python: `${PYTHON_SETUP}
@@ -1916,17 +2053,17 @@ title="Night-time lights by department")`,
     },
   },
   {
-    id: 'municipalities339-pop', type: 'indicator', section: 'indicators',
+    id: 'municipalities343-pop', type: 'indicator', section: 'indicators',
     title: 'Population',
-    scope: '339 municipalities · 2001–2020',
+    scope: '333 of 343 municipalities · 2001–2020',
     summary: 'Two decades of gridded population estimates and population density for every municipality: the denominator for per-capita indicators and population-weighted averages.',
-    description: 'Annual population estimates for Bolivia’s 339 municipalities from 2001 to 2020, computed by summing WorldPop’s 1 km gridded population over each municipality, and the population density (people per km²) of each municipality. Population sums up the hierarchy, so it gives provincial, departmental and national totals directly, and it is the weight for population-weighted averages of rates such as poverty. These are gridded estimates, not INE’s official projections.',
-    geography: 'Municipality', units: 339, period: '2001–2020', frequency: 'Annual', key: 'geo_id', idExample: 'BO-04-17-04',
+    description: 'Annual population estimates for 333 of Bolivia’s 343 municipalities from 2001 to 2020, computed by summing WorldPop’s 1 km gridded population over each municipality, and the population density (people per km²) of each municipality. Population sums up the hierarchy, so it gives provincial, departmental and national totals directly, and it is the weight for population-weighted averages of rates such as poverty. These are gridded estimates, not INE’s official projections; census population for 2012 and 2024, for all 343 units, is in the sdg dataset. The values were computed on DS4Bolivia’s polygons of the 2015 municipal map, so they are published for the 333 municipalities whose territory did not change; the six that lost territory to the four units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units have no data.',
+    geography: 'Municipality', units: 343, period: '2001–2020', frequency: 'Annual', key: 'geo_id', idExample: 'BO-04-17-04',
     categories: ['Social'], tags: ['population', 'WorldPop', 'demography', 'panel data'],
     image: 'images/indicators/pop.webp',
-    imageAlt: 'Map of population density in 2020 across 339 Bolivian municipalities in three natural-break classes on a log scale: densest in the La Paz–El Alto, Cochabamba, Santa Cruz, Sucre and Tarija urban areas, intermediate across the altiplano and valleys, sparsest in the northern and eastern lowlands',
+    imageAlt: 'Map of population density in 2020 across 343 Bolivian municipalities and indigenous autonomies in three natural-break classes on a log scale: densest in the La Paz–El Alto, Cochabamba, Santa Cruz, Sucre and Tarija urban areas, intermediate across the altiplano and valleys, sparsest in the northern and eastern lowlands',
     map: 'images/indicators/pop-map.webp',
-    mapAlt: 'Map of population density in 2020 across 339 Bolivian municipalities in three natural-break classes on a log scale: densest in the La Paz–El Alto, Cochabamba, Santa Cruz, Sucre and Tarija urban areas, intermediate across the altiplano and valleys, sparsest in the northern and eastern lowlands. Legend: High 42 to 2,860 people per km² (55 municipalities), Middle 4 to 42 (202), Low 0 to 4 (82).',
+    mapAlt: 'Map of population density in 2020 across 343 Bolivian municipalities and indigenous autonomies in three natural-break classes on a log scale: densest in the La Paz–El Alto, Cochabamba, Santa Cruz, Sucre and Tarija urban areas, intermediate across the altiplano and valleys, sparsest in the northern and eastern lowlands. Legend: High 42 to 2,860 people per km² (55 municipalities), Middle 4 to 42 (199), Low 0 to 4 (79), no data 10.',
     date: '2026-10-28', pinned: false, dataset: 'pop',
     code: {
       python: `${PYTHON_SETUP}
@@ -1955,17 +2092,17 @@ labels={"pop": "Population"}, title="Population by department, 2001-2020")`,
     },
   },
   {
-    id: 'municipalities339-emb', type: 'indicator', section: 'indicators',
+    id: 'municipalities343-emb', type: 'indicator', section: 'indicators',
     title: 'Satellite embeddings',
-    scope: '339 municipalities · 64 dimensions · 2017',
+    scope: '333 of 343 municipalities · 64 dimensions · 2017',
     summary: 'What every municipality looks like from space, compressed by a deep-learning model into 64 numbers: features for machine learning.',
-    description: 'Sixty-four satellite embedding dimensions (A00–A63) for each of Bolivia’s 339 municipalities in 2017, averaged from the annual 10 m Google Satellite Embedding dataset (AlphaEarth Foundations). The model summarises Sentinel-2, Landsat and other imagery into abstract features that capture land cover, texture, roads and buildings. Two versions are published: `emb`, the area-weighted mean over each municipality, and `embpw`, weighted by population so that it describes where people live. The dimensions are not interpretable one by one; they are inputs to models, for example to predict poverty.',
-    geography: 'Municipality', units: 339, period: '2017', frequency: 'One year', key: 'geo_id', idExample: 'BO-04-17-04',
+    description: 'Sixty-four satellite embedding dimensions (A00–A63) for 333 of Bolivia’s 343 municipalities in 2017, averaged from the annual 10 m Google Satellite Embedding dataset (AlphaEarth Foundations). The model summarises Sentinel-2, Landsat and other imagery into abstract features that capture land cover, texture, roads and buildings. Two versions are published: `emb`, the area-weighted mean over each municipality, and `embpw`, weighted by population so that it describes where people live. The dimensions are not interpretable one by one; they are inputs to models, for example to predict poverty. The values were computed on DS4Bolivia’s polygons of the 2015 municipal map, so they are published for the 333 municipalities whose territory did not change; the six that lost territory to the four units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units have no data.',
+    geography: 'Municipality', units: 343, period: '2017', frequency: 'One year', key: 'geo_id', idExample: 'BO-04-17-04',
     categories: ['Environment', 'Economy'], tags: ['satellite embeddings', 'AlphaEarth', 'machine learning', 'remote sensing'],
     image: 'images/indicators/emb.webp',
-    imageAlt: 'Map of satellite embedding dimension A00 (area-weighted) in 2017 across 339 Bolivian municipalities in three natural-break classes: low across the altiplano and western valleys, middle across Beni and Pando, high across Santa Cruz and the Chaco',
+    imageAlt: 'Map of satellite embedding dimension A00 (area-weighted) in 2017 across 343 Bolivian municipalities and indigenous autonomies in three natural-break classes: low across the altiplano and western valleys, middle across Beni and Pando, high across Santa Cruz and the Chaco',
     map: 'images/indicators/emb-map.webp',
-    mapAlt: 'Map of satellite embedding dimension A00 (area-weighted) in 2017 across 339 Bolivian municipalities in three natural-break classes: low across the altiplano and western valleys, middle across Beni and Pando, high across Santa Cruz and the Chaco. Legend: High 0.046 to 0.164 (49 municipalities), Middle −0.055 to 0.046 (97), Low −0.165 to −0.055 (193).',
+    mapAlt: 'Map of satellite embedding dimension A00 (area-weighted) in 2017 across 343 Bolivian municipalities and indigenous autonomies in three natural-break classes: low across the altiplano and western valleys, middle across Beni and Pando, high across Santa Cruz and the Chaco. Legend: High 0.046 to 0.164 (49 municipalities), Middle −0.055 to 0.046 (94), Low −0.165 to −0.055 (190), no data 10.',
     date: '2026-10-28', pinned: false, dataset: 'emb', datasets: ['emb', 'embpw'],
     code: {
       python: `${PYTHON_SETUP}
@@ -2004,7 +2141,7 @@ px.box(emb.filter(regex=r"^A\\d{2}$"),
     description: 'geo4bolivia is the data engine of the observatory. One line loads any dataset as a panel (one row per unit and year) with names and boundaries. Every spatial unit has one geo ID that nests by prefix (municipality BO-04-17-04 lies in province BO-04-17, in department BO-04, in Bolivia BO), so the package can move data up the hierarchy with each variable’s own aggregation rule, interpolate it onto grids or newer municipality maps, and combine datasets. To build your own indicators, it links tables that identify units by name in any spelling or by INE and DS4Bolivia codes (and refuses to guess between municipalities that share a name), summarizes rasters such as Earth Engine exports over units, and saves the result with the same documented format as the published data. It is small, works out of the box in Google Colab, and hands its data in one line to two companion packages: expdpy for panel exploration and econometrics, and geometrics for spatial analysis.',
     tags: ['Python', 'data loading', 'multi-scale', 'Colab', 'open data'],
     image: 'images/tools/geo4bolivia-package.webp',
-    imageAlt: 'Three stacked map layers of Bolivia, 9 departments, 112 provinces and 339 municipalities, linked by geo IDs, beside a code snippet that loads the data',
+    imageAlt: 'Three stacked map layers of Bolivia, 9 departments, 113 provinces and 343 municipalities, linked by geo IDs, beside a code snippet that loads the data',
     date: '2026-10-28', pinned: true,
     installNote: 'Colab already has its other dependencies, so installing takes seconds.',
     install: `!pip install -q geo4bolivia
@@ -2013,21 +2150,23 @@ px.box(emb.filter(regex=r"^A\\d{2}$"),
       python: `${PYTHON_SETUP}
 
 geo.datasets()                                        # datasets x scales x years
-geo.dictionary("sdg")                                 # variables, units, reference years
-gdf = geo.load("ntl", years=2020, geometry=True)      # 339 municipalities with boundaries
+geo.dictionary("sdg")                                 # variables, labels, years
+gdf = geo.load("sdg", years=2024, geometry=True)      # 343 units with boundaries
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
-          color="ln_t400NTLpc", hover_name="name",
+          color="index_sdg", hover_name="name",
           center={"lat": -16.3, "lon": -64}, zoom=4,
-          labels={"ln_t400NTLpc": "Log lights per capita"},
-          title="Night-time lights, 2020").show()
+          labels={"index_sdg": "Sustainable Development Index"},
+          title="Sustainable Development Index, ~2024").show()
 
 # Across scales: municipalities -> provinces -> departments -> Bolivia
-panel = geo.combine(["ntl", "pop"], scale="municipality")   # two datasets, one panel
-dep = geo.aggregate(geo.load("pop", years=2020), to="department", dataset="pop")
+panel = geo.combine(["sdg01", "sdg04"], scale="municipality")  # one panel
+ids = geo.load("sdg", years=2024)                   # IDS, rank, population, ...
+dep = geo.aggregate(ids, to="department", dataset="sdg")   # metadata rules
 names = geo.units("department").set_index("geo_id")["name"]
 dep["department"] = dep["geo_id"].map(names)
-px.bar(dep, x="department", y="pop", labels={"pop": "Population"},
-       title="Population by department, 2020").show()`,
+px.bar(dep, x="department", y="population",
+       labels={"population": "Census population"},
+       title="Population by department, 2024").show()`,
       pandas: `import pandas as pd
 import plotly.express as px
 
@@ -2042,7 +2181,7 @@ df["department"] = df["department_id"].map(units.set_index("geo_id")["name"])
 px.line(df, x="year", y="ln_t400NTLpc", color="department",
 line_group="geo_id", hover_name="name",
 labels={"ln_t400NTLpc": "Log lights per capita (trend)"},
-title="Night-time lights, 339 municipalities")`,
+title="Night-time lights, 333 municipalities")`,
     },
     build: `!pip install -q "geo4bolivia[raster]"
 import geo4bolivia as geo
@@ -2086,7 +2225,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
       { label: 'PyPI', url: 'https://pypi.org/project/geo4bolivia/', kind: 'pypi' },
       { label: 'Source code', url: REPO_URL + '/tree/main/src/geo4bolivia', kind: 'github' },
     ],
-    related: ['expdpy-package', 'geometrics-package', 'geo4bolivia-quickstart', 'municipalities339-sdg01', 'municipalities339-ntl'],
+    related: ['expdpy-package', 'geometrics-package', 'geo4bolivia-quickstart', 'municipalities343-sdg01', 'municipalities343-ntl'],
   },
   {
     id: 'geometrics-package', type: 'package', section: 'tools',
@@ -2096,7 +2235,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
     description: 'geometrics turns the standard analyses of regional growth into single functions built on the PySAL stack. Explore functions map variables, build spatial weights and test spatial dependence (Moran’s I, LISA clusters). Analyze functions estimate β-convergence (OLS and spatial models with LeSage–Pace impacts), σ-convergence, Phillips–Sul convergence clubs, Markov and spatial Markov transitions, Gini and Theil decompositions, and geographically weighted regressions. Learn functions simulate each concept from a known truth. Every result carries an interactive figure, a table and an interpret() method that explains it in words. geo4bolivia prepares Bolivian data for it in one line: geo.for_geometrics().',
     tags: ['Python', 'spatial econometrics', 'convergence', 'inequality', 'PySAL'],
     image: 'images/tools/geometrics-package.webp',
-    imageAlt: 'A LISA cluster map of night-time lights per capita across Bolivian municipalities in 2012 and its Moran scatterplot',
+    imageAlt: 'A LISA cluster map of the Sustainable Development Index across Bolivia’s 343 municipalities near 2024, with high-high clusters around La Paz, the Cochabamba–Chuquisaca valleys and the Chaco, and its Moran scatterplot (Moran’s I = 0.47)',
     date: '2026-10-28', pinned: true,
     install: `!pip install -q geo4bolivia geometrics`,
     quickstart: {
@@ -2105,15 +2244,14 @@ import numpy as np
 import geo4bolivia as geo
 import geometrics as gm
 
-ntl = geo.load("ntl")                                   # 339 municipalities, 2012-2020
-ntl["NTLpc"] = np.exp(ntl["ln_NTLpc"])                  # levels, for convergence
-gdf, df, df_dict = geo.for_geometrics(ntl, labels={"NTLpc": "Night-time lights per capita"})
+ids = geo.load("sdg", variables="index_sdg")      # 343 units, ~2012 and ~2024
+gdf, df, df_dict = geo.for_geometrics(ids)
 df = gm.set_labels(df, df_dict, set_panel=True)
 w = gm.make_weights(gdf, method="queen")
 
-gm.explore_lisa_cluster_map(df, "ln_t400NTLpc", gdf=gdf, w=w, period=2020).fig
-res = gm.analyze_beta_convergence(df, "NTLpc", gdf=gdf, w=w)   # levels: logged internally
-print(res.interpret())`,
+gm.explore_lisa_cluster_map(df, "index_sdg", gdf=gdf, w=w, period=2024).fig
+res = gm.analyze_beta_convergence(df, "index_sdg", gdf=gdf, w=w)   # levels
+print(res.interpret())   # did the units that started lower gain more?`,
     },
     features: [
       { title: 'Explore', fns: ['explore_choropleth_map', 'explore_moran_plot', 'explore_lisa_cluster_map'], text: 'Maps, spatial weights, Moran’s I and local clusters, over time.' },
@@ -2127,7 +2265,7 @@ print(res.interpret())`,
       { label: 'PyPI', url: 'https://pypi.org/project/geometrics/', kind: 'pypi' },
       { label: 'Source code', url: 'https://github.com/quarcs-lab/geometrics', kind: 'github' },
     ],
-    related: ['geo4bolivia-package', 'expdpy-package', 'mpi-esda', 'mpi-esda-heterogeneity'],
+    related: ['geo4bolivia-package', 'expdpy-package', 'sdg-dynamics', 'municipalities343-sdg', 'mpi-esda'],
   },
   {
     id: 'expdpy-package', type: 'package', section: 'tools',
@@ -2137,7 +2275,7 @@ print(res.interpret())`,
     description: 'expdpy (a Python port of ExPanDaR) turns the everyday steps of panel-data research into single functions. Explore functions describe a panel’s structure, decompose variation into between and within components (xtsum), and chart trajectories, distributions, transitions, missing values and correlations. Analyze functions estimate pooled, between, fixed-effects, random-effects and correlated-random-effects models, run Hausman and joint tests, fit fixest-style regressions with fixed effects and clustered or Driscoll–Kraay standard errors, and cover IV, event studies and β-, σ- and club convergence. Learn functions simulate each concept from a known truth. Every result has an interactive figure or table and an interpret() method. The observatory’s datasets are exactly the long panels expdpy expects: geo.for_expdpy() hands them over, labeled, in one line.',
     tags: ['Python', 'panel data', 'econometrics', 'fixed effects', 'ExPanDaR'],
     image: 'images/tools/expdpy-package.webp',
-    imageAlt: 'Night-time lights per capita trajectories of 339 Bolivian municipalities, 2012–2020, with department means and the between/within split of their variation',
+    imageAlt: 'Night-time lights per capita trajectories of 333 Bolivian municipalities, 2012–2020, with department means and the between/within split of their variation',
     date: '2026-10-28', pinned: true,
     install: `!pip install -q geo4bolivia expdpy`,
     quickstart: {
@@ -2146,7 +2284,7 @@ import numpy as np
 import geo4bolivia as geo
 import expdpy as ex
 
-df, df_def = geo.for_expdpy("ntl", groups=["department"])   # 339 municipalities, 2012-2020
+df, df_def = geo.for_expdpy("ntl", groups=["department"])   # 333 municipalities, 2012-2020
 df = ex.set_labels(df, df_def, set_panel=True)              # geo_id x year panel
 ex.explore_xtsum_table(df, var=["ln_t400NTLpc"]).gt         # within vs between variation
 ex.explore_trend_plot_by_group(df, group_var="department", var="ln_t400NTLpc").fig
@@ -2172,7 +2310,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
       { label: 'Source code', url: 'https://github.com/cmg777/expdpy', kind: 'github' },
       { label: 'No-code Analyze app', url: 'https://expdpy-analyze.streamlit.app', kind: 'launch' },
     ],
-    related: ['geo4bolivia-package', 'geometrics-package', 'municipalities339-ntl', 'municipalities339-pop'],
+    related: ['geo4bolivia-package', 'geometrics-package', 'municipalities343-ntl', 'municipalities343-pop'],
   },
 
   // ---------------------------------------------------------------- Tools: notebooks
@@ -2189,7 +2327,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
       { label: 'Open in Colab', url: COLAB_URL + 'geo4bolivia_quickstart.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/geo4bolivia_quickstart.ipynb', kind: 'github' },
     ],
-    related: ['geo4bolivia-package', 'municipalities339-sdg01', 'municipalities339-pop'],
+    related: ['geo4bolivia-package', 'municipalities343-sdg01', 'municipalities343-pop'],
   },
   {
     id: 'mpi-eda', type: 'notebook', section: 'tools',
@@ -2204,7 +2342,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
       { label: 'Open in Colab', url: COLAB_URL + 'eda.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/eda.ipynb', kind: 'github' },
     ],
-    related: ['municipalities339-sdg01', 'municipalities339-ntl', 'mpi-esda'],
+    related: ['municipalities343-sdg01', 'municipalities343-ntl', 'mpi-esda'],
   },
   {
     id: 'mpi-esda', type: 'notebook', section: 'tools',
@@ -2219,7 +2357,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
       { label: 'Open in Colab', url: COLAB_URL + 'esda.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/esda.ipynb', kind: 'github' },
     ],
-    related: ['municipalities339-sdg01', 'mpi-esda-dependence', 'geometrics-package'],
+    related: ['municipalities343-sdg01', 'mpi-esda-dependence', 'geometrics-package'],
   },
   {
     id: 'mpi-esda-dependence', type: 'notebook', section: 'tools',
@@ -2234,7 +2372,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
       { label: 'Open in Colab', url: COLAB_URL + 'esda_dependence.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/esda_dependence.ipynb', kind: 'github' },
     ],
-    related: ['mpi-esda', 'municipalities339-sdg01'],
+    related: ['mpi-esda', 'municipalities343-sdg01'],
   },
   {
     id: 'mpi-esda-inequality', type: 'notebook', section: 'tools',
@@ -2249,7 +2387,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
       { label: 'Open in Colab', url: COLAB_URL + 'esda_inequality.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/esda_inequality.ipynb', kind: 'github' },
     ],
-    related: ['municipalities339-sdg01', 'municipalities339-ntl', 'geometrics-package'],
+    related: ['municipalities343-sdg01', 'municipalities343-ntl', 'geometrics-package'],
   },
   {
     id: 'mpi-esda-heterogeneity', type: 'notebook', section: 'tools',
@@ -2264,7 +2402,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
       { label: 'Open in Colab', url: COLAB_URL + 'esda_heterogeneity.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/esda_heterogeneity.ipynb', kind: 'github' },
     ],
-    related: ['municipalities339-ntl', 'municipalities339-sdg01', 'geometrics-package'],
+    related: ['municipalities343-ntl', 'municipalities343-sdg01', 'geometrics-package'],
   },
   {
     id: 'mpi-eda-esda', type: 'notebook', section: 'tools',
@@ -2279,7 +2417,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
       { label: 'Open in Colab', url: COLAB_URL + 'eda_esda.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/eda_esda.ipynb', kind: 'github' },
     ],
-    related: ['municipalities339-sdg01', 'mpi-esda', 'mpi-esda-heterogeneity'],
+    related: ['municipalities343-sdg01', 'mpi-esda', 'mpi-esda-heterogeneity'],
   },
   {
     id: 'embeddings-mpi-ml', type: 'notebook', section: 'tools',
@@ -2294,7 +2432,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
       { label: 'Open in Colab', url: COLAB_URL + 'embeddings_mpi_ml.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/embeddings_mpi_ml.ipynb', kind: 'github' },
     ],
-    related: ['municipalities339-emb', 'municipalities339-sdg01', 'mpi-eda'],
+    related: ['municipalities343-emb', 'municipalities343-sdg01', 'mpi-eda'],
   },
 
   // ---------------------------------------------------------------- Tools: apps
@@ -2311,7 +2449,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
       { label: 'Launch app', url: 'https://carlos-mendez.projects.earthengine.app/view/geoexplorer1v100bolivia', kind: 'launch' },
       { label: 'Source code', url: REPO_URL + '/blob/main/apps/geoexplorer1v100bolivia.js', kind: 'github' },
     ],
-    related: ['municipalities339-ntl', 'municipalities339-pop'],
+    related: ['municipalities343-ntl', 'municipalities343-pop'],
   },
 
   // ---------------------------------------------------------------- Projects
@@ -2320,19 +2458,19 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
   {
     id: 'sdg-atlas-bolivia', type: 'project', section: 'projects',
     title: 'The subnational SDG Atlas of Bolivia',
-    summary: 'The Atlas of the Sustainable Development Goals in Bolivia measures how every municipality is progressing towards the 17 goals, with an index for each goal and the indicators behind it.',
-    description: 'The Atlas of the Sustainable Development Goals in Bolivia, led by SDSN Bolivia, measures the progress of each of Bolivia’s municipalities towards the 17 Sustainable Development Goals. For every goal it combines a set of indicators from censuses, surveys and administrative records into an index from 0 (worst situation) to 100 (targets met), so that municipalities can be compared goal by goal and their gaps located on the map. Its 2020 edition (Andersen, Canelas, Gonzales and Peñaranda) covers all 339 municipalities and is published in the observatory as fifteen goal datasets, sdg01 to sdg17, each with its index and indicators at their own reference years; the 2026 edition is online at the project’s website.',
-    team: 'SDSN Bolivia (Universidad Privada Boliviana)',
-    status: 'Atlas 2026 online; the 2020 edition is in the observatory',
-    citation: 'Andersen, L. E., Canelas, S., Gonzales, A., & Peñaranda, L. (2020). Atlas municipal de los Objetivos de Desarrollo Sostenible en Bolivia 2020. La Paz: Universidad Privada Boliviana, SDSN Bolivia.',
+    summary: 'The Atlas of the Sustainable Development Goals in Bolivia measures how every municipality and indigenous autonomy has progressed towards the goals between the 2012 and 2024 censuses, with an index for each goal, an overall index and the indicators behind them.',
+    description: 'The Atlas de los ODS en Bolivia 2026, led by SDSN Bolivia, measures the gaps and trends of sustainable development in Bolivia’s autonomous territorial entities between 2012 and 2024. It covers the 343 municipalities and indigenous autonomies (GAIOC) that exist in 2025, plus the departments and the Gran Chaco region, with 81 indicators of 15 Sustainable Development Goals drawn mainly from the 2012 and 2024 Population and Housing Censuses and from official records on health, education, finance, energy and public budgets, complemented by satellite data for climate and land. Every indicator is measured twice, near each census, and rescaled from 0 (worst situation) to 100 (target met); each goal index is the mean of its indicators and the Sustainable Development Index (IDS) the mean of the 15 goal indices, following SDSN’s global SDG Index. The Atlas finds near-universal progress, with Bolivia’s IDS rising from 57.4 to 66.0, and territorial convergence: the entities that started furthest behind advanced most. Its previous edition, the Municipal Atlas of the SDGs 2020, covered 339 municipalities at a single point in time. The observatory publishes the 2026 municipal data as sixteen datasets: the IDS (sdg) and one dataset per goal (sdg01 to sdg17), each at both periods.',
+    team: 'SDSN Bolivia (Universidad Privada Boliviana): Lykke E. Andersen, Fabiana Argandoña and the SDSN Bolivia technical team',
+    status: 'Atlas 2026 (2012–2024) published; its municipal data are in the observatory',
+    citation: 'Andersen, L. E., & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad Privada Boliviana, SDSN Bolivia.',
     tags: ['SDGs', 'municipalities', 'atlas', 'sustainable development'],
     image: 'images/projects/sdg-atlas-bolivia.webp',
-    imageAlt: 'The 339 municipalities of Bolivia shaded by the SDG 1 (No poverty) index, from rose (low) to turquoise (high), over an illustration of the Salar de Uyuni at night',
+    imageAlt: 'The 343 municipalities and indigenous autonomies of Bolivia shaded by the Sustainable Development Index near 2024, from rose (low) to turquoise (high), over an illustration of the Salar de Uyuni at night',
     date: '2026-11-17', pinned: true,
     links: [
       { label: 'Visit the Atlas', url: 'https://atlasods.sdsnbolivia.org/', kind: 'external' },
     ],
-    related: ['municipalities339-sdg01', 'municipalities339-sdg03', 'municipalities339-sdg04', 'human-capital-paper'],
+    related: ['municipalities343-sdg', 'municipalities343-sdg01', 'sdg-dynamics', 'human-capital-paper'],
   },
   {
     id: 'regional-shocks-spillovers', type: 'project', section: 'projects',
@@ -2349,7 +2487,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
     links: [
       { label: 'Visit the project', url: 'https://quarcs-lab.github.io/scspill/', kind: 'external' },
     ],
-    related: ['geometrics-package', 'expdpy-package', 'municipalities339-ntl'],
+    related: ['geometrics-package', 'expdpy-package', 'municipalities343-ntl'],
   },
   {
     id: 'local-pollution-dynamics', type: 'project', section: 'projects',
@@ -2362,7 +2500,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
     imageAlt: 'Illustration of the lowlands around Santa Cruz de la Sierra at dusk, with rose haze drifting over the city lights and a satellite scanning from above',
     date: '2026-11-17', pinned: true,
     links: [],
-    related: ['municipalities339-ntl', 'municipalities339-pop', 'municipalities339-sdg13'],
+    related: ['municipalities343-ntl', 'municipalities343-pop', 'municipalities343-sdg13'],
   },
 
   // ---------------------------------------------------------------- Insights
@@ -2370,24 +2508,24 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
     id: 'human-capital-paper', type: 'insight', subtype: 'Paper', section: 'insights',
     title: 'Human capital constraints and the regions of Bolivia',
     summary: 'Where malnutrition, language barriers, school dropout and unequal education cluster across 339 municipalities, and how they divide Bolivia into seven or eight regions.',
-    description: 'This study maps five constraints on human capital across Bolivia’s 339 municipalities: chronic malnutrition in children, the share of the population that does not speak Spanish, the secondary-school dropout rates of boys and girls, and inequality in years of education. It summarises them with principal components, finds where high and low values cluster in space (hot spots and cold spots), and groups municipalities that are both similar and contiguous into regions. All five indicators are in the observatory’s SDG goal datasets (sdg02, sdg04 and sdg10).',
+    description: 'This study maps five constraints on human capital across Bolivia’s 339 municipalities: chronic malnutrition in children, the share of the population that does not speak Spanish, the secondary-school dropout rates of boys and girls, and inequality in years of education. It summarises them with principal components, finds where high and low values cluster in space (hot spots and cold spots), and groups municipalities that are both similar and contiguous into regions. It used the Municipal Atlas of the SDGs 2020; the observatory’s 2026 Atlas data have close counterparts of all five indicators, measured near 2012 and near 2024, in its goal datasets sdg02, sdg04 and sdg10.',
     citation: 'Mendez, C., & Gonzales, E. (2021). Human capital constraints, spatial dependence, and regionalization in Bolivia: A spatial clustering approach. Economía, 44(87), 115–145.',
     doi: 'https://doi.org/10.18800/economia.202101.007',
     tags: ['human capital', 'education', 'spatial clustering', 'regionalization'],
     image: 'images/insights/human-capital-paper.webp',
-    imageAlt: 'Five maps of Bolivian municipalities: chronic child malnutrition, non-Spanish speakers, male and female secondary dropout, and inequality in years of education',
+    imageAlt: 'Five quintile maps of Bolivia’s 343 municipalities near 2024, from the SDG Atlas 2026: chronic child malnutrition, non-Spanish speakers, secondary dropout of boys and of girls, and inequality in years of education',
     date: '2021-05-06', pinned: true,
     media: [],
     links: [
       { label: 'Read the paper', url: 'https://doi.org/10.18800/economia.202101.007', kind: 'paper' },
     ],
     summarySections: [
-      { h: 'Data', p: 'Five indicators of the Municipal Atlas of the SDGs for 339 municipalities: chronic malnutrition in children, non-Spanish-speaking population, secondary dropout of males and of females, and the inequality of years of education.' },
+      { h: 'Data', p: 'Five indicators of the Municipal Atlas of the SDGs 2020 for 339 municipalities: chronic malnutrition in children, non-Spanish-speaking population, secondary dropout of males and of females, and the inequality of years of education.' },
       { h: 'Method', p: 'Principal components summarise the five constraints; measures of spatial dependence find hot spots and cold spots; a regionalization analysis groups municipalities that are similar in their constraints and close in space.' },
       { h: 'Findings', p: 'Human capital constraints are spatially clustered, and Bolivia can be divided into seven or eight geographic regions that share similar constraints.' },
-      { h: 'Reproduce it', p: 'The five indicators are sdg2_2_cmc, sdg10_2_nssp, sdg4_1_ssdrm, sdg4_1_ssdrf and sdg10_2_gcye in the sdg02, sdg10 and sdg04 datasets, each at its own reference year.' },
+      { h: 'Extend it', p: 'The paper used the 2020 edition of the Atlas. The 2026 edition has close counterparts of its five indicators at two periods, ~2012 and ~2024, for 343 municipalities: chronic malnutrition in children under 5 (sdg2_2_dcn in sdg02), the population that does not speak Spanish (sdg10_2_esp in sdg10), the secondary-school dropout rates of girls and boys (sdg4_1_asm and sdg4_1_ash in sdg04) and the Gini coefficient of years of education (sdg10_4_gin in sdg10). They allow the analysis to be updated and to ask whether the regions it found persisted. The definitions differ from the 2020 edition, so the values are not directly comparable with the paper’s.' },
     ],
-    related: ['municipalities339-sdg02', 'municipalities339-sdg04', 'municipalities339-sdg10', 'mpi-esda'],
+    related: ['municipalities343-sdg02', 'municipalities343-sdg04', 'municipalities343-sdg10', 'mpi-esda'],
   },
 ];
 

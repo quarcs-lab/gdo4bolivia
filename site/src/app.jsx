@@ -7,6 +7,9 @@ import {
   CONTENT_REGISTRY, REDIRECTS, PEOPLE, CONTACTS, CITATION_APA, CITATION_BIB,
 } from './content.js';
 
+// Units per scale in geo/units.csv, injected by site/build.mjs
+const UNIT_COUNTS = __UNIT_COUNTS__;
+
 // ====================================================================
 // Icons (inline SVG, Lucide style)
 // ====================================================================
@@ -1280,7 +1283,7 @@ const IndicatorsSection = () => {
                       <span className="font-mono text-xs text-brand-turquoise">geo</span>
                       <div className="text-salt-300 mt-1">Units, boundaries and crosswalks</div>
                     </td>
-                    <td className="px-4 py-4 md:px-6 text-salt-300 whitespace-nowrap">All scales · 461 units</td>
+                    <td className="px-4 py-4 md:px-6 text-salt-300 whitespace-nowrap">All scales · {UNIT_COUNTS.total} units</td>
                     <td className="px-4 py-4 md:px-6 text-salt-300">—</td>
                     <td className="px-4 py-4 md:px-6"><code className="font-mono text-brand-turquoise bg-teal-400/10 px-2 py-0.5 rounded text-xs font-bold">BO</code></td>
                     <td className="px-4 py-4 md:px-6 text-salt-400 whitespace-nowrap">CSV · Parquet · GeoJSON</td>
@@ -1291,7 +1294,7 @@ const IndicatorsSection = () => {
             <div className="bg-amber-950/30 px-4 py-4 md:px-6 border-t border-amber-900/30 flex gap-3">
               <Layers size={20} className="text-amber-400 flex-shrink-0 mt-0.5" />
               <p className="text-sm text-amber-100/80">
-                <strong className="text-amber-200">One ID system for every scale.</strong> Every unit has a geo ID that nests by prefix: municipality <code>BO-04-17-04</code> (La Paz) lies in province <code>BO-04-17</code> (Murillo), which lies in department <code>BO-04</code> (La Paz) and in Bolivia (<code>BO</code>). <a className="underline" href={`${REPO_URL}/blob/main/geo/units.csv`} target="_blank" rel="noopener noreferrer">geo/units.csv<span className="sr-only"> (opens in a new tab)</span></a> links each ID to its name and to its GADM, INE and DS4Bolivia codes, and the <a className="underline" href="tools/geo4bolivia-package/">geo4bolivia Python package</a> loads, links and aggregates data across scales. Newer municipality maps will be added as scales of their own, linked to these 339 municipalities. <a className="underline" href={`${REPO_URL}/blob/main/docs/data-infrastructure.md`} target="_blank" rel="noopener noreferrer">How the database works<span className="sr-only"> (opens in a new tab)</span></a>.
+                <strong className="text-amber-200">One ID system for every scale.</strong> Every unit has a geo ID that nests by prefix: municipality <code>BO-04-17-04</code> (Nuestra Señora de La Paz) lies in province <code>BO-04-17</code> (Murillo), which lies in department <code>BO-04</code> (La Paz) and in Bolivia (<code>BO</code>). <a className="underline" href={`${REPO_URL}/blob/main/geo/units.csv`} target="_blank" rel="noopener noreferrer">geo/units.csv<span className="sr-only"> (opens in a new tab)</span></a> links each ID to its name and to its GADM, INE and DS4Bolivia codes, and the <a className="underline" href="tools/geo4bolivia-package/">geo4bolivia Python package</a> loads, links and aggregates data across scales. The municipalities are the {UNIT_COUNTS.municipality} of the SDG Atlas 2026 (SDSN Bolivia’s map of 2025, municipalities and indigenous autonomies), in {UNIT_COUNTS.province} provinces and {UNIT_COUNTS.department} departments. <a className="underline" href={`${REPO_URL}/blob/main/docs/data-infrastructure.md`} target="_blank" rel="noopener noreferrer">How the database works<span className="sr-only"> (opens in a new tab)</span></a>.
               </p>
             </div>
           </div>
@@ -1304,7 +1307,7 @@ const IndicatorsSection = () => {
             Start coding in seconds
           </h3>
           <p className="text-salt-400 max-w-2xl mb-6">Two ways in. With the <a className="text-brand-turquoise underline decoration-brand-turquoise/50 underline-offset-2" href="tools/geo4bolivia-package/">geo4bolivia</a> package, one line gives you a panel with names and boundaries. Without it, every file is a plain URL that pandas reads directly. Every snippet runs as-is in a blank Google Colab notebook: its first line installs what Colab lacks.</p>
-          <CodeTabs code={REGISTRY_BY_ID['municipalities339-sdg01'].code} idPrefix="home-code" />
+          <CodeTabs code={REGISTRY_BY_ID['municipalities343-sdg'].code} idPrefix="home-code" />
         </AnimateIn>
       </div>
     </section>
@@ -1566,7 +1569,7 @@ const Footer = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
       <div className="border-t border-white/10 pt-8 space-y-3 text-xs text-salt-400 leading-relaxed">
         <p><strong className="text-salt-400">Disclaimer.</strong> The indicators, tools, projects and insights are the responsibility of the individual researchers and do not necessarily represent the views of their affiliated institutions or related organizations. Maps on this website are for geo-statistical use only and have a referential, informational character. They represent indicators spatially and do not constitute an official definition of Bolivia’s territorial boundaries.</p>
-        <p><strong className="text-salt-400">Credits.</strong> The section illustrations and cards are rendered from the observatory’s data (scripts/site_images.py); the indicator maps (scripts/indicator_map.py) are drawn over Esri’s World Dark Gray Canvas basemap (Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS user community). The hero globe uses <a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">Sentinel-2 cloudless<span className="sr-only"> (opens in a new tab)</span></a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2016), licensed under CC BY 4.0, over NASA's Blue Marble Next Generation (public domain), and is rendered with globe.gl; the section and footer backgrounds are Sentinel-2 cloudless crops of Bolivia from the same source, except Laguna Verde, from the 2024 mosaic (contains modified Copernicus Sentinel data 2024, CC BY-NC-SA 4.0). The emblem shades the nine departments by multidimensional poverty inside a satellite’s orbit (scripts/site_images.py). App screenshots, figures, and photos belong to their respective authors. Code is released under the <a href={`${REPO_URL}/blob/main/LICENSE`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">MIT License<span className="sr-only"> (opens in a new tab)</span></a> and data under <a href={`${REPO_URL}/blob/main/LICENSE-DATA`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">CC BY 4.0<span className="sr-only"> (opens in a new tab)</span></a>, except where a source requires otherwise; the boundaries are geoBoundaries’ (GeoBolivia, public domain); each dataset page credits the original sources and their licenses.</p>
+        <p><strong className="text-salt-400">Credits.</strong> The section illustrations and cards are rendered from the observatory’s data (scripts/site_images.py); the indicator maps (scripts/indicator_map.py) are drawn over Esri’s World Dark Gray Canvas basemap (Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS user community). The hero globe uses <a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">Sentinel-2 cloudless<span className="sr-only"> (opens in a new tab)</span></a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2016), licensed under CC BY 4.0, over NASA's Blue Marble Next Generation (public domain), and is rendered with globe.gl; the section and footer backgrounds are Sentinel-2 cloudless crops of Bolivia from the same source, except Laguna Verde, from the 2024 mosaic (contains modified Copernicus Sentinel data 2024, CC BY-NC-SA 4.0). The emblem shades the nine departments by multidimensional poverty inside a satellite’s orbit (scripts/site_images.py). App screenshots, figures, and photos belong to their respective authors. Code is released under the <a href={`${REPO_URL}/blob/main/LICENSE`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">MIT License<span className="sr-only"> (opens in a new tab)</span></a> and data under <a href={`${REPO_URL}/blob/main/LICENSE-DATA`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">CC BY 4.0<span className="sr-only"> (opens in a new tab)</span></a>, except where a source requires otherwise; the boundaries are SDSN Bolivia’s municipal map of 2025 (Límites Municipales Bolivia 2025, used with SDSN Bolivia’s permission); each dataset page credits the original sources and their licenses.</p>
         <p>Found an error? <a href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">Open an issue<span className="sr-only"> (opens in a new tab)</span></a> or start a thread in <a href={`${REPO_URL}/discussions`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">GitHub Discussions<span className="sr-only"> (opens in a new tab)</span></a>.</p>
       </div>
     </div>
@@ -1707,7 +1710,7 @@ const uniqueSources = (packages, role) => {
   });
 };
 // Boundary files are not covered by the observatory's data license (LICENSE-DATA)
-const BOUNDARY_NOTE = 'The unit boundaries (the maps on this page, geometry=True and geo/boundaries/) are geoBoundaries’ municipalities (Runfola et al. 2020, PLOS ONE 15(4): e0231866), from GeoBolivia, in the public domain; please credit “geoBoundaries (GeoBolivia, public domain)”. The geo IDs follow GADM 4.1’s numbering.';
+const BOUNDARY_NOTE = 'The unit boundaries (the maps on this page, geometry=True and geo/boundaries/) are SDSN Bolivia’s municipal map of 2025 (343 municipalities and indigenous autonomies), used and shared with SDSN Bolivia’s permission; please credit “SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/”. The geo IDs follow GADM 4.1’s numbering.';
 
 const ExternalA = ({ href, children, className = '' }) => (
   <a href={href} target="_blank" rel="noopener noreferrer"

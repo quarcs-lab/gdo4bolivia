@@ -129,6 +129,8 @@ const js = await esbuild.build({
   define: {
     'process.env.NODE_ENV': '"production"',
     __SITE_CONFIG__: JSON.stringify(project.site || {}),
+    // number of units at each scale of geo/units.csv, e.g. {"country": 1, ..., "total": 466}
+    __UNIT_COUNTS__: JSON.stringify(units.reduce((n, u) => ({ ...n, [u.scale]: (n[u.scale] || 0) + 1, total: (n.total || 0) + 1 }), {})),
   },
 });
 const appJs = `assets/${basename(Object.entries(js.metafile.outputs).find(([, o]) => o.entryPoint && o.entryPoint.endsWith('src/app.jsx'))[0])}`;

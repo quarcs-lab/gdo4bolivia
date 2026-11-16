@@ -421,18 +421,19 @@ def package_card(geo, plt):
     import mapclassify
     fig = plt.figure(figsize=(16, 9))
     ax = fig.add_axes([0.02, 0.03, 0.4, 0.94]); ax.set_axis_off()
-    mpi = geo.load("sdg01", variables="sdg1_2_mpi", years=2012)
-    pop = geo.load("pop", years=2012)
-    layers = [("department", "9 departments", "pop · BO-04", site_cmap()),
-              ("province", "112 provinces", "sdg01 · BO-04-17", seq_cmap()),
-              ("municipality", "339 municipalities", "ntl · BO-04-17-04", site_cmap().reversed())]
+    ids = geo.load("sdg", variables=["index_sdg", "population"], years=2024)
+    n = geo.units()["scale"].value_counts()
+    layers = [("department", f"{n['department']} departments", "sdg · BO-04", site_cmap()),
+              ("province", f"{n['province']} provinces", "sdg01 · BO-04-17", seq_cmap()),
+              ("municipality", f"{n['municipality']} municipalities", "ntl · BO-04-17-04", site_cmap().reversed())]
     for i, (scale, label, sub, cmap) in enumerate(layers):
         b = geo.boundaries(scale)
-        vals = geo.aggregate(mpi, to=scale, rules={"sdg1_2_mpi": "weighted_mean:pop"}, weights=pop) if scale != "municipality" else mpi
+        vals = (geo.aggregate(ids, to=scale, variables=["index_sdg"], rules={"index_sdg": "weighted_mean:population"})
+                if scale != "municipality" else ids)
         g = b.merge(vals, on="geo_id")
         dy = -i * 9.5
         sq = squash(g, dy=dy)
-        sq.assign(_c=mapclassify.Quantiles(g["sdg1_2_mpi"], k=min(6, len(g) - 1)).yb).plot(
+        sq.assign(_c=mapclassify.Quantiles(g["index_sdg"], k=min(6, len(g) - 1)).yb).plot(
             column="_c", cmap=cmap, ax=ax, edgecolor=BG, linewidth=0.3 if scale != "municipality" else 0.15)
         pt = geo.boundaries("municipality").set_index("geo_id").loc["BO-04-17-04", "geometry"].representative_point()
         ax.plot(pt.x, pt.y * 0.42 + dy, "o", ms=9, mfc="white", mec=ROSE, mew=2.5, zorder=5)
@@ -448,8 +449,8 @@ def package_card(geo, plt):
     fig.patches.append(panel)
     for k, c in enumerate(["#ff5f57", "#febc2e", "#28c840"]):
         fig.patches.append(plt.Circle((0.63 + k * 0.013, 0.68), 0.0055, transform=fig.transFigure, color=c))
-    lines = ['import geo4bolivia as geo', '', 'geo.load("ntl", geometry=True)', 'geo.link(df, "municipality", on="mun_id")',
-             'geo.aggregate(df, to="department")', 'geo.combine(["ntl", "pop"], "municipality")', 'geo.for_geometrics("ntl")']
+    lines = ['import geo4bolivia as geo', '', 'geo.load("sdg", geometry=True)', 'geo.link(df, "municipality", on="mun_id")',
+             'geo.aggregate(df, to="department")', 'geo.combine(["sdg", "ntl"], "municipality")', 'geo.for_geometrics("sdg")']
     for k, t in enumerate(lines):
         fig.text(0.625, 0.61 - k * 0.055, t, fontsize=15, family="DejaVu Sans Mono", color="white" if k == 0 else "#bfe9e2")
     fig.text(0.62, 0.08, "pip install geo4bolivia", fontsize=21, weight="bold", family="DejaVu Sans Mono", color=SAND)
@@ -459,11 +460,11 @@ def package_card(geo, plt):
 def geometrics_card(geo, plt):
     import libpysal
     from esda.moran import Moran, Moran_Local
-    ntl = geo.load("ntl", years=2012, variables="ln_t400NTLpc")
-    g = geo.boundaries("municipality").merge(ntl, on="geo_id")
+    ids = geo.load("sdg", years=2024, variables="index_sdg")
+    g = geo.boundaries("municipality").merge(ids, on="geo_id")
     w = libpysal.weights.Queen.from_dataframe(g, use_index=False, silence_warnings=True)
     w.transform = "r"
-    y = g["ln_t400NTLpc"].to_numpy()
+    y = g["index_sdg"].to_numpy()
     lisa = Moran_Local(y, w, seed=0, permutations=999)
     mi = Moran(y, w, permutations=0)
     quad = np.where(lisa.p_sim < 0.05, lisa.q, 0)
@@ -471,7 +472,7 @@ def geometrics_card(geo, plt):
     fig = plt.figure(figsize=(16, 9))
     ax = fig.add_axes([0.02, 0.06, 0.42, 0.84])
     g.plot(color=[colors[q] for q in quad], ax=ax, edgecolor=BG, linewidth=0.2); ax.set_axis_off()
-    ax.set_title("LISA clusters of night-time lights per capita, 2012", fontsize=17, color=TEXT)
+    ax.set_title("LISA clusters of the Sustainable Development Index, ~2024", fontsize=17, color=TEXT)
     for q, lab in [(1, "High-High"), (3, "Low-Low"), (2, "Low-High"), (4, "High-Low"), (0, "Not significant")]:
         ax.scatter([], [], color=colors[q], label=lab, s=120)
     ax.legend(loc="lower left", frameon=False, labelcolor=TEXT, fontsize=12)
@@ -482,7 +483,7 @@ def geometrics_card(geo, plt):
     b = np.polyfit(z, lag, 1)
     xs = np.linspace(z.min(), z.max(), 10); ax2.plot(xs, b[0] * xs + b[1], color=SAND, lw=2.5)
     ax2.axhline(0, color="#2c4a4e", lw=1); ax2.axvline(0, color="#2c4a4e", lw=1)
-    ax2.set_xlabel("Lights per capita (standardized)"); ax2.set_ylabel("Spatial lag")
+    ax2.set_xlabel("Sustainable Development Index (standardized)"); ax2.set_ylabel("Spatial lag")
     ax2.set_title(f"Moran's I = {mi.I:.2f}", fontsize=17, color=TEXT)
     for s in ax2.spines.values(): s.set_color(EDGE)
     fig.text(0.52, 0.9, "geometrics", fontsize=30, weight="bold", color="white")
@@ -504,7 +505,7 @@ def expdpy_card(geo, plt):
         ax.plot(means.index, means[col], color=cm(0.25 + 0.75 * k / 8), lw=3, label=deps[col])
     ax.legend(ncol=3, fontsize=10, frameon=False, labelcolor=TEXT, loc="lower right")
     ax.set_xlabel("Year"); ax.set_ylabel("Log lights per capita (trend)")
-    ax.set_title("339 municipal trajectories and department means, 2012–2020", fontsize=16, color=TEXT)
+    ax.set_title(f"{d['geo_id'].nunique()} municipal trajectories and department means, 2012–2020", fontsize=16, color=TEXT)
     for s in ax.spines.values(): s.set_color(EDGE)
     x = d["ln_t400NTLpc"]
     between = d.groupby("geo_id")["ln_t400NTLpc"].transform("mean")
@@ -522,18 +523,18 @@ def insight_card(geo, plt):
     import pandas as pd
 
     goals = ["sdg02", "sdg04", "sdg10"]
-    sdg = pd.concat([geo.load(d) for d in goals]).groupby("geo_id").first().reset_index()
+    sdg = pd.concat([geo.load(d, years=2024).set_index("geo_id") for d in goals], axis=1).reset_index()
     g = geo.boundaries("municipality").merge(sdg, on="geo_id")
-    panels = [("sdg2_2_cmc", "Chronic child\nmalnutrition (2016)"), ("sdg10_2_nssp", "Non-Spanish\nspeakers (2012)"),
-              ("sdg4_1_ssdrm", "Secondary dropout,\nmales (2017)"), ("sdg4_1_ssdrf", "Secondary dropout,\nfemales (2017)"),
-              ("sdg10_2_gcye", "Inequality in years\nof education (2012)")]
+    panels = [("sdg2_2_dcn", "Chronic child\nmalnutrition (2023)"), ("sdg10_2_esp", "Non-Spanish\nspeakers (2024)"),
+              ("sdg4_1_ash", "Secondary dropout,\nboys (2022–24)"), ("sdg4_1_asm", "Secondary dropout,\ngirls (2022–23)"),
+              ("sdg10_4_gin", "Inequality in years\nof education (2024)")]
     fig, axes = plt.subplots(1, 5, figsize=(16, 9))
     fig.subplots_adjust(left=0.01, right=0.99, top=0.72, bottom=0.08, wspace=0.02)
     for ax, (col, title) in zip(axes, panels):
         quantile_map(ax, g.dropna(subset=[col]), col, 5, site_cmap(), title)
         ax.set_title(title, fontsize=15, color=TEXT)
-    fig.text(0.02, 0.9, "Human capital constraints across Bolivia's 339 municipalities", fontsize=28, weight="bold", color="white")
-    fig.text(0.02, 0.84, "The five indicators studied by Mendez & Gonzales (2021), mapped from the observatory's sdg dataset (quintiles)",
+    fig.text(0.02, 0.9, "Human capital constraints across Bolivia's 343 municipalities, ~2024", fontsize=28, weight="bold", color="white")
+    fig.text(0.02, 0.84, "The five constraints studied by Mendez & Gonzales (2021), updated with the SDG Atlas 2026 (quintiles)",
              fontsize=15, color=MUTED)
     save_fig(fig, IMG / "insights/human-capital-paper.webp")
 
@@ -738,7 +739,7 @@ def pillars() -> None:
     print("pillars")
     mun = geo.boundaries("municipality")
     outline_geom = country()
-    mpi = mun.merge(geo.load("sdg01", variables="sdg1_2_mpi", years=2012), on="geo_id")
+    mpi = mun.merge(geo.load("sdg01", variables="sdg1_2_mpi", years=2024), on="geo_id")
     ntl = mun.merge(geo.load("ntl", years=2020), on="geo_id")
 
     # Indicators: three stacked layers (imagery, a choropleth, night lights)

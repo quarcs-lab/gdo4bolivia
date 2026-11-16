@@ -1,7 +1,8 @@
 // Interactive indicator map (Leaflet), loaded only on indicator pages. It draws the dataset's values
-// (assets/data/<dataset>.json, written by site/build.mjs from data/) on geoBoundaries' public-domain
-// municipalities (assets/data/municipality.geojson, written by scripts/web_boundaries.py), in five
-// Fisher-Jenks classes over the keyless basemap of project.yaml's `site` block.
+// (assets/data/<dataset>.json, written by site/build.mjs from data/) on the units of its scale
+// (assets/data/<scale>.geojson, written by scripts/web_boundaries.py), in five Fisher-Jenks classes
+// over the keyless basemap of project.yaml's `site` block. When a variable has two or more years,
+// "Change" maps its difference between the first and the last, in classes split at zero.
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import L from 'leaflet';
 import { MAP_VIEW } from './content.js';
@@ -9,7 +10,11 @@ import { MAP_VIEW } from './content.js';
 const SITE = __SITE_CONFIG__;   // project.yaml `site`, injected by the build
 const COLORS = { background: '#071417', no_data: '#5c6b6a', classes: ['#1f8a80', '#ec8f99', '#ffd9de'], ...(SITE.colors || {}) };
 const BASEMAP = SITE.basemap || {};
-const BOUNDARY_CREDIT = 'Boundaries: <a href="https://www.geoboundaries.org" target="_blank" rel="noopener noreferrer">geoBoundaries</a> (GeoBolivia, public domain)';
+const BOUNDARY_CREDIT = SITE.boundary_credit ? `Boundaries: ${String(SITE.boundary_credit).replace(/</g, '&lt;')}` : '';
+// Change maps: falls (most negative first) and rises (smallest first), up to three classes each
+const FALLS = ['#13605f', '#3f9c8f', '#9fd3c7'];
+const RISES = ['#f3b3bc', '#ec8f99', '#d84a64'];
+const CHANGE = 'change';
 const N_CLASSES = 5;
 
 const cache = {};
@@ -55,6 +60,7 @@ const PALETTE = COLORS.ramp && COLORS.ramp.length === N_CLASSES ? COLORS.ramp : 
 
 const fmt = (v) => {
   if (v === null || v === undefined) return 'No data';
+  if (Number.isNaN(v)) return 'No data';
   const a = Math.abs(v);
   if (a >= 1000) return Math.round(v).toLocaleString('en-US');
   if (a >= 100) return v.toFixed(1);
@@ -62,12 +68,29 @@ const fmt = (v) => {
   return String(Number(v.toPrecision(3)));
 };
 
+const signed = (v) => (v === null || v === undefined || Number.isNaN(v) ? 'No data' : `${v > 0 ? '+' : ''}${fmt(v)}`);
+
+// Classes of a change split at zero: Fisher-Jenks within the falls and within the rises
+const changeClasses = (present) => {
+  const neg = present.filter((v) => v < 0), pos = present.filter((v) => v >= 0);
+  const kNeg = Math.min(3, new Set(neg).size), kPos = Math.min(3, new Set(pos).size);
+  const negBreaks = kNeg ? jenks(neg, kNeg) : [];
+  const posBreaks = kPos ? jenks(pos, kPos) : [];
+  return {
+    breaks: [...negBreaks, ...posBreaks],
+    colors: [...FALLS.slice(3 - kNeg), ...RISES.slice(0, kPos)],
+    lows: [...negBreaks.map((_, i) => (i === 0 ? Math.min(...neg) : negBreaks[i - 1])),
+      ...posBreaks.map((_, i) => (i === 0 ? Math.min(...pos) : posBreaks[i - 1]))],
+  };
+};
+
 const useMapData = (dataset) => {
   const [state, setState] = useState({ status: 'loading' });
   useEffect(() => {
     let live = true;
     setState({ status: 'loading' });
-    Promise.all([getJSON(`assets/data/${dataset}.json`), getJSON('assets/data/municipality.geojson'), getJSON('assets/data/department.geojson')])
+    getJSON(`assets/data/${dataset}.json`)
+      .then((data) => Promise.all([data, getJSON(`assets/data/${data.scale || 'municipality'}.geojson`), getJSON('assets/data/department.geojson')]))
       .then(([data, units, departments]) => { if (live) setState({ status: 'ready', data, units, departments }); })
       .catch(() => { if (live) setState({ status: 'error' }); });
     return () => { live = false; };
@@ -98,26 +121,47 @@ export default function IndicatorMap({ datasets, id = 'map' }) {
   const variable = data && (data.variables.find((v) => v.name === choice.variable)
     || data.variables.find((v) => v.name === data.default?.variable) || data.variables[0]);
   const years = variable ? Object.keys(variable.years).sort() : [];
-  const year = years.includes(String(choice.year)) ? String(choice.year)
-    : years.includes(String(data?.default?.year)) && variable?.name === data?.default?.variable ? String(data.default.year) : years[years.length - 1];
+  const first = years[0], last = years[years.length - 1];
+  const changeLabel = `Change ${first}→${last}`;
+  const year = choice.year === CHANGE && years.length > 1 ? CHANGE
+    : years.includes(String(choice.year)) ? String(choice.year)
+      : years.includes(String(data?.default?.year)) && variable?.name === data?.default?.variable ? String(data.default.year) : last;
+  const isChange = year === CHANGE;
+  const yearText = isChange ? `between ${first} and ${last}` : year;
 
-  // Values by geo_id, classes and legend for the chosen variable and year
+  // Values by geo_id, classes and legend for the chosen variable and year (or change)
   const view = useMemo(() => {
     if (!variable || !year) return null;
-    const values = Object.fromEntries(data.units.map((u, i) => [u, variable.years[year][i]]));
+    const valueAt = (i) => {
+      if (!isChange) return variable.years[year][i];
+      const [a, b] = [variable.years[first][i], variable.years[last][i]];
+      return a === null || b === null ? null : Number((b - a).toPrecision(6));
+    };
+    const values = Object.fromEntries(data.units.map((u, i) => [u, valueAt(i)]));
     const present = Object.values(values).filter((v) => v !== null);
+    if (isChange) {
+      const sorted = [...present].sort((a, b) => a - b);
+      const { breaks, colors, lows } = changeClasses(present);
+      const classOf = (v) => (v === null ? -1 : breaks.findIndex((b) => v <= b + Math.abs(b) * 1e-9 + 1e-12));
+      const counts = breaks.map((_, i) => present.filter((v) => classOf(v) === i).length);
+      const ranked = data.units.filter((u) => values[u] !== null).sort((a, b) => values[b] - values[a]);
+      return { values, breaks, lows, counts, classOf, colors, ranked, min: sorted[0], max: sorted[sorted.length - 1],
+        missing: data.units.length - present.length, skewed: false, change: true,
+        rises: present.filter((v) => v > 0).length, falls: present.filter((v) => v < 0).length };
+    }
     const positive = present.every((v) => v > 0);
     const sorted = [...present].sort((a, b) => a - b);
     const skewed = positive && sorted[sorted.length - 1] / sorted[Math.floor(sorted.length / 2)] > 20;
     const scale = skewed ? Math.log : (v) => v;   // classify very skewed positive values (e.g. density) on logs
     const breaks = jenks(present.map(scale), Math.min(N_CLASSES, new Set(present).size)).map((b) => (skewed ? Math.exp(b) : b));
-    const classOf = (v) => (v === null ? -1 : breaks.findIndex((b) => v <= b * (1 + 1e-9)));
+    const classOf = (v) => (v === null ? -1 : breaks.findIndex((b) => v <= b + Math.abs(b) * 1e-9 + 1e-12));
     const counts = breaks.map((_, i) => present.filter((v) => classOf(v) === i).length);
     const ranked = data.units.filter((u) => values[u] !== null).sort((a, b) => values[b] - values[a]);
     const colors = breaks.length === N_CLASSES ? PALETTE : ramp(COLORS.ramp || COLORS.classes, Math.max(breaks.length, 2));
-    return { values, breaks, counts, classOf, colors, ranked, min: sorted[0], max: sorted[sorted.length - 1], missing: data.units.length - present.length, skewed };
-  }, [data, variable, year]);
-  current.current = { view, variable, year };
+    const lows = breaks.map((_, i) => (i === 0 ? sorted[0] : breaks[i - 1]));
+    return { values, breaks, lows, counts, classOf, colors, ranked, min: sorted[0], max: sorted[sorted.length - 1], missing: data.units.length - present.length, skewed };
+  }, [data, variable, year, isChange, first, last]);
+  current.current = { view, variable, year, yearText };
 
   // Create the map once the boundaries are in
   useEffect(() => {
@@ -142,9 +186,10 @@ export default function IndicatorMap({ datasets, id = 'map' }) {
       style,
       onEachFeature: (f, layer) => {
         layer.bindTooltip(() => {
-          const { view: v, variable: va, year: y } = current.current;
+          const { view: v, variable: va, yearText: y } = current.current;
           const name = String(f.properties.name).replace(/</g, '&lt;');
-          return `<strong>${name}</strong><br>${va ? `${va.title.replace(/</g, '&lt;')} (${y}): ${fmt(v.values[f.properties.geo_id])}` : ''}`;
+          const value = v?.change ? signed(v.values[f.properties.geo_id]) : fmt(v?.values[f.properties.geo_id]);
+          return `<strong>${name}</strong><br>${va ? `${v?.change ? 'Change in ' : ''}${va.title.replace(/</g, '&lt;')} (${y}): ${value}` : ''}`;
         }, { sticky: true, className: 'gdo-tooltip', direction: 'top', offset: [0, -8] });
         layer.on({ mouseover: () => layer.setStyle({ weight: 2, color: '#ffffff' }), mouseout: () => units.resetStyle(layer) });
       },
@@ -168,10 +213,11 @@ export default function IndicatorMap({ datasets, id = 'map' }) {
         {datasets.length > 1 && <Select id={`${id}-dataset`} label="Dataset" value={dataset} onChange={(d) => { setDataset(d); setChoice({ variable: null, year: null }); }} options={datasets.map((d) => [d, d])} />}
         <Select id={`${id}-variable`} label="Variable" value={variable?.name || ''} onChange={(v) => setChoice({ variable: v, year: null })}
                 options={(data?.variables || []).map((v) => [v.name, `${v.title} (${v.name})`])} disabled={!data} />
-        <Select id={`${id}-year`} label="Year" value={year || ''} onChange={pick('year')} options={years.map((y) => [y, y])} disabled={years.length < 2} />
+        <Select id={`${id}-year`} label="Year" value={year || ''} onChange={pick('year')}
+                options={[...years.map((y) => [y, y]), ...(years.length > 1 ? [[CHANGE, changeLabel]] : [])]} disabled={years.length < 2} />
       </div>
       <div className="relative rounded-xl overflow-hidden border border-white/10 bg-lagoon-900">
-        <div ref={el} role="region" aria-label={variable ? `Interactive map of ${variable.title} in ${year} by municipality` : 'Interactive map'}
+        <div ref={el} role="region" aria-label={variable ? `Interactive map of ${isChange ? 'the change in ' : ''}${variable.title} ${isChange ? yearText : `in ${year}`} by municipality` : 'Interactive map'}
              aria-describedby={`${id}-summary`} className="h-[420px] sm:h-[520px] w-full" />
         {state.status !== 'ready' && (
           <p className="absolute inset-0 flex items-center justify-center text-sm text-salt-400 p-6 text-center" role={state.status === 'error' ? 'alert' : 'status'}>
@@ -183,14 +229,16 @@ export default function IndicatorMap({ datasets, id = 'map' }) {
         <div className="mt-4 grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6 text-sm">
           <div>
             <p id={`${id}-summary`} className="text-salt-300 mb-3">
-              {variable.title}{unit}, {year}: {fmt(view.min)} to {fmt(view.max)} across {data.units.length - view.missing} municipalities
+              {view.change
+                ? <>Change in {variable.title}{unit} {yearText}: {signed(view.min)} to {signed(view.max)} across {data.units.length - view.missing} municipalities; it rose in {view.rises} and fell in {view.falls}</>
+                : <>{variable.title}{unit}, {year}: {fmt(view.min)} to {fmt(view.max)} across {data.units.length - view.missing} municipalities</>}
               {view.missing > 0 && `, ${view.missing} without data`}. Hover over or tap a municipality for its value.
             </p>
             <ul className="space-y-1.5" aria-label="Legend">
               {view.breaks.map((b, i) => (
                 <li key={i} className="flex items-center gap-2 text-salt-300">
                   <span className="w-5 h-3.5 rounded-sm flex-shrink-0" style={{ background: view.colors[i] }} aria-hidden="true"></span>
-                  {fmt(i === 0 ? view.min : view.breaks[i - 1])} – {fmt(b)} <span className="text-salt-400">({view.counts[i]})</span>
+                  {view.change ? `${signed(view.lows[i])} – ${signed(b)}` : `${fmt(view.lows[i])} – ${fmt(b)}`} <span className="text-salt-400">({view.counts[i]})</span>
                 </li>
               ))}
               {view.missing > 0 && (
@@ -199,14 +247,14 @@ export default function IndicatorMap({ datasets, id = 'map' }) {
                 </li>
               )}
             </ul>
-            <p className="text-xs text-salt-400 mt-3">Fisher–Jenks natural breaks{view.skewed ? ', computed on logs because the values are very skewed' : ''}. Holes are salt flats and lakes outside any municipality.</p>
+            <p className="text-xs text-salt-400 mt-3">{view.change ? `Final minus initial value; Fisher–Jenks natural breaks within the falls (green) and within the rises (rose), so the classes split at zero. Whether a rise is progress depends on the variable.` : `Fisher–Jenks natural breaks${view.skewed ? ', computed on logs because the values are very skewed' : ''}.`} Holes are salt flats and lakes outside any municipality.</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[['Highest', view.ranked.slice(0, 5)], ['Lowest', view.ranked.slice(-5).reverse()]].map(([label, list]) => (
               <div key={label}>
                 <h3 className="text-xs font-bold uppercase tracking-widest text-salt-400 mb-2">{label}</h3>
                 <ol className="space-y-1 text-salt-300">
-                  {list.map((u) => <li key={u} className="flex justify-between gap-2"><span className="truncate">{nameOf[u] || u}</span><span className="font-mono text-xs text-salt-200">{fmt(view.values[u])}</span></li>)}
+                  {list.map((u) => <li key={u} className="flex justify-between gap-2"><span className="truncate">{nameOf[u] || u}</span><span className="font-mono text-xs text-salt-200">{view.change ? signed(view.values[u]) : fmt(view.values[u])}</span></li>)}
                 </ol>
               </div>
             ))}
