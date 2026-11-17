@@ -85,6 +85,10 @@
   ],
   "geo:notebooks": [
     {
+      "title": "Load, link and build Bolivian indicators with geo4bolivia",
+      "path": "../../notebooks/geo4bolivia_quickstart.ipynb"
+    },
+    {
       "title": "Exploratory data analysis of multidimensional poverty",
       "path": "../../notebooks/eda.ipynb"
     },
@@ -93,8 +97,12 @@
       "path": "../../notebooks/esda_inequality.ipynb"
     },
     {
-      "title": "GWR and MGWR of poverty on night-time lights",
+      "title": "Where do lights predict poverty? GWR and MGWR",
       "path": "../../notebooks/esda_heterogeneity.ipynb"
+    },
+    {
+      "title": "Poverty in Bolivia: an extended EDA and ESDA",
+      "path": "../../notebooks/eda_esda.ipynb"
     },
     {
       "title": "Predicting poverty from satellite embeddings",

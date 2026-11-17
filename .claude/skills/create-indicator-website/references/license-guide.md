@@ -27,7 +27,7 @@ whether they have permission.
 | CC BY-SA, ODbL | No (share-alike) | Publish the dataset under the source's license instead; tell the user |
 | CC BY-NC, CC BY-NC-SA, "non-commercial use" | No | The source's terms prevail; tell the user, and ask before publishing |
 | "No redistribution without permission" (e.g. GADM) | No | Do not publish the files without written permission; tell the user |
-| No license stated | Unclear | Ask the user. With documented permission, record it in `geo:license.title` |
+| No license stated | Unclear | Ask the user. With documented permission, record it in `geo:license.title` (e.g. the SDG Atlas 2026: `name` `LicenseRef-SDSN-Bolivia-permission`, `title` "No open license stated (© Universidad Privada Boliviana); used and shared with the permission of SDSN Bolivia") |
 | Software licenses (MIT, Apache) on data | Usually yes | They permit reuse with notice; the copyright holder can relicense |
 
 Remember the **intermediaries**. Tools such as AidData GeoQuery (ODC-BY 1.0) and the

@@ -64,6 +64,10 @@ writeFileSync(join(OUT, '.nojekyll'), '');
 // --------------------------------------------------------------------------- metadata
 const DATASETS = readJSON('metadata/index.json').datasets;
 const PKG = Object.fromEntries(DATASETS.map((d) => [d, readJSON(`metadata/${d}.datapackage.json`)]));
+const yearSpan = (resources) => {
+  const years = resources.flatMap((r) => r['geo:period'] || []).map(Number).filter(Number.isFinite);
+  return years.length ? [Math.min(...years), Math.max(...years)] : null;
+};
 const itemDatasets = (item) => (item.datasets || (item.dataset ? [item.dataset] : [])).filter((d) => PKG[d]);
 const variables = (pkg) => pkg.resources[0].schema.fields.filter((f) => !f['geo:role']);
 
@@ -131,6 +135,8 @@ const js = await esbuild.build({
     __SITE_CONFIG__: JSON.stringify(project.site || {}),
     // number of units at each scale of geo/units.csv, e.g. {"country": 1, ..., "total": 466}
     __UNIT_COUNTS__: JSON.stringify(units.reduce((n, u) => ({ ...n, [u.scale]: (n[u.scale] || 0) + 1, total: (n.total || 0) + 1 }), {})),
+    // first and last year of every published resource (geo:period), e.g. [2001, 2024]
+    __YEAR_SPAN__: JSON.stringify(yearSpan(Object.values(PKG).flatMap((p) => p.resources || []))),
   },
 });
 const appJs = `assets/${basename(Object.entries(js.metafile.outputs).find(([, o]) => o.entryPoint && o.entryPoint.endsWith('src/app.jsx'))[0])}`;
@@ -166,6 +172,11 @@ const orgGraph = [
   },
 ];
 const period = (p) => String(p || '').replace(/[–-]/, '/');
+// ISO 8601 coverage of an indicator from its resources' geo:period, else its display period
+const coverage = (pkgs, fallback) => {
+  const span = yearSpan(pkgs.flatMap((p) => p?.resources || []));
+  return span ? (span[0] === span[1] ? String(span[0]) : `${span[0]}/${span[1]}`) : period(fallback);
+};
 const itemLD = (item) => {
   const url = SITE_URL + itemPath(item);
   const base = { '@id': `${url}#item`, url, name: item.title, description: plain(item.description || item.summary), keywords: item.tags, creator: { '@id': ORG } };
@@ -173,7 +184,7 @@ const itemLD = (item) => {
     const pkgs = itemDatasets(item).map((d) => PKG[d]);
     return {
       '@type': 'Dataset', ...base, isAccessibleForFree: true,
-      license: pkgs[0]?.licenses?.[0]?.path, temporalCoverage: period(item.period),
+      license: pkgs[0]?.licenses?.[0]?.path, temporalCoverage: coverage(pkgs, item.period),
       spatialCoverage: { '@type': 'Place', name: project.country.name },
       variableMeasured: pkgs.flatMap((p) => variables(p).map((f) => f.title)).filter((t, i, a) => a.indexOf(t) === i).slice(0, 100),
     };

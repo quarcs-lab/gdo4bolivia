@@ -11,7 +11,7 @@ reads the properties below at runtime; the validator enforces the starred ones.
 | `name`*, `title`*, `description`* | Heading of the variable table when a page shows several datasets |
 | `licenses`* | License section: the license of the published files. Usually CC BY 4.0, or the source's license if that is stricter. Each entry has a `name`* (SPDX id or `LicenseRef-...`), `title` and `path` (URL) |
 | `sources`* | About (the `original` ones), License and References. See below |
-| `geo:map` | Headline map: `{"variable": "...", "year": 2020}`, optionally `"scale"` and `"classify": "log"` |
+| `geo:map` | Headline map: `{"variable": "...", "year": 2020}`, optionally `"scale"`, `"classify": "log"` and, for datasets with an initial and a final period, `"panels": [first, last]` (the page map shows both side by side in pooled classes; the card shows `year`) |
 | `geo:updated` | "Last updated" in the License section (ISO date) |
 | `geo:citation`, `geo:notes`, `geo:notebooks` | Generated docs only |
 

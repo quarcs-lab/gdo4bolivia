@@ -63,6 +63,11 @@ df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/
 - The units are the 343 municipalities and indigenous autonomies (GAIOC) of 2025. Four of them were created after the 2012 census (TIOC-Raqaypampa, San Pedro de Macha, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico); the Atlas gives them values in both periods.
 - The indicators are rates, shares, ratios or indices, so their aggregation rule is `none`. Population-weighted averages can use the census population of the `sdg` dataset: `geo.aggregate(df, to="department", rules={"index_sdg5": "weighted_mean:population"}, weights=geo.load("sdg", variables="population"))`.
 
+## Related notebooks
+
+- [Dynamics of sustainable development in Bolivia, 2012–2024](../../notebooks/sdg_dynamics.ipynb)
+- [Poverty in Bolivia: an extended EDA and ESDA](../../notebooks/eda_esda.ipynb)
+
 ## Sources
 
 - Andersen, L. E., & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad Privada Boliviana, SDSN Bolivia. https://atlasods.sdsnbolivia.org/

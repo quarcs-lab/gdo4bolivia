@@ -60,9 +60,11 @@ df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/
 
 ## Related notebooks
 
+- [Load, link and build Bolivian indicators with geo4bolivia](../../notebooks/geo4bolivia_quickstart.ipynb)
 - [Exploratory data analysis of multidimensional poverty](../../notebooks/eda.ipynb)
 - [Spatial inequality of poverty and night-time lights](../../notebooks/esda_inequality.ipynb)
-- [GWR and MGWR of poverty on night-time lights](../../notebooks/esda_heterogeneity.ipynb)
+- [Where do lights predict poverty? GWR and MGWR](../../notebooks/esda_heterogeneity.ipynb)
+- [Poverty in Bolivia: an extended EDA and ESDA](../../notebooks/eda_esda.ipynb)
 - [Predicting poverty from satellite embeddings](../../notebooks/embeddings_mpi_ml.ipynb)
 
 ## Sources

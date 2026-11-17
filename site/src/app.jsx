@@ -9,6 +9,8 @@ import {
 
 // Units per scale in geo/units.csv, injected by site/build.mjs
 const UNIT_COUNTS = __UNIT_COUNTS__;
+// First and last year of the published data, from the metadata, e.g. [2001, 2024]
+const YEAR_SPAN = __YEAR_SPAN__;
 
 // ====================================================================
 // Icons (inline SVG, Lucide style)
@@ -1020,7 +1022,7 @@ const Hero = () => {
               Observing <span className="text-[#ff8597]">Bolivia's</span><br className="hidden sm:block" /> development<br className="hidden sm:block" /> <em className="gradient-text pr-2">from space.</em>
             </h1>
             <p className="text-lg md:text-xl text-salt-200 font-light leading-relaxed max-w-xl mb-10 [text-shadow:0_1px_12px_rgba(7,20,23,0.9)]">
-              Open indicators, AI-enhanced tools, research projects and insights for monitoring sustainable regional development across Bolivia.
+              Public-access indicators, AI-enhanced tools, research projects and insights for monitoring sustainable regional development across Bolivia.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <a href="#indicators" className="px-6 sm:px-8 py-3 rounded-lg bg-brand-rose hover:bg-brand-roseHover text-white font-bold text-base sm:text-lg transition-all hover:-translate-y-1 shadow-lg shadow-rose-950/40 flex items-center justify-center gap-2">
@@ -1087,7 +1089,7 @@ const Hero = () => {
 
 const PILLARS = [
   { title: 'Indicators & Tools', href: '#indicators', image: 'images/pillar-indicators.webp', icon: Database, accent: 'text-teal-300', border: 'hover:border-teal-400/40',
-    text: 'Harmonized municipal panels on poverty, health, education, night-time lights, population and satellite embeddings, with the Python packages, Colab notebooks and Earth Engine apps to load, map and model them.' },
+    text: 'Harmonized municipal panels: the SDG Atlas 2026’s goal indices and indicators near 2012 and near 2024, night-time lights, population and satellite embeddings, with the Python packages, Colab notebooks and Earth Engine apps to load, map and model them.' },
   { title: 'GeoDevelopment Projects', href: HAS_SECTION.projects ? '#projects' : '#indicators', image: 'images/pillar-projects.webp', icon: FolderKanban, accent: 'text-sky-300', border: 'hover:border-sky-400/40',
     text: 'Research projects that build on the observatory, from the subnational SDG Atlas to regional shocks and local pollution, each with its own website, data and methods.' },
   { title: 'GeoDevelopment Insights', href: HAS_SECTION.insights ? '#insights' : '#indicators', image: 'images/pillar-insights.webp', icon: Lightbulb, accent: 'text-rose-300', border: 'hover:border-rose-400/40',
@@ -1104,8 +1106,8 @@ const About = () => {
   const indicators = byType(['indicator']);
   const stats = [
     { value: new Set(indicators.flatMap((i) => i.datasets || [i.dataset])).size, label: 'indicator datasets' },
-    { value: 4, label: 'spatial scales' },
-    { value: '2001–2020', label: 'years covered' },
+    { value: Object.keys(UNIT_COUNTS).filter((k) => k !== 'total').length, label: 'spatial scales' },
+    ...(YEAR_SPAN ? [{ value: YEAR_SPAN[0] === YEAR_SPAN[1] ? String(YEAR_SPAN[0]) : `${YEAR_SPAN[0]}–${YEAR_SPAN[1]}`, label: 'years covered' }] : []),
     { value: byType(['package', 'notebook', 'app']).length, label: 'packages, notebooks & apps' },
     { value: byType(['project']).length, label: byType(['project']).length === 1 ? 'research project' : 'research projects' },
     { value: byType(['insight']).length, label: byType(['insight']).length === 1 ? 'research insight' : 'research insights' },
@@ -1569,7 +1571,7 @@ const Footer = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
       <div className="border-t border-white/10 pt-8 space-y-3 text-xs text-salt-400 leading-relaxed">
         <p><strong className="text-salt-400">Disclaimer.</strong> The indicators, tools, projects and insights are the responsibility of the individual researchers and do not necessarily represent the views of their affiliated institutions or related organizations. Maps on this website are for geo-statistical use only and have a referential, informational character. They represent indicators spatially and do not constitute an official definition of Bolivia’s territorial boundaries.</p>
-        <p><strong className="text-salt-400">Credits.</strong> The section illustrations and cards are rendered from the observatory’s data (scripts/site_images.py); the indicator maps (scripts/indicator_map.py) are drawn over Esri’s World Dark Gray Canvas basemap (Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS user community). The hero globe uses <a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">Sentinel-2 cloudless<span className="sr-only"> (opens in a new tab)</span></a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2016), licensed under CC BY 4.0, over NASA's Blue Marble Next Generation (public domain), and is rendered with globe.gl; the section and footer backgrounds are Sentinel-2 cloudless crops of Bolivia from the same source, except Laguna Verde, from the 2024 mosaic (contains modified Copernicus Sentinel data 2024, CC BY-NC-SA 4.0). The emblem shades the nine departments by multidimensional poverty inside a satellite’s orbit (scripts/site_images.py). App screenshots, figures, and photos belong to their respective authors. Code is released under the <a href={`${REPO_URL}/blob/main/LICENSE`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">MIT License<span className="sr-only"> (opens in a new tab)</span></a> and data under <a href={`${REPO_URL}/blob/main/LICENSE-DATA`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">CC BY 4.0<span className="sr-only"> (opens in a new tab)</span></a>, except where a source requires otherwise; the boundaries are SDSN Bolivia’s municipal map of 2025 (Límites Municipales Bolivia 2025, used with SDSN Bolivia’s permission); each dataset page credits the original sources and their licenses.</p>
+        <p><strong className="text-salt-400">Credits.</strong> The section illustrations and cards are rendered from the observatory’s data (scripts/site_images.py); the project cards are illustrations of Bolivian places drawn with ChatGPT, and any map on them is drawn from the official boundaries (scripts/project_images.py); the indicator maps (scripts/indicator_map.py) are drawn over Esri’s World Dark Gray Canvas basemap (Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS user community). The hero globe uses <a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">Sentinel-2 cloudless<span className="sr-only"> (opens in a new tab)</span></a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2016), licensed under CC BY 4.0, over NASA's Blue Marble Next Generation (public domain), and is rendered with globe.gl; the section and footer backgrounds are Sentinel-2 cloudless crops of Bolivia from the same source, except Laguna Verde, from the 2024 mosaic (contains modified Copernicus Sentinel data 2024, CC BY-NC-SA 4.0). The emblem shades the nine departments by multidimensional poverty (SDG Atlas 2020) inside a satellite’s orbit (scripts/site_images.py). App screenshots, figures, and photos belong to their respective authors. Code is released under the <a href={`${REPO_URL}/blob/main/LICENSE`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">MIT License<span className="sr-only"> (opens in a new tab)</span></a> and data under <a href={`${REPO_URL}/blob/main/LICENSE-DATA`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">CC BY 4.0<span className="sr-only"> (opens in a new tab)</span></a>, except where a source requires otherwise; the boundaries are SDSN Bolivia’s municipal map of 2025 (Límites Municipales Bolivia 2025, used with SDSN Bolivia’s permission); each dataset page credits the original sources and their licenses.</p>
         <p>Found an error? <a href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">Open an issue<span className="sr-only"> (opens in a new tab)</span></a> or start a thread in <a href={`${REPO_URL}/discussions`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">GitHub Discussions<span className="sr-only"> (opens in a new tab)</span></a>.</p>
       </div>
     </div>
@@ -1908,7 +1910,7 @@ const IndicatorDetail = ({ item }) => {
           : <MetadataStatus state={meta} ids={ids} />}
       </Block>
       <Block title="Explore the map" id="d-map">
-        <p className="text-salt-300 leading-relaxed mb-5">Choose any variable and year to map it across the {item.units} municipalities.</p>
+        <p className="text-salt-300 leading-relaxed mb-5">Choose any variable and year to map it across the {item.units} municipalities{item.period && !/^\d{4}$/.test(item.period) ? ', or map its change between the first and the last year' : ''}.</p>
         <WhenNear placeholder={<div className="h-[420px] sm:h-[520px] rounded-xl border border-white/10 bg-lagoon-900" />}>
           <React.Suspense fallback={<p className="text-sm text-salt-400" role="status">Loading the map…</p>}>
             <IndicatorMap key={item.id} datasets={ids} id={`map-${item.id}`} />

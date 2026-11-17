@@ -11,7 +11,7 @@ export const COLAB_EMPTY = 'https://colab.research.google.com/notebooks/empty.ip
 export const DEFAULT_TITLE = 'GeoDevelopment Observatory of Bolivia | GDO-Bolivia';
 export const SITE_NAME = 'GeoDevelopment Observatory of Bolivia';
 export const SHORT_NAME = 'GDO-Bolivia';
-export const SITE_DESCRIPTION = 'GDO-Bolivia is a public-access platform of open subnational indicators, notebooks, web apps, research projects and insights for monitoring sustainable regional development in Bolivia with satellite data and AI.';
+export const SITE_DESCRIPTION = 'GDO-Bolivia is a public-access platform of subnational indicators, notebooks, web apps, research projects and insights for monitoring sustainable regional development in Bolivia with satellite data and AI.';
 // Authors of the observatory's own citations (the site's, and each dataset's on its page)
 export const CITE_AUTHORS = { apa: 'Mendez, C.', bibtex: 'Mendez, Carlos' };
 // Center and zoom of the interactive indicator maps
@@ -2014,9 +2014,9 @@ px.scatter(dep.sort_values("index_sdg17"), x="index_sdg17", y="department",
     id: 'municipalities343-ntl', type: 'indicator', section: 'indicators',
     title: 'Night-time lights per capita',
     scope: '333 of 343 municipalities · 2012–2020',
-    summary: 'Nine years of VIIRS night-time lights per person for every municipality, with a long-run trend: a satellite proxy for local economic activity.',
+    summary: 'Nine years of VIIRS night-time lights per person for 333 municipalities, with a long-run trend: a satellite proxy for local economic activity.',
     description: 'Annual night-time lights per capita for 333 of Bolivia’s 343 municipalities from 2012 to 2020: the summed radiance of the Earth Observation Group’s annual VIIRS night-time lights (version 2, background masked) over each municipality, divided by its WorldPop population, in natural logs. A Hodrick–Prescott trend (λ = 400) of the same series separates the long-run path from year-to-year noise; it is complete for every municipality, while the raw log is missing where a municipality had no measurable light. Night-time lights track electrification and economic activity where official local statistics are scarce. The values were computed on DS4Bolivia’s polygons of the 2015 municipal map, so they are published for the 333 municipalities whose territory did not change; the six that lost territory to the four units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units have no data.',
-    geography: 'Municipality', units: 343, period: '2012–2020', frequency: 'Annual', key: 'geo_id', idExample: 'BO-04-17-04',
+    geography: 'Municipality', units: 333, period: '2012–2020', frequency: 'Annual', key: 'geo_id', idExample: 'BO-04-17-04',
     categories: ['Economy'], tags: ['night-time lights', 'VIIRS', 'remote sensing', 'panel data'],
     image: 'images/indicators/ntl.webp',
     imageAlt: 'Map of log night-time lights per capita in 2020 across 343 Bolivian municipalities and indigenous autonomies in three natural-break classes: highest across Santa Cruz, the Chaco and the southern altiplano, lowest in northern La Paz, parts of Pando and clusters in the Potosí and Chuquisaca valleys',
@@ -2056,9 +2056,9 @@ title="Night-time lights by department")`,
     id: 'municipalities343-pop', type: 'indicator', section: 'indicators',
     title: 'Population',
     scope: '333 of 343 municipalities · 2001–2020',
-    summary: 'Two decades of gridded population estimates and population density for every municipality: the denominator for per-capita indicators and population-weighted averages.',
+    summary: 'Two decades of gridded population estimates and population density for 333 municipalities: the denominator for per-capita indicators and population-weighted averages.',
     description: 'Annual population estimates for 333 of Bolivia’s 343 municipalities from 2001 to 2020, computed by summing WorldPop’s 1 km gridded population over each municipality, and the population density (people per km²) of each municipality. Population sums up the hierarchy, so it gives provincial, departmental and national totals directly, and it is the weight for population-weighted averages of rates such as poverty. These are gridded estimates, not INE’s official projections; census population for 2012 and 2024, for all 343 units, is in the sdg dataset. The values were computed on DS4Bolivia’s polygons of the 2015 municipal map, so they are published for the 333 municipalities whose territory did not change; the six that lost territory to the four units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units have no data.',
-    geography: 'Municipality', units: 343, period: '2001–2020', frequency: 'Annual', key: 'geo_id', idExample: 'BO-04-17-04',
+    geography: 'Municipality', units: 333, period: '2001–2020', frequency: 'Annual', key: 'geo_id', idExample: 'BO-04-17-04',
     categories: ['Social'], tags: ['population', 'WorldPop', 'demography', 'panel data'],
     image: 'images/indicators/pop.webp',
     imageAlt: 'Map of population density in 2020 across 343 Bolivian municipalities and indigenous autonomies in three natural-break classes on a log scale: densest in the La Paz–El Alto, Cochabamba, Santa Cruz, Sucre and Tarija urban areas, intermediate across the altiplano and valleys, sparsest in the northern and eastern lowlands',
@@ -2095,9 +2095,9 @@ labels={"pop": "Population"}, title="Population by department, 2001-2020")`,
     id: 'municipalities343-emb', type: 'indicator', section: 'indicators',
     title: 'Satellite embeddings',
     scope: '333 of 343 municipalities · 64 dimensions · 2017',
-    summary: 'What every municipality looks like from space, compressed by a deep-learning model into 64 numbers: features for machine learning.',
+    summary: 'What 333 municipalities look like from space, each compressed by a deep-learning model into 64 numbers: features for machine learning.',
     description: 'Sixty-four satellite embedding dimensions (A00–A63) for 333 of Bolivia’s 343 municipalities in 2017, averaged from the annual 10 m Google Satellite Embedding dataset (AlphaEarth Foundations). The model summarises Sentinel-2, Landsat and other imagery into abstract features that capture land cover, texture, roads and buildings. Two versions are published: `emb`, the area-weighted mean over each municipality, and `embpw`, weighted by population so that it describes where people live. The dimensions are not interpretable one by one; they are inputs to models, for example to predict poverty. The values were computed on DS4Bolivia’s polygons of the 2015 municipal map, so they are published for the 333 municipalities whose territory did not change; the six that lost territory to the four units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units have no data.',
-    geography: 'Municipality', units: 343, period: '2017', frequency: 'One year', key: 'geo_id', idExample: 'BO-04-17-04',
+    geography: 'Municipality', units: 333, period: '2017', frequency: 'One year', key: 'geo_id', idExample: 'BO-04-17-04',
     categories: ['Environment', 'Economy'], tags: ['satellite embeddings', 'AlphaEarth', 'machine learning', 'remote sensing'],
     image: 'images/indicators/emb.webp',
     imageAlt: 'Map of satellite embedding dimension A00 (area-weighted) in 2017 across 343 Bolivian municipalities and indigenous autonomies in three natural-break classes: low across the altiplano and western valleys, middle across Beni and Pando, high across Santa Cruz and the Chaco',
@@ -2139,7 +2139,7 @@ px.box(emb.filter(regex=r"^A\\d{2}$"),
     scope: '!pip install -q geo4bolivia',
     summary: 'The observatory’s Python package. Load every indicator as a tidy panel with boundaries, link your own data to the same units, and build new indicators across municipalities, provinces and departments.',
     description: 'geo4bolivia is the data engine of the observatory. One line loads any dataset as a panel (one row per unit and year) with names and boundaries. Every spatial unit has one geo ID that nests by prefix (municipality BO-04-17-04 lies in province BO-04-17, in department BO-04, in Bolivia BO), so the package can move data up the hierarchy with each variable’s own aggregation rule, interpolate it onto grids or newer municipality maps, and combine datasets. To build your own indicators, it links tables that identify units by name in any spelling or by INE and DS4Bolivia codes (and refuses to guess between municipalities that share a name), summarizes rasters such as Earth Engine exports over units, and saves the result with the same documented format as the published data. It is small, works out of the box in Google Colab, and hands its data in one line to two companion packages: expdpy for panel exploration and econometrics, and geometrics for spatial analysis.',
-    tags: ['Python', 'data loading', 'multi-scale', 'Colab', 'open data'],
+    tags: ['Python', 'data loading', 'multi-scale', 'Colab', 'public data'],
     image: 'images/tools/geo4bolivia-package.webp',
     imageAlt: 'Three stacked map layers of Bolivia, 9 departments, 113 provinces and 343 municipalities, linked by geo IDs, beside a code snippet that loads the data',
     date: '2026-10-28', pinned: true,
@@ -2469,7 +2469,7 @@ print(ex.analyze_hausman_test(panel, "ln_NTLpc", ["ln_pop"]).interpret())`,
 
   // ---------------------------------------------------------------- Projects
   // Card images: AI-generated pictures of Bolivian places (ChatGPT), prepared by scripts/project_images.py;
-  // the only map is drawn from the site's official boundaries (geoBoundaries, GeoBolivia)
+  // the only map is drawn from the site's official boundaries (SDSN Bolivia's 2025 municipal map)
   {
     id: 'sdg-atlas-bolivia', type: 'project', section: 'projects',
     title: 'The subnational SDG Atlas of Bolivia',

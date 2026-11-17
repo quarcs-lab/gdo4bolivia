@@ -180,7 +180,7 @@ All code below assumes **Google Colab**: each block starts with the line that in
 
 ### A. Without the package
 
-Every file is a plain URL: `https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/<path>`. Use `main` for the latest data, or a release tag (e.g. `v0.3.0`) for a frozen version. pandas, geopandas and plotly are preinstalled in Colab, so nothing needs installing:
+Every file is a plain URL: `https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/<path>`. Use `main` for the latest data, or a release tag (e.g. `v0.4.0`) for a frozen version. pandas, geopandas and plotly are preinstalled in Colab, so nothing needs installing:
 
 ```python
 import pandas as pd
@@ -214,11 +214,11 @@ geo.dictionary("ntl")                              # variables, labels, units, a
 df  = geo.load("ntl")                              # panel: geo_id, year, variables
 gdf = geo.load("ntl", years=2020, geometry=True)   # GeoDataFrame, ready to map
 w   = geo.load("pop", wide="pop")                  # one row per municipality, pop2001 ... pop2020
-mpi = geo.load("sdg01", variables="sdg1_2_mpi", years=2012)   # one SDG indicator at its year
+mpi = geo.load("sdg01", variables="sdg1_2_mpi", years=2012)   # one SDG indicator, ~2012
 names = geo.units("municipality")                  # names, parents, source keys
 shapes = geo.boundaries("department")
 xw = geo.crosswalk("municipality", "department")
-geo.load("ntl", ref="v0.2.0")                      # a frozen release of the data
+geo.load("ntl", ref="v0.4.0")                      # a frozen release of the data
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -320,9 +320,10 @@ pop = geo.load("pop", years=2020)
 geo.aggregate(pop, to="department", dataset="pop")
 geo.aggregate(pop, to="country", dataset="pop", variables=["pop"])
 
-# your own rules: municipal poverty (2012) as a population-weighted mean by department
-mpi = geo.load("sdg01", variables="sdg1_2_mpi", years=2012)
-geo.aggregate(mpi, to="department", rules={"sdg1_2_mpi": "weighted_mean:pop"}, weights=geo.load("pop"))
+# your own rules: municipal poverty (~2012, ~2024) as a mean weighted by census population
+mpi = geo.load("sdg01", variables="sdg1_2_mpi")
+geo.aggregate(mpi, to="department", rules={"sdg1_2_mpi": "weighted_mean:population"},
+              weights=geo.load("sdg", variables="population"))
 
 # onto units that do not nest: a grid, watersheds, a newer municipality map
 cells = geo.overlay(pop, my_grid, extensive=["pop"], id_col="cell")

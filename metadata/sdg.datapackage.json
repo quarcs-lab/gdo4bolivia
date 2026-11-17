@@ -173,6 +173,22 @@
     {
       "title": "Dynamics of sustainable development in Bolivia, 2012–2024",
       "path": "../../notebooks/sdg_dynamics.ipynb"
+    },
+    {
+      "title": "Load, link and build Bolivian indicators with geo4bolivia",
+      "path": "../../notebooks/geo4bolivia_quickstart.ipynb"
+    },
+    {
+      "title": "Exploratory data analysis of multidimensional poverty",
+      "path": "../../notebooks/eda.ipynb"
+    },
+    {
+      "title": "Spatial inequality of poverty and night-time lights",
+      "path": "../../notebooks/esda_inequality.ipynb"
+    },
+    {
+      "title": "Poverty in Bolivia: an extended EDA and ESDA",
+      "path": "../../notebooks/eda_esda.ipynb"
     }
   ]
 }

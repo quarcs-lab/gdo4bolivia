@@ -23,7 +23,7 @@ It serves:
 - **Decision-makers**, who design, target and evaluate regional policies
 - **Citizens**, who want to understand development in their own municipality or department
 
-It builds on [DS4Bolivia](https://github.com/quarcs-lab/ds4bolivia), whose municipal datasets are its first indicators.
+Its indicators build on the [Atlas de los ODS en Bolivia 2026](https://atlasods.sdsnbolivia.org/) of SDSN Bolivia (the Sustainable Development Index, its 15 goal indices and 81 indicators near 2012 and near 2024) and on [DS4Bolivia](https://github.com/quarcs-lab/ds4bolivia) (population, night-time lights and satellite embeddings).
 
 ## 🚀 Quickstart
 
@@ -144,13 +144,14 @@ Three pairs of municipalities share a name across departments: San Javier (Beni,
 | Notebook | Description |
 | --- | --- |
 | [Load, link and build indicators with geo4bolivia](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/geo4bolivia_quickstart.ipynb) | Load data with and without the package, move it across scales, link your own table, and save an indicator |
-| [Exploratory data analysis](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/eda.ipynb) | Multidimensional poverty, night-time lights and population: summaries, departments, treemaps and scatter plots |
-| [Exploratory spatial data analysis](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/esda.ipynb) | Maps, spatial weights, Moran's I and LISA clusters of multidimensional poverty |
+| [Exploratory data analysis](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/eda.ipynb) | Multidimensional poverty in 2012 and 2024, its change, census population and night-time lights: summaries, departments, treemaps and scatter plots |
+| [Exploratory spatial data analysis](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/esda.ipynb) | Maps, spatial weights, Moran's I and LISA clusters of multidimensional poverty in 2012 and 2024 |
 | [Spatial distribution and dependence](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/esda_dependence.ipynb) | Box-plot and Fisher-Jenks maps, KNN weights, the spatial lag, Moran's I and LISA clusters at two significance levels |
-| [Spatial inequality](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/esda_inequality.ipynb) | Gini, Theil decomposition between and within departments, spatial Gini |
+| [Spatial inequality](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/esda_inequality.ipynb) | Gini, Theil decomposition between and within departments, spatial Gini of poverty (2012, 2024) and lights |
 | [Spatial heterogeneity (GWR and MGWR)](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/esda_heterogeneity.ipynb) | Where night-time lights predict poverty better or worse: geographically weighted regressions |
 | [Extended EDA and ESDA](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/eda_esda.ipynb) | A full workflow on poverty, infrastructure and lights: statistics, correlations, clusters and bivariate maps |
 | [Predicting poverty from satellite embeddings](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/embeddings_mpi_ml.ipynb) | Random forest and XGBoost predict multidimensional poverty from 64 embedding dimensions, with random and spatial (leave-one-department-out) cross-validation and residual maps |
+| [Dynamics of sustainable development, 2012–2024](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/sdg_dynamics.ipynb) | Change in the Sustainable Development Index and its 15 goals, β- and σ-convergence with geometrics, rank mobility and spatial clusters of progress |
 
 ### Web apps
 
@@ -170,7 +171,11 @@ Three pairs of municipalities share a name across departments: San Javier (Beni,
 
 ## 💡 GeoDevelopment Insights
 
-Research that uses the municipal data will be summarised on the [website](https://quarcs-lab.github.io/geo4bolivia/#insights).
+Research that uses the observatory's data, summarised in plain language on the [website](https://quarcs-lab.github.io/geo4bolivia/#insights):
+
+| Insight | Paper |
+| --- | --- |
+| [Human capital constraints and the regions of Bolivia](https://quarcs-lab.github.io/geo4bolivia/insights/human-capital-paper/) | Mendez, C., & Gonzales, E. (2021). Human capital constraints, spatial dependence, and regionalization in Bolivia: A spatial clustering approach. *Economía*, 44(87), 115–145. https://doi.org/10.18800/economia.202101.007 |
 
 ---
 
