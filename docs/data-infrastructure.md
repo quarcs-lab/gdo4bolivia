@@ -145,11 +145,13 @@ Sources measured at a few points in time fit the same shape. The SDG Atlas 2026 
 | package | `geo:categories`, `geo:citation`, `geo:notes`, `geo:notebooks` | shown on the dataset page |
 | package | `geo:map` | the website's headline map: `{"variable", "year"}`, optionally `"scale"`, `"classify": "log"` and `"panels": [first, last]` (the page map shows each year side by side) (checked by `validate`) |
 | package | `geo:updated` | date of the last update, shown in the page's License section |
+| package | `geo:weights` | where a `weighted_mean:<field>` weight lives when it is not a field of the dataset, e.g. `{"population": "sdg"}`: `aggregate()` and `combine()` load it from there (checked by `validate`) |
 | source | `title`, `path` | full citation and its DOI or URL |
 | source | `geo:role`, `geo:creator`, `geo:homepage` | `original` (produced the data) or `intermediary` (a tool, repository or boundary set it passed through); who made it; the data's home page |
 | source | `geo:license`, `geo:attribution` | the source's own license (`{name, title, path}`) and the credit sentence it asks for |
 | resource | `path` | public URL of the CSV (checked by `validate`) |
 | resource | `geo:scale`, `geo:period` | the scale and `[first, last]` year |
+| resource | `geo:years`, `geo:units` | every year with rows (e.g. `[2012, 2024]`) and the number of units with rows; written by the build from the data (checked by `validate`) and shown by `geo.datasets()` |
 | resource | `geo:path`, `geo:parquet` | file paths inside the repository |
 | resource | `geo:source_geometry` | polygons the values were computed on, if different from `geo/boundaries` |
 | field | `type`, `constraints` | standard Table Schema (`pattern`, `minimum`, `maximum`, `required`) |
@@ -166,11 +168,13 @@ Sources measured at a few points in time fit the same shape. The SDG Atlas 2026 
 | Rule | Use for | Example |
 | --- | --- | --- |
 | `sum` | counts and totals | population, GDP, zonal sums of lights |
-| `weighted_mean:<field>` | rates and averages, weighted by another field | poverty weighted by `pop` |
+| `weighted_mean:<field>` | rates and averages, weighted by another field (of the dataset, or of the dataset `geo:weights` names) | every SDG indicator, weighted by census `population` from `sdg` |
 | `mean`, `min`, `max` | unweighted summaries (use with care) | — |
 | `none` | values that cannot be aggregated without more data | logs, HP trends, per-capita values without population |
 
-`aggregate()` raises an error for `none` variables you ask for explicitly and otherwise leaves them out with a warning; `combine()` drops them with a warning. Pass `rules=` to keep them. `overlay()` needs you to say which variables are *extensive* (totals, split by area) and which are *intensive* (rates, area-weighted means).
+`aggregate()` raises an error for `none` variables you ask for explicitly and otherwise leaves them out with a warning; `combine()` drops them with a warning. Pass `rules=` to keep them. Every result has `n_units` (the units that contributed) and `coverage` (their share of all the units in the target): night-time lights, for example, cover 333 of the 343 municipalities.
+
+The SDG Atlas's indicators, goal indices and IDS aggregate as census-population-weighted means (`weighted_mean:population`: the 2012 census for ~2012, the 2024 census for ~2024), with the weights loaded from the `sdg` dataset through `geo:weights`. These are approximations of the department and national values, not the Atlas's own figures. The ranking does not aggregate (`none`). `overlay()` needs you to say which variables are *extensive* (totals, split by area) and which are *intensive* (rates, area-weighted means).
 
 ---
 
@@ -180,7 +184,7 @@ All code below assumes **Google Colab**: each block starts with the line that in
 
 ### A. Without the package
 
-Every file is a plain URL: `https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/<path>`. Use `main` for the latest data, or a release tag (e.g. `v0.4.0`) for a frozen version. pandas, geopandas and plotly are preinstalled in Colab, so nothing needs installing:
+Every file is a plain URL: `https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/<path>`. Use `main` for the latest data, or a release tag (e.g. `v0.5.0`) for a frozen version. pandas, geopandas and plotly are preinstalled in Colab, so nothing needs installing:
 
 ```python
 import pandas as pd
@@ -209,16 +213,24 @@ xw = pd.read_csv(BASE + "geo/crosswalks/municipality__department.csv")  # munici
 !pip install -q geo4bolivia
 import geo4bolivia as geo
 
-geo.datasets()                                     # datasets x scales x years
+geo.datasets()                                     # datasets x scales: years, units with data
+geo.search("poverty")                              # variables matching words, in every dataset
+geo.info("sdg03")                                  # coverage, sources, licenses, citation, notes
 geo.dictionary("ntl")                              # variables, labels, units, aggregation rules
+geo.reference_years("sdg03")                       # the actual years behind 2012 and 2024
+print(geo.cite("sdg03"))                           # how to cite it, with its sources' credits
 df  = geo.load("ntl")                              # panel: geo_id, year, variables
+df  = geo.load("sdg", groups=["department"])       # + unit name and department name
 gdf = geo.load("ntl", years=2020, geometry=True)   # GeoDataFrame, ready to map
 w   = geo.load("pop", wide="pop")                  # one row per municipality, pop2001 ... pop2020
 mpi = geo.load("sdg01", variables="sdg1_2_mpi", years=2012)   # one SDG indicator, ~2012
 names = geo.units("municipality")                  # names, parents, source keys
 shapes = geo.boundaries("department")
 xw = geo.crosswalk("municipality", "department")
-geo.load("ntl", ref="v0.4.0")                      # a frozen release of the data
+geo.describe(df)                                   # summary per year, with labels and units
+geo.change(df, "index_sdg")                        # first-to-last change and ranks, per unit
+geo.map(df, "index_sdg", year=2024)                # interactive map (plotly)
+geo.load("ntl", ref="v0.5.0")                      # a frozen release of the data
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -228,7 +240,9 @@ Inside a clone of the repository the package reads the local files. Anywhere els
 | | Without the package | With the package |
 | --- | --- | --- |
 | Install (Colab) | nothing | `!pip install -q geo4bolivia` |
-| Names, boundaries | merge `geo/units.csv`, `geo/boundaries/*.geojson` yourself | `geometry=True`, `geo.units()` |
+| What a variable is | read `metadata/*.datapackage.json` or `docs/datasets/` | `geo.search()`, `geo.info()`, `geo.dictionary()`, `geo.reference_years()`, `geo.cite()` |
+| Names, boundaries | merge `geo/units.csv`, `geo/boundaries/*.geojson` yourself | `names=True`, `groups=[...]`, `geometry=True`, `geo.units()` |
+| Summaries, change, maps | by hand | `geo.describe()`, `geo.change()`, `geo.labels()`, `geo.map()` |
 | Filters, wide format | by hand | `years=`, `variables=`, `wide=` |
 | Across scales | join a crosswalk and aggregate by hand | `geo.aggregate()`, `geo.overlay()`, `geo.combine()` |
 | Your own data | — | `geo.link()`, `geo.zonal()`, `geo.check()`, `geo.save()` |
@@ -316,14 +330,17 @@ import geo4bolivia as geo
 
 pop = geo.load("pop", years=2020)
 
-# up a nested hierarchy, with the metadata rules
+# up a nested hierarchy, with the metadata rules; n_units and coverage say how many units contributed
 geo.aggregate(pop, to="department", dataset="pop")
-geo.aggregate(pop, to="country", dataset="pop", variables=["pop"])
+geo.aggregate(pop, to=["province", "department", "country"], dataset="pop", variables=["pop"])
 
-# your own rules: municipal poverty (~2012, ~2024) as a mean weighted by census population
+# SDG indicators: census-population-weighted means, the weights fetched from "sdg" automatically
 mpi = geo.load("sdg01", variables="sdg1_2_mpi")
-geo.aggregate(mpi, to="department", rules={"sdg1_2_mpi": "weighted_mean:population"},
-              weights=geo.load("sdg", variables="population"))
+geo.aggregate(mpi, to="department", dataset="sdg01")
+
+# your own rules and weights, e.g. poverty weighted by gridded population instead
+geo.aggregate(geo.load("sdg01", variables="sdg1_2_mpi", years=2012), to="department",
+              rules={"sdg1_2_mpi": "weighted_mean:pop"}, weights=geo.load("pop", years=2012))
 
 # onto units that do not nest: a grid, watersheds, a newer municipality map
 cells = geo.overlay(pop, my_grid, extensive=["pop"], id_col="cell")
@@ -423,22 +440,39 @@ To publish a dataset in the repository, it must be reproducible from its origina
 
 ## 7. Package reference
 
+Every function is documented, with an example that runs in Colab, in the [function reference](https://quarcs-lab.github.io/geo4bolivia/tools/geo4bolivia-reference/) (generated from the docstrings by `scripts/api_reference.py`). Every function that reads data also takes `ref=`, a git tag or commit.
+
 | Function | Purpose |
 | --- | --- |
-| `datasets()` | Table of datasets, scales, years and file paths |
-| `dictionary(dataset)` | Variable dictionary: label, description, unit, role, aggregation, source |
-| `load(dataset, scale=None, years=None, variables=None, wide=None, geometry=False, ref=None)` | Load a panel |
+| **Discover** | |
+| `datasets()` | The catalog: datasets, scales, years, units with data, variables, license |
+| `search(text, dataset=None)` | Variables whose name, label or description contain every word (accents and case ignored) |
+| `info(dataset)` | A dataset's documentation: coverage, actual years, license, sources and their licenses, citation, notes |
+| `dictionary(dataset)` | Variable dictionary: label, description, unit, role, aggregation, source, reference years |
+| `reference_years(dataset, variable=None)` | The actual years behind each stored year |
+| `cite(dataset, style="apa")` | The dataset's citation (APA or BibTeX) and the credits its sources require |
+| **Load** | |
+| `load(dataset, scale=None, years=None, variables=None, wide=None, geometry=False, names=False, groups=None, ref=None)` | Load a panel, optionally with names, parent unit names and boundaries |
+| `add_names(df, groups=None)` | Add the unit name and the names of the units it lies in |
 | `units(scale=None)` | Units with names, parents, `<scale>_id` columns and source keys |
 | `boundaries(scale)` | GeoDataFrame of a scale's polygons |
 | `crosswalk(source, target)` | Links between two nested scales |
 | `scales(active_only=False)`, `ancestors(scale)`, `scale_of(geo_id)` | The scale registry |
+| **Understand** | |
+| `describe(df, variables=None, by="year")` | Summary statistics per period (or group), with labels and units |
+| `labels(df)` | `{column: label}` from the metadata, for plot `labels=` |
+| `change(df, variables=None, first=None, last=None)` | Per unit: first and last values, change, % change, annual change, ranks |
+| `map(data, variable, year=None)` | Interactive Plotly map (the `[plot]` extra; preinstalled in Colab) |
+| **Move across scales** | |
+| `aggregate(df, to, dataset=None, rules=None, variables=None, weights=None)` | Move a panel up the hierarchy (one scale or a list), with `n_units` and `coverage` |
+| `combine(datasets, scale, years=None, extra=(), rules=None)` | Several datasets (and your tables) as one panel at one scale |
+| `overlay(df, target, extensive=(), intensive=(), id_col="geo_id")`, `overlay_weights(...)` | Area-weighted interpolation to non-nested units |
+| **Build** | |
 | `link(df, scale, on, key="auto", errors="raise")` | Attach `geo_id` to a table by names or codes |
 | `check(df, scale=None)` | List the problems that keep a table from being a valid panel |
-| `combine(datasets, scale, years=None, extra=(), rules=None)` | Several datasets (and your tables) as one panel at one scale |
 | `zonal(raster, scale, stats=("sum", "mean"), name="value", year=None)` | Summarise a raster over units |
-| `aggregate(df, to, dataset=None, rules=None, variables=None, weights=None)` | Move a panel up the hierarchy |
-| `overlay(df, target, extensive=(), intensive=(), id_col="geo_id")`, `overlay_weights(...)` | Area-weighted interpolation to non-nested units |
 | `save(df, name, scale, directory=".", ...)` | Write CSV, Parquet and a datapackage |
+| **Analyse** | |
 | `for_expdpy(data, scale=None, years=None, variables=None, labels=None, groups=None)` | `(df, df_def)` for the [expdpy](https://cmg777.github.io/expdpy/) package |
 | `for_geometrics(data, scale=None, years=None, variables=None, labels=None, groups=None)` | `(gdf, df, df_dict)` for the [geometrics](https://quarcs-lab.github.io/geometrics/) package |
 | `config()` | The project settings (project.yaml) |

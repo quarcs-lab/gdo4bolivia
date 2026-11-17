@@ -65,22 +65,22 @@ The SDG Atlas 2026 measures each indicator twice, near the 2012 census and near 
 
 ### Load the data: two ways
 
-**1. With the package.** One line gives a panel with names and boundaries, filtered by years and variables:
+**1. With the package**, [geo4bolivia](docs/python-package.md) ([tutorial](https://quarcs-lab.github.io/geo4bolivia/tools/geo4bolivia-package/), [function reference](https://quarcs-lab.github.io/geo4bolivia/tools/geo4bolivia-reference/)). It finds the variables and their documentation, and loads them as labelled panels with names and boundaries:
 
 ```python
 !pip install -q geo4bolivia
 import geo4bolivia as geo
 
-geo.dictionary("sdg01")                                    # variables, units, reference years
-mpi = geo.load("sdg01", variables="sdg1_2_mpi")            # one SDG indicator, ~2012 and ~2024
-wide = geo.load("pop", wide="pop")                         # one column per year
-geo.units("municipality")                                  # names, parents, INE and DS4Bolivia codes
-
-geo.aggregate(geo.load("pop"), to="department", dataset="pop")    # municipalities -> departments
-geo.aggregate(mpi, to="department", rules={"sdg1_2_mpi": "weighted_mean:population"},
-              weights=geo.load("sdg", variables="population"))    # census-weighted poverty
+geo.search("poverty")                                      # which variables, datasets, years
+geo.info("sdg01")                                          # coverage, sources, licenses, citation
+mpi = geo.load("sdg01", variables="sdg1_2_mpi",
+               groups=["department"])                      # ~2012 and ~2024, with names
+geo.describe(mpi)                                          # labelled summary per period
+geo.change(mpi, "sdg1_2_mpi")                              # change and rank change per unit
+geo.aggregate(mpi, to=["department", "country"], dataset="sdg01")  # census-population weighted
 geo.combine(["ntl", "pop"], scale="municipality")                 # two datasets, one panel
-geo.load("ntl", ref="v0.4.0")                                     # a frozen release of the data
+geo.map(mpi, "sdg1_2_mpi", year=2024)                             # interactive map
+geo.load("ntl", ref="v0.5.0")                                     # a frozen release of the data
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -135,15 +135,18 @@ Three pairs of municipalities share a name across departments: San Javier (Beni,
 
 | Package | What it does | Install (Google Colab) |
 | --- | --- | --- |
-| **[geo4bolivia](docs/python-package.md)** | Load every indicator as a panel with boundaries, link your own data, extract indicators from rasters, move data across scales | `!pip install -q geo4bolivia` |
+| **[geo4bolivia](docs/python-package.md)** (flagship; [tutorial](https://quarcs-lab.github.io/geo4bolivia/tools/geo4bolivia-package/), [reference](https://quarcs-lab.github.io/geo4bolivia/tools/geo4bolivia-reference/)) | Find variables and their sources, licenses and actual years; load every indicator as a labelled panel with names and boundaries; compare periods; aggregate across scales with coverage; map; link your own data and extract indicators from rasters | `!pip install -q geo4bolivia` |
 | **[expdpy](https://cmg777.github.io/expdpy/)** | Panel exploration and econometrics: within/between variation, trajectories, fixed and random effects, Hausman tests, clustered SEs; `geo.for_expdpy()` prepares the observatory's data for it in one line | `!pip install -q geo4bolivia expdpy` |
 | **[geometrics](https://quarcs-lab.github.io/geometrics/)** | Regional growth, convergence and inequality with spatial methods; `geo.for_geometrics()` prepares the observatory's data for it in one line | `!pip install -q geo4bolivia geometrics` |
+
+The three work as one workflow: geo4bolivia finds, explains and prepares the data, expdpy explores and models it as a panel, and geometrics analyses its geography.
 
 ### Cloud-based notebooks
 
 | Notebook | Description |
 | --- | --- |
-| [Load, link and build indicators with geo4bolivia](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/geo4bolivia_quickstart.ipynb) | Load data with and without the package, move it across scales, link your own table, and save an indicator |
+| [Find, load and understand the data with geo4bolivia](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/geo4bolivia_quickstart.ipynb) | The package tutorial: discover datasets and their documentation, load with and without the package, describe and map, compare ~2012 with ~2024, move across scales, link your own table, and build and save an indicator from a raster |
+| [One question, three packages](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/three_packages.ipynb) | Did municipalities converge in sustainable development, ~2012 to ~2024? geo4bolivia prepares the data, expdpy explores and models the panel, geometrics tests spatial clustering, β-convergence and inequality between and within departments |
 | [Exploratory data analysis](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/eda.ipynb) | Multidimensional poverty in 2012 and 2024, its change, census population and night-time lights: summaries, departments, treemaps and scatter plots |
 | [Exploratory spatial data analysis](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/esda.ipynb) | Maps, spatial weights, Moran's I and LISA clusters of multidimensional poverty in 2012 and 2024 |
 | [Spatial distribution and dependence](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/esda_dependence.ipynb) | Box-plot and Fisher-Jenks maps, KNN weights, the spatial lag, Moran's I and LISA clusters at two significance levels |

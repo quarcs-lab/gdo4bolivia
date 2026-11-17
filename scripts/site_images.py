@@ -408,6 +408,36 @@ def cards() -> None:
     expdpy_card(geo, plt)
     insight_card(geo, plt)
     notebook_cards(geo, plt)
+    three_packages_card(geo, plt)
+
+
+def three_packages() -> None:
+    import geo4bolivia as geo
+    print("three-packages card")
+    three_packages_card(geo, mpl())
+
+
+def three_packages_card(geo, plt) -> None:
+    """The three-packages notebook: LISA clusters of the IDS ~2024 (geometrics), with the three steps."""
+    import pandas as pd
+    from esda.moran import Moran_Local
+    from libpysal import weights
+    tools = ROOT / "images/tools"
+    crs = geo.config()["equal_area_crs"]
+    deps = geo.boundaries("department").to_crs(crs)
+    gdf = geo.load("sdg", variables="index_sdg", years=2024, geometry=True).to_crs(crs)
+    w = weights.Queen.from_dataframe(gdf, use_index=False, silence_warnings=True)
+    w = weights.attach_islands(w, weights.KNN.from_dataframe(gdf, k=1)) if w.islands else w
+    w.transform = "r"
+    lisa = Moran_Local(gdf["index_sdg"].values, w, permutations=999, seed=12345)
+    quad = {1: "High-high", 2: "Low-high", 3: "Low-low", 4: "High-low"}
+    gdf["lisa"] = np.where(lisa.p_sim < 0.05, pd.Series(lisa.q).map(quad), "Not significant")
+    fig = plt.figure(figsize=(16, 9)); ax = map_axes(fig)
+    lisa_map(ax, gdf, "lisa", deps)
+    fig.text(0.6, 0.86, "geo4bolivia  →  expdpy  →  geometrics", fontsize=19, color=SAND, family="DejaVu Sans Mono")
+    card_text(fig, "One question,\nthree packages", "Did municipalities converge, ~2012 to ~2024?\nLISA clusters of the Sustainable\nDevelopment Index, ~2024 (p < 0.05)")
+    swatches(fig, [(f"{k} ({(gdf['lisa'] == k).sum()})", c) for k, c in LISA_COLORS.items()], y=0.36)
+    save_fig(fig, tools / "three-packages.webp")
 
 
 def squash(gdf, y_scale=0.42, dy=0.0):
@@ -859,7 +889,8 @@ def pillars() -> None:
     save_fig(fig, IMG / "pillar-insights.webp", size=(1200, 800))
 
 
-STEPS = {"hero": hero, "bands": bands, "emblem": emblem, "og": og, "cards": cards, "pillars": pillars}
+STEPS = {"hero": hero, "bands": bands, "emblem": emblem, "og": og, "cards": cards, "pillars": pillars,
+         "three-packages": three_packages}
 
 if __name__ == "__main__":
     targets = sys.argv[1:] or ["all"]

@@ -37,6 +37,7 @@ CONTRIBUTING_DATA.md, and register it on the website."
 ## Project structure
 
 - **`project.yaml`**: project identity. Holds the name, the package name, the GitHub repository and default ref, the country codes (`BO`, `BOL`), the equal-area CRS (an Albers projection fitted to Bolivia) and the catalog file name. It is bundled into the wheel.
+- **The three Python packages** are the way into the data and one workflow: geo4bolivia (flagship: find, load, understand, aggregate, link), then expdpy (panels) and geometrics (space). Section 2 of the home page opens on them (`PackageWorkflow`); each package page has a tutorial (`tutorial` steps in its `CONTENT_REGISTRY` entry) and the shared example (`THREE_PACKAGES_EXAMPLE`). The function reference page (`tools/geo4bolivia-reference/`) renders `site/data/api.json`; after changing a public function or docstring run `uv run python scripts/api_reference.py`, and give every public function an example in `API_EXAMPLES` (`site/src/content.js`); `tests/test_core.py` checks both.
 - **`site/`**: the website, built by `site/build.mjs` (Node: esbuild, Tailwind CLI, sharp; pinned in `site/package.json`) into `_site/` and deployed by `.github/workflows/pages.yml` (Pages source: GitHub Actions). `_site/` is never committed.
   - `src/content.js`: the site's constants and the `CONTENT_REGISTRY` (plain data, no JSX); `src/app.jsx`: components and the path router; `src/map.jsx`: the interactive indicator map (Leaflet, a lazy chunk); `src/styles.css`, `tailwind.config.cjs`, `template.html`.
   - The build pre-renders a page per route (`<section>/<id>/index.html`, with its own title, description, preview image and JSON-LD), `404.html` and `sitemap.xml`, and writes `assets/data/<dataset>.json` (map values from `data/`) and `assets/search.json` (items and every variable).
@@ -56,7 +57,10 @@ CONTRIBUTING_DATA.md, and register it on the website."
   | `store.py` | generic | reads files locally or from GitHub |
   | `scales.py` | generic | the scale registry |
   | `metadata.py` | generic | reads the datapackages |
-  | `io.py` | generic | `load`, `units`, `boundaries`, `crosswalk`, `datasets`, `dictionary` |
+  | `io.py` | generic | `load`, `add_names`, `units`, `boundaries`, `crosswalk`, `datasets`, `dictionary` |
+  | `discover.py` | generic | `search`, `info`, `reference_years`, `cite`, `labels`, `describe` |
+  | `panel.py` | generic | `change` |
+  | `plot.py` | generic | `map` (plotly, the `[plot]` extra) |
   | `create.py` | generic | `link`, `check`, `combine`, `zonal`, `save` |
   | `bridge.py` | generic | `for_expdpy`, `for_geometrics` |
   | `aggregate.py` | generic | `aggregate`, `overlay`, `overlay_weights` |
@@ -69,7 +73,8 @@ CONTRIBUTING_DATA.md, and register it on the website."
 - **`tests/test_core.py`**: generic tests, driven by the registry and metadata. **`tests/test_project.py`**: Bolivia facts.
 - **`scripts/match_municipalities343.py`**: one-off matching of SDSN Bolivia's 343-unit map (2025) to the geo IDs by INE code, with the new units' IDs, names and the `changed` flag (`raw/lookups/municipalities343.csv`; it read the 339-unit `geo/` of version 0.3). **`scripts/web_boundaries.py`**: simplifies `geo/boundaries/` for the website (`site/data/*.geojson`). **`scripts/match_municipalities.py`**: one-off matching of the GADM municipality codes to DS4Bolivia (`raw/lookups/municipalities339_gadm.csv`; rerunning it needs the GADM file, no longer in the repo). **`scripts/indicator_map.py`** (generic): the indicator pages' headline maps and cards, three Fisher–Jenks classes on the `site/data/` boundaries over Esri's keyless World Dark Gray Canvas; with `geo:map` `panels` the page map shows each period side by side in classes pooled over both (settings in `project.yaml` `site:`, which also holds the five-class `ramp` of the interactive maps and the `boundary_credit`). **`scripts/site_images.py`**: renders the website's other images. **`scripts/project_images.py`**: the Projects cards (`images/projects/`) and pillar, from pictures drawn in ChatGPT with its `PROMPTS` (Bolivian places only, no maps or borders); any map on a card is drawn by the script from the official `site/data/` boundaries. **`scripts/new_project.py`** + `scripts/template/*.tpl`: the template generator.
 - **`notebooks/`**: Colab notebooks paired with MyST `.md` files through jupytext.
-  - `geo4bolivia_quickstart`: load, link and build indicators.
+  - `geo4bolivia_quickstart`: the package tutorial (discover, load, understand, change, scales, link, raster, save).
+  - `three_packages`: one question (did the IDS converge, ~2012 to ~2024?) through geo4bolivia, expdpy and geometrics.
   - `eda`, `esda`, `esda_dependence`, `esda_inequality`, `esda_heterogeneity`, `eda_esda`: ported from DS4Bolivia, on multidimensional poverty (`sdg1_2_mpi`, 2012 and 2024) and night-time lights (333 units).
   - `embeddings_mpi_ml`: predicting poverty from satellite embeddings.
   - `sdg_dynamics`: change, convergence, rank mobility and spatial dynamics of the SDG Atlas 2026, ~2012 to ~2024.
@@ -135,7 +140,7 @@ Every unit has one **geo ID** (`geo_id`). Administrative IDs are numbered as in 
 | `ntl` | 2012–2020 | `ln_NTLpc` = ln(10⁸ × EOG VIIRS radiance / WorldPop) and its HP trend `ln_t400NTLpc`, 333 units; logs, so `none` |
 | `emb`, `embpw` | 2017 | 64 satellite embedding dimensions (A00–A63), area- and population-weighted, 333 units; `none` |
 
-Load one SDG indicator in both periods: `geo.load("sdg01", variables="sdg1_2_mpi")`; one period: `years=2024`; its change: `df.pivot(index="geo_id", columns="year", values="sdg1_2_mpi")`. Population-weighted SDG averages: `geo.aggregate(df, to="department", rules={"sdg1_2_mpi": "weighted_mean:population"}, weights=geo.load("sdg", variables="population"))`.
+Load one SDG indicator in both periods: `geo.load("sdg01", variables="sdg1_2_mpi")`; one period: `years=2024`; its change per unit: `geo.change(df, "sdg1_2_mpi")`. Every SDG variable but `rank_sdg` aggregates as a census-population-weighted mean (`weighted_mean:population`), and the package loads the weights from `sdg` itself (`geo:weights`): `geo.aggregate(df, to="department", dataset="sdg01")`. These approximate, but are not, the Atlas's department figures.
 
 ## Loading data and building indicators
 
@@ -143,7 +148,12 @@ Load one SDG indicator in both periods: `geo.load("sdg01", variables="sdg1_2_mpi
 !pip install -q "geo4bolivia[raster]"              # Google Colab ([raster] for geo.zonal)
 import geo4bolivia as geo
 geo.datasets(); geo.dictionary("sdg01")             # catalog; variables with label and description
+geo.search("poverty"); geo.info("sdg03")            # find variables; a dataset's documentation
+geo.reference_years("sdg03"); print(geo.cite("sdg03"))   # actual years; citation and credits
 df  = geo.load("ntl")                               # panel: geo_id, year, variables
+mpi = geo.load("sdg01", variables="sdg1_2_mpi", groups=["department"])   # + name, department
+geo.describe(mpi); geo.change(mpi, "sdg1_2_mpi")    # labelled summary; change and ranks per unit
+geo.map(mpi, "sdg1_2_mpi", year=2024)               # interactive map (labels from geo.labels)
 gdf = geo.load("ntl", years=2020, geometry=True)    # with boundaries
 wide = geo.load("pop", wide="pop")                  # one column per year
 geo.units("municipality"); geo.boundaries("department"); geo.crosswalk("municipality", "province")

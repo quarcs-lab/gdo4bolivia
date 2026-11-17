@@ -68,6 +68,9 @@ const yearSpan = (resources) => {
   const years = resources.flatMap((r) => r['geo:period'] || []).map(Number).filter(Number.isFinite);
   return years.length ? [Math.min(...years), Math.max(...years)] : null;
 };
+// The package's function reference (scripts/api_reference.py), for the reference page's fallback and search
+const API = existsSync(join(SITE, 'data/api.json')) ? readJSON('site/data/api.json') : { families: [] };
+const apiFunctions = API.families.flatMap((f) => f.functions);
 const itemDatasets = (item) => (item.datasets || (item.dataset ? [item.dataset] : [])).filter((d) => PKG[d]);
 const variables = (pkg) => pkg.resources[0].schema.fields.filter((f) => !f['geo:role']);
 
@@ -120,7 +123,8 @@ for (const f of ['municipality.geojson', 'department.geojson', 'country.geojson'
 // --------------------------------------------------------------------------- search index
 write('assets/search.json', JSON.stringify(C.CONTENT_REGISTRY.map((item) => ({
   href: itemPath(item), type: item.type, subtype: item.subtype || '', title: item.title, summary: plain(item.summary),
-  tags: item.tags || [], text: plain(item.description),
+  tags: item.tags || [],
+  text: plain(item.description) + (item.type === 'reference' ? ' ' + apiFunctions.map((f) => `${f.name} ${f.summary}`).join(' ') : ''),
   variables: itemDatasets(item).flatMap((d) => variables(PKG[d]).map((f) => ({ name: f.name, title: f.title, dataset: d }))),
 }))));
 
@@ -198,6 +202,7 @@ const itemLD = (item) => {
   if (item.type === 'project') return { '@type': 'ResearchProject', ...base, ...(item.links?.[0] ? { sameAs: item.links[0].url } : {}) };
   if (item.type === 'insight') return { '@type': 'ScholarlyArticle', ...base, headline: item.title, sameAs: item.doi, datePublished: item.date };
   if (item.type === 'event') return { '@type': 'Event', ...base, startDate: item.date };
+  if (item.type === 'reference') return { '@type': 'TechArticle', ...base, proficiencyLevel: 'Beginner', dependencies: 'Python 3.11+' };
   return { '@type': 'CreativeWork', ...base };
 };
 const SECTION_LABEL = { indicators: 'Indicators', tools: 'Tools', projects: 'Projects', insights: 'Insights', events: 'Events' };
@@ -232,6 +237,9 @@ const itemFallback = (item) => {
     item.description ? `<p>${esc(plain(item.description))}</p>` : '',
     item.citation ? `<p>${esc(item.citation)} ${a(item.doi, item.doi)}</p>` : '',
     ul((item.links || []).map((l) => a(l.url, l.label))),
+    ...(item.type === 'reference' ? API.families.flatMap((f) => [
+      `<h2>${esc(f.title)}</h2>`, ul(f.functions.map((fn) => `<code>${esc(fn.signature)}</code>: ${esc(fn.summary)}`)),
+    ]) : []),
     ...pkgs.flatMap((p) => [
       `<h2>Variables of ${esc(p.name)}</h2>`,
       ul(variables(p).map((f) => `<code>${esc(f.name)}</code>: ${esc(f.title)}. ${esc(plain(f.description))}`)),
