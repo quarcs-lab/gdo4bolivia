@@ -60,7 +60,7 @@ df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/
 
 ## Related notebooks
 
-- [Load, link and build Bolivian indicators with geo4bolivia](../../notebooks/geo4bolivia_quickstart.ipynb)
+- [Find, load and understand Bolivia's subnational data with geo4bolivia](../../notebooks/geo4bolivia_quickstart.ipynb)
 - [Spatial inequality of poverty and night-time lights](../../notebooks/esda_inequality.ipynb)
 - [Predicting poverty from satellite embeddings](../../notebooks/embeddings_mpi_ml.ipynb)
 

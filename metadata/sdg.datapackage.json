@@ -46,11 +46,14 @@
   "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). Sustainable Development Index (IDS), from the Atlas de los ODS en Bolivia 2026 (343 municipalities, ~2012 and ~2024). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/sdg.md",
   "geo:notes": [
     "Both periods are stored at nominal years: 2012 for the Atlas's initial values (~2012) and 2024 for its final values (~2024). Each indicator's actual reference years differ (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) and are given in its description and in `geo:reference_years`.",
-    "Load one variable in both periods, e.g. `geo.load(\"sdg\", variables=\"index_sdg\")`, and its change with `df.pivot(index=\"geo_id\", columns=\"year\", values=\"index_sdg\")`.",
+    "Load one variable in both periods, e.g. `geo.load(\"sdg\", variables=\"index_sdg\", names=True)`, and its change per unit with `geo.change(df, \"index_sdg\")`.",
     "The units are the 343 municipalities and indigenous autonomies (GAIOC) of 2025. Four of them were created after the 2012 census (TIOC-Raqaypampa, San Pedro de Macha, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico); the Atlas gives them values in both periods.",
-    "The IDS and the ranking are not additive (`none`); `population` sums, and `urbanization` aggregates as a population-weighted mean (`geo.aggregate(geo.load(\"sdg\"), to=\"department\", dataset=\"sdg\")`).",
+    "`population` sums; the IDS and `urbanization` aggregate as census-population-weighted means (`geo.aggregate(geo.load(\"sdg\"), to=\"department\", dataset=\"sdg\")`), approximations rather than the Atlas's own department figures; the ranking is not additive (`none`).",
     "The goal indices and the 81 indicators are in the goal datasets `sdg01` ... `sdg17` (no 12 or 14)."
   ],
+  "geo:weights": {
+    "population": "sdg"
+  },
   "resources": [
     {
       "name": "sdg-municipality",
@@ -63,6 +66,11 @@
         2012,
         2024
       ],
+      "geo:years": [
+        2012,
+        2024
+      ],
+      "geo:units": 343,
       "geo:path": "data/municipality/sdg.csv",
       "geo:parquet": "data/municipality/sdg.parquet",
       "geo:source_geometry": "Municipal statistics of the Atlas, linked by INE municipality code",
@@ -111,7 +119,7 @@
               "2012": "~2012",
               "2024": "~2024"
             },
-            "geo:aggregation": "none",
+            "geo:aggregation": "weighted_mean:population",
             "geo:source": "Atlas de los ODS en Bolivia 2026"
           },
           {
@@ -171,12 +179,16 @@
   },
   "geo:notebooks": [
     {
-      "title": "Dynamics of sustainable development in Bolivia, 2012–2024",
-      "path": "../../notebooks/sdg_dynamics.ipynb"
+      "title": "One question, three packages: did Bolivia's municipalities converge?",
+      "path": "../../notebooks/three_packages.ipynb"
     },
     {
-      "title": "Load, link and build Bolivian indicators with geo4bolivia",
+      "title": "Find, load and understand Bolivia's subnational data with geo4bolivia",
       "path": "../../notebooks/geo4bolivia_quickstart.ipynb"
+    },
+    {
+      "title": "Dynamics of sustainable development in Bolivia, 2012–2024",
+      "path": "../../notebooks/sdg_dynamics.ipynb"
     },
     {
       "title": "Exploratory data analysis of multidimensional poverty",

@@ -78,6 +78,10 @@
         2017,
         2017
       ],
+      "geo:years": [
+        2017
+      ],
+      "geo:units": 333,
       "geo:path": "data/municipality/emb.csv",
       "geo:parquet": "data/municipality/emb.parquet",
       "geo:source_geometry": "DS4Bolivia polygons (bolivia339geoqueryFull, keyed by asdf_id), matched one-to-one to the 2015 map's municipalities by area overlap; only the 333 municipalities unchanged in the 343-unit map",

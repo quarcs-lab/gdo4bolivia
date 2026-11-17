@@ -1,0 +1,741 @@
+{
+  "package": "geo4bolivia",
+  "version": "0.5.0",
+  "families": [
+    {
+      "title": "Discover",
+      "text": "Find datasets and variables and read their documentation.",
+      "functions": [
+        {
+          "name": "datasets",
+          "module": "io",
+          "signature": "datasets(ref=None)",
+          "summary": "The catalog: one row per dataset and scale.",
+          "body": "",
+          "params": [],
+          "returns": "Columns ``dataset`` (the id to pass to ``geo.load``), ``scale``, ``title``,\n``years`` (e.g. ``\"2001–2020\"`` for an annual panel or ``\"2012, 2024\"`` for two\nperiods), ``units`` (units with data), ``variables`` (how many), ``first_year``,\n``last_year``, ``license``, ``categories`` and the ``csv`` and ``parquet`` paths.",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "search",
+          "module": "discover",
+          "signature": "search(text, dataset=None, ref=None)",
+          "summary": "Find variables whose name, label or description contain every word of ``text``.",
+          "body": "Matching ignores case and accents (``\"educacion\"`` finds \"Educación\"). Results\nare ranked: matches in the variable name or label come first.",
+          "params": [
+            {
+              "name": "text",
+              "text": "one or more words, e.g. ``\"poverty\"`` or ``\"night lights\"``"
+            },
+            {
+              "name": "dataset",
+              "text": "search only this dataset"
+            }
+          ],
+          "returns": "One row per variable and scale: ``dataset``, ``variable``, ``label``, ``unit``,\n``years``, ``scale``, ``units`` (with data) and ``description``. Pass the\n``dataset`` and ``variable`` to ``geo.load(dataset, variables=variable)``.",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "info",
+          "module": "discover",
+          "signature": "info(dataset, ref=None)",
+          "summary": "What a dataset is: description, coverage (scales, units, years), actual reference years, license, sources with their licenses, citation, notes and notebooks.",
+          "body": "",
+          "params": [
+            {
+              "name": "dataset",
+              "text": "dataset id (see ``geo.datasets()``)"
+            }
+          ],
+          "returns": "A ``DatasetInfo``: in a notebook it displays as formatted HTML; ``print()``\ngives plain text, and ``.dict`` the full datapackage.",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "dictionary",
+          "module": "io",
+          "signature": "dictionary(dataset, scale=None, ref=None)",
+          "summary": "The variable dictionary of a dataset, one row per column.",
+          "body": "",
+          "params": [
+            {
+              "name": "dataset",
+              "text": "dataset id (see ``geo.datasets()``)"
+            },
+            {
+              "name": "scale",
+              "text": "the resource's scale (default: the dataset's native scale)"
+            }
+          ],
+          "returns": "Columns ``variable``, ``label`` (the field's ``title``, a readable name for\nplot axes and legends), ``description`` (how it was built), ``unit``, ``role``\n(id, time, source_key or variable), ``aggregation`` (the rule ``geo.aggregate``\nuses), ``source`` and ``reference_years`` (the actual years behind each stored\nyear, e.g. ``\"2012: 2008; 2024: 2023\"``, when they differ).",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "reference_years",
+          "module": "discover",
+          "signature": "reference_years(dataset, variable=None, scale=None, ref=None)",
+          "summary": "The actual years behind each stored year, one row per variable and stored year.",
+          "body": "Some panels store values at nominal years: the SDG Atlas, for example, stores its\ninitial values at 2012 and its final values at 2024, while an indicator may come\nfrom a survey of 2008 and 2023.",
+          "params": [
+            {
+              "name": "dataset",
+              "text": "dataset id"
+            },
+            {
+              "name": "variable",
+              "text": "one variable (default: all)"
+            },
+            {
+              "name": "scale",
+              "text": "the resource's scale (default: the dataset's native scale)"
+            }
+          ],
+          "returns": "Columns ``variable``, ``label``, ``year`` (as stored) and ``reference`` (the\nactual years; the stored year when they are the same).",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "cite",
+          "module": "discover",
+          "signature": "cite(dataset, style='apa', ref=None)",
+          "summary": "How to cite a dataset: its recommended citation, then the credits its sources require.",
+          "body": "",
+          "params": [
+            {
+              "name": "dataset",
+              "text": "dataset id"
+            },
+            {
+              "name": "style",
+              "text": "``\"apa\"`` (plain text) or ``\"bibtex\"``"
+            }
+          ],
+          "returns": "A string; print it: ``print(geo.cite(\"<dataset>\"))``.",
+          "raises": "",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "title": "Load",
+      "text": "Panels, units, boundaries and crosswalks, from GitHub or a local checkout.",
+      "functions": [
+        {
+          "name": "load",
+          "module": "io",
+          "signature": "load(dataset, scale=None, years=None, variables=None, wide=None, geometry=False, names=False, groups=None, ref=None)",
+          "summary": "Load a dataset as a panel: one row per unit (``geo_id``) and year.",
+          "body": "",
+          "params": [
+            {
+              "name": "dataset",
+              "text": "dataset id (see ``geo.datasets()``)"
+            },
+            {
+              "name": "scale",
+              "text": "scale to load; defaults to the dataset's native scale"
+            },
+            {
+              "name": "years",
+              "text": "an int, a list of ints, or a ``(first, last)`` range (inclusive)"
+            },
+            {
+              "name": "variables",
+              "text": "a variable or list of variables to keep (``geo_id`` and ``year`` are always kept); ``geo.search()`` and ``geo.dictionary()`` list them"
+            },
+            {
+              "name": "wide",
+              "text": "a variable name; returns one row per unit with one column per year (``<variable><year>``)"
+            },
+            {
+              "name": "geometry",
+              "text": "attach unit boundaries (and names) and return a GeoDataFrame"
+            },
+            {
+              "name": "names",
+              "text": "add the unit ``name``"
+            },
+            {
+              "name": "groups",
+              "text": "coarser scales whose unit names to add as columns, e.g. ``[\"department\"]`` adds a ``department`` column (implies ``names``)"
+            },
+            {
+              "name": "ref",
+              "text": "git branch, tag or commit to read from GitHub (default: local checkout or ``main``)"
+            }
+          ],
+          "returns": "",
+          "raises": "",
+          "notes": "Raises ``ValueError`` for unknown variables, and for years that have no rows\n(listing the years the dataset has)."
+        },
+        {
+          "name": "units",
+          "module": "io",
+          "signature": "units(scale=None, ref=None)",
+          "summary": "All units (or the units of one scale) with names, parents and source keys.",
+          "body": "",
+          "params": [
+            {
+              "name": "scale",
+              "text": "a scale id (see ``geo.scales()``); default: every scale"
+            }
+          ],
+          "returns": "Every row has ``geo_id``, ``scale``, ``name``, ``parent_id``, ``area_km2``, a\n``<scale>_id`` column for each coarser scale it lies in, and the codes each\nsource uses for it (e.g. ``ine_code``), which ``geo.link(..., key=...)`` matches.",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "boundaries",
+          "module": "io",
+          "signature": "boundaries(scale, ref=None)",
+          "summary": "Unit polygons for a scale (CRS84), with ``geo_id`` and ``name``.",
+          "body": "",
+          "params": [
+            {
+              "name": "scale",
+              "text": "a scale id (see ``geo.scales()``)"
+            }
+          ],
+          "returns": "",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "crosswalk",
+          "module": "io",
+          "signature": "crosswalk(source, target, ref=None)",
+          "summary": "Links between two scales: ``geo_id_from``, ``geo_id_to``, ``weight_area``.",
+          "body": "",
+          "params": [
+            {
+              "name": "source",
+              "text": "the finer scale, e.g. ``\"municipality\"``"
+            },
+            {
+              "name": "target",
+              "text": "a coarser scale it nests in, e.g. ``\"department\"``"
+            }
+          ],
+          "returns": "``weight_area`` is the share of the source unit's area inside the target unit\n(1.0 for nested scales). Crosswalks are published for every pair of active\nscales where one nests in the other, from finer to coarser.",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "scales",
+          "module": "scales",
+          "signature": "scales(active_only=False, ref=None)",
+          "summary": "The registry of spatial scales as a table, one row per scale (``geo.scales()``).",
+          "body": "Columns: ``label``, ``kind`` (admin, grouping, grid, custom), ``parent`` (the\ncoarser scale it nests in), ``children``, ``id_pattern``, ``example`` and\n``status`` (active or planned). ``active_only=True`` hides planned scales.",
+          "params": [],
+          "returns": "",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "ancestors",
+          "module": "scales",
+          "signature": "ancestors(scale, ref=None)",
+          "summary": "Coarser scales a unit of ``scale`` nests in, in breadth-first order.",
+          "body": "Administrative scales follow ``parent``; a scale whose units are unions of\n``scale`` units (a grouping, such as statistical regions) is also an ancestor. The parent\nchain of each level comes before the groupings of that level, e.g.\n``municipality -> [province, department, country]``.",
+          "params": [],
+          "returns": "",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "scale_of",
+          "module": "scales",
+          "signature": "scale_of(geo_id, ref=None)",
+          "summary": "The scale a geo ID belongs to, from the ID patterns (e.g. a municipality ID -> ``\"municipality\"``).",
+          "body": "",
+          "params": [],
+          "returns": "",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "config",
+          "module": "project",
+          "signature": "config()",
+          "summary": "The contents of project.yaml.",
+          "body": "",
+          "params": [],
+          "returns": "",
+          "raises": "",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "title": "Understand",
+      "text": "Labels, summaries, change between periods and quick maps.",
+      "functions": [
+        {
+          "name": "labels",
+          "module": "discover",
+          "signature": "labels(data, ref=None)",
+          "summary": "Readable labels for the columns of a panel (or every field of a dataset id).",
+          "body": "Variables take their metadata ``title``; columns written by ``geo.change()``\n(``<var>_2024``, ``<var>_change``...) are labelled from their variable; group\ncolumns (``department``) take the scale's label.",
+          "params": [
+            {
+              "name": "data",
+              "text": "a panel (any DataFrame) or a dataset id"
+            }
+          ],
+          "returns": "``{column: label}`` for the columns it knows. Pass it to Plotly:\n``px.scatter(df, x=..., y=..., labels=geo.labels(df))``.",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "describe",
+          "module": "discover",
+          "signature": "describe(df, variables=None, by='year', ref=None)",
+          "summary": "Summary statistics of a panel's variables, per ``by`` group (default: per year).",
+          "body": "",
+          "params": [
+            {
+              "name": "df",
+              "text": "a panel, e.g. from ``geo.load``"
+            },
+            {
+              "name": "variables",
+              "text": "a variable or list of them (default: every numeric variable)"
+            },
+            {
+              "name": "by",
+              "text": "a column to group by: ``\"year\"`` (default), ``None`` to pool all rows, or a group such as ``\"department\"`` (after ``geo.load(..., groups=[\"department\"])``)"
+            }
+          ],
+          "returns": "One row per variable (and group): ``variable``, ``label``, ``unit``, ``count``,\n``mean``, ``std``, ``min``, ``p25``, ``median``, ``p75`` and ``max``.",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "add_names",
+          "module": "io",
+          "signature": "add_names(df, groups=None, scale=None, ref=None)",
+          "summary": "Add the unit ``name`` and, for each scale in ``groups``, the name of the unit it lies in.",
+          "body": "",
+          "params": [
+            {
+              "name": "df",
+              "text": "any table with ``geo_id``"
+            },
+            {
+              "name": "groups",
+              "text": "a coarser scale or list of them (see ``geo.ancestors``), e.g. ``[\"department\"]``"
+            },
+            {
+              "name": "scale",
+              "text": "the units' scale (default: inferred from ``geo_id``)"
+            }
+          ],
+          "returns": "A copy with ``name`` and one column per group (the group unit's name) after\n``geo_id`` (and ``year``).",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "change",
+          "module": "panel",
+          "signature": "change(df, variables=None, first=None, last=None)",
+          "summary": "The change of each unit between two years of a panel, one row per unit.",
+          "body": "",
+          "params": [
+            {
+              "name": "df",
+              "text": "a long panel with ``geo_id``, ``year`` and variables (e.g. from ``geo.load``)"
+            },
+            {
+              "name": "variables",
+              "text": "a variable or list of them (default: every numeric variable)"
+            },
+            {
+              "name": "first, last",
+              "text": "the two years to compare (default: the panel's first and last year)"
+            }
+          ],
+          "returns": "One row per unit. For each variable ``v``: ``v_<first>``, ``v_<last>``,\n``v_change`` (last minus first), ``v_pct_change`` (in percent of the first\nvalue), ``v_annual_change`` (the change divided by the years between them),\n``v_rank_<first>`` and ``v_rank_<last>`` (1 = highest value) and\n``v_rank_change`` (positive when the unit climbed). Text columns that are\nconstant within a unit (``name``, ``department``...) are kept.\n\nThe years are the stored years: for panels stored at nominal years (see\n``geo.reference_years``), the actual span of an indicator may differ.",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "map",
+          "module": "plot",
+          "signature": "map(data, variable, year=None, scale=None, title=None, simplify=0.005, ref=None, **kwargs)",
+          "summary": "An interactive choropleth map (Plotly) of one variable in one year.",
+          "body": "",
+          "params": [
+            {
+              "name": "data",
+              "text": "a dataset id, or a panel with ``geo_id`` (with or without geometry), e.g. from ``geo.load``, ``geo.change`` or ``geo.aggregate``"
+            },
+            {
+              "name": "variable",
+              "text": "the column to colour by"
+            },
+            {
+              "name": "year",
+              "text": "the year to map (default: the last year with data); ignored for tables without a ``year`` column"
+            },
+            {
+              "name": "scale",
+              "text": "the units' scale (default: inferred from ``geo_id``)"
+            },
+            {
+              "name": "title",
+              "text": "the figure title (default: the variable's label and the year)"
+            },
+            {
+              "name": "simplify",
+              "text": "tolerance in degrees for simplifying the drawn boundaries (about 500 m by default, invisible at the country's scale; it keeps the figure light). ``None`` draws them in full detail"
+            },
+            {
+              "name": "**kwargs",
+              "text": "passed to ``plotly.express.choropleth_map`` (e.g. ``color_continuous_scale=\"Viridis\"``, ``range_color=(0, 100)``)"
+            }
+          ],
+          "returns": "Returns a ``plotly.graph_objects.Figure``; it displays in a notebook, and\n``.show()`` displays it from a script or a cell that does more afterwards.",
+          "raises": "",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "title": "Move across scales",
+      "text": "Up the hierarchy with each variable's rule, or onto units that do not nest.",
+      "functions": [
+        {
+          "name": "aggregate",
+          "module": "aggregate",
+          "signature": "aggregate(df, to, dataset=None, rules=None, variables=None, weights=None, ref=None)",
+          "summary": "Aggregate a panel up to a coarser, nested scale (or to several at once).",
+          "body": "",
+          "params": [
+            {
+              "name": "df",
+              "text": "panel with ``geo_id``, optionally ``year``, and variable columns"
+            },
+            {
+              "name": "to",
+              "text": "target scale id, or a list of them (e.g. ``[\"department\", \"country\"]``), each containing the source scale (see ``geo.ancestors``)"
+            },
+            {
+              "name": "dataset",
+              "text": "take each variable's ``geo:aggregation`` rule from this dataset's metadata"
+            },
+            {
+              "name": "rules",
+              "text": "explicit rules that override the metadata, e.g. ``{\"y\": \"weighted_mean:pop\"}``"
+            },
+            {
+              "name": "variables",
+              "text": "variables to aggregate (default: every numeric column except ids and year, leaving out, with a warning, those without a rule)"
+            },
+            {
+              "name": "weights",
+              "text": "extra columns to join on ``geo_id`` (and ``year`` if present) for ``weighted_mean`` rules whose weight is not already in ``df``. When the dataset's metadata names where a weight lives (``geo:weights``, e.g. census population), it is loaded automatically."
+            }
+          ],
+          "returns": "Returns one row per target unit (and year) with ``n_units``, the number of\nsource units that contributed, and ``coverage``, their share of all the source\nunits in the target (1.0 when every unit has data). With a list of targets,\nthe results are stacked with a ``scale`` column.",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "combine",
+          "module": "create",
+          "signature": "combine(datasets, scale, years=None, extra=(), rules=None, ref=None)",
+          "summary": "Merge datasets into one panel at ``scale``, aggregating finer ones up.",
+          "body": "",
+          "params": [
+            {
+              "name": "datasets",
+              "text": "dataset ids, or ``{dataset: [variables]}`` to pick variables"
+            },
+            {
+              "name": "scale",
+              "text": "target scale; each dataset must be published at it or nest in it"
+            },
+            {
+              "name": "years",
+              "text": "as in ``geo.load``"
+            },
+            {
+              "name": "extra",
+              "text": "your own panels (with ``geo_id`` and ``year``) at ``scale``"
+            },
+            {
+              "name": "rules",
+              "text": "aggregation rules overriding the metadata, ``{variable: rule}``"
+            }
+          ],
+          "returns": "",
+          "raises": "",
+          "notes": "Variables without an aggregation rule (``none``) are dropped, with a warning,\nwhen a dataset has to be aggregated. Clashing column names get the dataset\nid as a prefix (``<dataset>_<column>``). Weighted means fetch their weights as\n``geo.aggregate()`` does (``geo:weights`` in the metadata)."
+        },
+        {
+          "name": "overlay",
+          "module": "aggregate",
+          "signature": "overlay(df, target, extensive=(), intensive=(), source=None, id_col='geo_id')",
+          "summary": "Area-weighted interpolation of a panel onto non-nested units.",
+          "body": "",
+          "params": [
+            {
+              "name": "df",
+              "text": "panel with ``geo_id``, optionally ``year``, and the variables"
+            },
+            {
+              "name": "target",
+              "text": "a scale id or a GeoDataFrame with ``id_col`` and polygons (e.g. a grid)"
+            },
+            {
+              "name": "extensive",
+              "text": "counts/totals (population, GDP): split by the share of each source unit's area falling in the target, then summed"
+            },
+            {
+              "name": "intensive",
+              "text": "rates/averages (GDP per capita, HDI): area-weighted mean over the parts of source units inside the target"
+            },
+            {
+              "name": "source",
+              "text": "the source scale or GeoDataFrame (default: inferred from ``geo_id``)"
+            }
+          ],
+          "returns": "",
+          "raises": "",
+          "notes": "Assumes values are spread uniformly within each source unit. Returns one row\nper target unit (and year), with ``geo_id`` holding the target ids."
+        },
+        {
+          "name": "overlay_weights",
+          "module": "aggregate",
+          "signature": "overlay_weights(source, target, id_col='geo_id')",
+          "summary": "Area of every source-target intersection, in an equal-area projection.",
+          "body": "",
+          "params": [
+            {
+              "name": "source, target",
+              "text": "scale ids, or GeoDataFrames with ``id_col`` and polygons"
+            },
+            {
+              "name": "id_col",
+              "text": "the id column of GeoDataFrame inputs"
+            }
+          ],
+          "returns": "Columns ``geo_id_from``, ``geo_id_to``, ``area_km2``, ``share_of_from`` (the\npart of the source unit inside the target) and ``share_of_to``.",
+          "raises": "",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "title": "Build",
+      "text": "Link your own data, extract indicators from rasters, check and save them.",
+      "functions": [
+        {
+          "name": "link",
+          "module": "create",
+          "signature": "link(df, scale, on, key='auto', errors='raise', ref=None)",
+          "summary": "Attach ``geo_id`` to a table that identifies units by name or by a source code.",
+          "body": "",
+          "params": [
+            {
+              "name": "df",
+              "text": "your table (one row per unit, or per unit and year)"
+            },
+            {
+              "name": "scale",
+              "text": "scale of your units, e.g. ``\"province\"`` (see ``geo.scales()``)"
+            },
+            {
+              "name": "on",
+              "text": "the column of ``df`` that identifies the unit"
+            },
+            {
+              "name": "key",
+              "text": "the column of ``geo.units(scale)`` to match against: ``\"name\"``, a source code column of ``geo.units(scale)`` (e.g. ``\"gid\"`` for GADM codes), or ``\"auto\"``: the column matching most values, with the others filling the gaps (so mixed spellings from different sources still link). Matching ignores accents, case, spaces and punctuation (\"BântéayMéanchey\" = \"Banteay Meanchey\"). A value shared by several units (two municipalities with the same name) is ambiguous and links to none of them: link such units by a code instead."
+            },
+            {
+              "name": "errors",
+              "text": "``\"raise\"`` (default), ``\"warn\"`` or ``\"ignore\"`` for values that match no unit or are ambiguous"
+            }
+          ],
+          "returns": "Returns a copy of ``df`` with ``geo_id`` as its first column.",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "check",
+          "module": "create",
+          "signature": "check(df, scale=None, time='year', ref=None)",
+          "summary": "Problems that would stop ``df`` from being a valid panel at ``scale`` (empty list = OK).",
+          "body": "Checks: a ``geo_id`` column, ids known at the scale, one row per unit (and\nyear) and integer years.",
+          "params": [
+            {
+              "name": "df",
+              "text": "your panel, e.g. from ``geo.link``"
+            },
+            {
+              "name": "scale",
+              "text": "its scale (default: inferred from ``geo_id``)"
+            },
+            {
+              "name": "time",
+              "text": "the year column, or ``None`` for a cross-section"
+            }
+          ],
+          "returns": "",
+          "raises": "",
+          "notes": ""
+        },
+        {
+          "name": "zonal",
+          "module": "create",
+          "signature": "zonal(raster, scale, stats=('sum', 'mean'), name='value', year=None, band=1, all_touched=False, ref=None)",
+          "summary": "Summarise a raster (GeoTIFF path or URL) over the units of a scale.",
+          "body": "",
+          "params": [
+            {
+              "name": "raster",
+              "text": "path or URL of a raster, or ``{year: path}`` for an annual series"
+            },
+            {
+              "name": "scale",
+              "text": "a scale id, or a GeoDataFrame with ``geo_id`` and polygons"
+            },
+            {
+              "name": "stats",
+              "text": "any of ``sum``, ``mean``, ``min``, ``max``, ``median``, ``count``"
+            },
+            {
+              "name": "name",
+              "text": "prefix of the output columns (``name_sum``, ``name_mean``, ...)"
+            },
+            {
+              "name": "year",
+              "text": "year to record when ``raster`` is a single file"
+            },
+            {
+              "name": "all_touched",
+              "text": "count every pixel a unit touches (default: pixel centres inside)"
+            }
+          ],
+          "returns": "",
+          "raises": "",
+          "notes": "Needs ``rasterio``: in Colab, ``!pip install -q \"geo4bolivia[raster]\"``.\nPixels are not split at unit edges, so use a fine raster, or\n``all_touched=True`` for very small units. Nodata pixels are ignored."
+        },
+        {
+          "name": "save",
+          "module": "create",
+          "signature": "save(df, name, scale, directory='.', title=None, description='', variables=None, sources=(), citation=None, license='CC-BY-4.0')",
+          "summary": "Save a panel exactly like the published datasets, ready to share or contribute.",
+          "body": "",
+          "params": [
+            {
+              "name": "df",
+              "text": "a valid panel (see ``geo.check``)"
+            },
+            {
+              "name": "name",
+              "text": "the dataset id: lowercase letters, digits, ``-`` or ``_``"
+            },
+            {
+              "name": "scale",
+              "text": "its scale"
+            },
+            {
+              "name": "directory",
+              "text": "where to write ``data/`` and ``metadata/`` (default: the current folder)"
+            },
+            {
+              "name": "title, description",
+              "text": "what the dataset is"
+            },
+            {
+              "name": "variables",
+              "text": "``{column: {\"label\", \"description\", \"unit\", \"aggregation\", \"source\"}}``"
+            },
+            {
+              "name": "sources",
+              "text": "titles or ``{\"title\", \"path\"}`` dicts of the sources"
+            },
+            {
+              "name": "citation",
+              "text": "the recommended citation"
+            },
+            {
+              "name": "license",
+              "text": "an SPDX license id (default ``CC-BY-4.0``)"
+            }
+          ],
+          "returns": "",
+          "raises": "",
+          "notes": "Writes ``<directory>/data/<scale>/<name>.csv`` and ``.parquet`` and\n``<directory>/metadata/<name>.datapackage.json`` (Frictionless). Describe each\nvariable in ``variables``: ``{\"pop\": {\"label\": \"Population\", \"description\":\n\"Sum of WorldPop 100 m population over the unit\", \"unit\": \"people\",\n\"aggregation\": \"sum\", \"source\": \"WorldPop\"}}``. The ``label`` is a readable\nname for plots; the description says how the variable was built. The\naggregation rule (``sum``, ``mean``, ``weighted_mean:<field>``, ``none``, ...)\ntells ``geo.aggregate()`` how to move the variable to coarser scales.\n\nReturns the datapackage as a dict."
+        }
+      ]
+    },
+    {
+      "title": "Analyse",
+      "text": "Labelled inputs for the companion packages.",
+      "functions": [
+        {
+          "name": "for_expdpy",
+          "module": "bridge",
+          "signature": "for_expdpy(data, scale=None, years=None, variables=None, labels=None, groups=None, ref=None)",
+          "summary": "``(df, df_def)`` in the format expdpy expects.",
+          "body": "",
+          "params": [
+            {
+              "name": "data",
+              "text": "a dataset id or your own panel with ``geo_id`` and ``year``"
+            },
+            {
+              "name": "scale, years, variables",
+              "text": "as in ``geo.load`` (for a dataset id)"
+            },
+            {
+              "name": "labels",
+              "text": "``{variable: description}`` for your own columns"
+            },
+            {
+              "name": "groups",
+              "text": "coarser scales whose unit names to add as columns"
+            }
+          ],
+          "returns": "df : the panel with ``geo_id``, ``name``, ``year``, the group names and the variables\ndf_def : the data dictionary (``var_name``, ``var_def``, ``label``, ``type``,\n    ``role``, ``can_be_na``); pass both to ``ex.set_labels(df, df_def, set_panel=True)``",
+          "raises": "",
+          "notes": "These are the parameters of ``for_geometrics``. ``groups`` is handy for expdpy's\nby-group views, e.g. ``groups=[\"department\"]`` adds a ``department`` column\n(the department's name) for ``ex.explore_trend_plot_by_group``."
+        },
+        {
+          "name": "for_geometrics",
+          "module": "bridge",
+          "signature": "for_geometrics(data, scale=None, years=None, variables=None, labels=None, groups=None, ref=None)",
+          "summary": "``(gdf, df, df_dict)`` in the format geometrics expects.",
+          "body": "",
+          "params": [
+            {
+              "name": "data",
+              "text": "a dataset id (see ``geo.datasets()``) or your own panel with ``geo_id`` and ``year`` (from ``geo.link``, ``geo.combine``, ``geo.zonal``...)"
+            },
+            {
+              "name": "scale, years, variables",
+              "text": "as in ``geo.load`` (for a dataset id)"
+            },
+            {
+              "name": "labels",
+              "text": "``{variable: description}`` for your own columns (dataset variables are described from the metadata)"
+            },
+            {
+              "name": "groups",
+              "text": "coarser scales whose unit names to add as columns, e.g. ``[\"province\"]``"
+            }
+          ],
+          "returns": "gdf : GeoDataFrame with ``geo_id`` and ``geometry`` (EPSG:4326)\ndf : the panel with ``geo_id``, ``name``, ``year``, the group names and the variables\ndf_dict : one row per ``df`` column with ``var_name``, ``var_def``, ``label``,\n    ``type`` (entity / time / factor / numeric), ``role`` and ``can_be_na``",
+          "raises": "",
+          "notes": ""
+        }
+      ]
+    }
+  ]
+}

@@ -85,7 +85,7 @@
   ],
   "geo:notebooks": [
     {
-      "title": "Load, link and build Bolivian indicators with geo4bolivia",
+      "title": "Find, load and understand Bolivia's subnational data with geo4bolivia",
       "path": "../../notebooks/geo4bolivia_quickstart.ipynb"
     },
     {
@@ -121,6 +121,18 @@
         2012,
         2020
       ],
+      "geo:years": [
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020
+      ],
+      "geo:units": 333,
       "geo:path": "data/municipality/ntl.csv",
       "geo:parquet": "data/municipality/ntl.parquet",
       "geo:source_geometry": "DS4Bolivia polygons (bolivia339geoqueryFull, keyed by asdf_id), matched one-to-one to the 2015 map's municipalities by area overlap; only the 333 municipalities unchanged in the 343-unit map",

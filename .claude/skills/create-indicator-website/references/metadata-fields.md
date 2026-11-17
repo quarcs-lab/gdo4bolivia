@@ -13,7 +13,12 @@ reads the properties below at runtime; the validator enforces the starred ones.
 | `sources`* | About (the `original` ones), License and References. See below |
 | `geo:map` | Headline map: `{"variable": "...", "year": 2020}`, optionally `"scale"`, `"classify": "log"` and, for datasets with an initial and a final period, `"panels": [first, last]` (the page map shows both side by side in pooled classes; the card shows `year`) |
 | `geo:updated` | "Last updated" in the License section (ISO date) |
-| `geo:citation`, `geo:notes`, `geo:notebooks` | Generated docs only |
+| `geo:citation`, `geo:notes`, `geo:notebooks` | Generated docs, `geo.info()` and `geo.cite()` |
+| `geo:weights` | Where a `weighted_mean:<field>` weight lives when it is not a field of this dataset, e.g. `{"population": "sdg"}`; `geo.aggregate()` loads it from there (checked by `validate`) |
+
+## Resource
+
+The builder's `publish()` writes `geo:period`, `geo:years` (every year with rows) and `geo:units` (units with rows) from the data; `geo.datasets()` and the page show them and `validate` checks them. Do not edit them by hand: rebuild.
 
 ## Source
 
@@ -46,4 +51,4 @@ reads the properties below at runtime; the validator enforces the starred ones.
 | `description`* | **How it was built**: definition, unit, original source, reference year or period |
 | `geo:unit`, `geo:aggregation`, `geo:source`, `geo:role`, `geo:reference_years` | Package and docs (`geo:source` also goes in the map's data credit) |
 
-`geo.dictionary(dataset)` returns `variable, label, description, unit, role, aggregation, source`.
+`geo.dictionary(dataset)` returns `variable, label, description, unit, role, aggregation, source, reference_years`; `geo.search()` finds variables by words in their `name`, `title` and `description`, so write them so users can find them.
