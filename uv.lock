@@ -1051,7 +1051,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "geo4bolivia", extras = ["all"], editable = "../geo4bolivia-package" }]
+requires-dist = [{ name = "geo4bolivia", extras = ["all"], specifier = ">=0.6.0" }]
 
 [package.metadata.requires-dev]
 analysis = [
@@ -1077,7 +1077,7 @@ dev = [
 [[package]]
 name = "geo4bolivia"
 version = "0.6.0"
-source = { editable = "../geo4bolivia-package" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "esda", version = "2.9.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "esda", version = "2.10.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
@@ -1103,6 +1103,10 @@ dependencies = [
     { name = "spreg", version = "1.9.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "statsmodels" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/1b/5e/f4e5b07c97befba245f69970b77437f8a4b4883c346e30231abf65dc39c3/geo4bolivia-0.6.0.tar.gz", hash = "sha256:c4328abb2a9e3e935f109d4f4cf57a30c290b36434b4fca20cbb6951fd9f0c0d", size = 267451, upload-time = "2026-11-20T03:34:30.252Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5a/86/81fe65501454cc0484ab671cfe285a6f56607fa8f9407894206542315d38/geo4bolivia-0.6.0-py3-none-any.whl", hash = "sha256:0a49c9b2f543b97409ce0f4b0c95f0c7fea6ebd407994f4a0139606e6dbaa49a", size = 314251, upload-time = "2026-11-20T03:34:28.857Z" },
+]
 
 [package.optional-dependencies]
 all = [
@@ -1112,52 +1116,6 @@ all = [
     { name = "mgwr" },
     { name = "rasterio", version = "1.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "rasterio", version = "1.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "esda", specifier = ">=2.5" },
-    { name = "geopandas", specifier = ">=1.0" },
-    { name = "giddy", marker = "extra == 'all'", specifier = ">=2.3.5" },
-    { name = "giddy", marker = "extra == 'dynamics'", specifier = ">=2.3.5" },
-    { name = "great-tables", specifier = ">=0.16" },
-    { name = "inequality", specifier = ">=1.0" },
-    { name = "libpysal", specifier = ">=4.9" },
-    { name = "linearmodels", marker = "extra == 'all'", specifier = ">=6" },
-    { name = "linearmodels", marker = "extra == 'panel'", specifier = ">=6" },
-    { name = "mapclassify", specifier = ">=2.6" },
-    { name = "mgwr", marker = "extra == 'all'", specifier = ">=2.2" },
-    { name = "mgwr", marker = "extra == 'mgwr'", specifier = ">=2.2" },
-    { name = "numpy", specifier = ">=1.26" },
-    { name = "pandas", specifier = ">=2.1" },
-    { name = "plotly", specifier = ">=5.24" },
-    { name = "pyarrow", specifier = ">=15" },
-    { name = "pyyaml", specifier = ">=6.0" },
-    { name = "rasterio", marker = "extra == 'all'", specifier = ">=1.3" },
-    { name = "rasterio", marker = "extra == 'raster'", specifier = ">=1.3" },
-    { name = "requests", specifier = ">=2.31" },
-    { name = "scipy", specifier = ">=1.11" },
-    { name = "spreg", specifier = ">=1.8" },
-    { name = "statsmodels", specifier = ">=0.14" },
-]
-provides-extras = ["raster", "dynamics", "mgwr", "panel", "plot", "all"]
-
-[package.metadata.requires-dev]
-compare = [
-    { name = "expdpy", specifier = ">=0.5.2" },
-    { name = "geometrics", specifier = ">=0.1.3" },
-]
-dev = [
-    { name = "pytest", specifier = ">=8.0" },
-    { name = "pytest-xdist", specifier = ">=3.5" },
-    { name = "ruff", specifier = ">=0.6" },
-]
-docs = [
-    { name = "griffe", specifier = "<1" },
-    { name = "ipykernel", specifier = ">=6" },
-    { name = "jupyter", specifier = ">=1.0" },
-    { name = "nbformat", specifier = ">=5.9" },
-    { name = "quartodoc", specifier = ">=0.11" },
 ]
 
 [[package]]

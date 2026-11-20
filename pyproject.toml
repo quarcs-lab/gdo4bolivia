@@ -36,9 +36,10 @@ constraint-dependencies = [
     "giddy>=2.3.5",
 ]
 
-# DEVELOPMENT ONLY: the package from the sibling checkout. Removed when 0.6.0 is on PyPI.
-[tool.uv.sources]
-geo4bolivia = { path = "../geo4bolivia-package", editable = true }
+# To develop the package and the data together, use a sibling checkout of the package instead of
+# the PyPI release (do not commit this): uncomment, then `uv sync`.
+# [tool.uv.sources]
+# geo4bolivia = { path = "../geo4bolivia", editable = true }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
