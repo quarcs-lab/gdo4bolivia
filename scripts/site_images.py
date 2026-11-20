@@ -403,7 +403,8 @@ def cards() -> None:
     import geo4bolivia as geo
     plt = mpl()
     print("cards")
-    package_card(geo, plt)
+    # The geo4bolivia card (tools/geo4bolivia-package.webp) is the package's hero in 16:9, drawn by the
+    # package repository's tools/build_images.py (hero-card.webp) and copied here; not drawn by this script.
     geometrics_card(geo, plt)
     expdpy_card(geo, plt)
     insight_card(geo, plt)
@@ -438,53 +439,6 @@ def three_packages_card(geo, plt) -> None:
     card_text(fig, "One question,\nthree packages", "Did municipalities converge, ~2012 to ~2024?\nLISA clusters of the Sustainable\nDevelopment Index, ~2024 (p < 0.05)")
     swatches(fig, [(f"{k} ({(gdf['lisa'] == k).sum()})", c) for k, c in LISA_COLORS.items()], y=0.36)
     save_fig(fig, tools / "three-packages.webp")
-
-
-def squash(gdf, y_scale=0.42, dy=0.0):
-    from shapely import affinity
-    out = gdf.copy()
-    out["geometry"] = gdf.geometry.map(lambda g: affinity.affine_transform(g, [1, 0, 0, y_scale, 0, dy]))
-    return out
-
-
-def package_card(geo, plt):
-    import mapclassify
-    fig = plt.figure(figsize=(16, 9))
-    ax = fig.add_axes([0.02, 0.03, 0.4, 0.94]); ax.set_axis_off()
-    ids = geo.load("sdg", variables=["index_sdg", "population"], years=2024)
-    n = geo.units()["scale"].value_counts()
-    layers = [("department", f"{n['department']} departments", "sdg · BO-04", site_cmap()),
-              ("province", f"{n['province']} provinces", "sdg01 · BO-04-17", seq_cmap()),
-              ("municipality", f"{n['municipality']} municipalities", "ntl · BO-04-17-04", site_cmap().reversed())]
-    for i, (scale, label, sub, cmap) in enumerate(layers):
-        b = geo.boundaries(scale)
-        vals = (geo.aggregate(ids, to=scale, variables=["index_sdg"], rules={"index_sdg": "weighted_mean:population"})
-                if scale != "municipality" else ids)
-        g = b.merge(vals, on="geo_id")
-        dy = -i * 9.5
-        sq = squash(g, dy=dy)
-        sq.assign(_c=mapclassify.Quantiles(g["index_sdg"], k=min(6, len(g) - 1)).yb).plot(
-            column="_c", cmap=cmap, ax=ax, edgecolor=BG, linewidth=0.3 if scale != "municipality" else 0.15)
-        pt = geo.boundaries("municipality").set_index("geo_id").loc["BO-04-17-04", "geometry"].representative_point()
-        ax.plot(pt.x, pt.y * 0.42 + dy, "o", ms=9, mfc="white", mec=ROSE, mew=2.5, zorder=5)
-        fig.text(0.42, 0.84 - i * 0.33, label, fontsize=21, weight="bold", color="white")
-        fig.text(0.42, 0.79 - i * 0.33, sub, fontsize=15, color=TURQUOISE, family="DejaVu Sans Mono")
-    ax.plot([pt.x] * 2, [pt.y * 0.42, pt.y * 0.42 - 19], ls="--", color=ROSE, lw=1.5, zorder=4)
-    ax.set_xlim(-70, -57); ax.set_ylim(-31.5, -3.5)
-    fig.text(0.62, 0.84, "geo4bolivia", fontsize=46, weight="bold", color="white")
-    fig.text(0.62, 0.77, "load · link · build · move across scales", fontsize=20, color=SAND)
-    from matplotlib.patches import FancyBboxPatch
-    panel = FancyBboxPatch((0.61, 0.17), 0.365, 0.55, boxstyle="round,pad=0.005,rounding_size=0.015",
-                           transform=fig.transFigure, facecolor=SURFACE, edgecolor=EDGE, lw=1.5)
-    fig.patches.append(panel)
-    for k, c in enumerate(["#ff5f57", "#febc2e", "#28c840"]):
-        fig.patches.append(plt.Circle((0.63 + k * 0.013, 0.68), 0.0055, transform=fig.transFigure, color=c))
-    lines = ['import geo4bolivia as geo', '', 'geo.load("sdg", geometry=True)', 'geo.link(df, "municipality", on="mun_id")',
-             'geo.aggregate(df, to="department")', 'geo.combine(["sdg", "ntl"], "municipality")', 'geo.for_geometrics("sdg")']
-    for k, t in enumerate(lines):
-        fig.text(0.625, 0.61 - k * 0.055, t, fontsize=15, family="DejaVu Sans Mono", color="white" if k == 0 else "#bfe9e2")
-    fig.text(0.62, 0.08, "pip install geo4bolivia", fontsize=21, weight="bold", family="DejaVu Sans Mono", color=SAND)
-    save_fig(fig, IMG / "tools/geo4bolivia-package.webp")
 
 
 def geometrics_card(geo, plt):
