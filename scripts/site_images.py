@@ -614,8 +614,6 @@ def notebook_cards(geo, plt) -> None:
     import pandas as pd
     from esda.moran import Moran_Local, Moran_Local_BV
     from libpysal import weights
-    from mgwr.gwr import GWR
-    from mgwr.sel_bw import Sel_BW
 
     crs = geo.config()["equal_area_crs"]
     units = geo.units("municipality")
@@ -698,23 +696,21 @@ def notebook_cards(geo, plt) -> None:
     swatches(fig, [(f"{a:.2f} – {b:.2f}", c) for a, b, c in zip(lo, q.bins, site_cmap(5).colors)], y=0.38)
     save_fig(fig, tools / "esda-inequality.webp")
 
-    # esda_heterogeneity: significant GWR slopes
-    cent = gdf.geometry.centroid
-    coords = np.column_stack([cent.x, cent.y]) / 1000
-    yv, Xv = gdf[["sdg1_2_mpi"]].values, gdf[["ln_t400NTLpc"]].values
-    bw = Sel_BW(coords, yv, Xv).search(criterion="AICc")
-    res = GWR(coords, yv, Xv, bw).fit()
-    sig = res.filter_tvals(alpha=0.05)[:, 1] != 0
-    gdf["slope"] = res.params[:, 1]
+    # esda_heterogeneity: significant local slopes of the package's multiscale GWR (standardized variables)
+    mg = geo.mgwr(pd.DataFrame(gdf.drop(columns="geometry")), "sdg1_2_mpi", "ln_t400NTLpc")
+    local = mg.df.set_index("geo_id")
+    gdf["slope"] = gdf["geo_id"].map(local["ln_t400NTLpc_coef"])
+    sig = gdf["geo_id"].map(local["ln_t400NTLpc_significant"]).fillna(False).to_numpy(dtype=bool)
+    bw = mg.bw["ln_t400NTLpc"]
     fj = mapclassify.FisherJenks(gdf.loc[sig, "slope"], k=5)
     cm = site_cmap(5).reversed()
     fig = plt.figure(figsize=(16, 9)); ax = map_axes(fig)
     gdf[~sig].plot(ax=ax, color=EDGE, edgecolor=BG, linewidth=0.25)
     gdf[sig].assign(_c=fj.yb).plot(column="_c", cmap=cm, ax=ax, edgecolor=BG, linewidth=0.25)
     deps.boundary.plot(ax=ax, color=SALT, linewidth=0.8, alpha=0.7); ax.set_axis_off()
-    card_text(fig, "Where lights track poverty", f"Local GWR slope of poverty on night-time\nlights, 2012 (bandwidth {int(bw)}, significant at 5%)")
+    card_text(fig, "Where lights track poverty", f"Local MGWR slope of poverty on night-time\nlights, 2012 (standardized, bandwidth {int(bw)},\nsignificant at 5%)")
     lo = [gdf.loc[sig, "slope"].min(), *fj.bins[:-1]]
-    swatches(fig, [(f"{a:.3f} to {b:.3f}", c) for a, b, c in zip(lo, fj.bins, cm.colors)] + [("Not significant", EDGE)], y=0.4)
+    swatches(fig, [(f"{a:.2f} to {b:.2f}", c) for a, b, c in zip(lo, fj.bins, cm.colors)] + [("Not significant", EDGE)], y=0.4)
     save_fig(fig, tools / "esda-heterogeneity.webp")
 
     # eda_esda: bivariate LISA, own poverty vs neighbours' lights (p < 0.10)

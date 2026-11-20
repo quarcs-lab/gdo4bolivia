@@ -75,7 +75,7 @@
   "geo:categories": [
     "Social"
   ],
-  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). Population (333 of 343 municipalities, 2001–2020). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/pop.md",
+  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). Population (333 of 343 municipalities, 2001–2020). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/pop.md",
   "geo:notes": [
     "The values belong to DS4Bolivia's polygons of the 2015 map, so they are published for the 333 municipalities whose territory is unchanged in the 343-unit map of 2025. The six municipalities that lost territory to the units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units (San Pedro de Macha, TIOC-Raqaypampa, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico) have no rows.",
     "The counts were computed by DS4Bolivia on its own municipal polygons, geoBoundaries v4 polygons that differ slightly from the SDSN Bolivia 2025 boundaries in geo/boundaries/; `asdf_id` keeps the DS4Bolivia polygon ID.",
@@ -99,7 +99,7 @@
   "resources": [
     {
       "name": "pop-municipality",
-      "path": "https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/pop.csv",
+      "path": "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/pop.csv",
       "format": "csv",
       "mediatype": "text/csv",
       "encoding": "utf-8",

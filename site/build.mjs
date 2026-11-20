@@ -40,6 +40,9 @@ const write = (p, text) => { const f = join(OUT, p); mkdirSync(dirname(f), { rec
 const hash = (text) => createHash('sha256').update(text).digest('hex').slice(0, 10);
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const plain = (s) => String(s ?? '').replace(/`/g, '');
+// a description may have several paragraphs (blank lines between them)
+const oneLine = (s) => plain(s).replace(/\s*\n\s*/g, ' ');
+const paragraphs = (s) => plain(s).split(/\n\s*\n/).filter(Boolean);
 const itemPath = (item) => `${item.section}/${item.id}/`;
 
 rmSync(OUT, { recursive: true, force: true });
@@ -68,9 +71,6 @@ const yearSpan = (resources) => {
   const years = resources.flatMap((r) => r['geo:period'] || []).map(Number).filter(Number.isFinite);
   return years.length ? [Math.min(...years), Math.max(...years)] : null;
 };
-// The package's function reference (scripts/api_reference.py), for the reference page's fallback and search
-const API = existsSync(join(SITE, 'data/api.json')) ? readJSON('site/data/api.json') : { families: [] };
-const apiFunctions = API.families.flatMap((f) => f.functions);
 const itemDatasets = (item) => (item.datasets || (item.dataset ? [item.dataset] : [])).filter((d) => PKG[d]);
 const variables = (pkg) => pkg.resources[0].schema.fields.filter((f) => !f['geo:role']);
 
@@ -124,7 +124,7 @@ for (const f of ['municipality.geojson', 'department.geojson', 'country.geojson'
 write('assets/search.json', JSON.stringify(C.CONTENT_REGISTRY.map((item) => ({
   href: itemPath(item), type: item.type, subtype: item.subtype || '', title: item.title, summary: plain(item.summary),
   tags: item.tags || [],
-  text: plain(item.description) + (item.type === 'reference' ? ' ' + apiFunctions.map((f) => `${f.name} ${f.summary}`).join(' ') : ''),
+  text: oneLine(item.description),
   variables: itemDatasets(item).flatMap((d) => variables(PKG[d]).map((f) => ({ name: f.name, title: f.title, dataset: d }))),
 }))));
 
@@ -183,7 +183,7 @@ const coverage = (pkgs, fallback) => {
 };
 const itemLD = (item) => {
   const url = SITE_URL + itemPath(item);
-  const base = { '@id': `${url}#item`, url, name: item.title, description: plain(item.description || item.summary), keywords: item.tags, creator: { '@id': ORG } };
+  const base = { '@id': `${url}#item`, url, name: item.title, description: oneLine(item.description || item.summary), keywords: item.tags, creator: { '@id': ORG } };
   if (item.type === 'indicator') {
     const pkgs = itemDatasets(item).map((d) => PKG[d]);
     return {
@@ -202,7 +202,6 @@ const itemLD = (item) => {
   if (item.type === 'project') return { '@type': 'ResearchProject', ...base, ...(item.links?.[0] ? { sameAs: item.links[0].url } : {}) };
   if (item.type === 'insight') return { '@type': 'ScholarlyArticle', ...base, headline: item.title, sameAs: item.doi, datePublished: item.date };
   if (item.type === 'event') return { '@type': 'Event', ...base, startDate: item.date };
-  if (item.type === 'reference') return { '@type': 'TechArticle', ...base, proficiencyLevel: 'Beginner', dependencies: 'Python 3.11+' };
   return { '@type': 'CreativeWork', ...base };
 };
 const SECTION_LABEL = { indicators: 'Indicators', tools: 'Tools', projects: 'Projects', insights: 'Insights', events: 'Events' };
@@ -234,12 +233,9 @@ const itemFallback = (item) => {
     `<p>${a('./', C.SITE_NAME)} / ${a(`./#${item.section}`, SECTION_LABEL[item.section])}</p>`,
     `<h1 style="font-size:2.25rem;font-weight:800;margin:1rem 0">${esc(item.title)}</h1>`,
     `<p>${esc(plain(item.summary))}</p>`,
-    item.description ? `<p>${esc(plain(item.description))}</p>` : '',
+    ...paragraphs(item.description).map((para) => `<p>${esc(para)}</p>`),
     item.citation ? `<p>${esc(item.citation)} ${a(item.doi, item.doi)}</p>` : '',
     ul((item.links || []).map((l) => a(l.url, l.label))),
-    ...(item.type === 'reference' ? API.families.flatMap((f) => [
-      `<h2>${esc(f.title)}</h2>`, ul(f.functions.map((fn) => `<code>${esc(fn.signature)}</code>: ${esc(fn.summary)}`)),
-    ]) : []),
     ...pkgs.flatMap((p) => [
       `<h2>Variables of ${esc(p.name)}</h2>`,
       ul(variables(p).map((f) => `<code>${esc(f.name)}</code>: ${esc(f.title)}. ${esc(plain(f.description))}`)),
@@ -282,14 +278,17 @@ for (const item of C.CONTENT_REGISTRY) {
     preload: (item.map || item.image) ? `<link rel="preload" as="image" href="${esc(item.map || item.image)}" fetchpriority="high">` : '',
   }));
 }
-// Retired pages send visitors and search engines to the page that replaced them
+// Retired pages send visitors and search engines to the page that replaced them: a page of this site
+// ("<section>/<id>", keeping the #anchor) or, for a page that left the site, a full URL
 for (const [from, to] of Object.entries(C.REDIRECTS || {})) {
+  const external = /^https?:/.test(to);
+  const href = external ? to : `${BASE + to}/`;
   write(`${from}/index.html`, `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>Moved</title>
-<meta name="robots" content="noindex"><link rel="canonical" href="${esc(SITE_URL + to)}/">
-<meta http-equiv="refresh" content="0; url=${esc(BASE + to)}/">
-<script>location.replace(${JSON.stringify(BASE + to + '/')} + location.hash)</script>
-</head><body><p><a href="${esc(BASE + to)}/">This page has moved.</a></p></body></html>
+<meta name="robots" content="noindex"><link rel="canonical" href="${esc(external ? to : `${SITE_URL + to}/`)}">
+<meta http-equiv="refresh" content="0; url=${esc(href)}">
+<script>location.replace(${JSON.stringify(href)}${external ? '' : ' + location.hash'})</script>
+</head><body><p>This page has moved to <a href="${esc(href)}">${esc(external ? to : SITE_URL + to + '/')}</a>.</p></body></html>
 `);
 }
 // Unknown paths: GitHub Pages serves 404.html, and the app shows its "not found" page there

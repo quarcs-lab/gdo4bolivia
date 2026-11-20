@@ -11,30 +11,33 @@ kernelspec:
   name: python3
 ---
 
-<a href="https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/esda.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+<a href="https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/esda.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
 
 # Exploratory spatial data analysis of multidimensional poverty in Bolivia
 
-Part of the [GeoDevelopment Observatory of Bolivia](https://quarcs-lab.github.io/geo4bolivia/).
+Part of the [GeoDevelopment Observatory of Bolivia](https://quarcs-lab.github.io/gdo4bolivia/).
 
-Is poverty in one municipality similar to poverty in its neighbours, and did that change as poverty fell? This notebook answers both questions for the Multidimensional Poverty Index (MPI) of Bolivia's 343 municipalities and indigenous autonomies, measured from the population censuses of 2012 and 2024 by the *Atlas de los ODS en Bolivia 2026* (SDSN Bolivia). Step by step:
+Is poverty in one municipality similar to poverty in its neighbours, and did that change as poverty fell? This notebook answers both questions for the Multidimensional Poverty Index (MPI) of Bolivia's 343 municipalities and indigenous autonomies, measured from the population censuses of 2012 and 2024 by the *Atlas de los ODS en Bolivia 2026* (SDSN Bolivia). Each step uses the functions of the [`geo4bolivia`](https://quarcs-lab.github.io/geo4bolivia/) package:
 
-1. **Load and map** the data for both periods with `geo4bolivia`
-2. **Spatial weights and spatial lags**: who are the neighbours, and how poor are they?
-3. **Global spatial dependence**: Moran's I in 2012 and 2024
-4. **Local spatial dependence**: LISA clusters and outliers in both periods, and how they moved
-5. **Combined figure**: the Moran scatterplot next to the cluster map, for 2024
+1. **Load** the data for both periods (`geo.load`, `geo.describe`, `geo.change`)
+2. **Map** both periods in common classes (`geo.map`)
+3. **Spatial weights**: who are the neighbours? (`geo.weights`, `geo.connectivity`)
+4. **Global spatial dependence**: Moran's I in 2012 and 2024 (`geo.moran`)
+5. **Local spatial dependence**: LISA clusters and outliers in both periods (`geo.lisa`)
+6. **Transitions**: how the clusters moved between the two periods (`geo.lisa_transitions`)
+
+Each analysis returns a **result object**. Displaying it shows its main figure and a reading of the numbers; its parts are `.fig`, `.df` (the table behind the figure), the numbers by name (`.moran_i`, `.p_sim`) and `.interpret()`.
 
 +++
 
 ## 0. Setup
 
-In Google Colab the next cell installs the package and the spatial-analysis libraries (a few seconds). Locally, `uv sync` has installed them already.
+In Google Colab the next cell installs the package (a few seconds); it brings the spatial-analysis libraries it uses (libpysal, esda, mapclassify, plotly). Locally, `uv sync` has installed it already.
 
 ```{code-cell} ipython3
 import importlib.util
 
-missing = [p for p in ["geo4bolivia", "mapclassify", "libpysal", "esda", "splot"] if importlib.util.find_spec(p) is None]
+missing = [p for p in ["geo4bolivia"] if importlib.util.find_spec(p) is None]
 if missing:
     pkgs = " ".join(missing)
     !pip install -q {pkgs}
@@ -42,290 +45,259 @@ if missing:
 
 ```{code-cell} ipython3
 import warnings
+warnings.filterwarnings("ignore")    # library notices; the text explains the ones that matter
 
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import mapclassify as mc
-
-from libpysal import weights
-from esda.moran import Moran, Moran_Local
-from splot.esda import lisa_cluster
-from splot.libpysal import plot_spatial_weights
 
 import geo4bolivia as geo
 
-warnings.filterwarnings("ignore", message="Numba not installed")   # mapclassify works without it
-sns.set_theme(style="whitegrid")
-SEED = 12345
+YEARS = [2012, 2024]
 ```
 
 ## 1. Load the data
 
-`geo.load(..., geometry=True)` returns the poverty index with the municipal boundaries and names. The MPI runs from 0 to 1, and **higher values mean more poverty**. The Atlas gives it for two periods, stored as the years 2012 and 2024; `wide=` puts them side by side, one column per year. We add the department of each municipality and a poverty rank for 2024 (1 = poorest), and project the map to the observatory's equal-area projection, so that distances and areas are in metres.
+`geo.load()` returns a panel: one row per municipality (`geo_id`) and year. The MPI runs from 0 to 1, and **higher values mean more poverty**. The Atlas gives it for two periods, stored as the years 2012 and 2024. `groups=` adds the name of each municipality and of its department.
 
 ```{code-cell} ipython3
-YEARS = [2012, 2024]
-MPI = {year: f"mpi_{year}" for year in YEARS}          # column names
-
-gdf = geo.load("sdg01", variables="sdg1_2_mpi", years=2024, geometry=True)[["geo_id", "name", "geometry"]]
-wide = geo.load("sdg01", variables="sdg1_2_mpi", wide="sdg1_2_mpi")
-gdf = gdf.merge(wide.rename(columns={f"sdg1_2_mpi{y}": MPI[y] for y in YEARS}), on="geo_id")
-
-units = geo.units("municipality")[["geo_id", "department_id"]]
-dep_names = geo.units("department").set_index("geo_id")["name"]
-gdf = gdf.merge(units, on="geo_id")
-gdf["department"] = gdf["department_id"].map(dep_names)
-gdf["rank_2024"] = gdf[MPI[2024]].rank(ascending=False, method="min").astype(int)
-
-gdf = gdf[["geo_id", "name", "department", *MPI.values(), "rank_2024", "geometry"]].to_crs(geo.config()["equal_area_crs"])
-print(len(gdf), "municipalities and indigenous autonomies")
-gdf.head()
+mpi = geo.load("sdg01", variables="sdg1_2_mpi", groups=["department"])
+print(mpi["geo_id"].nunique(), "municipalities and indigenous autonomies")
+mpi.head()
 ```
 
 ```{code-cell} ipython3
-gdf[list(MPI.values())].describe().round(3)
+geo.describe(mpi)
 ```
 
-Did any municipality become poorer, and did the ranking change?
+Did any municipality become poorer, and did the ranking change? `geo.change()` gives one row per municipality with its value in both years and its change. The table lists the five poorest of 2024.
 
 ```{code-cell} ipython3
-change = gdf[MPI[2024]] - gdf[MPI[2012]]
-print(f"Mean MPI fell by {1 - gdf[MPI[2024]].mean() / gdf[MPI[2012]].mean():.0%}; "
-      f"municipalities where it rose: {(change > 0).sum()}")
-print(f"Rank (Spearman) correlation between 2012 and 2024: "
-      f"{gdf[MPI[2012]].corr(gdf[MPI[2024]], method='spearman'):.2f}")
-```
-
-Department boundaries, with a label point inside each, for the maps:
-
-```{code-cell} ipython3
-departments = geo.boundaries("department").to_crs(gdf.crs)
-departments["label_point"] = departments.representative_point()
+chg = geo.change(mpi, "sdg1_2_mpi")
+m12, m24 = chg["sdg1_2_mpi_2012"].mean(), chg["sdg1_2_mpi_2024"].mean()
+rho = chg["sdg1_2_mpi_2012"].corr(chg["sdg1_2_mpi_2024"], method="spearman")
+print(f"Mean MPI: {m12:.3f} in 2012, {m24:.3f} in 2024 ({m24 / m12 - 1:.0%})")
+print(f"Median change of a municipality: {chg['sdg1_2_mpi_pct_change'].median():.0f}%;",
+      "municipalities where the MPI rose:", (chg["sdg1_2_mpi_change"] > 0).sum())
+print("Rank (Spearman) correlation between 2012 and 2024:", round(rho, 2))
+cols = ["name", "department", "sdg1_2_mpi_2012", "sdg1_2_mpi_2024", "sdg1_2_mpi_pct_change"]
+chg.nlargest(5, "sdg1_2_mpi_2024")[cols].round(3)
 ```
 
 ## 2. Map the data
 
-First both periods on one continuous colour scale, which shows how much poverty fell; then three classes per period found by the Fisher-Jenks natural-breaks algorithm, which show where poverty is relatively high in each period.
+`geo.map()` with a list of years draws one map per year. With `scheme=` the maps are drawn in classes, here five classes found by the Fisher-Jenks natural-breaks algorithm on the values of both periods together, so the colours mean the same in both maps:
 
 ```{code-cell} ipython3
-def add_departments(ax, labels=True):
-    departments.boundary.plot(ax=ax, color="black", linewidth=0.8)
-    if labels:
-        for _, row in departments.iterrows():
-            ax.annotate(row["name"], xy=(row["label_point"].x, row["label_point"].y), ha="center", fontsize=8,
-                        bbox={"facecolor": "white", "alpha": 0.8, "pad": 1.5, "edgecolor": "none"})
-    ax.set_axis_off()
-
-vmax = gdf[MPI[2012]].max()
-fig, axes = plt.subplots(1, 2, figsize=(14, 7))
-for ax, year in zip(axes, YEARS):
-    gdf.plot(column=MPI[year], cmap="RdBu_r", vmin=0, vmax=vmax, edgecolor="grey", linewidth=0.2, legend=True,
-             legend_kwds={"label": "Multidimensional poverty index", "shrink": 0.6}, ax=ax)
-    ax.set_title(f"({'ab'[YEARS.index(year)]}) {year}, common scale")
-    add_departments(ax, labels=False)
-plt.tight_layout()
-plt.show()
+fig = geo.map(mpi, "sdg1_2_mpi", year=YEARS, scheme="fisher_jenks")
+fig
 ```
+
+A classed map keeps its class limits in `fig.layout.meta["bins"]`. The municipalities in each class, per period:
 
 ```{code-cell} ipython3
-for year in YEARS:
-    fj = mc.FisherJenks(gdf[MPI[year]], k=3)
-    print(year, "upper bounds:", fj.bins.round(3), "| municipalities per class:", fj.counts)
+limits = fig.layout.meta["bins"]
+pd.crosstab(pd.cut(mpi["sdg1_2_mpi"], limits, include_lowest=True), mpi["year"])
 ```
 
-```{code-cell} ipython3
-fig, axes = plt.subplots(1, 2, figsize=(14, 7))
-for ax, year in zip(axes, YEARS):
-    gdf.plot(column=MPI[year], scheme="FisherJenks", k=3, cmap="coolwarm", edgecolor="grey", linewidth=0.2,
-             legend=True, legend_kwds={"title": f"MPI {year}", "loc": "lower left"}, ax=ax)
-    ax.set_title(f"({'ab'[YEARS.index(year)]}) {year}, three natural breaks (Fisher-Jenks)")
-    add_departments(ax, labels=False)
-plt.tight_layout()
-plt.show()
-```
+Poverty fell everywhere. The mean MPI dropped from 0.234 in 2012 to 0.063 in 2024 (by 73%), the median from 0.227 to 0.053, and no municipality became poorer. In 2012, 113 municipalities had an MPI above 0.273 (the two highest classes); in 2024 only one does, TIOC-Raqaypampa (Cochabamba, 0.296), the poorest unit in both periods. 261 of the 343 units are now in the lowest class (up to 0.084), against 20 in 2012.
 
-Poverty fell everywhere. The mean MPI dropped from 0.234 in 2012 to 0.063 in 2024 (by 73%), the median from 0.227 to 0.053, and no municipality became poorer. The ranking, however, barely moved: the rank correlation between the two periods is 0.86, and the poorest unit in both is TIOC-Raqaypampa (Cochabamba; 0.563, then 0.296).
+The ranking, however, barely moved: the rank correlation between the two periods is 0.86. The poorest units also progressed more slowly in relative terms: the five poorest of 2024 cut their MPI by 47% to 59%, against 76% for the median municipality.
 
-The natural breaks show where poverty stays relatively high. In 2012 the top class (MPI above 0.31, 83 units) covers the belt where Chuquisaca, Potosí and Cochabamba meet, most of Pando and much of the Oruro and La Paz highlands. In 2024 the top class (above 0.11) is smaller, 45 units, and concentrated in that belt (11 in Potosí and 9 each in Chuquisaca and Cochabamba) and in Oruro (9); Pando, which had 9 units in the top class in 2012, keeps only San Pedro. The least poor class holds the main cities, Santa Cruz (48 of its 56 units in 2024) and Tarija (all 11).
+Common classes show the fall, but they hide the geography of 2024, when almost every unit is in the two lowest classes. The local statistics of section 5 compare each municipality with the mean of its own period, and the companion notebook `esda_dependence` maps each period in its own classes.
 
 +++
 
-## 3. Spatial weights and spatial lags
+## 3. Spatial weights
 
-A **spatial weights matrix** $W$ says who is a neighbour of whom. Here each municipality's neighbours are its 6 nearest municipalities (by the distance between centroids), built on all 343 units. With k-nearest neighbours every unit has neighbours, so there are no islands to handle. The matrix is **row-standardised**, so each row sums to one and the neighbours have equal weight. The same matrix serves both periods.
+**Spatial weights** say who is a neighbour of whom. `geo.weights()` builds them from the boundaries. Here each municipality's neighbours are its 6 nearest municipalities (by the distance between centroids), on all 343 units. The weights are **row-standardised**: each neighbour counts 1/6, so the weighted sum of the neighbours' values is their average. The same weights serve both periods.
 
-```{code-cell} ipython3
-W = weights.KNN.from_dataframe(gdf, k=6)
-W.transform = "r"
-print(f"{W.n} municipalities, {W.mean_neighbors:.0f} neighbours each, {W.s0:.0f} = sum of the weights")
-print(f"islands: {len(W.islands)}; connected components: {W.n_components}")
-```
+`geo.connectivity()` draws the links on the map and describes the graph of neighbours:
 
 ```{code-cell} ipython3
-fig, ax = plt.subplots(figsize=(10, 10))
-plot_spatial_weights(W, gdf, ax=ax)
-departments.boundary.plot(ax=ax, color="black", linewidth=0.6)
-ax.set_title("Each municipality linked to its 6 nearest neighbours")
-plt.show()
+w = geo.weights("municipality", method="knn", k=6)
+geo.connectivity("municipality", w)
 ```
 
-The **spatial lag** $Wy$ of the MPI is the average poverty of each municipality's neighbours:
+The package's default, used when no weights are given, is **queen contiguity**: two municipalities are neighbours when they share a border or a corner. How does it compare?
 
 ```{code-cell} ipython3
-LAG = {year: f"W_mpi_{year}" for year in YEARS}
-for year in YEARS:
-    gdf[LAG[year]] = weights.lag_spatial(W, gdf[MPI[year]])
-gdf[["name", "department", MPI[2012], LAG[2012], MPI[2024], LAG[2024]]].round(3).head(10)
+queen = geo.connectivity("municipality")
+print(queen.interpret())
+queen.fig_hist
 ```
 
-For Azurduy (Chuquisaca), one of the poorest municipalities, the MPI fell from 0.512 to 0.187, and the average of its 6 neighbours from 0.377 to 0.122: in both periods its neighbours are poor, but less so than Azurduy itself.
+`.df` has the number of neighbours of each unit. The units with the fewest and the most queen neighbours:
+
+```{code-cell} ipython3
+few_many = pd.concat([queen.df.nsmallest(4, "n_neighbors"), queen.df.nlargest(4, "n_neighbors")])
+few_many.assign(island=few_many["geo_id"].isin(queen.islands))
+```
+
+With the 6 nearest neighbours every municipality has exactly six neighbours, 1.75% of all pairs of units are linked, and the graph is one connected piece.
+
+Queen contiguity gives 5.5 neighbours on average, but unevenly: from 1 (Catacora, Copacabana, Santiago de Huata and Coipasa) to 12 (Villa Tunari and Charagua), and 1.61% of all pairs are linked. Coipasa (`BO-05-10-02`) touches no other municipality, because the Coipasa salt flat, a hole in the map, surrounds it. The package links such an island to its nearest unit, so that its spatial lag is defined.
+
+Each choice has a price. Nearest neighbours treat every unit alike, but link some municipalities that do not touch. Contiguity follows the borders, but averages over one neighbour in some places and twelve in others. This notebook uses the 6 nearest neighbours throughout and reports the main results with queen contiguity next to them.
 
 +++
 
 ## 4. Global spatial dependence
 
-Plotting each municipality's poverty against the poverty of its neighbours shows whether poor municipalities tend to have poor neighbours:
+**Moran's I** summarises in one number whether similar values lie near each other. The Moran scatterplot behind it plots each municipality's poverty against its **spatial lag**, the average poverty of its neighbours, both in standard deviations from the mean of the year. With row-standardised weights, Moran's I is the slope of the line through that cloud. Values near 0 mean no spatial pattern; positive values mean that similar values cluster. Its pseudo p-value compares it with 999 random reshuffles of the values across the map.
 
 ```{code-cell} ipython3
-fig, axes = plt.subplots(1, 2, figsize=(12, 5.5))
-for ax, year in zip(axes, YEARS):
-    sns.regplot(data=gdf, x=MPI[year], y=LAG[year], scatter_kws={"s": 15, "alpha": 0.7},
-                line_kws={"color": "black"}, ax=ax)
-    ax.set(xlabel=f"Multidimensional poverty index ({year})", ylabel="Poverty in neighbouring municipalities",
-           title=str(year))
-plt.tight_layout()
-plt.show()
+moran = {year: geo.moran(mpi, "sdg1_2_mpi", year=year, w=w) for year in YEARS}
+moran[2012]
 ```
-
-**Moran's I** summarises this relationship in one number: with row-standardised weights it is the slope of the regression of the standardised spatial lag on the standardised variable. Values near 0 mean no spatial pattern; positive values mean that similar values cluster. Its pseudo p-value compares it with 999 random reshuffles of the values across the map.
 
 ```{code-cell} ipython3
-np.random.seed(SEED)
-globalMoran = {year: Moran(gdf[MPI[year]], W, permutations=999) for year in YEARS}
-
-pd.DataFrame({year: {"Moran's I": m.I, "expected I": m.EI, "pseudo p-value": m.p_sim, "z": m.z_sim}
-              for year, m in globalMoran.items()}).round(3)
+moran[2024]
 ```
 
-Moran's I is 0.45 in 2012 and 0.39 in 2024, far above its expected value of about 0 under spatial randomness. In both periods none of the 999 random reshuffles produced a value as large (pseudo p-value 0.001, the smallest possible with 999 permutations). Poverty is strongly and positively spatially autocorrelated in both periods: poor municipalities tend to have poor neighbours. Clustering weakened somewhat as poverty fell, but it remains strong.
+The table behind the scatterplot has one row per municipality: its standardised value, its spatial lag and its quadrant (HH: high among high, LL: low among low, HL and LH: unlike its neighbours).
+
+```{code-cell} ipython3
+moran[2024].df.head()
+```
+
+Moran's I in both periods, with the 6 nearest neighbours and with the default queen contiguity (`year="all"` computes it in every year):
+
+```{code-cell} ipython3
+pd.concat({"6 nearest neighbours": geo.moran(mpi, "sdg1_2_mpi", year="all", w=w).df,
+           "queen contiguity": geo.moran(mpi, "sdg1_2_mpi", year="all").df},
+          names=["weights"]).droplevel(1).round(3)
+```
+
+With the 6 nearest neighbours, Moran's I is 0.448 in 2012 and 0.388 in 2024, far above its expected value under spatial randomness (−0.003). In both periods none of the 999 random reshuffles produced a value as large (pseudo p-value 0.001, the smallest possible with 999 permutations). Poverty is strongly and positively spatially autocorrelated: poor municipalities tend to have poor neighbours. 245 of the 343 units (71%) in 2012 and 256 (75%) in 2024 lie in the High-High or Low-Low quadrant of the scatterplot.
+
+In the table, Azurduy (Chuquisaca) is 2.8 standard deviations above the mean MPI of 2024 and its six neighbours are on average 1.3 above it: its neighbours are poor, but less so than Azurduy itself.
+
+The choice of weights changes the size of the fall, not the conclusion. With queen contiguity Moran's I is 0.436 in 2012 and 0.415 in 2024: also strong and significant in both periods, but it falls by 0.021 instead of 0.060. Clustering did not strengthen as poverty fell; how much it weakened depends on who counts as a neighbour.
 
 +++
 
 ## 5. Local spatial dependence
 
-Moran's I is one number for the whole country. **Local Moran's I** (LISA, Local Indicators of Spatial Association) computes one statistic per municipality and tests it with permutations. Each significant municipality falls in one of four groups:
+Moran's I is one number for the whole country. **Local Moran's I** (LISA, Local Indicators of Spatial Association) computes one statistic per municipality and tests it with permutations. Each significant municipality falls in one of four types:
 
-| Group | The municipality is | Its neighbours are | Meaning |
+| Type | The municipality is | Its neighbours are | Meaning |
 | --- | --- | --- | --- |
-| High-high | poor | poor | **poverty hotspot** |
-| Low-low | less poor | less poor | **cluster of low poverty** |
-| High-low | poor | less poor | poor outlier |
-| Low-high | less poor | poor | less poor outlier |
+| High-High | poor | poor | **poverty hot spot** |
+| Low-Low | less poor | less poor | **cluster of low poverty** |
+| High-Low | poor | less poor | poor outlier |
+| Low-High | less poor | poor | less poor outlier |
 
-"High" and "low" are relative to the national mean of each period, so a 2024 hotspot is poor by 2024 standards.
+"High" and "low" are relative to the national mean of each period, so a 2024 hot spot is poor by 2024 standards. `geo.lisa()` assigns the types at the 5% level (`alpha=0.05`, the default).
 
 ```{code-cell} ipython3
-moranLocal = {year: Moran_Local(gdf[MPI[year]], W, permutations=999, seed=SEED) for year in YEARS}
+lisa = {year: geo.lisa(mpi, "sdg1_2_mpi", year=year, w=w) for year in YEARS}
+lisa[2012]
 ```
 
 ```{code-cell} ipython3
-fig, axes = plt.subplots(1, 2, figsize=(14, 7))
-for ax, year in zip(axes, YEARS):
-    lisa_cluster(moranLocal[year], gdf, p=0.05, legend_kwds={"loc": "lower left"}, ax=ax)
-    add_departments(ax, labels=False)
-    ax.set_title(f"Spatial clusters and outliers of poverty, {year} (p < 0.05)")
-plt.tight_layout()
-plt.show()
+lisa[2024]
 ```
 
-The same classification as columns, to count and list the municipalities in each group:
+`lisa[year].df` has one row per municipality with its type (`cluster`) and pseudo p-value. We stack both years and add the department and the MPI, to count and list the municipalities of each type:
 
 ```{code-cell} ipython3
-quadrants = {1: "High-high", 2: "Low-high", 3: "Low-low", 4: "High-low"}
-CLUSTER = {year: f"cluster_{year}" for year in YEARS}
+clusters = pd.concat([mpi[mpi["year"] == year].merge(lisa[year].df[["geo_id", "cluster"]])
+                      for year in YEARS])
+order = ["High-High", "Low-Low", "High-Low", "Low-High", "Not significant"]
+pd.crosstab(clusters["cluster"], clusters["year"]).reindex(order)
+```
+
+The types by department, in both periods:
+
+```{code-cell} ipython3
+(pd.crosstab(clusters["department"], [clusters["year"], clusters["cluster"]])
+   .reindex(columns=order[:4], level=1))
+```
+
+The second figure of a LISA result is the Moran scatterplot coloured by type:
+
+```{code-cell} ipython3
+lisa[2024].fig_scatter
+```
+
+How do the default queen weights compare? The same analysis without `w=`:
+
+```{code-cell} ipython3
+counts = {}
 for year in YEARS:
-    lm = moranLocal[year]
-    gdf[f"lisa_p_{year}"] = lm.p_sim
-    gdf[CLUSTER[year]] = np.where(lm.p_sim < 0.05, pd.Series(lm.q).map(quadrants), "Not significant")
-
-order = ["High-high", "Low-low", "High-low", "Low-high", "Not significant"]
-pd.DataFrame({year: gdf[CLUSTER[year]].value_counts() for year in YEARS}).reindex(order)
+    counts[(year, "6 nearest")] = lisa[year].df["cluster"].value_counts()
+    counts[(year, "queen")] = geo.lisa(mpi, "sdg1_2_mpi", year=year).df["cluster"].value_counts()
+pd.DataFrame(counts).reindex(order)
 ```
 
-How did municipalities move between groups? Rows are the 2012 group, columns the 2024 group:
+With the 6 nearest neighbours and at the 5% level, 127 of the 343 units belong to a significant type in 2012 and 107 in 2024:
 
-```{code-cell} ipython3
-pd.crosstab(gdf[CLUSTER[2012]], gdf[CLUSTER[2024]], margins=True, margins_name="Total")
-```
+- **Poverty hot spots (High-High) fell from 43 to 27.** In 2012 they were in Chuquisaca (14), Potosí (11), Pando (7), Cochabamba (5), La Paz (3), Oruro (2) and Beni (1). In 2024 they are concentrated in Potosí (10), Chuquisaca (7) and Cochabamba (5), the belt where the three departments meet, plus 3 in Beni and 2 in Oruro. Pando and La Paz have none.
+- **Clusters of low poverty (Low-Low) stayed at about 70** (70, then 71), but moved towards the lowlands: Santa Cruz has 37 in 2024 (27 in 2012) and Tarija 8 (6), while Cochabamba has 11 (20) and La Paz 11 (15).
+- **Outliers fell from 14 to 9**: 7 High-Low and 7 Low-High in 2012, 3 and 6 in 2024.
 
-The groups by department in 2024:
-
-```{code-cell} ipython3
-pd.crosstab(gdf["department"], gdf[CLUSTER[2024]], margins=True, margins_name="Total")
-```
-
-The spatial outliers in 2024, municipalities that differ significantly from their neighbours:
-
-```{code-cell} ipython3
-outliers = gdf[CLUSTER[2024]].isin(["High-low", "Low-high"])
-(gdf[outliers].sort_values([CLUSTER[2024], MPI[2024]], ascending=[True, False])
-    [["name", "department", CLUSTER[2024], MPI[2024], LAG[2024], "rank_2024", "lisa_p_2024", CLUSTER[2012]]].round(3))
-```
-
-At the 5% level, 127 of the 343 units belong to a significant group in 2012 and 107 in 2024:
-
-- **Poverty hotspots (High-high) fell from 43 to 27.** In 2012 they were in Chuquisaca (14), Potosí (11), Pando (7), Cochabamba (5), La Paz (3), Oruro (2) and Beni (1). In 2024 they are concentrated in the belt where Chuquisaca, Potosí and Cochabamba meet (10 in Potosí, 7 in Chuquisaca, 5 in Cochabamba, among them TIOC-Raqaypampa and San Pedro de Macha), plus Choquecota and Curahuara de Carangas in Oruro and three units in Beni (San Ignacio, Santa Ana and the new TIOC-Territorio Indígena Multiétnico). The Pando hotspot has disappeared: none of Pando's units is a hotspot in 2024. Of the 43 hotspots of 2012, 22 are still hotspots and 19 are no longer significant.
-- **Low-poverty clusters (Low-low) stayed at about 70** (70 in 2012, 71 in 2024), but moved towards the lowlands: Santa Cruz has 37 in 2024 (27 in 2012), while Cochabamba has 11 (20) and La Paz 11 (15). Tarija has 8 of its 11 municipalities. 54 units are Low-low in both periods.
-- **Outliers fell from 14 to 9.** In 2024, three poorer municipalities have less poor neighbours (High-low: Arbieto and Morochata in Cochabamba, Tito Yupanqui in La Paz), and six less poor municipalities have poorer neighbours (Low-high), among them the capital Sucre (MPI 0.014, neighbours 0.115), Camargo and Alcalá in Chuquisaca, and Villa Nueva in Pando.
+Queen contiguity agrees on the direction and differs on the counts. It finds almost the same number of hot spots in 2012 (42) but more in 2024 (35 against 27), so a smaller fall; and fewer clusters of low poverty in both periods (46 and 51 against 70 and 71). In all it flags 98 units in 2012 and 94 in 2024. The number of clusters therefore depends on the weights; that hot spots became fewer and low-poverty clusters did not shrink holds with both.
 
 With 343 local tests, some significant results are expected by chance alone, so treat isolated significant municipalities with care; the large contiguous clusters are the robust finding.
 
 +++
 
-## 6. Combined figure
+## 6. Transitions between cluster types
 
-The 2024 Moran scatterplot coloured by LISA group, next to the cluster map. The dashed lines are the means of the MPI and of its spatial lag, which split the plot into the four quadrants.
+Did the hot spots and the clusters of low poverty persist? `geo.lisa_transitions()` runs the LISA analysis in both years on the same units and weights, and counts how the municipalities moved between types. Rows are the type in 2012, columns the type in 2024.
 
 ```{code-cell} ipython3
-colors = {"High-high": "#d7191c", "High-low": "#fdae61", "Low-high": "#abd9e9", "Low-low": "#2c7bb6",
-          "Not significant": "#d3d3d3"}
-x, y, cluster = MPI[2024], LAG[2024], CLUSTER[2024]
-
-fig, axes = plt.subplots(1, 2, figsize=(15, 7), gridspec_kw={"width_ratios": [1, 1.1]})
-
-# (a) Moran scatterplot
-ax = axes[0]
-sns.regplot(data=gdf, x=x, y=y, scatter=False, ci=None, line_kws={"color": "black", "lw": 2}, ax=ax)
-for group in ["Not significant", "Low-high", "High-low", "Low-low", "High-high"]:
-    d = gdf[gdf[cluster] == group]
-    ax.scatter(d[x], d[y], s=40, color=colors[group], label=f"{group} ({len(d)})",
-               edgecolor="white", linewidth=0.3)
-ax.axvline(gdf[x].mean(), color="black", alpha=0.5, linestyle="--")
-ax.axhline(gdf[y].mean(), color="black", alpha=0.5, linestyle="--")
-box = dict(boxstyle="round,pad=0.4", fc="white", ec="black", lw=1)
-for text, (tx, ty) in {"HH": (0.97, 0.97), "LH": (0.03, 0.97), "LL": (0.03, 0.03), "HL": (0.97, 0.03)}.items():
-    ax.text(tx, ty, text, transform=ax.transAxes, ha="right" if tx > 0.5 else "left",
-            va="top" if ty > 0.5 else "bottom", bbox=box)
-ax.set(xlabel="Multidimensional poverty index (2024)", ylabel="Poverty in neighbouring municipalities",
-       title=f"(a) Moran scatterplot (Moran's I = {globalMoran[2024].I:.2f})")
-ax.legend(loc="center right", fontsize=9)
-
-# (b) cluster map
-ax = axes[1]
-gdf.plot(color=gdf[cluster].map(colors), edgecolor="white", linewidth=0.2, ax=ax)
-add_departments(ax)
-ax.set_title("(b) Spatial clusters and outliers, 2024 (p < 0.05)")
-
-plt.tight_layout()
-plt.show()
+moves = geo.lisa_transitions(mpi, "sdg1_2_mpi", w=w)
+moves
 ```
+
+`moves.fig_map` draws the types of 2024 with the municipalities that changed type outlined. `moves.df` lists every municipality with its type in both years. Where were the hot spots of 2012 that persisted and those that dissolved, and where are the new ones?
+
+```{code-cell} ipython3
+moved = moves.df.merge(chg[["geo_id", "department", "sdg1_2_mpi_2012", "sdg1_2_mpi_2024"]])
+hot = moved[(moved["cluster_2012"] == "High-High") | (moved["cluster_2024"] == "High-High")]
+pd.crosstab(hot["department"], hot["transition"])
+```
+
+```{code-cell} ipython3
+new = moved[moved["moved"] & (moved["cluster_2024"] == "High-High")]
+new[["name", "department", "transition", "sdg1_2_mpi_2012", "sdg1_2_mpi_2024"]]
+```
+
+The same count for the clusters of low poverty:
+
+```{code-cell} ipython3
+low = moved[(moved["cluster_2012"] == "Low-Low") | (moved["cluster_2024"] == "Low-Low")]
+pd.crosstab(low["department"], low["transition"])
+```
+
+The spatial outliers of 2024, municipalities that differ significantly from their neighbours, with their type in 2012 (`value` and `lag` are the MPI of the municipality and the average of its neighbours, in standard deviations from the mean of 2024):
+
+```{code-cell} ipython3
+outliers = moved[moved["cluster_2024"].isin(["High-Low", "Low-High"])]
+outliers = outliers.merge(lisa[2024].df[["geo_id", "value", "lag", "p_sim"]], on="geo_id")
+cols = ["name", "department", "cluster_2012", "cluster_2024", "sdg1_2_mpi_2024", "value", "lag", "p_sim"]
+outliers.sort_values(["cluster_2024", "sdg1_2_mpi_2024"], ascending=[True, False])[cols].round(3)
+```
+
+276 of the 343 units (80%) are of the same type in both periods, 196 of them not significant in either.
+
+- **Hot spots.** Of the 43 hot spots of 2012, 22 are still hot spots in 2024: 9 in Potosí, 7 in Chuquisaca, 5 in Cochabamba and 1 in Oruro. 19 are no longer significant (6 each in Chuquisaca and Pando, 3 in La Paz, 2 in Potosí, 1 each in Beni and Oruro) and 2 became Low-High outliers (Alcalá in Chuquisaca and Villa Nueva in Pando), less poor than their neighbours by 2024. The Pando hot spot of 2012 dissolved: none of its 7 units remains. Five units are new hot spots: San Ignacio, Santa Ana and the new TIOC-Territorio Indígena Multiétnico in Beni, Tinguipaya in Potosí and Curahuara de Carangas in Oruro. Their poverty fell too (Tinguipaya from 0.462 to 0.134); they are hot spots because they and their neighbours are above the mean of 2024.
+- **Clusters of low poverty.** 54 of the 70 of 2012 persist: 26 in Santa Cruz, 11 in Cochabamba, 10 in La Paz, 6 in Tarija and 1 in Chuquisaca. 15 are no longer significant, 8 of them in Cochabamba and 5 in La Paz. 17 units joined: 11 in Santa Cruz, 2 each in Chuquisaca and Tarija, 1 each in La Paz and Potosí.
+- **Outliers in 2024.** Three poorer municipalities have less poor neighbours (High-Low): Arbieto and Morochata in Cochabamba and Tito Yupanqui in La Paz. Six less poor municipalities have poorer neighbours (Low-High), among them the capital Sucre (MPI 0.014, 1.1 standard deviations below the mean, with neighbours 1.2 above it). Sucre and Camargo are Low-High in both periods, Morochata and Tito Yupanqui High-Low in both.
+
+Moves to and from "Not significant" can come from a pseudo p-value that crosses 0.05 by a small margin, so the persistent clusters are the firmer result.
+
++++
 
 ## Summary
 
 - Multidimensional poverty fell by 73% between 2012 and 2024 (mean MPI 0.234 to 0.063) and in every one of the 343 units, but the ranking is stable (rank correlation 0.86).
-- Poverty is strongly spatially clustered in both periods: Moran's I = 0.45 in 2012 and 0.39 in 2024 (pseudo p-value 0.001) with 6-nearest-neighbour weights.
-- Poverty hotspots fell from 43 to 27 and now concentrate where Chuquisaca, Potosí and Cochabamba meet; the Pando hotspot of 2012 has disappeared. Low-poverty clusters (70, then 71) shifted towards Santa Cruz and Tarija.
+- Poverty is strongly spatially clustered in both periods: Moran's I = 0.448 in 2012 and 0.388 in 2024 with 6-nearest-neighbour weights, and 0.436 and 0.415 with queen contiguity (pseudo p-value 0.001 in every case).
+- Poverty hot spots fell from 43 to 27 (42 to 35 with queen contiguity) and now concentrate where Potosí, Chuquisaca and Cochabamba meet; the Pando hot spot of 2012 has dissolved. Clusters of low poverty (70, then 71) shifted towards Santa Cruz and Tarija.
+- Four in five units (80%) are of the same type in both periods. 22 of the 43 hot spots of 2012 persist.
 - Some capitals stand out as less poor islands among poorer neighbours (Sucre in both periods).
-- The companion notebook [`esda_dependence`](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/esda_dependence.ipynb) compares map classifications and repeats the analysis at the 10% level; [`esda_inequality`](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/esda_inequality.ipynb) measures how unequal poverty is and how that changed.
+- These are descriptions of where poverty is and how it is arranged in space. They are associations, not evidence of what causes the clusters.
+
+Function pages: [`map`](https://quarcs-lab.github.io/geo4bolivia/reference/map.html), [`weights`](https://quarcs-lab.github.io/geo4bolivia/reference/weights.html), [`connectivity`](https://quarcs-lab.github.io/geo4bolivia/reference/connectivity.html), [`moran`](https://quarcs-lab.github.io/geo4bolivia/reference/moran.html), [`lisa`](https://quarcs-lab.github.io/geo4bolivia/reference/lisa.html), [`lisa_transitions`](https://quarcs-lab.github.io/geo4bolivia/reference/lisa_transitions.html).
+
+The companion notebook [`esda_dependence`](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/esda_dependence.ipynb) compares map classifications and repeats the analysis at the 10% level; [`esda_inequality`](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/esda_inequality.ipynb) measures how unequal poverty is and how that changed.

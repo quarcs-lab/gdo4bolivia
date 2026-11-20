@@ -35,13 +35,18 @@ download links: the page no longer uses them.
 - **Two tabs.** `python` (the package) starts with `${PYTHON_SETUP}`, which holds the
   `!pip install -q <pkg>`, the import and `import plotly.express as px`. `pandas` (plain URLs)
   reads `BASE = "${RAW_URL}"` and needs no install line.
-- **Runs in Colab as is.** Use `"<pkg>[raster]"` when it calls `geo.zonal()`; add `expdpy` or
-  `geometrics` to the install line when used.
+- **Runs in Colab as is.** Name the extra a snippet needs (`"<pkg>[raster]"` for `geo.zonal()`,
+  `[dynamics]` for `geo.transitions()` and `geo.spatial_transitions()`, `[mgwr]` for `geo.mgwr()`,
+  `[panel]` for `geo.panel_model()`); add `expdpy` or `geometrics` to the install line when used.
 - **A Plotly Express figure** with the simplest syntax: data, `x`/`y`/`color`, and only
   `hover_name`, `labels={...}` and `title`. Use the variable's **label** in `labels`.
   - Maps: `px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index, color=..., hover_name="name", center=..., zoom=...)` with a continuous scale.
   - Use long tables (`groupby(..., as_index=False)`, names via `.map()`).
   - Add `.show()` to every figure except the last expression.
+  - A snippet that runs one of the package's analyses (`geo.lisa()`, `geo.beta_convergence()`, ...)
+    ends with the result's own figure instead (`res.fig`, or the figure `geo.map()` returns), after
+    `print(res.interpret())` where the reading helps. Check each call with `help(geo.<function>)` or in
+    the package's function reference (`geo.config()["documentation"]`, under `reference/`).
 - **Lines of about 84 characters at most.**
 - **Examples** (optional): 2–4 recipes of 8–20 lines that show how to use the dataset's
   variables (e.g. rebuild a composite index from its components, rank departments, relate two

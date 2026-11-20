@@ -53,7 +53,7 @@
     "Environment",
     "Economy"
   ],
-  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). Satellite embeddings 2017, area-weighted (333 of 343 municipalities). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/emb.md",
+  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). Satellite embeddings 2017, area-weighted (333 of 343 municipalities). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/emb.md",
   "geo:notes": [
     "The values belong to DS4Bolivia's polygons of the 2015 map, so they are published for the 333 municipalities whose territory is unchanged in the 343-unit map of 2025. The six municipalities that lost territory to the units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units (San Pedro de Macha, TIOC-Raqaypampa, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico) have no rows.",
     "The dimensions are not interpretable one by one and should not be aggregated; their aggregation rule is `none`.",
@@ -69,7 +69,7 @@
   "resources": [
     {
       "name": "emb-municipality",
-      "path": "https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/emb.csv",
+      "path": "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/emb.csv",
       "format": "csv",
       "mediatype": "text/csv",
       "encoding": "utf-8",

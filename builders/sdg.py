@@ -18,8 +18,8 @@ from functools import partial
 import numpy as np
 import pandas as pd
 
-from .. import metadata, store
-from .common import ids_from_units, publish, write_docs
+from geo4bolivia import metadata, store
+from geo4bolivia.build.common import ids_from_units, publish, write_docs
 
 SCALE = "municipality"
 RAW = "raw/sdg/atlas_ods_bolivia_2026.xlsx"

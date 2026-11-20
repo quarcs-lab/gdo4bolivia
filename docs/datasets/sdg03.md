@@ -17,8 +17,8 @@ The SDG 3 (Good health and well-being) index of the Atlas de los ODS en Bolivia 
 
 | File | Format |
 | --- | --- |
-| [`data/municipality/sdg03.csv`](https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/sdg03.csv) | CSV |
-| [`data/municipality/sdg03.parquet`](https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/sdg03.parquet) | Parquet |
+| [`data/municipality/sdg03.csv`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg03.csv) | CSV |
+| [`data/municipality/sdg03.parquet`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg03.parquet) | Parquet |
 
 | Variable | Label | Description | Unit | Coverage | Aggregation | Source |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -52,7 +52,7 @@ Without the package:
 ```python
 import pandas as pd
 
-df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/sdg03.csv")
+df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg03.csv")
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -76,7 +76,7 @@ df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/
 
 ## Recommended citation
 
-> GeoDevelopment Observatory of Bolivia (2026). SDG 3: Good health and well-being, from the Atlas de los ODS en Bolivia 2026 (343 municipalities, ~2012 and ~2024). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/sdg03.md
+> GeoDevelopment Observatory of Bolivia (2026). SDG 3: Good health and well-being, from the Atlas de los ODS en Bolivia 2026 (343 municipalities, ~2012 and ~2024). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/sdg03.md
 
 ## License
 

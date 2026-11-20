@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://quarcs-lab.github.io/geo4bolivia/sitemap.xml
+Sitemap: https://quarcs-lab.github.io/gdo4bolivia/sitemap.xml

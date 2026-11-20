@@ -11,155 +11,125 @@ kernelspec:
   name: python3
 ---
 
-<a href="https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/esda_inequality.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+<a href="https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/esda_inequality.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
 
 # Spatial inequality of poverty and night-time lights
 
-Part of the [GeoDevelopment Observatory of Bolivia](https://quarcs-lab.github.io/geo4bolivia/).
+Part of the [GeoDevelopment Observatory of Bolivia](https://quarcs-lab.github.io/gdo4bolivia/).
 
-How unequal are Bolivia's municipalities, how much of that inequality is regional, and did it change as poverty fell? This notebook measures inequality in two indicators:
+How unequal are Bolivia's municipalities, how much of that inequality is regional, and did it change as poverty fell? This notebook measures inequality in two indicators with the [`geo4bolivia`](https://quarcs-lab.github.io/geo4bolivia/) package:
 
 - **Multidimensional poverty** (`sdg1_2_mpi`, Multidimensional Poverty Index, 0–1; **higher = poorer**) of the *Atlas de los ODS en Bolivia 2026* (SDSN Bolivia), computed from the population censuses of 2012 and 2024, for all **343 municipalities and indigenous autonomies**, in **both periods**.
-- **Night-time lights per capita** (`ln_t400NTLpc`, the Hodrick–Prescott trend of log lights per person) in 2012. Lights and the WorldPop population behind them cover only **333 units**: the 6 municipalities that lost territory to the new indigenous autonomies (Colquechaca, Mizque, Porco, Tomave, San Ignacio, Santa Ana) and the 4 new units have no data. Every result for lights is computed on those 333 units.
+- **Night-time lights per capita** (`ln_t400NTLpc`, the Hodrick–Prescott trend of log lights per person), every year from 2012 to 2020. Lights and the WorldPop population behind them cover only **333 units**: the 6 municipalities that lost territory to the new indigenous autonomies (Colquechaca, Mizque, Porco, Tomave, San Ignacio, Santa Ana) and the 4 new units have no data. Every result for lights is computed on those 333 units.
 
 Outline:
 
-1. **Load** the data with `geo4bolivia`
-2. **Distributions** and maps
-3. **Theil index**, decomposed between and within the 9 departments
-4. **Gini coefficient**
-5. **Spatial Gini**: how much inequality lies between neighbouring municipalities
+1. **Load** the data (`geo.load`)
+2. **Distributions** and maps (`geo.distribution`, `geo.map`, `geo.aggregate`)
+3. **Theil index**, split between and within the 9 departments (`geo.theil_decomposition`)
+4. **Gini coefficient** and the Lorenz curve (`geo.inequality`)
+5. **Spatial Gini**: how much inequality lies between neighbouring municipalities (`geo.inequality` with `spatial=True`)
 6. **Summary**
+
+Each analysis returns a **result object**. Displaying it shows its main figure and a reading of the numbers; its parts are `.fig`, `.df` (the table behind the figure), `.gt` (a formatted table) and `.interpret()`.
 
 +++
 
 ## 0. Setup
 
-In Google Colab the next cell installs what Colab lacks (a few seconds). Locally, `uv sync` has installed everything already.
+In Google Colab the next cell installs the package (a few seconds); it brings the libraries it uses (libpysal, inequality, mapclassify, plotly). Locally, `uv sync` has installed it already.
 
 ```{code-cell} ipython3
 import importlib.util
 
-missing = [p for p in ["geo4bolivia", "mapclassify", "libpysal", "inequality"]
-           if importlib.util.find_spec(p) is None]
+missing = [p for p in ["geo4bolivia"] if importlib.util.find_spec(p) is None]
 if missing:
     !pip install -q {" ".join(missing)}
 ```
 
 ```{code-cell} ipython3
-import numpy as np
+import warnings
+warnings.filterwarnings("ignore")    # library notices; the text explains the ones that matter
+
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 import geo4bolivia as geo
-from libpysal import weights
-import inequality
-from inequality.gini import Gini_Spatial
 
-import warnings
-warnings.filterwarnings("ignore")
+MPI = "sdg1_2_mpi"       # Multidimensional Poverty Index (higher = poorer), 2012 and 2024
+NTL = "ln_t400NTLpc"     # log night-time lights per capita, HP trend, 2012-2020
 ```
 
 ## 1. Load the data
 
-Each municipality has one `geo_id` (e.g. `BO-04-17-04`, Nuestra Señora de La Paz). Poverty comes from the SDG Atlas, stored as the years 2012 and 2024; `wide=` gives one column per period. Census population (dataset `sdg`) serves as weights for poverty. Lights come from the `ntl` dataset in 2012, with the WorldPop population (`pop`) of the same year. `geometry=True` attaches the boundaries; `geo.units()` gives each municipality its department.
+Each municipality has one `geo_id` (e.g. `BO-04-17-04`, Nuestra Señora de La Paz). `geo.load()` returns a panel with one row per municipality and year; `groups=` adds the name of each municipality and of its department. Poverty is stored at the years 2012 and 2024, lights at every year from 2012 to 2020.
 
 ```{code-cell} ipython3
-mpi = geo.load("sdg01", variables="sdg1_2_mpi", wide="sdg1_2_mpi")        # 343 units, 2012 and 2024
-census = geo.load("sdg", variables="population")                           # census population, 2012 and 2024
-ntl = geo.load("ntl", variables="ln_t400NTLpc", years=2012)                # 333 units
-pop = geo.load("pop", years=2012)                                          # WorldPop, 333 units
+mpi = geo.load("sdg01", variables=MPI, groups=["department"])      # 343 units
+ntl = geo.load("ntl", variables=NTL, groups=["department"])        # 333 units
 
-units = geo.units("municipality")
-departments = geo.units("department").set_index("geo_id")["name"]
-
-gdf = (geo.load("sdg01", variables="sdg1_2_mpi", years=2024, geometry=True)[["geo_id", "name", "geometry"]]
-          .merge(mpi, on="geo_id")
-          .merge(census.pivot(index="geo_id", columns="year", values="population").add_prefix("census_"),
-                 on="geo_id")
-          .merge(ntl[["geo_id", "ln_t400NTLpc"]], on="geo_id", how="left")     # NaN for the 10 units without lights
-          .merge(pop[["geo_id", "pop"]], on="geo_id", how="left")
-          .merge(units[["geo_id", "department_id"]], on="geo_id"))
-gdf["department"] = gdf["department_id"].map(departments)
-gdf = gdf.to_crs(geo.config()["equal_area_crs"])     # metres, for maps and neighbours
-
-print(gdf.shape, "| units without lights:", int(gdf["ln_t400NTLpc"].isna().sum()))
-gdf[["geo_id", "name", "department", "sdg1_2_mpi2012", "sdg1_2_mpi2024", "ln_t400NTLpc", "census_2024"]].head()
-```
-
-```{code-cell} ipython3
-MPI12, MPI24 = "sdg1_2_mpi2012", "sdg1_2_mpi2024"   # Multidimensional Poverty Index (higher = poorer)
-NTL = "ln_t400NTLpc"                                # log night-time lights per capita, HP trend, 2012
-GROUP = "department"                                # 9 departments
-VARS = [MPI12, MPI24, NTL]
-labels = {MPI12: "Multidimensional poverty index (2012)",
-          MPI24: "Multidimensional poverty index (2024)",
-          NTL: "Log night-time lights per capita (2012)"}
-
-# each indicator on the units that have it: 343 for poverty, 333 for lights
-data = {var: gdf[gdf[var].notna()].reset_index(drop=True) for var in VARS}
-{labels[v]: len(d) for v, d in data.items()}
+for name, panel in [("poverty", mpi), ("lights", ntl)]:
+    years = sorted(panel["year"].unique().tolist())
+    print(f"{name}: {panel['geo_id'].nunique()} units, years {years}")
+mpi.head()
 ```
 
 ## 2. Distributions and maps
 
-```{code-cell} ipython3
-fig, axes = plt.subplots(1, 3, figsize=(14, 3.8))
-for ax, var in zip(axes, VARS):
-    sns.histplot(data[var][var], kde=True, ax=ax, color="steelblue")
-    ax.set_xlabel(labels[var])
-plt.tight_layout()
-plt.show()
+`geo.distribution()` overlays the histograms of the two periods and summarises each:
 
-gdf[VARS].describe().round(3)
+```{code-cell} ipython3
+dist = geo.distribution(mpi, MPI)
+dist
+```
+
+The table behind it, and the same summary for lights in their first and last year:
+
+```{code-cell} ipython3
+lights = geo.distribution(ntl, NTL, year=[2012, 2020])
+pd.concat({"Multidimensional poverty": dist.df, "Log lights per capita": lights.df},
+          names=["indicator"]).droplevel(1).round(3)
+```
+
+Where are the poorest municipalities? One map per period, each in its own quintiles (`scheme="quantiles"`), so the darkest class is the poorest fifth of that period:
+
+```{code-cell} ipython3
+for year in [2012, 2024]:
+    geo.map(mpi, MPI, year=year, scheme="quantiles", title=f"MPI quintiles, {year}").show()
+```
+
+The poorest fifth of each period, by department:
+
+```{code-cell} ipython3
+quintile = mpi.groupby("year")[MPI].transform(lambda values: pd.qcut(values, 5, labels=False))
+poorest = mpi[quintile == 4]
+pd.crosstab(poorest["department"], poorest["year"], margins=True, margins_name="Total")
+```
+
+Poverty fell sharply: the municipal mean MPI dropped from 0.234 in 2012 (range 0.018 to 0.563) to 0.063 in 2024 (range 0.003 to 0.296). Its absolute spread narrowed too (standard deviation 0.106, then 0.044), but less than the mean, so relative to the mean it widened. In 2024 most municipalities bunch near zero with a long right tail (skewness 1.44, against 0.46 in 2012).
+
+In both periods the poorest fifth lies mainly in Potosí, Chuquisaca, Cochabamba, La Paz and Oruro (57 of its 69 units in 2012, 60 of 68 in 2024). Pando had 8 units in the poorest fifth in 2012 and has 3 in 2024. Santa Cruz has one unit in it in 2012 and none in 2024, and Tarija none in either period.
+
+Log lights per capita (333 units) average 13.0 in 2012, with the middle half between 12.0 and 14.3 and a few very dark units (the minimum is 0.86). By 2020 the mean is 14.0 and the standard deviation has fallen from 1.68 to 1.18.
+
+Before decomposing, the department averages show how large the regional gaps are. The plain mean gives every municipality the same weight. `geo.aggregate()` computes the population-weighted mean: the metadata of `sdg01` say that the MPI aggregates with census population as weights, and the package loads them.
+
+```{code-cell} ipython3
+plain = mpi.pivot_table(index="department", columns="year", values=MPI).add_prefix("mean_mpi_")
+weighted = geo.add_names(geo.aggregate(mpi, to="department", dataset="sdg01"))
+weighted = weighted.pivot(index="name", columns="year", values=MPI).add_prefix("pop_weighted_mpi_")
+dep_table = plain.join(weighted).join(mpi.groupby("department")["geo_id"].nunique().rename("units"))
+dep_table.sort_values("mean_mpi_2024", ascending=False).round(3)
 ```
 
 ```{code-cell} ipython3
-# department outlines
-dep_lines = geo.boundaries("department").to_crs(gdf.crs).boundary
-
-fig, axes = plt.subplots(1, 3, figsize=(18, 6.5))
-for ax, var, year in zip(axes, [MPI12, MPI24], [2012, 2024]):
-    gdf.plot(column=var, scheme="Quantiles", k=5, cmap="Reds", linewidth=0.1, edgecolor="white",
-             legend=True, legend_kwds={"loc": "lower left", "fontsize": 8, "title": f"MPI quintiles, {year}"}, ax=ax)
-    ax.set_title(f"({'ab'[year == 2024]}) Multidimensional poverty, {year}")
-gdf.plot(column=GROUP, categorical=True, cmap="tab10", linewidth=0.1, edgecolor="white",
-         legend=True, legend_kwds={"loc": "lower left", "fontsize": 8}, ax=axes[2])
-axes[2].set_title("(c) The 9 departments (groups for the decomposition)")
-for ax in axes:
-    dep_lines.plot(ax=ax, color="black", linewidth=0.6)
-    ax.set_axis_off()
-plt.tight_layout()
-plt.show()
+country = geo.aggregate(mpi, to="country", dataset="sdg01")
+print("Bolivia, population-weighted MPI:", dict(zip(country["year"], country[MPI].round(3))))
+print("Bolivia, mean across municipalities:", mpi.groupby("year")[MPI].mean().round(3).to_dict())
 ```
 
-Poverty fell sharply: the municipal mean MPI dropped from 0.234 in 2012 (range 0.018 to 0.563) to 0.063 in 2024 (range 0.003 to 0.296). Its absolute spread narrowed too (standard deviation 0.106, then 0.044), but less than the mean, so relative to the mean it widened, from 0.45 to 0.70 of the mean. In 2024 most municipalities bunch near zero with a long right tail. Each map uses its own quintiles. In both periods the poorest quintile lies mainly in the Andean valleys where northern Potosí, Chuquisaca and Cochabamba meet and in the Oruro highlands; in 2012 it also covers much of Pando. The least poor quintile holds the departmental capitals, much of Santa Cruz and Tarija. Log lights per capita (333 units) are concentrated around 13 (the middle half between 12.0 and 14.3), with a handful of very dark outliers (one below 1).
+Chuquisaca has the highest mean MPI in both periods (0.323, then 0.090) and Tarija the lowest (0.118, then 0.027). Pando had the largest drop: from the second poorest department on average in 2012 (0.315) to the sixth in 2024 (0.068). In every department and in both periods the population-weighted MPI is below the plain mean: the populous municipalities, led by the capitals, are less poor than the small rural ones. For the country, the population-weighted MPI is 0.133 in 2012 and 0.033 in 2024, against means across municipalities of 0.234 and 0.063. The population-weighted figures approximate the Atlas's department values; they are not the Atlas's own figures.
 
-Before decomposing, the department averages show how large the regional gaps are. The population-weighted mean uses `geo.aggregate` with the census population of each period as weights; mean lights use the 333 units with data:
-
-```{code-cell} ipython3
-dep_pw = geo.aggregate(geo.load("sdg01", variables="sdg1_2_mpi"), to="department",
-                       rules={"sdg1_2_mpi": "weighted_mean:population"}, weights=census)
-dep_pw = dep_pw.pivot(index="geo_id", columns="year", values="sdg1_2_mpi").add_prefix("pop_weighted_mpi_")
-dep_pw.index = dep_pw.index.map(departments)
-
-dep_table = (gdf.groupby(GROUP)
-               .agg(units=(MPI12, "size"), mean_mpi_2012=(MPI12, "mean"), mean_mpi_2024=(MPI24, "mean"),
-                    units_with_lights=(NTL, "count"), mean_ln_ntl_2012=(NTL, "mean"))
-               .join(dep_pw)
-               .sort_values("mean_mpi_2024", ascending=False))
-dep_table.round(3)
-```
-
-```{code-cell} ipython3
-nat = geo.aggregate(geo.load("sdg01", variables="sdg1_2_mpi"), to="country",
-                    rules={"sdg1_2_mpi": "weighted_mean:population"}, weights=census)
-print("Bolivia, population-weighted MPI:", dict(zip(nat["year"], nat["sdg1_2_mpi"].round(3))))
-print("Bolivia, mean across municipalities:", gdf[[MPI12, MPI24]].mean().round(3).to_dict())
-```
-
-Chuquisaca has the highest mean MPI in both periods (0.323, then 0.090) and Tarija the lowest (0.118, then 0.027). Pando had the largest drop: from the second poorest department on average in 2012 (0.315) to the sixth in 2024 (0.068). In every department and in both periods the population-weighted MPI is below the unweighted mean: the populous municipalities, led by the capitals, are less poor than the small rural ones. For the country, the population-weighted MPI is 0.133 in 2012 and 0.033 in 2024, against means across municipalities of 0.234 and 0.063.
+Everything below treats each municipality as one observation, whatever its population: it measures inequality between municipalities, not between people.
 
 +++
 
@@ -167,103 +137,138 @@ Chuquisaca has the highest mean MPI in both periods (0.323, then 0.090) and Tari
 
 The Theil index is 0 under perfect equality and rises with inequality. Its key property is **additive decomposability**: with the municipalities grouped into departments, total inequality splits exactly into a *between-department* part (differences in department means) and a *within-department* part (differences among municipalities of the same department). Like the Gini below, it is a relative measure: multiplying every value by the same factor leaves it unchanged.
 
+`geo.theil_decomposition()` computes the index and its two parts in each year. `by="department"` groups the municipalities by the department they lie in. With `permutations=`, it also tests the between part against random reassignments of the municipalities to groups of the same sizes.
+
 ```{code-cell} ipython3
-theil = {var: inequality.theil.Theil(data[var][var].values).T for var in VARS}
-{labels[var]: round(float(t), 4) for var, t in theil.items()}
+theil = geo.theil_decomposition(mpi, MPI, by="department", permutations=999)
+theil
 ```
 
 ```{code-cell} ipython3
-rows = []
-for var in VARS:
-    d = inequality.theil.TheilD(data[var][var].values, data[var][GROUP].values)
-    total, between, within = float(theil[var]), float(np.squeeze(d.bg)), float(np.squeeze(d.wg))
-    rows.append({"variable": var, "units": len(data[var]), "Theil": total, "between": between, "within": within,
-                 "between share": between / total, "within share": within / total})
-theil_table = pd.DataFrame(rows).set_index("variable")
-theil_table.round(4)
+theil.df.round(4)
+```
+
+The same decomposition for lights, in every year from 2012 to 2020:
+
+```{code-cell} ipython3
+theil_ntl = geo.theil_decomposition(ntl, NTL, by="department", permutations=999)
+theil_ntl.fig
 ```
 
 ```{code-cell} ipython3
-ax = theil_table[["between share", "within share"]].rename(index=labels).plot.barh(
-    stacked=True, color=["#d84a64", "#1f8a80"], figsize=(8, 3))
-ax.set_xlim(0, 1)
-ax.invert_yaxis()
-ax.set_xlabel("Share of total Theil inequality")
-ax.set_ylabel("")
-ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.3), ncol=2, frameon=False)
-plt.tight_layout()
-plt.show()
+theil_ntl.df.round(4)
 ```
 
-The Theil index of poverty **doubled**, from 0.104 in 2012 to 0.219 in 2024. Poverty fell everywhere, but proportionally less in the poorest municipalities, so the relative gaps between municipalities widened even as the absolute gaps narrowed. The Theil index of log lights (0.010, 333 units) is much smaller than that of poverty, but the two levels are not comparable: lights enter in logs, which compresses their dispersion by construction, while the MPI is a ratio-scale index. Only the **shares** of the decomposition are comparable.
+The Theil index of poverty **more than doubled**, from 0.104 in 2012 to 0.219 in 2024. Poverty fell everywhere, but proportionally less in the poorest municipalities, so the relative gaps between municipalities widened even as the absolute gaps narrowed.
 
-For every indicator **most inequality is within departments**: 79% for poverty in both 2012 and 2024, and 83% for lights. Differences between department averages explain 21% of poverty inequality in both periods and 17% of lights inequality. The split is stable: inequality rose by the same proportion between and within departments. Bolivia's municipal disparities are therefore mostly local: each department contains both poor and less-poor municipalities.
+**Most inequality is within departments**: 79% in both periods. Differences between department averages account for the other 21%, a share that random groups of the same sizes did not reach in 999 trials (pseudo p-value 0.001). The split is stable: inequality rose by about the same proportion between and within departments. Bolivia's municipal disparities are therefore mostly local: each department contains both poor and less poor municipalities.
+
+For lights, 82% to 83% of the Theil index lies within departments in 2012 and in 2020; the between share is 17% in 2012, peaks at 20% in 2016 and 2017, and is 18% in 2020. The level of the index is another matter. It is far smaller than that of poverty (0.010 in 2012) and falls every year, to 0.004 in 2020, but neither fact means what it would for a variable in levels. Lights enter in logarithms, which compresses their dispersion by construction, and the Theil and Gini of a logged variable fall mechanically when lights grow everywhere by the same proportion, because the mean of the logs rises. The standard deviation of the logs does not have that problem, and it fell from 1.68 to 1.18 (section 2): dispersion in lights did narrow. Read the indices of lights for their split between and within departments, and for neighbours in section 5, not for their level.
 
 +++
 
 ## 4. Gini coefficient
 
-The Gini coefficient (0 = equality, 1 = maximal inequality) is half the mean absolute difference between all pairs of municipalities, relative to the mean.
+The Gini coefficient (0 = equality, 1 = maximal inequality) is half the mean absolute difference between all pairs of municipalities, relative to the mean. `geo.inequality()` computes it in each year, with the Theil index and, on request, the coefficient of variation (`"cv"`: the standard deviation over the mean). `spatial=True` adds the spatial Gini of the next section, with 999 permutations.
 
 ```{code-cell} ipython3
-gini = {var: inequality.gini.Gini(data[var][var].values).g for var in VARS}
-{labels[var]: round(float(g), 4) for var, g in gini.items()}
+ineq = geo.inequality(mpi, MPI, measures=("gini", "theil", "cv"), spatial=True, permutations=999)
+ineq
 ```
 
-The Gini of poverty rose from 0.254 in 2012 to 0.367 in 2024: the expected gap in MPI between two randomly drawn municipalities (twice the Gini) grew from about 51% to about 73% of the mean MPI. The Gini of log lights is 0.068, small for the same reason as its Theil index.
+`.gt` is the table of the measures. With two years it shows both and their change; a trend needs three or more years.
+
+```{code-cell} ipython3
+ineq.gt
+```
+
+The **Lorenz curve** shows the same inequality as a picture. Municipalities are sorted from the lowest MPI to the highest; the curve gives the share of the total (the sum of the MPI over all municipalities) held by the lowest share of them. The further the curve lies below the diagonal, the higher the Gini.
+
+```{code-cell} ipython3
+ineq.fig_lorenz
+```
+
+```{code-cell} ipython3
+for year in [2012, 2024]:
+    low, top = ineq.lorenz_share(year, 0.5), 1 - ineq.lorenz_share(year, 0.9)
+    print(f"{year}: the half of the municipalities with the lowest MPI holds {low:.0%} of the total;",
+          f"the tenth with the highest holds {top:.0%}")
+```
+
+For lights the panel has nine years, so `geo.inequality()` also fits a trend to each measure. The Lorenz curve is left out: it describes shares of a total, and a sum of logarithms is not a total of anything.
+
+```{code-cell} ipython3
+ineq_ntl = geo.inequality(ntl, NTL, spatial=True, permutations=999, lorenz=False)
+ineq_ntl
+```
+
+```{code-cell} ipython3
+ineq_ntl.df.round(4)
+```
+
+The Gini of poverty rose from 0.254 in 2012 to 0.367 in 2024 (by 45%): the expected gap in MPI between two randomly drawn municipalities (twice the Gini) grew from about 51% to about 73% of the mean MPI. The coefficient of variation tells the same story (0.45, then 0.70). With two periods these are two levels to compare, not a trend that can be tested.
+
+The Lorenz curve of 2024 lies below that of 2012. The half of the municipalities with the lowest MPI holds 32% of the total in 2012 and 25% in 2024; the tenth with the highest MPI holds 19%, then 25%. Remaining poverty is more concentrated in the poorest municipalities.
+
+The Gini of log lights falls from 0.068 in 2012 to 0.047 in 2020, about 4.6% a year. The caveat of section 3 applies: part of that fall is the rising mean of the logs. The series is also a smoothed trend, so its years are not independent observations and the significance of the fitted trend overstates the evidence.
 
 +++
 
 ## 5. Spatial Gini
 
-The spatial Gini (Rey and Smith, 2013) splits the Gini into the contribution of pairs of **neighbouring** municipalities and that of non-neighbours. If inequality had no spatial structure, neighbours would differ as much as any random pair, and their share of the Gini would roughly equal their share of all pairs. A smaller share means neighbours are more alike than random pairs (positive spatial autocorrelation). The p-value compares the observed split with 999 random reshufflings of the values across the map.
+The spatial Gini (Rey and Smith, 2013) splits the Gini into the contribution of pairs of **neighbouring** municipalities and that of all other pairs. If inequality had no spatial structure, neighbours would differ as much as any random pair, and their share of the Gini would roughly equal their share of all pairs. A smaller share means neighbours are more alike than random pairs (positive spatial autocorrelation). The pseudo p-value compares the observed split with 999 random reshuffles of the values across the map.
 
-Neighbours are the 6 nearest municipalities (k-nearest neighbours on centroids in the equal-area projection), as in the original DS4Bolivia notebook. With k-nearest neighbours no unit is left without neighbours (no islands). The weights are built separately for each set of units: on all 343 for poverty, and on the 333 with lights for lights, so that every unit's 6 neighbours have data. `Gini_Spatial` only uses who is a neighbour, so the weights stay binary.
+`spatial=True` used the package's default weights, queen contiguity among the units with data: 343 for poverty and 333 for lights, where a unit without data is nobody's neighbour. Only who is a neighbour matters here, not the size of the weights. The column `gini_spatial` is the part of the Gini owed to neighbouring pairs, and `gini_spatial_p` its pseudo p-value.
 
 ```{code-cell} ipython3
-W = {}
-for var in VARS:
-    W[var] = weights.KNN.from_dataframe(data[var], k=6)    # binary: 1 for each of the 6 nearest neighbours
-    print(f"{labels[var]}: {W[var].n} units, islands: {len(W[var].islands)}")
+def neighbour_shares(result, w):
+    """The neighbours' share of the Gini, next to their share of all pairs of units."""
+    table = result.df[["year", "n_units", "gini", "gini_spatial", "gini_spatial_p"]].copy()
+    table["neighbour share of Gini, %"] = 100 * table["gini_spatial"] / table["gini"]
+    table["neighbour pairs, % of pairs"] = 100 * w.mean_neighbors / (w.n - 1)
+    return table
 
-np.random.seed(12345)
-rows = []
-for var in VARS:
-    n, w = len(data[var]), W[var]
-    sg = Gini_Spatial(data[var][var].values, w, permutations=999)
-    rows.append({"variable": var,
-                 "units": n,
-                 "Gini": sg.g,
-                 "neighbour pairs, % of pairs": 100 * w.s0 / (n * (n - 1)),
-                 "neighbour share of Gini, %": 100 * sg.wg / sg.dtotal,
-                 "expected if random, %": 100 * (1 - sg.e_wcg / sg.dtotal),
-                 "non-neighbour Gini (wcg_share)": sg.wcg_share,
-                 "p-value": sg.p_sim})
-spatial_gini = pd.DataFrame(rows).set_index("variable")
-spatial_gini.round(4)
+print("Poverty:", ineq.w_spec)
+print("Lights: ", ineq_ntl.w_spec)
+shares = pd.concat({"Multidimensional poverty": neighbour_shares(ineq, geo.weights(mpi)),
+                    "Log lights per capita": neighbour_shares(ineq_ntl, geo.weights(ntl))},
+                   names=["indicator"])
+shares[shares["year"].isin([2012, 2020, 2024])].droplevel(1).round(4)
 ```
 
-With 343 units, pairs of neighbours are 1.75% of all pairs of municipalities, and under random reshuffling they would carry about the same share of the Gini (1.75%). In fact they carry only 1.22% of poverty inequality in 2012 and 1.28% in 2024. For lights (333 units) neighbours are 1.81% of pairs and carry 1.34% of the Gini. The difference is significant for all three (p = 0.001, the smallest value 999 permutations allow): **inequality is spatially structured**. Neighbours resemble each other, and almost all inequality (about 98.7% of the Gini) comes from pairs of municipalities that are not neighbours. The neighbour share rose slightly from 2012 to 2024, so neighbours became a little less alike, in line with the lower Moran's I of 2024 in `esda`. The `wcg_share` column, which the original DS4Bolivia notebook printed, is this non-neighbour part in Gini units (for poverty 0.250 of 0.254 in 2012 and 0.362 of 0.367 in 2024), not a share of neighbours.
+The other notebooks of this series use the 6 nearest neighbours instead of contiguity. `w=` takes any weights from `geo.weights()`:
+
+```{code-cell} ipython3
+w6 = geo.weights(mpi, method="knn", k=6)
+neighbour_shares(geo.inequality(mpi, MPI, w=w6, permutations=999), w6).round(4)
+```
+
+With queen contiguity on the 343 units, pairs of neighbours are 1.61% of all pairs of municipalities, and under random reshuffling they would carry about the same share of the Gini. In fact they carry 1.14% of poverty inequality in 2012 and 1.17% in 2024. For lights (333 units) neighbours are 1.63% of pairs and carry 1.16% of the Gini in 2012 and 1.18% in 2020. The difference is significant in every case (pseudo p-value 0.001, the smallest that 999 permutations allow): **inequality is spatially structured**. Neighbours resemble each other, and almost all inequality (about 98.8% of the Gini) comes from pairs of municipalities that are not neighbours.
+
+The 6 nearest neighbours give the same reading: they are 1.75% of all pairs and carry 1.22% of the Gini of poverty in 2012 and 1.28% in 2024. With both definitions the neighbour share rose slightly between the two periods, so neighbours became a little less alike relative to other pairs, in line with the lower Moran's I of 2024 in `esda`.
 
 +++
 
 ## 6. Summary
 
 ```{code-cell} ipython3
-summary = pd.DataFrame({
-    "Units": theil_table["units"],
-    "Theil": theil_table["Theil"],
-    "Theil: between departments": theil_table["between share"],
-    "Theil: within departments": theil_table["within share"],
-    "Gini": pd.Series({v: float(g) for v, g in gini.items()}),
-    "Spatial Gini: neighbour share, %": spatial_gini["neighbour share of Gini, %"],
-    "Spatial Gini: p-value": spatial_gini["p-value"],
-}).rename(index=labels)
-summary.T.round(4)
+def summary(result, decomposition):
+    table = result.df.merge(decomposition.df[["year", "between_share"]], on="year")
+    table["neighbour_share"] = table["gini_spatial"] / table["gini"]
+    cols = ["year", "n_units", "gini", "theil", "between_share", "neighbour_share", "gini_spatial_p"]
+    return table[cols]
+
+both = pd.concat({"Multidimensional poverty": summary(ineq, theil),
+                  "Log lights per capita": summary(ineq_ntl, theil_ntl)}, names=["indicator"])
+both[both["year"].isin([2012, 2020, 2024])].droplevel(1).round(4)
 ```
 
-- Municipal **poverty fell sharply but became more unequal in relative terms**: the Gini rose from 0.25 to 0.37 and the Theil index from 0.10 to 0.22 between 2012 and 2024, because the poorest municipalities reduced their poverty proportionally less. Lights (2012, 333 units), measured in logs, show low inequality on that scale.
-- **Most inequality lies within departments**: 79% for poverty in both periods and 83% for lights. Departmental averages hide most of the disparities that matter for targeting.
-- Inequality is **spatially structured** in both periods: neighbouring municipalities resemble each other, so the poor and the less-poor municipalities form regional clusters that cut across department boundaries.
+- Municipal **poverty fell sharply but became more unequal in relative terms**: the Gini rose from 0.25 to 0.37 and the Theil index from 0.10 to 0.22 between 2012 and 2024, because the poorest municipalities reduced their poverty proportionally less. The tenth of the municipalities with the highest MPI holds 25% of the total in 2024, against 19% in 2012.
+- **Most inequality lies within departments**: 79% for poverty in both periods and 82% to 83% for lights. Departmental averages hide most of the disparities between municipalities.
+- Inequality is **spatially structured** in both periods and for both indicators: neighbouring municipalities resemble each other, so the poor and the less poor municipalities form regional clusters that cut across department boundaries.
+- Lights are measured in logs, so the level and the fall of their Gini and Theil indices are not comparable with those of poverty; their dispersion (the standard deviation of the logs) fell from 1.68 in 2012 to 1.18 in 2020.
+- These are descriptions of how the indicators are distributed. They are associations, not evidence of what causes the gaps.
+
+Function pages: [`distribution`](https://quarcs-lab.github.io/geo4bolivia/reference/distribution.html), [`map`](https://quarcs-lab.github.io/geo4bolivia/reference/map.html), [`aggregate`](https://quarcs-lab.github.io/geo4bolivia/reference/aggregate.html), [`theil_decomposition`](https://quarcs-lab.github.io/geo4bolivia/reference/theil_decomposition.html), [`inequality`](https://quarcs-lab.github.io/geo4bolivia/reference/inequality.html), [`weights`](https://quarcs-lab.github.io/geo4bolivia/reference/weights.html).
 
 Related notebooks: `esda` and `esda_dependence` (Moran's I and LISA clusters in both periods) and `esda_heterogeneity` (GWR and MGWR of poverty on lights).

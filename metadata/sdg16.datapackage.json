@@ -28,7 +28,7 @@
   "geo:categories": [
     "Institutions"
   ],
-  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). SDG 16: Peace, justice and strong institutions, from the Atlas de los ODS en Bolivia 2026 (343 municipalities, ~2012 and ~2024). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/sdg16.md",
+  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). SDG 16: Peace, justice and strong institutions, from the Atlas de los ODS en Bolivia 2026 (343 municipalities, ~2012 and ~2024). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/sdg16.md",
   "geo:notes": [
     "Both periods are stored at nominal years: 2012 for the Atlas's initial values (~2012) and 2024 for its final values (~2024). Each indicator's actual reference years differ (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) and are given in its description and in `geo:reference_years`.",
     "Load one variable in both periods, e.g. `geo.load(\"sdg16\", variables=\"index_sdg16\", names=True)`, and its change per unit with `geo.change(df, \"index_sdg16\")`.",
@@ -41,7 +41,7 @@
   "resources": [
     {
       "name": "sdg16-municipality",
-      "path": "https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/sdg16.csv",
+      "path": "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg16.csv",
       "format": "csv",
       "mediatype": "text/csv",
       "encoding": "utf-8",

@@ -11,22 +11,22 @@ kernelspec:
   name: python3
 ---
 
-<a href="https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/embeddings_mpi_ml.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+<a href="https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/embeddings_mpi_ml.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
 
 # Predicting multidimensional poverty from satellite embeddings
 
-Part of the [GeoDevelopment Observatory of Bolivia](https://quarcs-lab.github.io/geo4bolivia/).
+Part of the [GeoDevelopment Observatory of Bolivia](https://quarcs-lab.github.io/gdo4bolivia/).
 
 Can satellite imagery predict poverty where surveys are missing? This notebook trains machine-learning models to predict the **Multidimensional Poverty Index** (`sdg1_2_mpi`, 0–1; **higher = poorer**) of Bolivia's municipalities from the 64 dimensions of Google's **satellite embeddings** (`emb` and `embpw`, 2017), and compares them with a baseline built on **night-time lights and population**. The poverty index comes from the *Atlas de los ODS en Bolivia 2026* (SDSN Bolivia), computed from the population censuses of **2012 and 2024**, so the same imagery is used to predict poverty at both dates.
 
 Outline:
 
-1. **Load** the targets and the features with `geo4bolivia`
+1. **Load** the targets and the features with [`geo4bolivia`](https://quarcs-lab.github.io/geo4bolivia/)
 2. **Models and validation**: random forest and XGBoost; random 5-fold and spatial (leave-one-department-out) cross-validation
 3. **Comparison table**: R², RMSE and MAE, for each census
 4. **Feature importance**: the top 20 embedding dimensions
 5. **Predicted vs observed**
-6. **Where the model fails**: maps of out-of-fold residuals
+6. **Where the model fails**: maps of out-of-fold residuals (`geo.map`) and their spatial autocorrelation (`geo.moran`)
 
 It builds on DS4Bolivia's `run_poverty_prediction.py` script, with different targets, a spatial validation and a lights baseline.
 
@@ -38,23 +38,25 @@ It builds on DS4Bolivia's `run_poverty_prediction.py` script, with different tar
 
 ## 0. Setup
 
-In Google Colab the next cell installs what Colab lacks (a few seconds; Colab already has scikit-learn and XGBoost). Locally, `uv sync` has installed everything already.
+In Google Colab the next cell installs what Colab lacks (a few seconds): the `geo4bolivia` package, which loads the data, draws the maps and tests the residuals for spatial autocorrelation. Colab already has scikit-learn and XGBoost. Locally, `uv sync` has installed everything already.
 
 ```{code-cell} ipython3
 import importlib.util
 
-missing = [p for p in ["geo4bolivia", "libpysal", "esda"]
-           if importlib.util.find_spec(p) is None]
+needs = {"geo4bolivia": "geo4bolivia", "sklearn": "scikit-learn", "xgboost": "xgboost"}   # module: package
+missing = [package for module, package in needs.items() if importlib.util.find_spec(module) is None]
 if missing:
     !pip install -q {" ".join(missing)}
 ```
 
 ```{code-cell} ipython3
+import warnings
+warnings.filterwarnings("ignore")
+
 import time
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.colors import TwoSlopeNorm
 import seaborn as sns
 
 import geo4bolivia as geo
@@ -62,18 +64,13 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import KFold, GroupKFold, cross_val_predict
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 from xgboost import XGBRegressor
-from libpysal import weights
-from esda.moran import Moran
-
-import warnings
-warnings.filterwarnings("ignore")
 
 SEED = 42
 ```
 
 ## 1. Load the targets and the features
 
-Everything is keyed by `geo_id`. The poverty index is stored at two nominal years, 2012 and 2024, the years of the two censuses. The two embedding datasets have the same column names (`A00`–`A63`), so we load them separately rather than with `geo.combine` (which would prefix them `emb_` and `embpw_`):
+Everything is keyed by `geo_id`. The poverty index is stored at two nominal years, 2012 and 2024, the years of the two censuses. `wide=` gives one row per municipality with one column per year, and `groups=` adds the name of each municipality and of its department. The two embedding datasets have the same column names (`A00`–`A63`), so we load them separately rather than with `geo.combine` (which would prefix them `emb_` and `embpw_`):
 
 - **`emb`**: each dimension averaged over the municipality's area
 - **`embpw`**: each dimension averaged with population weights, so it describes the places where people live
@@ -82,22 +79,17 @@ Everything is keyed by `geo_id`. The poverty index is stored at two nominal year
 TARGETS = [2012, 2024]
 LIGHTS_YEAR = {2012: 2012, 2024: 2020}      # lights and population: latest year <= target
 
-mpi = geo.load("sdg01", variables="sdg1_2_mpi", wide="sdg1_2_mpi")
+mpi = geo.load("sdg01", variables="sdg1_2_mpi", wide="sdg1_2_mpi", groups=["department"])
 ntl = geo.load("ntl", variables="ln_t400NTLpc", wide="ln_t400NTLpc")
-pop = geo.load("pop", wide="pop")
+pop = geo.load("pop", variables="pop", wide="pop")
 emb = geo.load("emb", years=2017).set_index("geo_id")
 embpw = geo.load("embpw", years=2017).set_index("geo_id")
-
-units = geo.units("municipality")
-departments = geo.units("department").set_index("geo_id")["name"]
 
 print("Units with MPI:", mpi["geo_id"].nunique(), "| with embeddings:", emb.index.nunique(),
       "| with lights:", ntl["geo_id"].nunique())
 
 df = (mpi.merge(ntl, on="geo_id").merge(pop, on="geo_id")
-         .merge(emb[[]], left_on="geo_id", right_index=True)          # keep units with embeddings
-         .merge(units[["geo_id", "name", "department_id"]], on="geo_id"))
-df["department"] = df["department_id"].map(departments)
+         .merge(emb[[]], left_on="geo_id", right_index=True))         # keep units with embeddings
 for t in TARGETS:
     df[f"ln_pop{LIGHTS_YEAR[t]}"] = np.log(df[f"pop{LIGHTS_YEAR[t]}"])
 
@@ -316,72 +308,53 @@ The figure shows XGBoost with population-weighted embeddings and lights, the mod
 
 ## 6. Where the model fails: out-of-fold residuals
 
-Residuals are observed minus predicted MPI: **red** municipalities are poorer than the model predicts, **blue** ones less poor. The ten units without features are grey. The maps show the spatial design for both targets.
+Residuals are observed minus predicted MPI: **red** municipalities are poorer than the model predicts, **blue** ones less poor. We put them in a table with one row per municipality and target year, the shape `geo.map()` and `geo.moran()` take. The maps show the spatial design for both targets, each on its own colour scale centred at zero; the ten units without features are not drawn.
 
 ```{code-cell} ipython3
-gdf = geo.boundaries("municipality").to_crs(geo.config()["equal_area_crs"])
-gdf = gdf[["geo_id", "geometry"]].merge(df[["geo_id", "name", "department"]], on="geo_id")
-resid_cols = {}
+RESID = {"Random 5-fold": "resid_random", "Spatial (by department)": "resid_spatial"}
+resid = pd.concat([
+    df[["geo_id", "name", "department"]].assign(
+        year=t, mpi=y[t],
+        **{col: y[t] - oof[(t, BEST_FEATURES, best_model, cv_name)] for cv_name, col in RESID.items()})
+    for t in TARGETS], ignore_index=True)
+
 for t in TARGETS:
-    for cv_name, tag in zip(cv_designs, ["random", "spatial"]):
-        col = f"resid_{tag}_{t}"
-        gdf[col] = y[t] - oof[(t, BEST_FEATURES, best_model, cv_name)]
-        resid_cols[(t, cv_name)] = col
-
-all_units = geo.boundaries("municipality").to_crs(gdf.crs)
-dep_lines = geo.boundaries("department").to_crs(gdf.crs).boundary
-
-fig, axes = plt.subplots(1, 2, figsize=(13, 6.5))
-for ax, t in zip(axes, TARGETS):
-    col = f"resid_spatial_{t}"
-    lim = np.abs(gdf[col]).max()
-    all_units.plot(ax=ax, color="#dddddd", linewidth=0)
-    gdf.plot(column=col, cmap="RdBu_r", norm=TwoSlopeNorm(0, -lim, lim), linewidth=0.05,
-             edgecolor="grey", legend=True, ax=ax,
-             legend_kwds={"shrink": 0.6, "label": "observed − predicted MPI"})
-    dep_lines.plot(ax=ax, color="black", linewidth=0.5)
-    ax.set_title(f"Out-of-fold residuals, MPI {t}, spatial CV")
-    ax.set_axis_off()
-plt.tight_layout()
-plt.show()
+    geo.map(resid, "resid_spatial", year=t, color_continuous_scale="RdBu_r",
+            color_continuous_midpoint=0, labels={"resid_spatial": "observed − predicted MPI"},
+            title=f"Out-of-fold residuals, MPI {t}, spatial CV").show()
 ```
 
-Are the errors spatially clustered? Moran's I of the residuals with queen contiguity among the 333 units:
-
-```{code-cell} ipython3
-w = weights.Queen.from_dataframe(gdf, use_index=False)
-w.transform = "r"
-print("Islands:", w.islands)
-np.random.seed(SEED)                     # reproducible permutation p-values
-for (t, cv_name), col in resid_cols.items():
-    mi = Moran(gdf[col], w, permutations=999)
-    print(f"MPI {t}, {cv_name} CV: Moran's I = {mi.I:.3f}, p = {mi.p_sim:.3f}")
-```
-
-```{code-cell} ipython3
-by_dep = pd.concat({
-    f"MPI {t}": gdf.groupby("department")[f"resid_spatial_{t}"]
-                   .agg(municipalities="size", mean_residual="mean",
-                        rmse=lambda r: np.sqrt(np.mean(r ** 2)))
-    for t in TARGETS}, axis=1)
-by_dep.sort_values(("MPI 2012", "rmse"), ascending=False).round(3)
-```
+Are the errors spatially clustered? [`geo.moran()`](https://quarcs-lab.github.io/geo4bolivia/reference/moran.html) computes Moran's I of the residuals with its default weights, queen contiguity among the 333 units with data, and 999 permutations:
 
 ```{code-cell} ipython3
 for t in TARGETS:
-    col = f"resid_spatial_{t}"
-    gdf[f"mpi{t}"] = y[t]
-    cols = ["name", "department", f"mpi{t}", col]
+    for cv_name, col in RESID.items():
+        res = geo.moran(resid, col, year=t)
+        print(f"MPI {t}, {cv_name} CV: Moran's I = {res.moran_i:.3f}, p = {res.p_sim:.3f}")
+print("Weights:", res.w_spec)
+```
+
+```{code-cell} ipython3
+by_dep = resid.pivot_table(index="department", columns="year", values="resid_spatial",
+                           aggfunc=["size", "mean", lambda r: np.sqrt(np.mean(r ** 2))])
+by_dep = by_dep.rename(columns={"size": "municipalities", "mean": "mean_residual", "<lambda>": "rmse"})
+by_dep.sort_values(("rmse", 2012), ascending=False).round(3)
+```
+
+```{code-cell} ipython3
+cols = ["name", "department", "mpi", "resid_spatial"]
+for t in TARGETS:
+    one = resid[resid["year"] == t]
     print(f"MPI {t}, poorer than predicted (spatial CV):")
-    print(gdf.nlargest(5, col)[cols].round(3).to_string(index=False))
+    print(one.nlargest(5, "resid_spatial")[cols].round(3).to_string(index=False))
     print(f"MPI {t}, less poor than predicted (spatial CV):")
-    print(gdf.nsmallest(5, col)[cols].round(3).to_string(index=False), "\n")
+    print(one.nsmallest(5, "resid_spatial")[cols].round(3).to_string(index=False), "\n")
 ```
 
-Coipasa (Oruro) has no neighbours: the Coipasa salt flat, a hole in the map, surrounds it.
+Coipasa (Oruro) touches no other municipality, because the Coipasa salt flat, a hole in the map, surrounds it; the package links it to its nearest unit, as the description of the weights says.
 
-- **Under random CV** the residuals are small and only weakly clustered for 2012 (Moran's I = 0.083, p = 0.008), and not clustered at all for 2024 (I = 0.003, p = 0.444).
-- **Under spatial CV** they are strongly clustered (I = 0.433 for 2012 and 0.341 for 2024, both p = 0.001). The errors are shared by whole departments: the model carries the poverty level of the training departments into the held-out one.
+- **Under random CV** the residuals are small and only weakly clustered for 2012 (Moran's I = 0.083, p = 0.013), and not clustered at all for 2024 (I = −0.002, p = 0.466).
+- **Under spatial CV** they are strongly clustered (I = 0.431 for 2012 and 0.342 for 2024, both p = 0.001). The errors are shared by whole departments: the model carries the poverty level of the training departments into the held-out one.
 - **2012.** **Pando** is the hardest department (RMSE 0.120): it is poorer than predicted by 0.079 on average, and Sena and San Pedro by about 0.23. Chuquisaca (+0.070 on average; Azurduy +0.23) and two Oruro municipalities (El Choro, Toledo) are also poorer than predicted. Tarija (−0.089) and **La Paz** (−0.061) are less poor than predicted; in La Paz the largest errors are in the Yungas and the mining valleys (Yanacachi −0.27, Cajuata, Coripata, Cairoma, Tipuani), predicted about 0.19–0.27 too poor.
 - **2024.** The errors are smaller in absolute terms (department RMSEs 0.021–0.048), as the target itself varies less, but the pattern persists: La Paz is again less poor than predicted (−0.030 on average; Yanacachi, Coripata and Coroico in the Yungas), and Chuquisaca poorer (+0.021; Azurduy, Incahuasi, Poroma). El Choro (Oruro) has the largest positive residual (+0.16). Pando's bias has gone (−0.016).
 

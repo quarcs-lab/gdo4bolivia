@@ -1,6 +1,6 @@
 """Project-specific tests: facts about Bolivia's units and datasets.
 
-Generic behaviour is tested in tests/test_core.py.
+Generic behaviour is tested in the package repository (quarcs-lab/geo4bolivia).
 """
 
 import numpy as np
@@ -213,9 +213,14 @@ def test_sdg_rollups_fetch_census_population_by_themselves():
 
 
 def test_lights_cover_333_of_343_municipalities():
-    up = geo.aggregate(geo.load("ntl", years=2020), to="country", rules={"ln_NTLpc": "mean"}, variables="ln_NTLpc")
+    # the dataset has 333 units; the trend series is complete, the raw series lacks a few each year
+    ntl = geo.load("ntl", years=2020)
+    assert ntl["geo_id"].nunique() == 333 and geo.datasets().set_index("dataset").loc["ntl", "units"] == 333
+    up = geo.aggregate(ntl, to="country", rules={"ln_t400NTLpc": "mean"}, variables="ln_t400NTLpc")
     assert up["n_units"].item() == 333 and up["coverage"].item() == pytest.approx(333 / 343)
-    assert geo.datasets().set_index("dataset").loc["ntl", "units"] == 333
+    # n_units counts the units with data: five municipalities have no raw lights value in 2020
+    raw = geo.aggregate(ntl, to="country", rules={"ln_NTLpc": "mean"}, variables="ln_NTLpc")
+    assert raw["n_units"].item() == ntl["ln_NTLpc"].notna().sum() == 328
 
 
 def test_sdg_change_and_reference_years():

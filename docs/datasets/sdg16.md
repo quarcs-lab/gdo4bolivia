@@ -17,8 +17,8 @@ The SDG 16 (Peace, justice and strong institutions) index of the Atlas de los OD
 
 | File | Format |
 | --- | --- |
-| [`data/municipality/sdg16.csv`](https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/sdg16.csv) | CSV |
-| [`data/municipality/sdg16.parquet`](https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/sdg16.parquet) | Parquet |
+| [`data/municipality/sdg16.csv`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg16.csv) | CSV |
+| [`data/municipality/sdg16.parquet`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg16.parquet) | Parquet |
 
 | Variable | Label | Description | Unit | Coverage | Aggregation | Source |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -49,7 +49,7 @@ Without the package:
 ```python
 import pandas as pd
 
-df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/sdg16.csv")
+df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg16.csv")
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -72,7 +72,7 @@ df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/
 
 ## Recommended citation
 
-> GeoDevelopment Observatory of Bolivia (2026). SDG 16: Peace, justice and strong institutions, from the Atlas de los ODS en Bolivia 2026 (343 municipalities, ~2012 and ~2024). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/sdg16.md
+> GeoDevelopment Observatory of Bolivia (2026). SDG 16: Peace, justice and strong institutions, from the Atlas de los ODS en Bolivia 2026 (343 municipalities, ~2012 and ~2024). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/sdg16.md
 
 ## License
 

@@ -17,8 +17,8 @@ Sixty-four satellite embedding dimensions (A00–A63) for 333 of Bolivia's 343 m
 
 | File | Format |
 | --- | --- |
-| [`data/municipality/emb.csv`](https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/emb.csv) | CSV |
-| [`data/municipality/emb.parquet`](https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/emb.parquet) | Parquet |
+| [`data/municipality/emb.csv`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/emb.csv) | CSV |
+| [`data/municipality/emb.parquet`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/emb.parquet) | Parquet |
 
 | Variable | Label | Description | Unit | Coverage | Aggregation | Source |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -108,7 +108,7 @@ Without the package:
 ```python
 import pandas as pd
 
-df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/emb.csv")
+df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/emb.csv")
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -132,7 +132,7 @@ df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/
 
 ## Recommended citation
 
-> GeoDevelopment Observatory of Bolivia (2026). Satellite embeddings 2017, area-weighted (333 of 343 municipalities). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/emb.md
+> GeoDevelopment Observatory of Bolivia (2026). Satellite embeddings 2017, area-weighted (333 of 343 municipalities). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/emb.md
 
 ## License
 

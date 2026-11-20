@@ -1,6 +1,6 @@
 """Match the 339 GADM 4.1 municipalities to the DS4Bolivia municipalities (one-off).
 
-Writes ``raw/lookups/municipalities339_gadm.csv``, which ``build/geo.py`` and the
+Writes ``raw/lookups/municipalities339_gadm.csv``, which ``builders/geo.py`` and the
 dataset builders read. Since version 0.2 the repository no longer holds GADM's geometry
 (the boundaries come from geoBoundaries), so to run this again download GADM 4.1 level 3
 for Bolivia (https://gadm.org/download_country.html, GeoJSON) to the path below, and

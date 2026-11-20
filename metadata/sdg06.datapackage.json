@@ -29,7 +29,7 @@
     "Social",
     "Environment"
   ],
-  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). SDG 6: Clean water and sanitation, from the Atlas de los ODS en Bolivia 2026 (343 municipalities, ~2012 and ~2024). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/sdg06.md",
+  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). SDG 6: Clean water and sanitation, from the Atlas de los ODS en Bolivia 2026 (343 municipalities, ~2012 and ~2024). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/sdg06.md",
   "geo:notes": [
     "Both periods are stored at nominal years: 2012 for the Atlas's initial values (~2012) and 2024 for its final values (~2024). Each indicator's actual reference years differ (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) and are given in its description and in `geo:reference_years`.",
     "Load one variable in both periods, e.g. `geo.load(\"sdg06\", variables=\"index_sdg6\", names=True)`, and its change per unit with `geo.change(df, \"index_sdg6\")`.",
@@ -42,7 +42,7 @@
   "resources": [
     {
       "name": "sdg06-municipality",
-      "path": "https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/sdg06.csv",
+      "path": "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg06.csv",
       "format": "csv",
       "mediatype": "text/csv",
       "encoding": "utf-8",

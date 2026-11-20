@@ -1,7 +1,7 @@
 # Metadata the indicator page needs
 
 `metadata/<dataset>.datapackage.json` is a Frictionless Data Package with `geo:` extensions
-(the full list is in `src/<pkg>/metadata.py` and `docs/data-infrastructure.md`). The page
+(the full list is in `docs/data-infrastructure.md`; the package's `metadata` and `validate` modules read and check them). The page
 reads the properties below at runtime; the validator enforces the starred ones.
 
 ## Package

@@ -3,10 +3,15 @@
 // ====================================================================
 // Site constants
 // ====================================================================
-export const SITE_URL = 'https://quarcs-lab.github.io/geo4bolivia/';
-export const REPO_URL = 'https://github.com/quarcs-lab/geo4bolivia';
-export const RAW_URL = 'https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/';
-export const COLAB_URL = 'https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/';
+export const SITE_URL = 'https://quarcs-lab.github.io/gdo4bolivia/';
+export const REPO_URL = 'https://github.com/quarcs-lab/gdo4bolivia';
+// The geo4bolivia Python package lives in its own repository, with its own documentation site
+// (get started, articles and the function reference); REPO_URL is the observatory's (data, notebooks)
+export const PACKAGE_DOCS_URL = 'https://quarcs-lab.github.io/geo4bolivia/';
+export const PACKAGE_REPO_URL = 'https://github.com/quarcs-lab/geo4bolivia';
+export const PACKAGE_COLAB_URL = 'https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/get-started.ipynb';
+export const RAW_URL = 'https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/';
+export const COLAB_URL = 'https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/';
 export const COLAB_EMPTY = 'https://colab.research.google.com/notebooks/empty.ipynb';
 export const DEFAULT_TITLE = 'GeoDevelopment Observatory of Bolivia | GDO-Bolivia';
 export const SITE_NAME = 'GeoDevelopment Observatory of Bolivia';
@@ -16,9 +21,12 @@ export const SITE_DESCRIPTION = 'GDO-Bolivia is a public-access platform of subn
 export const CITE_AUTHORS = { apa: 'Mendez, C.', bibtex: 'Mendez, Carlos' };
 // Center and zoom of the interactive indicator maps
 export const MAP_VIEW = { center: [-16.3, -64.6], zoom: 5 };
-// Retired pages ("<section>/<id>") and the page that replaced each one. Version 0.4 moved to the
-// 343-unit municipal map of the SDG Atlas 2026 (page ids municipalities339-* -> municipalities343-*).
+// Retired pages ("<section>/<id>") and the page that replaced each one: another page of this site
+// ("<section>/<id>") or, for a page that left the site, a full URL. Version 0.4 moved to the
+// 343-unit municipal map of the SDG Atlas 2026 (page ids municipalities339-* -> municipalities343-*);
+// the package's function reference moved to the package's own documentation site.
 export const REDIRECTS = {
+  'tools/geo4bolivia-reference': PACKAGE_DOCS_URL + 'reference/',
   'indicators/municipalities339-sdg': 'indicators/municipalities343-sdg',   // the combined SDG page of 0.2
   'indicators/municipalities339-ntl': 'indicators/municipalities343-ntl',
   'indicators/municipalities339-pop': 'indicators/municipalities343-pop',
@@ -49,55 +57,59 @@ import geo4bolivia as geo
 import plotly.express as px`;
 
 // ====================================================================
-// The three Python packages: one workflow, one end-to-end example
+// The three Python packages: geo4bolivia for the fundamentals, two companions for specialised methods
 // ====================================================================
-// The steps of the "one workflow, three packages" panel (home page and every package page)
+// The cards of the packages panel (home page and every package page): where to start, where to go further
 export const PACKAGE_WORKFLOW = [
-  { id: 'geo4bolivia-package', name: 'geo4bolivia', role: 'Find, load and understand the data', flagship: true,
-    text: 'Start here. Search the variables, read their sources and actual years, load any indicator as a labelled panel with names and boundaries, compare the two periods, aggregate to provinces and departments, map it, and link your own data to the same units.',
-    fns: ['search', 'info', 'load', 'change', 'aggregate', 'map'] },
-  { id: 'expdpy-package', name: 'expdpy', role: 'Explore and model panels',
-    text: 'Then study the panel: its structure, how much of the variation lies between or within units, trajectories by department, and pooled, fixed- and random-effects models with a Hausman test.',
-    fns: ['explore_xtsum_table', 'explore_trend_plot_by_group', 'analyze_panel_table', 'analyze_hausman_test'] },
-  { id: 'geometrics-package', name: 'geometrics', role: 'Analyse space, convergence and inequality',
-    text: 'And its geography: spatial clusters (Moran’s I, LISA), β-convergence with spatial models, and inequality between and within departments, each with a plain-language reading.',
-    fns: ['explore_lisa_cluster_map', 'analyze_beta_convergence', 'analyze_theil_decomposition'] },
+  { id: 'geo4bolivia-package', name: 'geo4bolivia', role: 'Find, load, map and analyse the data', flagship: true,
+    text: 'The place to start, and often all you need. Search the variables and load any indicator as a labelled panel with names and boundaries, then map it and run the fundamental analyses in one call each: spatial dependence, convergence, transitions, inequality, regression, panel and spatial models, and MGWR. Every result comes with an interactive figure and a reading in words.',
+    fns: ['search', 'load', 'map', 'lisa', 'beta_convergence', 'inequality', 'spatial_model', 'mgwr'] },
+  { id: 'expdpy-package', name: 'expdpy', role: 'Specialised methods for panels',
+    text: 'A companion for specialised panel methods beyond geo4bolivia’s own: how much of the variation lies between or within units, correlated random effects, instrumental variables, event studies and robust inference. geo.for_expdpy() hands it any panel, labelled.',
+    fns: ['explore_xtsum_table', 'analyze_cre_table', 'analyze_iv_regression', 'analyze_event_study'] },
+  { id: 'geometrics-package', name: 'geometrics', role: 'Specialised methods for space',
+    text: 'A companion for specialised spatial methods beyond geo4bolivia’s own: whether a spatial model’s spillovers survive a change of weights matrix, and teaching sandboxes that simulate each concept from a known truth. geo.for_geometrics() hands it any panel with its boundaries.',
+    fns: ['analyze_spatial_model_by_weights', 'learn_spatial_spillovers', 'learn_omitted_spatial_lag', 'learn_spatial_weights'] },
 ];
 
-// One question answered with the three packages: did Bolivia's municipalities converge in sustainable
-// development between ~2012 and ~2024? (notebooks/three_packages.ipynb works it through)
+// One question: did Bolivia's municipalities converge in sustainable development between ~2012 and
+// ~2024? geo4bolivia answers it alone; each companion then adds one specialised step
+// (notebooks/three_packages.ipynb works it through)
 export const THREE_PACKAGES_EXAMPLE = `!pip install -q geo4bolivia expdpy geometrics
-import numpy as np
-import plotly.express as px
 import geo4bolivia as geo
 import expdpy as ex
 import geometrics as gm
 
-# 1. geo4bolivia: find, load and understand the data
-display(geo.search("sustainable development index"))   # -> "sdg", "index_sdg"
-ids = geo.load("sdg", variables=["index_sdg", "population"],
+# 1. geo4bolivia answers the question on its own
+ids = geo.load("sdg", variables="index_sdg",
                groups=["department"])          # 343 units, ~2012 and ~2024
-display(geo.describe(ids))                     # labelled summary per period
-chg = geo.change(ids, "index_sdg")             # one row per municipality
-px.scatter(chg, x="index_sdg_2012", y="index_sdg_change", color="department",
-           hover_name="name", labels=geo.labels(chg),
-           title="Did the municipalities that started lower gain more?").show()
+geo.map(ids, "index_sdg", year=[2012, 2024],
+        scheme="fisher_jenks").show()          # both periods, common classes
+beta = geo.beta_convergence(ids, "index_sdg")  # did the laggards gain more?
+print(beta.interpret())
+beta.fig.show()
+print(geo.inequality(ids, "index_sdg").interpret())   # did the gaps narrow?
+lisa = geo.lisa(ids, "index_sdg", year=2024)   # where do highs and lows cluster?
+print(lisa.interpret())
+lisa.fig.show()
 
-# 2. expdpy: how much varies between and within units, and panel models
-ids["ln_pop"] = np.log(ids["population"])
-df, df_def = geo.for_expdpy(ids, labels={"ln_pop": "Log of census population"})
+# 2. expdpy goes further with panels: variation between and within units
+df, df_def = geo.for_expdpy(ids)
 df = ex.set_labels(df, df_def, set_panel=True)
-display(ex.explore_xtsum_table(df, var=["index_sdg"]).gt)
-ex.explore_trend_plot_by_group(df, group_var="department",
-                               var="index_sdg").fig.show()
-print(ex.analyze_hausman_test(df, "index_sdg", ["ln_pop"]).interpret())
+xt = ex.explore_xtsum_table(df, var=["index_sdg"])
+print(xt.interpret())
+display(xt.gt)
 
-# 3. geometrics: spatial clusters and convergence
-gdf, sp, sp_dict = geo.for_geometrics("sdg", variables="index_sdg")
+# 3. geometrics goes further with space: does the answer depend on who
+#    counts as a neighbour? The same spatial model under seven weights
+chg = geo.change(ids, "index_sdg").assign(year=2024)   # one row per unit
+cols = ["geo_id", "year", "index_sdg_2012", "index_sdg_change"]
+gdf, sp, sp_dict = geo.for_geometrics(chg[cols], labels=geo.labels(chg))
 sp = gm.set_labels(sp, sp_dict, set_panel=True)
-w = gm.make_weights(gdf, method="queen")
-print(gm.analyze_beta_convergence(sp, "index_sdg").interpret())
-gm.explore_lisa_cluster_map(sp, "index_sdg", gdf=gdf, w=w, period=2024).fig`;
+rob = gm.analyze_spatial_model_by_weights(
+    sp, "index_sdg_change", ["index_sdg_2012"], gdf=gdf, model="lag")
+print(rob.interpret())
+rob.fig`;
 
 export const CONTENT_REGISTRY = [
   // ---------------------------------------------------------------- Indicators
@@ -2186,30 +2198,35 @@ px.box(emb.filter(regex=r"^A\\d{2}$"),
   // ---------------------------------------------------------------- Tools: packages
   {
     id: 'geo4bolivia-package', type: 'package', section: 'tools',
-    title: 'geo4bolivia: find, load and understand Bolivia’s subnational data',
+    title: 'geo4bolivia: find, load, map and analyse Bolivia’s subnational data',
     scope: '!pip install -q geo4bolivia',
-    summary: 'The observatory’s flagship Python package and the place to start. Search every variable, read its sources and actual years, load any indicator as a labelled panel with names and boundaries, compare ~2012 with ~2024, aggregate to provinces and departments, map it, and link your own data to the same units.',
-    description: 'geo4bolivia is how the observatory’s data are meant to be used. It knows every dataset’s documentation, so it can tell you what a variable means, where it comes from, under which license, how to cite it and which years really lie behind the two periods of the SDG Atlas 2026. It loads any indicator in one line as a tidy panel (one row per unit and year), with unit names, the department or province each unit lies in, and boundaries. It summarises variables with their labels, computes each municipality’s change and rank change between ~2012 and ~2024, and draws an interactive map. Every unit has one geo ID that nests by prefix (municipality BO-04-17-04 lies in province BO-04-17, in department BO-04, in Bolivia BO), so the package moves data up the hierarchy with each variable’s own rule: sums for counts, census-population-weighted means for the SDG indicators (it fetches the weights itself), and reports how many units each result covers. To build your own indicators, it links tables that name units in any spelling or by INE code (and refuses to guess between municipalities that share a name), summarises rasters such as Earth Engine exports over units, and saves the result in the same documented format. It is small, works out of the box in Google Colab, and hands its data, labelled, to the two companion packages: expdpy for panel econometrics and geometrics for spatial analysis.',
-    tags: ['Python', 'flagship', 'data discovery', 'multi-scale', 'Colab'],
+    summary: 'The observatory’s Python package and the place to start. Search every variable, load any indicator as a labelled panel with names and boundaries, map it, and run the fundamental analyses in one call each: spatial dependence, convergence, inequality, regression and spatial models, and MGWR.',
+    description: 'geo4bolivia is how the observatory’s data are meant to be used. It finds variables across every dataset and explains them (sources, licenses, actual years, how to cite them), loads any indicator in one line as a tidy panel with unit names, parent units and boundaries, and moves it across municipalities, provinces and departments with each variable’s own rule. It then maps the data and runs the fundamental analyses itself, each in one call: exploration, Moran’s I and LISA clusters, β-, σ- and club convergence, transitions and rank mobility, Gini and Theil inequality, regression, panel and spatial models, and multiscale GWR. Every analysis returns an interactive figure, a table and a reading of the result in words, and your own tables and rasters can be linked to the same units.\n\nThe package has its own repository and its own documentation site, with a guide to get started, an article for each method worked through on Bolivia’s data, and a reference with an example for every function; this page is a short introduction. For specialised methods, geo.for_expdpy() and geo.for_geometrics() hand any panel, labelled, to the two companion packages, expdpy and geometrics.',
+    tags: ['Python', 'flagship', 'spatial data science', 'multi-scale', 'Colab'],
     image: 'images/tools/geo4bolivia-package.webp',
     imageAlt: 'Three stacked map layers of Bolivia, 9 departments, 113 provinces and 343 municipalities, linked by geo IDs, beside a code snippet that loads the data',
-    date: '2026-11-17', pinned: true, flagship: true,
-    installNote: 'Colab already has its dependencies (pandas, geopandas, plotly), so installing takes seconds. Add [raster] for geo.zonal().',
-    install: `!pip install -q geo4bolivia
-!pip install -q "geo4bolivia[raster]"   # + rasterio, for indicators from rasters (geo.zonal)`,
-    reference: 'geo4bolivia-reference',
+    date: '2026-11-20', pinned: true, flagship: true,
+    installNote: 'The first line is enough for loading, maps and the core analyses. The extras add the libraries of a few methods; install only those you need, or all of them.',
+    install: `!pip install -q geo4bolivia               # loading, maps, core analyses
+!pip install -q "geo4bolivia[dynamics]"   # + Markov transitions (geo.transitions)
+!pip install -q "geo4bolivia[mgwr]"       # + multiscale GWR (geo.mgwr)
+!pip install -q "geo4bolivia[panel]"      # + panel models (geo.panel_model)
+!pip install -q "geo4bolivia[raster]"     # + zonal statistics (geo.zonal)
+!pip install -q "geo4bolivia[all]"        # all of the above`,
+    // Where every function is documented (PackageDetail links it under "What it does")
+    referenceUrl: PACKAGE_DOCS_URL + 'reference/',
     quickstart: {
-      python: `${PYTHON_SETUP}
+      python: `!pip install -q geo4bolivia
+import geo4bolivia as geo
 
-geo.search("poverty")                         # which variables, datasets, years
+display(geo.search("poverty"))                # variables, datasets and years
 mpi = geo.load("sdg01", variables="sdg1_2_mpi",
                groups=["department"])         # 343 units, ~2012 and ~2024
-chg = geo.change(mpi, "sdg1_2_mpi")           # per municipality: change, ranks
-dep = geo.aggregate(mpi, to="department", dataset="sdg01")   # census-weighted
-geo.map(mpi, "sdg1_2_mpi", year=2024).show()  # interactive, labelled map
-px.scatter(chg, x="sdg1_2_mpi_2012", y="sdg1_2_mpi_2024", color="department",
-           hover_name="name", labels=geo.labels(chg),
-           title="Multidimensional poverty, ~2012 and ~2024")`,
+geo.map(mpi, "sdg1_2_mpi", year=[2012, 2024],
+        scheme="fisher_jenks").show()         # both periods, common classes
+res = geo.lisa(mpi, "sdg1_2_mpi", year=2024)  # where does poverty cluster?
+print(res.interpret())                        # the result in words
+res.fig                                       # the interactive cluster map`,
       pandas: `import pandas as pd
 import plotly.express as px
 
@@ -2224,149 +2241,32 @@ px.box(df, x="department", y="sdg1_2_mpi", color="period",
        labels={"sdg1_2_mpi": "Multidimensional poverty index (0-1)"},
        title="Multidimensional poverty by department, ~2012 and ~2024")`,
     },
-    tutorial: [
-      { id: 'discover', title: 'Discover what is available',
-        text: 'The catalog lists every dataset with its years and the number of units with data. geo.search() finds variables by words in their name, label or description (in any accents or case), geo.info() shows a dataset’s documentation, and geo.cite() prints how to cite it with the credits its sources require. The SDG Atlas stores its two periods at 2012 and 2024; geo.reference_years() gives the actual years behind each indicator.',
-        code: `${PYTHON_SETUP}
-
-cat = geo.datasets()                       # datasets x scales: years, units
-display(cat[["dataset", "title", "years", "units", "variables"]])
-display(geo.search("poverty")[["dataset", "variable", "label", "years"]])
-display(geo.info("sdg03"))                 # coverage, sources, license, notes
-print(geo.cite("sdg03"))                   # APA, plus the sources' credits
-display(geo.reference_years("sdg03"))      # e.g. 2008 and 2023 for a survey
-px.bar(cat, x="dataset", y="variables", color="years", hover_name="title",
-       title="Variables per dataset")` },
-      { id: 'load', title: 'Load a panel, with or without the package',
-        text: 'geo.load() returns one row per unit and year. Pick variables and years, add the unit names and the department or province each unit lies in, attach boundaries, or reshape to one column per year. Every file is also a plain URL, so pandas alone can read it.',
-        code: `${PYTHON_SETUP}
-import pandas as pd
-
-mpi = geo.load("sdg01", variables="sdg1_2_mpi", groups=["department"])
-ids = geo.load("sdg", years=2024, geometry=True)      # with boundaries
-pop = geo.load("pop", variables="pop", wide="pop")    # one column per year
-display(geo.units("municipality").head())             # names, parents, codes
-
-# Without the package: the same files at plain URLs
-BASE = "${RAW_URL}"
-raw = pd.read_csv(BASE + "data/municipality/sdg01.csv")
-
-px.box(mpi, x="department", y="sdg1_2_mpi", color="year",
-       labels=geo.labels(mpi), title="Multidimensional poverty by department")` },
-      { id: 'understand', title: 'Understand a variable',
-        text: 'The dictionary gives each variable’s label, definition, unit, aggregation rule and actual years. geo.describe() summarises variables per period with their labels, geo.labels() names any column for a plot, and geo.map() draws an interactive map (Plotly, preinstalled in Colab; elsewhere install geo4bolivia[plot]).',
-        code: `${PYTHON_SETUP}
-
-display(geo.dictionary("sdg04"))           # label, definition, unit, rule
-edu = geo.load("sdg04", variables=["index_sdg4", "sdg4_6_alf"],
-               groups=["department"])
-display(geo.describe(edu))                 # per period, with labels and units
-display(geo.describe(edu, by="department").head())
-geo.map(edu, "index_sdg4", year=2024)      # labelled, with names on hover` },
-      { id: 'change', title: 'Compare the two periods',
-        text: 'geo.change() turns a panel into one row per unit with its first and last values, the absolute, percentage and annual change, and the rank in each period. Its columns are labelled automatically.',
-        code: `${PYTHON_SETUP}
-
-ids = geo.load("sdg", variables="index_sdg", groups=["department"])
-chg = geo.change(ids, "index_sdg")         # ~2012 -> ~2024 per municipality
-cols = ["name", "department", "index_sdg_2012", "index_sdg_2024",
-        "index_sdg_change", "index_sdg_rank_change"]
-display(chg.nlargest(5, "index_sdg_change")[cols])
-geo.map(chg, "index_sdg_change").show()
-px.scatter(chg, x="index_sdg_rank_2012", y="index_sdg_rank_2024",
-           color="department", hover_name="name", labels=geo.labels(chg),
-           title="Rank mobility in the Sustainable Development Index")` },
-      { id: 'scales', title: 'Move across scales',
-        text: 'geo.aggregate() moves a panel up to provinces, departments or Bolivia with each variable’s rule from the metadata. The SDG indicators average with census-population weights (2012 census for ~2012, 2024 for ~2024), which the package loads itself; the results approximate, but are not, the Atlas’s own department figures. n_units and coverage tell how many municipalities each result rests on. geo.combine() puts several datasets on one scale.',
-        code: `${PYTHON_SETUP}
-
-mpi = geo.load("sdg01", variables="sdg1_2_mpi")
-up = geo.aggregate(mpi, to=["department", "country"], dataset="sdg01")
-display(up.tail(3))                                  # Bolivia, both periods
-dep = geo.add_names(up[up["scale"] == "department"])
-goals = geo.combine(["sdg01", "sdg04"], scale="department")  # one panel
-lights = geo.aggregate(geo.load("ntl", years=2020), to="department",
-                       rules={"ln_NTLpc": "mean"}, variables="ln_NTLpc")
-display(lights[["geo_id", "n_units", "coverage"]])  # 333 of 343 have lights
-px.line(dep, x="year", y="sdg1_2_mpi", color="name", markers=True,
-        labels=geo.labels(dep), title="Poverty by department (weighted)")` },
-      { id: 'link', title: 'Link your own table',
-        text: 'Tables from reports and ministries name municipalities in many spellings, or carry INE codes. geo.link() attaches the geo ID, ignoring accents, case and spacing, and stops with an explanation when a name is ambiguous (six pairs of municipalities share a name) or unknown. The values below are made up; use your own.',
-        code: `${PYTHON_SETUP}
-import pandas as pd
-
-mine = pd.DataFrame({"municipio": ["SUCRE", "El Alto", "cobija", "Trinidad"],
-                     "year": 2024, "clinics": [41, 63, 12, 18]})
-mine = geo.link(mine, scale="municipality", on="municipio")
-print(geo.check(mine))                        # [] = a valid panel
-ine = pd.DataFrame({"codigo": [20101, 70101], "teachers": [9120, 11034]})
-ine = geo.link(ine, scale="municipality", on="codigo", key="mun_id")
-
-panel = geo.combine(["sdg"], scale="municipality", years=2024, extra=[mine])
-panel = geo.add_names(panel.dropna(subset=["clinics"]))
-panel["clinics_per_10k"] = panel["clinics"] / panel["population"] * 1e4
-px.bar(panel, x="name", y="clinics_per_10k",
-       labels={"clinics_per_10k": "Clinics per 10,000 people"},
-       title="Your indicator, linked to the observatory's units")` },
-      { id: 'raster', title: 'Build an indicator from a raster',
-        text: 'geo.zonal() summarises any GeoTIFF, such as a Google Earth Engine export, over the units of a scale, and geo.save() writes the result as CSV, Parquet and a documented datapackage. Here a small raster of distance to La Paz stands in for yours.',
-        code: `!pip install -q "geo4bolivia[raster]"
-import numpy as np
-import rasterio
-from rasterio.transform import from_bounds
-import geo4bolivia as geo
-
-x0, y0, x1, y1 = geo.boundaries("country").total_bounds
-lon, lat = np.meshgrid(np.linspace(x0, x1, 600), np.linspace(y1, y0, 600))
-km = 111 * np.hypot(lon + 68.13, lat + 16.50)      # rough km to La Paz
-with rasterio.open("dist.tif", "w", driver="GTiff", width=600, height=600,
-                   count=1, dtype="float32", crs="EPSG:4326",
-                   transform=from_bounds(x0, y0, x1, y1, 600, 600)) as f:
-    f.write(km.astype("float32"), 1)
-
-dist = geo.zonal("dist.tif", scale="municipality", stats=["mean"],
-                 name="dist_lpz", year=2024)
-geo.save(dist, "distance", scale="municipality", directory="my_data",
-         variables={"dist_lpz_mean": {"label": "Distance to La Paz (km)",
-                                      "unit": "km", "aggregation": "none"}})
-geo.map(dist, "dist_lpz_mean", title="Mean distance to La Paz (km)")` },
-      { id: 'analyse', title: 'Hand the data to expdpy and geometrics',
-        text: 'geo.for_expdpy() and geo.for_geometrics() return a dataset, or your own panel, in the exact format of the two companion packages, with every column labelled from the metadata. The workflow below takes one question through all three packages.',
-        code: `!pip install -q geo4bolivia expdpy geometrics
-import geo4bolivia as geo
-import expdpy as ex
-import geometrics as gm
-
-df, df_def = geo.for_expdpy("sdg", variables="index_sdg", groups=["department"])
-df = ex.set_labels(df, df_def, set_panel=True)          # geo_id x year panel
-gdf, sp, sp_dict = geo.for_geometrics("sdg", variables="index_sdg")
-sp = gm.set_labels(sp, sp_dict, set_panel=True)         # + boundaries
-gm.explore_choropleth_map(sp, "index_sdg", gdf=gdf, period=2024).fig.show()
-ex.explore_trend_plot_by_group(df, group_var="department", var="index_sdg").fig` },
-    ],
     features: [
-      { title: 'Discover', fns: ['datasets', 'search', 'info', 'dictionary', 'reference_years', 'cite'], text: 'What exists, what each variable means, its sources, licenses and actual years, and how to cite it.' },
-      { title: 'Load', fns: ['load', 'units', 'boundaries', 'crosswalk'], text: 'Panels with names, parent units and boundaries; every unit’s INE, GADM and DS4Bolivia codes.' },
-      { title: 'Understand', fns: ['describe', 'labels', 'change', 'map'], text: 'Labelled summaries, the change and rank change between periods, and interactive maps.' },
-      { title: 'Move across scales', fns: ['aggregate', 'combine', 'overlay'], text: 'Up the hierarchy with each variable’s rule and coverage, or onto grids and other maps by area.' },
-      { title: 'Build', fns: ['link', 'check', 'zonal', 'save'], text: 'Your tables and rasters on the observatory’s units, saved in its documented format.' },
-      { title: 'Analyse', fns: ['for_expdpy', 'for_geometrics'], text: 'Labelled inputs for expdpy (panel econometrics) and geometrics (spatial analysis).' },
+      { title: 'Find and load', fns: ['search', 'info', 'dictionary', 'cite', 'load', 'change', 'aggregate'], text: 'What exists and what each variable means; panels with names, parent units and boundaries, compared across periods and moved up to provinces and departments.' },
+      { title: 'Explore', fns: ['describe', 'distribution', 'extremes', 'correlation', 'scatter', 'trend'], text: 'A first look at any variable: labelled summaries, distributions, the highest and lowest units, correlations, relationships and trends.' },
+      { title: 'Maps and spatial dependence', fns: ['map', 'weights', 'connectivity', 'moran', 'lisa'], text: 'Interactive maps, continuous or in classes, of several years side by side or of the change; spatial weights, Moran’s I and LISA clusters.' },
+      { title: 'Convergence and transitions', fns: ['beta_convergence', 'sigma_convergence', 'convergence_clubs', 'transitions', 'spatial_transitions', 'lisa_transitions', 'rank_mobility'], text: 'Whether the units that started lower catch up, and who moved: β, σ and club convergence, Markov and spatial Markov transitions, and rank mobility.' },
+      { title: 'Inequality', fns: ['inequality', 'theil_decomposition'], text: 'Gini and Theil in each year with the Lorenz curve, and inequality between and within departments or provinces.' },
+      { title: 'Models and MGWR', fns: ['regression', 'panel_model', 'spatial_diagnostics', 'spatial_model', 'mgwr'], text: 'Least squares, panel estimators with a Hausman test, spatial models with direct and spillover effects, and local slopes that change from place to place.' },
+      { title: 'Build your own', fns: ['link', 'check', 'zonal', 'overlay', 'save'], text: 'Your tables and rasters on the observatory’s units, saved in its documented format.' },
+      { title: 'Go further', fns: ['for_expdpy', 'for_geometrics'], text: 'Labelled inputs for the companion packages: expdpy for specialised panel methods and geometrics for specialised spatial methods.' },
     ],
     links: [
-      { label: 'Tutorial notebook in Colab', url: COLAB_URL + 'geo4bolivia_quickstart.ipynb', kind: 'colab' },
-      { label: 'Three packages in Colab', url: COLAB_URL + 'three_packages.ipynb', kind: 'colab' },
-      { label: 'How the database works', url: REPO_URL + '/blob/main/docs/data-infrastructure.md', kind: 'docs' },
+      { label: 'Documentation', url: PACKAGE_DOCS_URL, kind: 'docs' },
+      { label: 'Get started in Colab', url: PACKAGE_COLAB_URL, kind: 'colab' },
+      { label: 'Articles', url: PACKAGE_DOCS_URL + 'articles/', kind: 'docs' },
+      { label: 'Function reference', url: PACKAGE_DOCS_URL + 'reference/', kind: 'docs' },
       { label: 'PyPI', url: 'https://pypi.org/project/geo4bolivia/', kind: 'pypi' },
-      { label: 'Source code', url: REPO_URL + '/tree/main/src/geo4bolivia', kind: 'github' },
+      { label: 'Source code', url: PACKAGE_REPO_URL, kind: 'github' },
     ],
-    related: ['three-packages', 'expdpy-package', 'geometrics-package', 'geo4bolivia-quickstart', 'municipalities343-sdg'],
+    related: ['geo4bolivia-quickstart', 'three-packages', 'expdpy-package', 'geometrics-package', 'municipalities343-sdg'],
   },
   {
     id: 'expdpy-package', type: 'package', section: 'tools',
     title: 'expdpy: explore and model panel data',
     scope: '!pip install -q geo4bolivia expdpy',
-    summary: 'A companion package for panel data: within/between variation, trajectories and transitions, then pooled, fixed and random effects, Hausman tests and clustered standard errors, each with a plain-language reading. geo4bolivia hands it Bolivian panels in one line.',
-    description: 'expdpy (a Python port of ExPanDaR) turns the everyday steps of panel-data research into single functions. Explore functions describe a panel’s structure, decompose variation into between and within components (xtsum), and chart trajectories, distributions, transitions, missing values and correlations. Analyze functions estimate pooled, between, fixed-effects, random-effects and correlated-random-effects models, run Hausman and joint tests, fit fixest-style regressions with fixed effects and clustered or Driscoll–Kraay standard errors, and cover IV, event studies and β-, σ- and club convergence. Learn functions simulate each concept from a known truth. Every result has an interactive figure or table and an interpret() method. The observatory’s datasets are exactly the long panels expdpy expects: geo.for_expdpy() hands them over, labelled and with the department of each municipality, in one line. The SDG Atlas gives two periods (~2012 and ~2024) for 343 units; night-time lights give a nine-year panel (2012–2020) for 333.',
+    summary: 'A companion package for specialised panel-data methods, beyond geo4bolivia’s built-in analyses: the split of variation between and within units, correlated random effects, instrumental variables, event studies and robust inference, each with a plain-language reading. geo4bolivia hands it Bolivian panels in one line.',
+    description: 'geo4bolivia runs the fundamental panel analyses itself: trends, regressions, and pooled, between, fixed- and random-effects models with a Hausman test. expdpy (a Python port of ExPanDaR) is its companion for going further with panels. Its explore functions describe a panel’s structure, decompose variation into between and within components (xtsum), and chart trajectories, distributions, transitions, missing values and correlations. Its analyze functions add correlated random effects, joint tests, fixest-style regressions with fixed effects and clustered or Driscoll–Kraay standard errors, wild-bootstrap inference, instrumental variables and event studies. Its learn functions simulate each concept from a known truth. Every result has an interactive figure or table and an interpret() method. The observatory’s datasets are exactly the long panels expdpy expects: geo.for_expdpy() hands them over, labelled and with the department of each municipality, in one line. The SDG Atlas gives two periods (~2012 and ~2024) for 343 units; night-time lights give a nine-year panel (2012–2020) for 333.',
     tags: ['Python', 'panel data', 'econometrics', 'fixed effects', 'ExPanDaR'],
     image: 'images/tools/expdpy-package.webp',
     imageAlt: 'Night-time lights per capita trajectories of 333 Bolivian municipalities, 2012–2020, with department means and the between/within split of their variation',
@@ -2433,13 +2333,14 @@ ex.analyze_panel_table(df, "index_sdg", ["ln_pop"]).etable` },
     features: [
       { title: 'Explore', fns: ['explore_panel_structure', 'explore_xtsum_table', 'explore_spaghetti_plot', 'explore_transition_matrix'], text: 'Panel structure, within/between variation, trajectories, distributions and transitions.' },
       { title: 'Panel models', fns: ['analyze_panel_table', 'analyze_hausman_test', 'analyze_cre_table'], text: 'Pooled, between, fixed, random and correlated random effects, side by side.' },
-      { title: 'Regressions & inference', fns: ['analyze_regression_table', 'analyze_coefficient_plot', 'analyze_robust_inference'], text: 'Fixed effects, clustered and Driscoll–Kraay errors, wild bootstrap, IV and event studies.' },
+      { title: 'Regressions & inference', fns: ['analyze_regression_table', 'analyze_coefficient_plot', 'analyze_robust_inference'], text: 'Fixed effects, clustered and Driscoll–Kraay errors, and wild-bootstrap inference.' },
+      { title: 'Causal designs', fns: ['analyze_iv_regression', 'analyze_panel_iv_regression', 'analyze_event_study'], text: 'Instrumental variables, in cross-sections and panels, and event studies of staggered treatments.' },
       { title: 'Convergence & Kuznets', fns: ['analyze_beta_convergence', 'analyze_sigma_convergence', 'analyze_kuznets_waves'], text: 'Non-spatial β-, σ- and club convergence; inequality–development waves.' },
       { title: 'Learn', fns: ['learn_pooled_vs_fixed_effects', 'explain'], text: 'Sandboxes that simulate from a known truth, and plain-language explainers.' },
     ],
     links: [
       { label: 'Documentation', url: 'https://cmg777.github.io/expdpy/', kind: 'docs' },
-      { label: 'Three packages in Colab', url: COLAB_URL + 'three_packages.ipynb', kind: 'colab' },
+      { label: 'One question, three packages in Colab', url: COLAB_URL + 'three_packages.ipynb', kind: 'colab' },
       { label: 'PyPI', url: 'https://pypi.org/project/expdpy/', kind: 'pypi' },
       { label: 'Source code', url: 'https://github.com/cmg777/expdpy', kind: 'github' },
       { label: 'No-code Analyze app', url: 'https://expdpy-analyze.streamlit.app', kind: 'launch' },
@@ -2450,8 +2351,8 @@ ex.analyze_panel_table(df, "index_sdg", ["ln_pop"]).etable` },
     id: 'geometrics-package', type: 'package', section: 'tools',
     title: 'geometrics: regional growth, convergence and inequality',
     scope: '!pip install -q geo4bolivia geometrics',
-    summary: 'A companion package for spatial analysis: maps, spatial dependence, β- and club convergence, spatial regressions, distribution dynamics and inequality, each with a plain-language reading. geo4bolivia hands it Bolivian data in one line.',
-    description: 'geometrics turns the standard analyses of regional growth into single functions built on the PySAL stack. Explore functions map variables, build spatial weights and test spatial dependence (Moran’s I, LISA clusters). Analyze functions estimate β-convergence (OLS and spatial models with LeSage–Pace impacts), σ-convergence over three or more periods, Phillips–Sul convergence clubs, Markov and spatial Markov transitions, Gini and Theil decompositions, and geographically weighted regressions. Learn functions simulate each concept from a known truth. Every result carries an interactive figure, a table and an interpret() method that explains it in words. geo4bolivia prepares any of the observatory’s datasets for it, with boundaries and labels: geo.for_geometrics(). With the two periods of the SDG Atlas 2026 it answers whether municipalities converged between ~2012 and ~2024, where progress clustered and whether gaps narrowed between or within departments.',
+    summary: 'A companion package for specialised spatial methods, beyond geo4bolivia’s built-in analyses: whether a spatial model’s results survive a change of weights matrix, and teaching sandboxes that simulate each concept of regional growth, convergence and inequality from a known truth. geo4bolivia hands it Bolivian data in one line.',
+    description: 'geo4bolivia’s own analysis functions (maps, Moran’s I and LISA clusters, β-, σ- and club convergence, Markov transitions, Gini and Theil, spatial models and MGWR) are ported from geometrics, so the fundamentals need only geo4bolivia. geometrics is its companion for going further with space, and it works on any regional panel, not only Bolivia’s. It re-estimates a spatial model under alternative weights matrices, to check that its spillovers do not hinge on who counts as a neighbour; fits single-bandwidth geographically weighted regressions next to the multiscale ones; and teaches each concept with sandboxes that simulate it from a known truth and with plain-language explainers. Every result carries an interactive figure, a table and an interpret() method that explains it in words. geo.for_geometrics() prepares any of the observatory’s datasets for it, with boundaries and labels. The tutorial below takes the Sustainable Development Index of the SDG Atlas 2026 through its main functions: where the index clusters, whether municipalities converged between ~2012 and ~2024, and whether gaps narrowed between or within departments.',
     tags: ['Python', 'spatial econometrics', 'convergence', 'inequality', 'PySAL'],
     image: 'images/tools/geometrics-package.webp',
     imageAlt: 'A LISA cluster map of the Sustainable Development Index across Bolivia’s 343 municipalities near 2024, with high-high clusters around La Paz, the Cochabamba–Chuquisaca valleys and the Chaco, and its Moran scatterplot (Moran’s I = 0.47)',
@@ -2526,13 +2427,13 @@ theil.fig` },
     features: [
       { title: 'Explore', fns: ['explore_choropleth_map', 'explore_moran_plot', 'explore_lisa_cluster_map'], text: 'Maps, spatial weights, Moran’s I and local clusters, over time.' },
       { title: 'Converge', fns: ['analyze_beta_convergence', 'analyze_sigma_convergence', 'analyze_convergence_clubs'], text: 'β-, σ- and club convergence, including spatial models.' },
-      { title: 'Model', fns: ['analyze_spatial_model', 'analyze_gwr', 'analyze_mgwr'], text: 'SAR, SEM, SLX and SDM with impacts; local regressions.' },
+      { title: 'Model', fns: ['analyze_spatial_model', 'analyze_spatial_model_by_weights', 'analyze_gwr'], text: 'SAR, SEM, SLX and SDM with impacts, their robustness across weights matrices, and local regressions.' },
       { title: 'Inequality & dynamics', fns: ['analyze_inequality_over_time', 'analyze_theil_decomposition', 'analyze_markov_transitions'], text: 'Gini and Theil (between and within groups), Markov and spatial Markov chains.' },
-      { title: 'Learn', fns: ['learn_beta_convergence', 'explain'], text: 'Simulations from a known truth and plain-language explainers for 30 topics.' },
+      { title: 'Learn', fns: ['learn_spatial_spillovers', 'learn_omitted_spatial_lag', 'learn_beta_convergence', 'explain'], text: 'Simulations from a known truth and plain-language explainers for 30 topics.' },
     ],
     links: [
       { label: 'Documentation', url: 'https://quarcs-lab.github.io/geometrics/', kind: 'docs' },
-      { label: 'Three packages in Colab', url: COLAB_URL + 'three_packages.ipynb', kind: 'colab' },
+      { label: 'One question, three packages in Colab', url: COLAB_URL + 'three_packages.ipynb', kind: 'colab' },
       { label: 'PyPI', url: 'https://pypi.org/project/geometrics/', kind: 'pypi' },
       { label: 'Source code', url: 'https://github.com/quarcs-lab/geometrics', kind: 'github' },
     ],
@@ -2543,8 +2444,8 @@ theil.fig` },
   {
     id: 'geo4bolivia-quickstart', type: 'notebook', section: 'tools',
     title: 'Find, load and understand Bolivia’s subnational data with geo4bolivia',
-    summary: 'The geo4bolivia tutorial as a Colab notebook: discover the datasets and their documentation, load panels with and without the package, describe and map a variable, compare ~2012 with ~2024, move data across scales, link your own table and build an indicator from a raster.',
-    description: 'This Colab notebook follows the tutorial of the geo4bolivia package step by step on the data of Bolivia’s 343 municipalities and indigenous autonomies. It searches the catalog, reads a dataset’s documentation, actual reference years and citation, and loads the same files as plain URLs and with the package, with names and departments. It describes education by period and by department and maps it interactively. It compares the two periods of the Sustainable Development Index: the index rose in 342 of the 343 units, by 10 points on average, and rose most where it started lowest (correlation −0.43). Aggregated with census-population weights, national multidimensional poverty fell from 0.133 to 0.033, and every department’s fell to between 18% and 32% of its 2012 value; night-time lights cover 333 of the 343 municipalities, as the coverage column shows. The notebook then links tables by department names in any spelling and by INE codes, shows how shared names and typos are reported, builds a market-access indicator from a raster with zonal statistics, spreads the 2024 census population onto a 25 km grid and saves the result in the observatory’s format.',
+    summary: 'A tour of the geo4bolivia package as a Colab notebook: discover the datasets and their documentation, load panels with and without the package, describe and map a variable, compare ~2012 with ~2024, move data across scales, link your own table, build an indicator from a raster, and take a first look at the built-in analyses.',
+    description: 'This Colab notebook introduces the geo4bolivia package step by step on the data of Bolivia’s 343 municipalities and indigenous autonomies. It searches the catalog, reads a dataset’s documentation, actual reference years and citation, and loads the same files as plain URLs and with the package, with names and departments. It describes education by period and by department and maps it interactively. It compares the two periods of the Sustainable Development Index: the index rose in 342 of the 343 units, by 10 points on average, and rose most where it started lowest (correlation −0.43). Aggregated with census-population weights, national multidimensional poverty fell from 0.133 to 0.033, and every department’s fell to between 18% and 32% of its 2012 value; night-time lights cover 333 of the 343 municipalities, as the coverage column shows. The notebook then links tables by department names in any spelling and by INE codes, shows how shared names and typos are reported, builds a market-access indicator from a raster with zonal statistics, spreads the 2024 census population onto a 25 km grid and saves the result in the observatory’s format. Its last part introduces the package’s built-in analyses, each in one call with an interactive figure and a reading of the result in words, and points to the package’s documentation site for the rest.',
     tags: ['geo4bolivia', 'quickstart', 'Python', 'Colab'],
     image: 'images/tools/geo4bolivia-quickstart.webp',
     imageAlt: 'Map of multidimensional poverty by Bolivian department in 2024, weighted by census population',
@@ -2552,8 +2453,9 @@ theil.fig` },
     links: [
       { label: 'Open in Colab', url: COLAB_URL + 'geo4bolivia_quickstart.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/geo4bolivia_quickstart.ipynb', kind: 'github' },
+      { label: 'Package documentation', url: PACKAGE_DOCS_URL, kind: 'docs' },
     ],
-    related: ['geo4bolivia-package', 'geo4bolivia-reference', 'three-packages', 'municipalities343-sdg01'],
+    related: ['geo4bolivia-package', 'three-packages', 'municipalities343-sdg01'],
   },
   {
     id: 'mpi-eda', type: 'notebook', section: 'tools',
@@ -2575,7 +2477,7 @@ theil.fig` },
     title: 'Exploratory spatial data analysis of poverty',
     summary: 'Is a municipality as poor as its neighbours? Moran’s I and LISA clusters of multidimensional poverty across 343 municipalities, in 2012 and 2024.',
     description: 'This Colab notebook maps the Multidimensional Poverty Index of the SDG Atlas of Bolivia 2026 in 2012 and 2024 and measures its spatial dependence with six-nearest-neighbour weights. Poverty fell by 73% on average, but it stays strongly clustered: Moran’s I is 0.45 in 2012 and 0.39 in 2024 (pseudo p = 0.001). At the 5% level, poverty hot spots fell from 43 to 27 and now concentrate where Chuquisaca, Potosí and Cochabamba meet; the Pando hot spot of 2012 has disappeared. Low-poverty clusters (70, then 71) moved towards Santa Cruz and Tarija.',
-    tags: ['ESDA', 'spatial autocorrelation', 'LISA', 'PySAL'],
+    tags: ['ESDA', 'spatial autocorrelation', 'LISA', 'geo4bolivia'],
     image: 'images/tools/esda.webp',
     imageAlt: 'LISA cluster map of multidimensional poverty in 2024: 27 high-poverty clusters where Chuquisaca, Potosí and Cochabamba meet and 71 low-poverty clusters, mostly around Santa Cruz',
     date: '2026-10-28', pinned: true,
@@ -2583,14 +2485,14 @@ theil.fig` },
       { label: 'Open in Colab', url: COLAB_URL + 'esda.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/esda.ipynb', kind: 'github' },
     ],
-    related: ['municipalities343-sdg01', 'mpi-esda-dependence', 'geometrics-package'],
+    related: ['municipalities343-sdg01', 'mpi-esda-dependence', 'geo4bolivia-package'],
   },
   {
     id: 'mpi-esda-dependence', type: 'notebook', section: 'tools',
     title: 'Spatial distribution and dependence of poverty',
     summary: 'Box-plot and natural-breaks maps of multidimensional poverty, with the spatial lag, Moran’s I and LISA clusters in 2012 and 2024.',
     description: 'This Colab notebook classifies Bolivia’s 343 municipalities and indigenous autonomies by multidimensional poverty in 2012 and 2024 with box-plot and Fisher–Jenks breaks: the median index fell from 0.227 to 0.053, and the box-plot high outliers rose from 2 to 12, led by TIOC-Raqaypampa and Poroma, which cut their poverty far less than the median unit. Spatial dependence stays strong with six-nearest-neighbour weights (Moran’s I, the slope of the spatial-lag regression, is 0.45 and then 0.39). At the 10% level, LISA finds 52 poverty hot spots in 2012 and 36 in 2024, concentrated in Potosí, Chuquisaca and Cochabamba, and 83 and 85 low-poverty clusters, increasingly in Santa Cruz.',
-    tags: ['ESDA', 'map classification', 'Moran’s I', 'PySAL'],
+    tags: ['ESDA', 'map classification', 'Moran’s I', 'geo4bolivia'],
     image: 'images/tools/esda-dependence.webp',
     imageAlt: 'Map of multidimensional poverty in 2024 across Bolivia’s 343 municipalities classified with box-plot breaks, with 12 high outliers',
     date: '2026-10-28', pinned: false,
@@ -2598,7 +2500,7 @@ theil.fig` },
       { label: 'Open in Colab', url: COLAB_URL + 'esda_dependence.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/esda_dependence.ipynb', kind: 'github' },
     ],
-    related: ['mpi-esda', 'municipalities343-sdg01'],
+    related: ['mpi-esda', 'municipalities343-sdg01', 'geo4bolivia-package'],
   },
   {
     id: 'mpi-esda-inequality', type: 'notebook', section: 'tools',
@@ -2613,28 +2515,28 @@ theil.fig` },
       { label: 'Open in Colab', url: COLAB_URL + 'esda_inequality.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/esda_inequality.ipynb', kind: 'github' },
     ],
-    related: ['municipalities343-sdg01', 'municipalities343-ntl', 'geometrics-package'],
+    related: ['municipalities343-sdg01', 'municipalities343-ntl', 'geo4bolivia-package'],
   },
   {
     id: 'mpi-esda-heterogeneity', type: 'notebook', section: 'tools',
-    title: 'Where do lights predict poverty? GWR and MGWR',
-    summary: 'Is night-time light linked to poverty in the same way everywhere? OLS, GWR and multiscale GWR of municipal poverty on lights per capita, for 2012 and 2024.',
-    description: 'This Colab notebook regresses the multidimensional poverty index of the SDG Atlas of Bolivia 2026 on log night-time lights per capita for the 333 municipalities with lights data, first in 2012 and then with poverty in 2024 on lights in 2020. One national slope explains 29% of the variation in 2012; a geographically weighted regression with an adaptive bisquare kernel of 46 neighbours raises R² to 0.63. A multiscale GWR, with bandwidths of 44 neighbours for the intercept and 64 for the slope, fits best (R² 0.65, lowest AICc). Every local slope is negative, but the link is almost five times stronger in Cochabamba than in Beni. By 2024 the link is a little weaker (national R² 0.25) and the slope’s bandwidth widens to 100 neighbours.',
-    tags: ['GWR', 'MGWR', 'spatial heterogeneity', 'night-time lights'],
+    title: 'Where do lights predict poverty? Multiscale GWR',
+    summary: 'Is night-time light linked to poverty in the same way everywhere? A national regression and a multiscale geographically weighted regression (MGWR) of municipal poverty on lights per capita, for 2012 and 2024.',
+    description: 'This Colab notebook regresses the multidimensional poverty index of the SDG Atlas of Bolivia 2026 on log night-time lights per capita for the 333 municipalities with lights data, first in 2012 and then with poverty in 2024 on lights in 2020. One national slope explains 29% of the variation in 2012. A multiscale geographically weighted regression (MGWR, with geo4bolivia’s geo.mgwr), which lets the intercept and the slope vary over space, each at its own scale, with bandwidths of 44 neighbours for the intercept and 64 for the slope, raises R² to 0.65. Every local slope is negative, but the link is almost five times stronger in Cochabamba than in Beni. By 2024 the link is a little weaker (national R² 0.25) and the slope’s bandwidth widens to 100 neighbours.',
+    tags: ['MGWR', 'spatial heterogeneity', 'night-time lights', 'geo4bolivia'],
     image: 'images/tools/esda-heterogeneity.webp',
-    imageAlt: 'Map of significant local GWR slopes of poverty on night-time lights in 2012 across 333 Bolivian municipalities (bandwidth 46), steepest in Cochabamba, Chuquisaca and Potosí',
+    imageAlt: 'Map of the significant local slopes of a multiscale GWR of poverty on night-time lights in 2012 across 333 Bolivian municipalities (bandwidth 64), steepest in Cochabamba, Chuquisaca and Potosí',
     date: '2026-10-28', pinned: false,
     links: [
       { label: 'Open in Colab', url: COLAB_URL + 'esda_heterogeneity.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/esda_heterogeneity.ipynb', kind: 'github' },
     ],
-    related: ['municipalities343-ntl', 'municipalities343-sdg01', 'geometrics-package'],
+    related: ['municipalities343-ntl', 'municipalities343-sdg01', 'geo4bolivia-package'],
   },
   {
     id: 'mpi-eda-esda', type: 'notebook', section: 'tools',
     title: 'Poverty in Bolivia: an extended EDA and ESDA',
-    summary: 'Exploratory and spatial analysis of multidimensional poverty in 343 municipalities, 2012 and 2024: correlates, clusters, bivariate LISA with night-time lights, inequality and GWR.',
-    description: 'This Colab notebook uses the SDG Atlas of Bolivia 2026 to explore multidimensional poverty in 343 municipalities and indigenous autonomies around the 2012 and 2024 censuses. The municipal index fell from an average of 0.234 to 0.063, in every unit, but the ranking barely changed (rank correlation 0.86). Poverty moves most closely with electricity coverage and telephones (Spearman about −0.9) and is strongly clustered (Moran’s I 0.45 in 2012, 0.39 in 2024), with hot spots in the Chuquisaca–Potosí–Cochabamba valleys. A bivariate LISA on the 333 units with lights shows that poor municipalities tend to have dark neighbours (bivariate Moran’s I −0.26). Relative inequality rose as poverty fell (Gini 0.25 to 0.37), and a GWR shows that the lights–poverty link is negative everywhere but strongest in the Andean valleys.',
+    summary: 'Exploratory and spatial analysis of multidimensional poverty in 343 municipalities, 2012 and 2024: correlates, clusters, bivariate LISA with night-time lights, inequality and a multiscale GWR.',
+    description: 'This Colab notebook uses the SDG Atlas of Bolivia 2026 to explore multidimensional poverty in 343 municipalities and indigenous autonomies around the 2012 and 2024 censuses. The municipal index fell from an average of 0.234 to 0.063, in every unit, but the ranking barely changed (rank correlation 0.86). Poverty moves most closely with electricity coverage and telephones (Spearman about −0.9) and is strongly clustered (Moran’s I 0.45 in 2012, 0.39 in 2024), with hot spots in the Chuquisaca–Potosí–Cochabamba valleys. A bivariate LISA on the 333 units with lights shows that poor municipalities tend to have dark neighbours (bivariate Moran’s I −0.26). Relative inequality rose as poverty fell (Gini 0.25 to 0.37), and a multiscale geographically weighted regression (MGWR) shows that the lights–poverty link is negative everywhere but strongest in the central-southern valleys.',
     tags: ['EDA', 'ESDA', 'bivariate LISA', 'infrastructure'],
     image: 'images/tools/eda-esda.webp',
     imageAlt: 'Bivariate LISA map of 333 Bolivian municipalities relating each one’s poverty in 2012 to its neighbours’ night-time lights',
@@ -2643,13 +2545,13 @@ theil.fig` },
       { label: 'Open in Colab', url: COLAB_URL + 'eda_esda.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/eda_esda.ipynb', kind: 'github' },
     ],
-    related: ['municipalities343-sdg01', 'mpi-esda', 'mpi-esda-heterogeneity'],
+    related: ['municipalities343-sdg01', 'mpi-esda', 'mpi-esda-heterogeneity', 'geo4bolivia-package'],
   },
   {
     id: 'three-packages', type: 'notebook', section: 'tools',
     title: 'One question, three packages: did Bolivia’s municipalities converge?',
-    summary: 'A guided tour of the observatory’s three Python packages on one question: did the Sustainable Development Index of Bolivia’s 343 municipalities converge between ~2012 and ~2024? geo4bolivia finds and prepares the data, expdpy explores and models the panel, and geometrics maps its geography.',
-    description: 'This Colab notebook shows how the three packages fit together. With geo4bolivia it searches the catalog, reads the documentation of the SDG Atlas 2026 (sources, license, actual years), loads the Sustainable Development Index with each municipality’s department, summarises it, computes every unit’s change and rank change, aggregates it to departments with census-population weights and maps it. With expdpy it splits the variation into differences between municipalities and changes within them, follows trajectories by department, and compares pooled, fixed- and random-effects models of the index on census population with a Hausman test. With geometrics it measures spatial clustering in both periods (Moran’s I, LISA), estimates β-convergence with and without a spatial lag, and decomposes inequality between and within departments. Each step ends with a plain-language reading of the result.',
+    summary: 'One question, did the Sustainable Development Index of Bolivia’s 343 municipalities converge between ~2012 and ~2024?, answered with geo4bolivia alone: load, map, β-convergence, inequality and spatial clusters. Then one or two specialised steps with each companion package: expdpy for panels and geometrics for space.',
+    description: 'This Colab notebook answers the question with geo4bolivia alone and then shows where its two companion packages go further. With geo4bolivia it finds and loads the Sustainable Development Index of the SDG Atlas 2026, maps both periods in common classes, tests β-convergence, compares inequality in the two periods and locates the spatial clusters, each in one call that ends with a plain-language reading of the result. It then hands the same panel to expdpy (geo.for_expdpy) for one or two specialised panel steps, such as the split of the variation into differences between municipalities and changes within them, and to geometrics (geo.for_geometrics) for one or two specialised spatial steps, such as checking that a spatial model’s results do not depend on the choice of weights matrix.',
     tags: ['geo4bolivia', 'expdpy', 'geometrics', 'convergence', 'SDGs'],
     image: 'images/tools/three-packages.webp',
     imageAlt: 'Three linked panels: a search of the catalog with geo4bolivia, the trajectories of the Sustainable Development Index by department with expdpy, and a LISA cluster map of Bolivia’s 343 municipalities with geometrics',
@@ -2661,26 +2563,11 @@ theil.fig` },
     related: ['geo4bolivia-package', 'expdpy-package', 'geometrics-package', 'sdg-dynamics', 'municipalities343-sdg'],
   },
   {
-    id: 'geo4bolivia-reference', type: 'reference', section: 'tools',
-    title: 'geo4bolivia function reference',
-    summary: 'Every function of the geo4bolivia Python package, in the order of a typical analysis: what it does, its parameters and what it returns, with an example that runs in Google Colab on Bolivia’s data.',
-    description: 'The reference of the geo4bolivia package, generated from its documentation so that it always matches the released code. Functions are grouped as in the tutorial: discover the data, load it, understand it, move it across scales, build your own indicators and hand them to the companion packages. Every function that reads data also takes ref=, a git tag such as "v0.5.0", to read the data exactly as they were in that release.',
-    tags: ['Python', 'reference', 'API', 'documentation'],
-    image: 'images/tools/geo4bolivia-package.webp',
-    imageAlt: 'Three stacked map layers of Bolivia, 9 departments, 113 provinces and 343 municipalities, linked by geo IDs, beside a code snippet that loads the data',
-    date: '2026-11-17',
-    links: [
-      { label: 'PyPI', url: 'https://pypi.org/project/geo4bolivia/', kind: 'pypi' },
-      { label: 'Source code', url: REPO_URL + '/tree/main/src/geo4bolivia', kind: 'github' },
-    ],
-    related: ['geo4bolivia-package', 'geo4bolivia-quickstart', 'three-packages'],
-  },
-  {
     id: 'sdg-dynamics', type: 'notebook', section: 'tools',
     title: 'Dynamics of sustainable development in Bolivia, 2012–2024',
     summary: 'How the Sustainable Development Index and its 15 goals changed across Bolivia’s 343 municipalities and indigenous autonomies between the 2012 and 2024 censuses: progress, convergence, rank mobility and spatial clustering.',
-    description: 'Using the SDG Atlas of Bolivia 2026 loaded with geo4bolivia, this Colab notebook compares the Sustainable Development Index (IDS), its 15 goal indices and multidimensional poverty near the 2012 and 2024 censuses. The IDS rose in 342 of the 343 units, by 10 points on average, driven by infrastructure, education, decent work and poverty reduction, while climate action retreated as more families were hit by extreme events and fires emitted more CO₂. With geometrics it estimates β-convergence (the units that started lower gained more, with a half-life of about 20 years) and compares dispersion across periods: gaps in the IDS narrowed, and poverty fell most where it was highest, although relative gaps in poverty widened. It also measures rank mobility (Spearman 0.84) and uses Moran’s I and LISA clusters to show that progress concentrated around El Alto, in the Cochabamba and Chuquisaca valleys and in the north, and lagged in eastern Santa Cruz.',
-    tags: ['SDGs', 'convergence', 'spatial analysis', 'geometrics'],
+    description: 'Using the SDG Atlas of Bolivia 2026 loaded with geo4bolivia, this Colab notebook compares the Sustainable Development Index (IDS), its 15 goal indices and multidimensional poverty near the 2012 and 2024 censuses. The IDS rose in 342 of the 343 units, by 10 points on average, driven by infrastructure, education, decent work and poverty reduction, while climate action retreated as more families were hit by extreme events and fires emitted more CO₂. With geo4bolivia’s own functions it estimates β-convergence (the units that started lower gained more, with a half-life of about 20 years) and compares dispersion across periods: gaps in the IDS narrowed, and poverty fell most where it was highest, although relative gaps in poverty widened. It also measures rank mobility (Spearman 0.84) and uses Moran’s I and LISA clusters to show that progress concentrated around El Alto, in the Cochabamba and Chuquisaca valleys and in the north, and lagged in eastern Santa Cruz.',
+    tags: ['SDGs', 'convergence', 'spatial analysis', 'geo4bolivia'],
     image: 'images/tools/sdg-dynamics.webp',
     imageAlt: 'Scatter plot of the change in the Sustainable Development Index between ~2012 and ~2024 against its initial value for 343 Bolivian municipalities, with a falling fitted line (r = −0.43): the units that started lower gained more',
     date: '2026-11-17', pinned: true,
@@ -2688,7 +2575,7 @@ theil.fig` },
       { label: 'Open in Colab', url: COLAB_URL + 'sdg_dynamics.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/sdg_dynamics.ipynb', kind: 'github' },
     ],
-    related: ['municipalities343-sdg', 'geometrics-package', 'municipalities343-sdg01', 'mpi-esda'],
+    related: ['municipalities343-sdg', 'geo4bolivia-package', 'municipalities343-sdg01', 'mpi-esda'],
   },
   {
     id: 'embeddings-mpi-ml', type: 'notebook', section: 'tools',
@@ -2801,201 +2688,6 @@ theil.fig` },
 ];
 
 
-// ====================================================================
-// One runnable example per function of the package, for the function reference page
-// (tools/geo4bolivia-reference/). tests/test_core.py checks that every public function has one.
-// ====================================================================
-const RASTER_SETUP = `!pip install -q "geo4bolivia[raster]"
-import numpy as np
-import rasterio
-from rasterio.transform import from_bounds
-import geo4bolivia as geo
-import plotly.express as px
-
-# A small raster of rough distance to La Paz (km); use your own GeoTIFF instead
-x0, y0, x1, y1 = geo.boundaries("country").total_bounds
-lon, lat = np.meshgrid(np.linspace(x0, x1, 400), np.linspace(y1, y0, 400))
-km = 111 * np.hypot(lon + 68.13, lat + 16.50)
-with rasterio.open("dist.tif", "w", driver="GTiff", width=400, height=400,
-                   count=1, dtype="float32", crs="EPSG:4326",
-                   transform=from_bounds(x0, y0, x1, y1, 400, 400)) as f:
-    f.write(km.astype("float32"), 1)`;
-
-export const API_EXAMPLES = {
-  datasets: `${PYTHON_SETUP}
-
-cat = geo.datasets()
-display(cat[["dataset", "scale", "title", "years", "units", "variables"]])
-px.bar(cat, x="dataset", y="units", color="years", hover_name="title",
-       title="Units with data per dataset")`,
-  search: `${PYTHON_SETUP}
-
-hits = geo.search("education women")       # every word must match
-display(hits[["dataset", "variable", "label", "years"]])
-df = geo.load(hits["dataset"][0], variables=hits["variable"][0], names=True)
-px.box(df, x="year", y=hits["variable"][0], hover_name="name",
-       labels=geo.labels(df), title=hits["label"][0])`,
-  info: `${PYTHON_SETUP}
-
-geo.info("sdg06")          # description, coverage, sources, license, notes`,
-  dictionary: `${PYTHON_SETUP}
-
-d = geo.dictionary("sdg03")
-display(d[["variable", "label", "unit", "aggregation", "reference_years"]])`,
-  reference_years: `${PYTHON_SETUP}
-
-ry = geo.reference_years("sdg03")          # stored year -> actual years
-ry[ry["year"] == 2024]`,
-  cite: `${PYTHON_SETUP}
-
-print(geo.cite("sdg01"))                   # APA, then the sources' credits
-print(geo.cite("sdg01", style="bibtex"))`,
-  load: `${PYTHON_SETUP}
-
-df = geo.load("sdg05", variables=["index_sdg5"], years=[2012, 2024],
-              groups=["department"])
-px.histogram(df, x="index_sdg5", color="year", barmode="overlay",
-             labels=geo.labels(df), title="Gender equality index")`,
-  units: `${PYTHON_SETUP}
-
-m = geo.units("municipality")              # names, parents, INE codes, areas
-display(m[["geo_id", "name", "ine_code", "province_id", "department_id"]].head())
-px.histogram(m, x="area_km2", log_y=True, title="Municipal areas (km²)")`,
-  boundaries: `${PYTHON_SETUP}
-
-dep = geo.boundaries("department")
-px.choropleth_map(dep, geojson=dep.geometry, locations=dep.index,
-                  color="name", hover_name="name",
-                  center={"lat": -16.3, "lon": -64}, zoom=4,
-                  title="Bolivia's nine departments")`,
-  crosswalk: `${PYTHON_SETUP}
-
-xw = geo.crosswalk("municipality", "department")
-n = xw.groupby("geo_id_to", as_index=False).size()
-n["department"] = n["geo_id_to"].map(geo.units("department")
-                                     .set_index("geo_id")["name"])
-px.bar(n, x="department", y="size", title="Municipalities per department")`,
-  scales: `${PYTHON_SETUP}
-
-geo.scales()                               # ids, labels, parents, ID patterns`,
-  ancestors: `${PYTHON_SETUP}
-
-print(geo.ancestors("municipality"))       # province, department, country`,
-  scale_of: `${PYTHON_SETUP}
-
-print(geo.scale_of("BO-04-17-04"), geo.scale_of("BO-04"))`,
-  config: `${PYTHON_SETUP}
-
-cfg = geo.config()                         # project.yaml: repository, CRS...
-print(cfg["repository"], cfg["equal_area_crs"])`,
-  labels: `${PYTHON_SETUP}
-
-df = geo.load("sdg07", variables=["sdg7_1_cae", "sdg7_1_elc"], years=2024)
-px.scatter(df, x="sdg7_1_cae", y="sdg7_1_elc", labels=geo.labels(df),
-           title="Electricity and clean cooking, ~2024")`,
-  describe: `${PYTHON_SETUP}
-
-df = geo.load("sdg06", groups=["department"])
-display(geo.describe(df))                          # per period
-s = geo.describe(df, variables="index_sdg6", by="department")
-px.bar(s, x="department", y="mean", error_y="std", labels={"mean": s["label"][0]},
-       title="Clean water and sanitation index by department (both periods)")`,
-  add_names: `${PYTHON_SETUP}
-
-df = geo.load("sdg08", variables="index_sdg8", years=2024)
-df = geo.add_names(df, groups=["department", "province"])
-px.box(df, x="department", y="index_sdg8", hover_name="name",
-       labels=geo.labels(df), title="Decent work index, ~2024")`,
-  change: `${PYTHON_SETUP}
-
-df = geo.load("sdg01", variables="sdg1_2_mpi", groups=["department"])
-chg = geo.change(df, "sdg1_2_mpi")
-px.scatter(chg, x="sdg1_2_mpi_2012", y="sdg1_2_mpi_change",
-           color="department", hover_name="name", labels=geo.labels(chg),
-           title="Poverty fell most where it was highest")`,
-  map: `${PYTHON_SETUP}
-
-df = geo.load("sdg11", variables="index_sdg11")
-geo.map(df, "index_sdg11", year=2024)      # last year by default`,
-  aggregate: `${PYTHON_SETUP}
-
-df = geo.load("sdg04", variables="index_sdg4")
-up = geo.aggregate(df, to=["department", "country"], dataset="sdg04")
-up = geo.add_names(up[up["scale"] == "department"])
-px.bar(up, x="name", y="index_sdg4", color="year", barmode="group",
-       labels=geo.labels(up), title="Education index by department (weighted)")`,
-  combine: `${PYTHON_SETUP}
-
-dep = geo.combine(["sdg03", "sdg04"], scale="department", years=2024)
-dep = geo.add_names(dep)
-px.scatter(dep, x="index_sdg3", y="index_sdg4", text="name",
-           labels=geo.labels(dep), title="Health and education, ~2024")`,
-  overlay: `${PYTHON_SETUP}
-import geopandas as gpd
-import numpy as np
-from shapely.geometry import box
-
-crs = geo.config()["equal_area_crs"]       # metres, equal area
-x0, y0, x1, y1 = geo.boundaries("country").to_crs(crs).total_bounds
-size = 50_000                              # 50 km cells
-cells = [box(x, y, x + size, y + size) for x in np.arange(x0, x1, size)
-         for y in np.arange(y0, y1, size)]
-grid = gpd.GeoDataFrame({"cell": range(len(cells))}, geometry=cells, crs=crs)
-grid = grid.to_crs("EPSG:4326")
-pop = geo.load("sdg", variables="population", years=2024)
-cells = geo.overlay(pop, grid, extensive=["population"], id_col="cell")
-px.histogram(cells, x="population", title="Population on a 50 km grid")`,
-  overlay_weights: `${PYTHON_SETUP}
-
-w = geo.overlay_weights("municipality", "department")
-px.histogram(w, x="share_of_from", log_y=True,
-             title="Share of each municipality inside each department")`,
-  link: `${PYTHON_SETUP}
-import pandas as pd
-
-mine = pd.DataFrame({"municipio": ["SUCRE", "el alto", "Cobija"],
-                     "clinics": [41, 63, 12]})        # made-up values
-mine = geo.link(mine, scale="municipality", on="municipio")
-by_code = geo.link(pd.DataFrame({"cod": [20101]}), scale="municipality",
-                   on="cod", key="mun_id")            # INE code -> geo_id
-geo.add_names(mine)`,
-  check: `${PYTHON_SETUP}
-import pandas as pd
-
-df = pd.DataFrame({"geo_id": ["BO-04-17-04", "BO-04-17-04", "BO-99"],
-                   "year": [2024, 2024, 2024], "x": [1, 2, 3]})
-geo.check(df, scale="municipality")        # unknown id, duplicate rows`,
-  zonal: `${RASTER_SETUP}
-
-dist = geo.zonal("dist.tif", scale="municipality", stats=["mean", "max"],
-                 name="dist_lpz", year=2024)
-geo.map(dist, "dist_lpz_mean", title="Mean distance to La Paz (km)")`,
-  save: `${RASTER_SETUP}
-
-dist = geo.zonal("dist.tif", scale="province", stats=["mean"],
-                 name="dist_lpz", year=2024)
-pkg = geo.save(dist, "distance", scale="province", directory="my_data",
-               title="Distance to La Paz",
-               variables={"dist_lpz_mean": {"label": "Distance to La Paz (km)",
-                          "unit": "km", "aggregation": "none"}})
-print(pkg["resources"][0]["schema"]["fields"][2])`,
-  for_expdpy: `!pip install -q geo4bolivia expdpy
-import geo4bolivia as geo
-import expdpy as ex
-
-df, df_def = geo.for_expdpy("sdg", variables="index_sdg", groups=["department"])
-df = ex.set_labels(df, df_def, set_panel=True)
-ex.explore_trend_plot_by_group(df, group_var="department", var="index_sdg").fig`,
-  for_geometrics: `!pip install -q geo4bolivia geometrics
-import geo4bolivia as geo
-import geometrics as gm
-
-gdf, df, df_dict = geo.for_geometrics("sdg", variables="index_sdg")
-df = gm.set_labels(df, df_dict, set_panel=True)
-w = gm.make_weights(gdf, method="queen")
-gm.explore_moran_plot(df, "index_sdg", gdf=gdf, w=w, period=2024).fig`,
-};
-
 export const PEOPLE = {
   core: [
     { name: 'Carlos Mendez', affiliation: 'Nagoya University, Japan', avatar: 'images/people/carlos-mendez.webp', website: 'https://carlos-mendez.org' },
@@ -3010,12 +2702,12 @@ export const CONTACTS = [
   { name: 'Carlos Mendez', email: 'carlos.mendez.n9 [at] f.mail.nagoya-u.ac.jp' },
 ];
 
-export const CITATION_APA = 'Mendez, C. (2026). GeoDevelopment Observatory of Bolivia. https://quarcs-lab.github.io/geo4bolivia/';
+export const CITATION_APA = 'Mendez, C. (2026). GeoDevelopment Observatory of Bolivia. https://quarcs-lab.github.io/gdo4bolivia/';
 export const CITATION_BIB = `@misc{gdobolivia2026,
   author       = {Mendez, Carlos},
   title        = {{GeoDevelopment Observatory of Bolivia}},
   year         = {2026},
-  howpublished = {\\url{https://quarcs-lab.github.io/geo4bolivia/}},
-  note         = {Data and code: https://github.com/quarcs-lab/geo4bolivia}
+  howpublished = {\\url{https://quarcs-lab.github.io/gdo4bolivia/}},
+  note         = {Data and code: https://github.com/quarcs-lab/gdo4bolivia}
 }`;
 

@@ -6,10 +6,10 @@ authors:
   - family-names: Mendez
     given-names: Carlos
     affiliation: "Nagoya University"
-version: 0.5.0
-date-released: 2026-11-17
-url: "https://quarcs-lab.github.io/geo4bolivia/"
-repository-code: "https://github.com/quarcs-lab/geo4bolivia"
+version: 0.6.0
+date-released: 2026-11-20
+url: "https://quarcs-lab.github.io/gdo4bolivia/"
+repository-code: "https://github.com/quarcs-lab/gdo4bolivia"
 license: MIT
 keywords:
   - Bolivia

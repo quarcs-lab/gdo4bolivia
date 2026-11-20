@@ -3,9 +3,9 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
-  SITE_URL, REPO_URL, RAW_URL, COLAB_URL, COLAB_EMPTY, DEFAULT_TITLE, SITE_NAME, SHORT_NAME, CITE_AUTHORS,
+  SITE_URL, REPO_URL, PACKAGE_DOCS_URL, RAW_URL, COLAB_URL, COLAB_EMPTY, DEFAULT_TITLE, SITE_NAME, SHORT_NAME, CITE_AUTHORS,
   CONTENT_REGISTRY, REDIRECTS, PEOPLE, CONTACTS, CITATION_APA, CITATION_BIB,
-  PACKAGE_WORKFLOW, THREE_PACKAGES_EXAMPLE, API_EXAMPLES,
+  PACKAGE_WORKFLOW, THREE_PACKAGES_EXAMPLE,
 } from './content.js';
 
 // Units per scale in geo/units.csv, injected by site/build.mjs
@@ -142,7 +142,8 @@ const parseLocation = () => {
   const rest = pathname.startsWith(BASE_PATH) ? pathname.slice(BASE_PATH.length) : pathname.replace(/^\//, '');
   const [section, id] = rest.split('/').filter((p) => p && p !== 'index.html');
   const moved = REDIRECTS[`${section}/${id}`];
-  if (moved) { window.history.replaceState(null, '', `${BASE_PATH}${moved}/${hash}`); return parseLocation(); }
+  if (moved && /^https?:/.test(moved)) window.location.replace(moved);   // the page left the site
+  else if (moved) { window.history.replaceState(null, '', `${BASE_PATH}${moved}/${hash}`); return parseLocation(); }
   if (section && id) return { view: 'detail', section, id: decodeURIComponent(id) };
   if (section) return { view: 'detail', section, id: '' };   // a section alone, e.g. "indicators/"
   return { view: 'home', anchor: hash.replace(/^#/, '') };
@@ -258,7 +259,6 @@ const TYPE_STYLE = {
   app: { label: 'Web app', text: 'text-orange-300', bg: 'bg-orange-400/10', ring: 'border-orange-400/30', glow: 'hover:border-orange-400/40', icon: Globe },
   insight: { label: 'Insight', text: 'text-rose-300', bg: 'bg-rose-400/10', ring: 'border-rose-400/30', glow: 'hover:border-rose-400/40', icon: Lightbulb },
   event: { label: 'Event', text: 'text-emerald-300', bg: 'bg-emerald-400/10', ring: 'border-emerald-400/30', glow: 'hover:border-emerald-400/40', icon: Calendar },
-  reference: { label: 'Reference', text: 'text-sand-300', bg: 'bg-sand-400/10', ring: 'border-sand-400/30', glow: 'hover:border-sand-400/40', icon: FileText },
 };
 
 const LINK_ICON = {
@@ -1212,8 +1212,9 @@ const ItemCard = ({ item, showImage = true }) => {
   );
 };
 
-// The three Python packages as one workflow (home page and every package page): geo4bolivia first,
-// then expdpy and geometrics. `current` marks the package whose page shows it.
+// The three Python packages (home page and every package page): geo4bolivia, the place to start,
+// covers the fundamentals; expdpy and geometrics are its companions for specialised methods.
+// `current` marks the package whose page shows it.
 const PACKAGE_PREFIX = { 'geo4bolivia-package': 'geo', 'expdpy-package': 'ex', 'geometrics-package': 'gm' };
 const PackageWorkflow = ({ current, compact = false }) => (
   <ol className={`grid grid-cols-1 gap-4 ${compact ? 'sm:grid-cols-3' : 'md:grid-cols-3 md:gap-6'}`}>
@@ -1225,8 +1226,8 @@ const PackageWorkflow = ({ current, compact = false }) => (
           <a href={itemHref(item)} aria-current={here ? 'page' : undefined}
              className={`flex flex-col h-full rounded-xl border p-5 transition-colors ${here ? 'border-sand-400/60 bg-sand-400/10' : step.flagship ? 'border-sand-400/35 bg-sand-400/[0.06] hover:border-sand-400/60' : 'border-white/10 bg-white/[0.03] hover:border-sand-400/40'}`}>
             <div className={`flex gap-2 mb-3 ${compact ? 'flex-col items-start' : 'items-center justify-between'}`}>
-              <span className="font-mono text-xs text-brand-turquoise">Step {i + 1}</span>
-              {step.flagship && <span className="text-[10px] font-bold uppercase tracking-widest text-sand-200 bg-sand-400/15 border border-sand-400/30 rounded-full px-2 py-0.5">Flagship · start here</span>}
+              <span className="font-mono text-xs text-brand-turquoise">{step.flagship ? 'Start here' : 'Go further'}</span>
+              {step.flagship && <span className="text-[10px] font-bold uppercase tracking-widest text-sand-200 bg-sand-400/15 border border-sand-400/30 rounded-full px-2 py-0.5">Flagship</span>}
               {here && !step.flagship && <span className="text-[10px] font-bold uppercase tracking-widest text-salt-300">This package</span>}
             </div>
             <h4 className="text-xl font-bold text-white font-mono">{step.name}</h4>
@@ -1236,7 +1237,7 @@ const PackageWorkflow = ({ current, compact = false }) => (
               {step.fns.map((fn) => <code key={fn} className="max-w-full break-all text-[11px] font-mono text-sand-200 bg-sand-400/10 px-1.5 py-0.5 rounded">{PACKAGE_PREFIX[step.id]}.{fn}()</code>)}
             </div>
           </a>
-          {!compact && i < PACKAGE_WORKFLOW.length - 1 && (
+          {!compact && step.flagship && i < PACKAGE_WORKFLOW.length - 1 && (
             <span className="hidden md:flex absolute top-1/2 -right-[19px] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-lagoon-900 border border-white/15 items-center justify-center text-salt-300" aria-hidden="true">
               <ArrowRight size={14} />
             </span>
@@ -1278,12 +1279,13 @@ const IndicatorsSection = () => {
           <div className="mb-12">
             <div className="flex flex-wrap items-end justify-between gap-4 mb-5">
               <div className="max-w-3xl">
-                <h3 className="text-2xl font-bold tracking-tight text-white">Start with the Python packages: one workflow, three packages</h3>
-                <p className="text-salt-300 leading-relaxed mt-2">Every indicator below is meant to be used through <a className="text-brand-turquoise hover:underline" href={itemHref(REGISTRY_BY_ID['geo4bolivia-package'])}>geo4bolivia</a>: it finds the data, explains it and prepares it, and then hands it, labelled, to expdpy for panel econometrics and geometrics for spatial analysis. All three run in Google Colab.</p>
+                <h3 className="text-2xl font-bold tracking-tight text-white">Start with geo4bolivia, go further with its companions</h3>
+                <p className="text-salt-300 leading-relaxed mt-2">Every indicator below is meant to be used through <a className="text-brand-turquoise hover:underline" href={itemHref(REGISTRY_BY_ID['geo4bolivia-package'])}>geo4bolivia</a>: it finds, loads and maps the data and runs the fundamental analyses itself, from spatial dependence, convergence and inequality to regression, spatial models and MGWR. For specialised methods it hands its panels, labelled, to two companion packages: expdpy for panels and geometrics for space. All three run in Google Colab.</p>
               </div>
               <div className="flex flex-wrap gap-2">
-                <a href={itemHref(REGISTRY_BY_ID['three-packages'])} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-rose text-white text-sm font-semibold hover:bg-brand-roseHover transition-colors">The workflow in one notebook <ArrowRight size={14} /></a>
-                <a href={itemHref(REGISTRY_BY_ID['geo4bolivia-reference'])} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/15 text-salt-200 text-sm font-semibold hover:border-white/30 hover:text-white transition-colors">Function reference</a>
+                <a href={itemHref(REGISTRY_BY_ID['three-packages'])} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-rose text-white text-sm font-semibold hover:bg-brand-roseHover transition-colors">One question in one notebook <ArrowRight size={14} /></a>
+                <a href={PACKAGE_DOCS_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/15 text-salt-200 text-sm font-semibold hover:border-white/30 hover:text-white transition-colors">Documentation<span className="sr-only"> of geo4bolivia (opens in a new tab)</span></a>
+                <a href={`${PACKAGE_DOCS_URL}reference/`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/15 text-salt-200 text-sm font-semibold hover:border-white/30 hover:text-white transition-colors">Function reference<span className="sr-only"> of geo4bolivia (opens in a new tab)</span></a>
               </div>
             </div>
             <PackageWorkflow />
@@ -1548,7 +1550,7 @@ const CiteSection = () => (
             <h3 className="font-bold text-salt-200 text-sm uppercase tracking-wide">APA</h3>
             <CopyButton text={CITATION_APA} />
           </div>
-          <p className="text-salt-300">Mendez, C. (2026). <em>GeoDevelopment Observatory of Bolivia</em>. https://quarcs-lab.github.io/geo4bolivia/</p>
+          <p className="text-salt-300">Mendez, C. (2026). <em>GeoDevelopment Observatory of Bolivia</em>. https://quarcs-lab.github.io/gdo4bolivia/</p>
         </div>
         <CodeBlock title="BibTeX" language="bibtex" code={CITATION_BIB} />
       </AnimateIn>
@@ -1999,9 +2001,9 @@ const IndicatorDetail = ({ item }) => {
   );
 };
 
-// A package page: install, quickstart, a step-by-step tutorial, the three-package workflow and its example
+// A package page: about, the three packages, install, quickstart, a step-by-step tutorial (if the entry
+// has one), one question through the three packages, and what the package does
 const PackageDetail = ({ item }) => {
-  const reference = item.reference && REGISTRY_BY_ID[item.reference];
   const steps = item.tutorial || [];
   const notebook = REGISTRY_BY_ID['three-packages'];
   const here = itemHref(item);
@@ -2032,13 +2034,6 @@ const PackageDetail = ({ item }) => {
           </ol>
         </AsideCard>
       )}
-      {reference && (
-        <AsideCard title="Reference">
-          <a href={itemHref(reference)} className="group flex items-center justify-between gap-2 text-sm font-semibold text-brand-turquoise hover:text-white">
-            Every function, with an example <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-          </a>
-        </AsideCard>
-      )}
       <AsideCard title="Open">
         <div className="flex flex-col gap-2">{item.links.map((l, i) => <LinkButton key={l.url} link={l} primary={i === 0} />)}</div>
       </AsideCard>
@@ -2048,9 +2043,11 @@ const PackageDetail = ({ item }) => {
       <figure className="rounded-xl overflow-hidden border border-white/10 bg-lagoon-900">
         <img src={item.image} alt={item.imageAlt} className="w-full h-auto" />
       </figure>
-      <Block title="About this package" id="p-about"><p className="text-salt-300 leading-relaxed">{item.description}</p></Block>
-      <Block title="One workflow, three packages" id="p-flow">
-        <p className="text-salt-300 leading-relaxed mb-6">The observatory’s three Python packages work as one workflow: geo4bolivia finds, explains and prepares the data; expdpy explores and models it as a panel; geometrics analyses its geography. geo4bolivia hands its data to the other two in one line (geo.for_expdpy, geo.for_geometrics).</p>
+      <Block title="About this package" id="p-about">
+        <div className="space-y-4">{item.description.split(/\n\s*\n/).map((para) => <p key={para} className="text-salt-300 leading-relaxed">{para}</p>)}</div>
+      </Block>
+      <Block title="Start with geo4bolivia, go further with its companions" id="p-flow">
+        <p className="text-salt-300 leading-relaxed mb-6">geo4bolivia is the place to start: it finds, loads and maps the data and runs the fundamental analyses itself (spatial dependence, convergence, inequality, regression and spatial models, MGWR). expdpy and geometrics are its companions for specialised methods, with panels and with space; geo4bolivia hands them any panel in one line (geo.for_expdpy, geo.for_geometrics).</p>
         <PackageWorkflow current={item.id} compact />
       </Block>
       <Block title="Install" id="p-install">
@@ -2083,8 +2080,8 @@ const PackageDetail = ({ item }) => {
           <CodeBlock title="my_indicator.py" language="python" code={item.build} colab />
         </Block>
       )}
-      <Block title="The three packages on one question" id="p-example">
-        <p className="text-salt-300 leading-relaxed mb-4">Did Bolivia’s municipalities converge in sustainable development between ~2012 and ~2024? geo4bolivia finds and prepares the data, expdpy splits its variation and fits panel models, and geometrics maps its clusters and tests convergence. {notebook && <>The <a className="text-brand-turquoise hover:underline" href={itemHref(notebook)}>notebook</a> works it through, with the results.</>}</p>
+      <Block title="One question, three packages" id="p-example">
+        <p className="text-salt-300 leading-relaxed mb-4">Did Bolivia’s municipalities converge in sustainable development between ~2012 and ~2024? geo4bolivia answers it on its own: it loads and maps the index, tests β-convergence, compares inequality in the two periods and locates the clusters. Each companion then adds one specialised step: expdpy splits the variation between and within municipalities, and geometrics checks that the spatial result holds under seven weights matrices. {notebook && <>The <a className="text-brand-turquoise hover:underline" href={itemHref(notebook)}>notebook</a> works the question through, with the results.</>}</p>
         <CodeBlock code={THREE_PACKAGES_EXAMPLE} language="python" title="three_packages.py" colab />
       </Block>
       <Block title="What it does" id="p-features">
@@ -2097,134 +2094,8 @@ const PackageDetail = ({ item }) => {
             </div>
           ))}
         </div>
-        {reference && <p className="text-sm text-salt-400 mt-4">Every function is documented, with an example, in the <a className="text-brand-turquoise hover:underline" href={itemHref(reference)}>function reference</a>.</p>}
+        {item.referenceUrl && <p className="text-sm text-salt-400 mt-4">Every function is documented, with an example, in the <a className="text-brand-turquoise hover:underline" href={item.referenceUrl} target="_blank" rel="noopener noreferrer">function reference<span className="sr-only"> (opens in a new tab)</span></a> on the package’s documentation site.</p>}
       </Block>
-    </DetailShell>
-  );
-};
-
-// Docstring text: ``code`` spans, paragraphs, and "name : text" lines as a definition list
-const DocText = ({ text }) => {
-  const inline = (t) => t.split(/``(.+?)``/g).map((part, i) => (i % 2
-    ? <code key={i} className="font-mono text-[0.9em] text-sand-200 bg-sand-400/10 px-1 rounded">{part}</code> : part));
-  const paragraphs = (text || '').trim().split(/\n\s*\n/).filter(Boolean);
-  return paragraphs.map((para, i) => {
-    const lines = para.split('\n');
-    const defs = [];
-    for (const line of lines) {
-      const m = line.match(/^(\S[^:]*?) : (.*)$/);
-      if (m) defs.push([m[1], m[2]]);
-      else if (defs.length && /^\s/.test(line)) defs[defs.length - 1][1] += ` ${line.trim()}`;
-      else { defs.length = 0; break; }
-    }
-    if (defs.length) {
-      return (
-        <dl key={i} className="space-y-2 mb-3">
-          {defs.map(([k, v]) => <div key={k}><dt className="font-mono text-sm text-white">{k}</dt><dd className="text-sm text-salt-300 leading-relaxed pl-4">{inline(v)}</dd></div>)}
-        </dl>
-      );
-    }
-    return <p key={i} className="text-sm text-salt-300 leading-relaxed mb-3">{inline(lines.map((l) => l.trim()).join(' '))}</p>;
-  });
-};
-
-// The package's function reference: site/data/api.json (scripts/api_reference.py, from the docstrings)
-// loaded on demand, with an example per function from API_EXAMPLES
-const ReferenceDetail = ({ item }) => {
-  const [api, setApi] = useState(null);
-  const [failed, setFailed] = useState(false);
-  useEffect(() => { import('../data/api.json').then((m) => setApi(m.default)).catch(() => setFailed(true)); }, []);
-  const here = itemHref(item);
-  const prefix = 'geo';
-  const jump = (id) => (e) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    e.preventDefault();
-    el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
-    window.history.replaceState(null, '', `${window.location.pathname}#${id}`);
-  };
-  // a link to "#fn-<name>" scrolls there once the reference has loaded
-  useEffect(() => {
-    if (!api || !window.location.hash) return;
-    const go = () => document.getElementById(window.location.hash.slice(1))?.scrollIntoView({ block: 'start' });
-    go();
-    const late = setTimeout(go, 400);       // again once fonts and images have settled the layout
-    return () => clearTimeout(late);
-  }, [api]);
-  const pkg = REGISTRY_BY_ID['geo4bolivia-package'];
-  return (
-    <DetailShell item={item} aside={<>
-      <AsideCard title="Functions">
-        {api ? (
-          <nav aria-label="Functions" className="space-y-4 text-sm max-h-[60vh] overflow-y-auto pr-1">
-            {api.families.map((fam) => (
-              <div key={fam.title}>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-salt-400 mb-1.5">{fam.title}</h3>
-                <ul className="space-y-1">
-                  {fam.functions.map((fn) => (
-                    <li key={fn.name}><a href={`${here}#fn-${fn.name}`} onClick={jump(`fn-${fn.name}`)} className="font-mono text-salt-300 hover:text-white">{prefix}.{fn.name}()</a></li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </nav>
-        ) : <p className="text-sm text-salt-400">{failed ? 'The reference could not be loaded.' : 'Loading…'}</p>}
-      </AsideCard>
-      {pkg && (
-        <AsideCard title="Learn">
-          <a href={itemHref(pkg)} className="group flex items-center justify-between gap-2 text-sm font-semibold text-brand-turquoise hover:text-white">The step-by-step tutorial <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" /></a>
-        </AsideCard>
-      )}
-      <AsideCard title="Open">
-        <div className="flex flex-col gap-2">{item.links.map((l, i) => <LinkButton key={l.url} link={l} primary={i === 0} />)}</div>
-      </AsideCard>
-    </>}>
-      <Block title="About this reference" id="r-about">
-        <p className="text-salt-300 leading-relaxed mb-4">{item.description}</p>
-        <CodeBlock title="Colab" language="text" code={'!pip install -q geo4bolivia\nimport geo4bolivia as geo'} colab />
-        {api && <p className="text-sm text-salt-400 mt-3">Version {api.version}: {api.families.reduce((n, f) => n + f.functions.length, 0)} functions.</p>}
-      </Block>
-      {api && api.families.map((fam) => (
-        <Block key={fam.title} title={fam.title} id={`fam-${fam.title.toLowerCase().replace(/[^a-z]+/g, '-')}`}>
-          {fam.text && <p className="text-salt-300 leading-relaxed mb-8">{fam.text}</p>}
-          <div className="space-y-12">
-            {fam.functions.map((fn) => (
-              <article key={fn.name} id={`fn-${fn.name}`} className="scroll-mt-24">
-                <h3 className="text-xl font-bold text-white font-mono mb-2">{prefix}.{fn.name}()</h3>
-                <pre className="rounded-lg bg-lagoon-950/70 border border-white/10 px-4 py-3 text-xs text-sand-200 font-mono whitespace-pre-wrap break-words mb-4">{prefix}.{fn.signature}</pre>
-                <div className="[&>p]:text-base [&>p]:text-salt-100"><DocText text={fn.summary} /></div>
-                {fn.body && <DocText text={fn.body} />}
-                {fn.params.length > 0 && (
-                  <div className="mt-4">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-salt-400 mb-2">Parameters</h4>
-                    <dl className="space-y-2">
-                      {fn.params.map((p) => <div key={p.name}><dt className="font-mono text-sm text-white">{p.name}</dt><dd className="text-sm text-salt-300 leading-relaxed pl-4"><DocText text={p.text} /></dd></div>)}
-                    </dl>
-                  </div>
-                )}
-                {fn.returns && (
-                  <div className="mt-4">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-salt-400 mb-2">Returns</h4>
-                    <DocText text={fn.returns} />
-                  </div>
-                )}
-                {fn.notes && (
-                  <div className="mt-4">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-salt-400 mb-2">Notes</h4>
-                    <DocText text={fn.notes} />
-                  </div>
-                )}
-                {API_EXAMPLES[fn.name] && (
-                  <div className="mt-5">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-salt-400 mb-2">Example</h4>
-                    <CodeBlock code={API_EXAMPLES[fn.name]} language="python" title={CODE_TITLE.python} colab />
-                  </div>
-                )}
-              </article>
-            ))}
-          </div>
-        </Block>
-      ))}
     </DetailShell>
   );
 };
@@ -2389,14 +2260,17 @@ const EventDetail = ({ item }) => {
   );
 };
 
-const NotFound = () => {
+// `moved`: the full URL of a page that left the site (REDIRECTS); the router is already sending the visitor there
+const NotFound = ({ moved }) => {
   const headingRef = useRef(null);
   useEffect(() => { if (headingRef.current) headingRef.current.focus(); }, []);
   return (
     <div className="max-w-7xl mx-auto pt-40 pb-32 px-4 sm:px-6 lg:px-8">
-      <Eyebrow className="mb-5">Error 404</Eyebrow>
-      <h1 ref={headingRef} tabIndex={-1} className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tighter leading-[1.05] text-white mb-5 focus:outline-none">Page <em className="gradient-text pr-2">not found</em></h1>
-      <p className="text-lg text-salt-300 mb-8">We couldn’t find that item. It may have moved.</p>
+      <Eyebrow className="mb-5">{moved ? 'Moved' : 'Error 404'}</Eyebrow>
+      <h1 ref={headingRef} tabIndex={-1} className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tighter leading-[1.05] text-white mb-5 focus:outline-none">Page <em className="gradient-text pr-2">{moved ? 'moved' : 'not found'}</em></h1>
+      {moved
+        ? <p className="text-lg text-salt-300 mb-8">This page has moved to <a className="text-brand-turquoise underline break-all" href={moved}>{moved}</a>.</p>
+        : <p className="text-lg text-salt-300 mb-8">We couldn’t find that item. It may have moved.</p>}
       <a href="#top" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-brand-rose hover:bg-brand-roseHover text-white font-semibold"><ArrowLeft size={16} /> Back to home</a>
     </div>
   );
@@ -2404,10 +2278,10 @@ const NotFound = () => {
 
 const DetailView = ({ route }) => {
   const item = REGISTRY_BY_ID[route.id];
-  if (!item || item.section !== route.section) return <NotFound />;
+  const moved = REDIRECTS[`${route.section}/${route.id}`];
+  if (!item || item.section !== route.section) return <NotFound moved={/^https?:/.test(moved || '') ? moved : undefined} />;
   if (item.type === 'indicator') return <IndicatorDetail item={item} />;
   if (item.type === 'package') return <PackageDetail item={item} />;
-  if (item.type === 'reference') return <ReferenceDetail item={item} />;
   if (item.type === 'notebook' || item.type === 'app') return <ToolDetail item={item} />;
   if (item.type === 'project') return <ProjectDetail item={item} />;
   if (item.type === 'insight') return <InsightDetail item={item} />;

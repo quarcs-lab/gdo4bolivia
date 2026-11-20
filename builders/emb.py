@@ -2,8 +2,8 @@
 
 import pandas as pd
 
-from .. import store
-from .common import publish, write_docs
+from geo4bolivia import store
+from geo4bolivia.build.common import publish, write_docs
 from .geo import link_ds4bolivia_polygons
 
 SCALE, YEAR = "municipality", 2017

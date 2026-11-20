@@ -11,54 +11,49 @@ kernelspec:
   name: python3
 ---
 
-<a href="https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/eda.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+<a href="https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/eda.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
 
 # Exploratory data analysis of multidimensional poverty in Bolivia
 
-Part of the [GeoDevelopment Observatory of Bolivia](https://quarcs-lab.github.io/geo4bolivia/).
+Part of the [GeoDevelopment Observatory of Bolivia](https://quarcs-lab.github.io/gdo4bolivia/).
 
-This notebook explores how multidimensional poverty varies across Bolivia's 343 municipalities and indigenous autonomies, how it changed between the 2012 and 2024 censuses, and how it relates to population and night-time lights. All data come from the `geo4bolivia` package.
+This notebook explores how multidimensional poverty varies across Bolivia's 343 municipalities and indigenous autonomies, how it changed between the 2012 and 2024 censuses, and how it relates to population and night-time lights. The data and every analysis come from the [`geo4bolivia`](https://quarcs-lab.github.io/geo4bolivia/) package.
 
 1. **Load the data** with `geo4bolivia`
-2. **Descriptive statistics**, for the country and by department, in both periods
+2. **Descriptive statistics**: the centre, the spread and the extremes, in both periods
 3. **Regional differences**: how poverty is distributed across departments
 4. **Change, 2012-2024**: where poverty fell most
 5. **Population and poverty**: are the most populous municipalities less poor?
 6. **Night-time lights and poverty**: can lights from space help predict poverty?
 
+Each exploration function ([`distribution`](https://quarcs-lab.github.io/geo4bolivia/reference/distribution.html), [`extremes`](https://quarcs-lab.github.io/geo4bolivia/reference/extremes.html), [`correlation`](https://quarcs-lab.github.io/geo4bolivia/reference/correlation.html), [`scatter`](https://quarcs-lab.github.io/geo4bolivia/reference/scatter.html), [`trend`](https://quarcs-lab.github.io/geo4bolivia/reference/trend.html)) returns a **result object**. Displayed, it shows its figure and a reading of the numbers; `.fig`, `.df`, `.gt` and the named numbers (`.corr`, `.slope`, ...) give the parts one by one. Every figure is interactive: hover over a point or a municipality to see its name.
+
 +++
 
 ## 0. Setup
 
-In Google Colab the next cell installs the package and the mapping library (a few seconds). Locally, `uv sync` has installed them already.
+In Google Colab the next cell installs the package (a few seconds). Locally, `uv sync` has installed it already.
 
 ```{code-cell} ipython3
 import importlib.util
 
-missing = [p for p in ["geo4bolivia", "mapclassify"] if importlib.util.find_spec(p) is None]
-if missing:
-    pkgs = " ".join(missing)
-    !pip install -q {pkgs}
+if importlib.util.find_spec("geo4bolivia") is None:
+    !pip install -q geo4bolivia
 ```
 
 ```{code-cell} ipython3
 import sys
 import warnings
 
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 import plotly.express as px
 import plotly.io as pio
 
 import geo4bolivia as geo
 
 if "google.colab" not in sys.modules:
-    pio.renderers.default = "plotly_mimetype+notebook_connected"   # keeps the saved notebook small
-
-sns.set_theme(style="whitegrid")
-warnings.filterwarnings("ignore", message="Numba not installed")   # mapclassify works without it
+    pio.renderers.default = "notebook_connected"   # keeps the saved notebook small
+warnings.filterwarnings("ignore", module="numba")   # a notice of an optional library
 ```
 
 ## 1. Load the data
@@ -69,89 +64,43 @@ warnings.filterwarnings("ignore", message="Numba not installed")   # mapclassify
 | `population` | `sdg` | 2012, 2024 | Census population |
 | `ln_t400NTLpc` | `ntl` | 2012–2020 | Long-run trend (HP filter) of the log of night-time lights per capita |
 
-The poverty index comes from the [Atlas de los ODS en Bolivia 2026](https://atlasods.sdsnbolivia.org/) (Andersen & Argandoña, SDSN Bolivia), which computes it from the 2012 and 2024 Population and Housing Censuses for all 343 units. Night-time lights were computed on the older 339-unit map, so they cover **333 units**: the six municipalities that have since lost territory (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four units created after 2012 have no values. Section 6 uses those 333.
+The poverty index comes from the [Atlas de los ODS en Bolivia 2026](https://atlasods.sdsnbolivia.org/) (Andersen & Argandoña, SDSN Bolivia), which computes it from the 2012 and 2024 Population and Housing Censuses for all 343 units. Night-time lights were computed on the older 339-unit map, so they cover **333 units**: the six municipalities that have since lost territory (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four units created after 2012 have no values.
 
-We build a long table (one row per unit and period) for the plots, and a wide GeoDataFrame (one row per unit) for the maps.
+`geo.load()` returns a panel with one row per unit and year. We join the three variables into one panel; lights enter in 2012, the one year they share with poverty.
 
 ```{code-cell} ipython3
-YEARS = [2012, 2024]
-
-mpi = geo.load("sdg01", variables="sdg1_2_mpi")
+mpi = geo.load("sdg01", variables="sdg1_2_mpi", groups=["department"])
 census = geo.load("sdg", variables="population")
+lights = geo.load("ntl", variables="ln_t400NTLpc")          # 2012 to 2020
 
-# department and province of each municipality, from the units table
-units = geo.units()
-names = units.set_index("geo_id")["name"]
-parents = units.loc[units["scale"] == "municipality", ["geo_id", "name", "department_id", "province_id"]]
-parents["department"] = parents["department_id"].map(names)
-parents["province"] = parents["province_id"].map(names)
-parents = parents[["geo_id", "name", "province", "department"]]
-
-long = mpi.merge(census, on=["geo_id", "year"]).merge(parents, on="geo_id")
-long["rank_mpi"] = long.groupby("year")["sdg1_2_mpi"].rank(ascending=False, method="min").astype(int)  # 1 = poorest
-long["period"] = long["year"].astype(str)
-
-wide = long.pivot(index="geo_id", columns="year", values=["sdg1_2_mpi", "population", "rank_mpi"])
-wide.columns = [f"{v}_{y}" for v, y in wide.columns]
-wide = wide.astype({f"{v}_{y}": int for v in ["population", "rank_mpi"] for y in YEARS})
-wide["mpi_change"] = wide["sdg1_2_mpi_2024"] - wide["sdg1_2_mpi_2012"]
-
-lights = geo.load("ntl", variables="ln_t400NTLpc", years=2012)[["geo_id", "ln_t400NTLpc"]]
-
-gdf = (geo.boundaries("municipality")[["geo_id", "geometry"]]
-       .merge(parents, on="geo_id").merge(wide.reset_index(), on="geo_id")
-       .merge(lights, on="geo_id", how="left"))
-print(long.shape, gdf.shape, f"units with lights: {gdf['ln_t400NTLpc'].notna().sum()}")
-gdf.drop(columns="geometry").head()
-```
-
-Labels for the plots, and a fixed colour for each department and period:
-
-```{code-cell} ipython3
-labels = {
-    "sdg1_2_mpi": "Multidimensional poverty index",
-    "sdg1_2_mpi_2012": "Multidimensional poverty index (2012)",
-    "sdg1_2_mpi_2024": "Multidimensional poverty index (2024)",
-    "mpi_change": "Change in MPI, 2012-2024",
-    "population": "Census population",
-    "population_2024": "Census population (2024)",
-    "ln_t400NTLpc": "Log night-time lights per capita (trend, 2012)",
-    "rank_mpi_2024": "Poverty rank in 2024 (1 = poorest)",
-    "department": "Department",
-    "name": "Municipality",
-}
-departments = sorted(gdf["department"].unique())
-palette = dict(zip(departments, sns.color_palette("tab10", len(departments))))
-period_palette = {"2012": "tab:orange", "2024": "tab:blue"}
+df = (mpi.merge(census, on=["geo_id", "year"])
+         .merge(lights, on=["geo_id", "year"], how="left"))
+df.head()
 ```
 
 ## 2. Descriptive statistics
 
 - What do we know about the centre and dispersion of poverty, and how did they change?
 
+`geo.describe()` summarises each variable in each year, with its label and unit from the metadata.
+
 ```{code-cell} ipython3
-gdf[["sdg1_2_mpi_2012", "sdg1_2_mpi_2024", "mpi_change", "population_2012", "population_2024"]].describe().round(3)
+geo.describe(df).drop(columns=["variable", "unit"]).round(3)
+```
+
+`geo.extremes()` ranks one year and returns the units at the two ends.
+
+```{code-cell} ipython3
+geo.extremes(df, "sdg1_2_mpi", year=2012)
 ```
 
 ```{code-cell} ipython3
-by_dep = long.groupby(["department", "year"])["sdg1_2_mpi"].agg(["count", "mean", "median", "std", "min", "max"])
-by_dep = by_dep.unstack("year").round(3)
-by_dep.sort_values(("mean", 2012), ascending=False)
+geo.extremes(df, "sdg1_2_mpi", year=2024)
 ```
 
-The poorest and least poor municipalities in each period:
+In 2012 the average municipality had an MPI of 0.234 (median 0.227, standard deviation 0.106), with values from 0.018 to 0.563. By 2024 the average had fallen to 0.063 (median 0.053, standard deviation 0.044), with values from 0.003 to 0.296. Population is very skewed: the median unit had about 12,300 inhabitants in 2024 (10,600 in 2012), while Santa Cruz de la Sierra had 1.61 million. The summary table also shows a gap: lights have 333 units in 2012 and none in 2024.
 
-```{code-cell} ipython3
-cols = ["name", "department", "sdg1_2_mpi", "rank_mpi", "population"]
-for year in YEARS:
-    d = long[long["year"] == year]
-    print(f"--- {year}: poorest\n{d.nlargest(5, 'sdg1_2_mpi')[cols].to_string(index=False)}")
-    print(f"--- {year}: least poor\n{d.nsmallest(5, 'sdg1_2_mpi')[cols].to_string(index=False)}\n")
-```
-
-In 2012 the average municipality had an MPI of 0.234 (median 0.227, standard deviation 0.106), with values from 0.018 to 0.563. By 2024 the average had fallen to 0.063 (median 0.053, standard deviation 0.044), with values from 0.003 to 0.296. Poverty fell in every one of the 343 units, by 0.171 points on average (from 0.015 to 0.402). Population is very skewed: the median unit had about 12,300 inhabitants in 2024 (10,600 in 2012), while Santa Cruz de la Sierra had 1.61 million.
-
-By department, Chuquisaca (mean 0.323), Pando (0.315) and Potosí (0.279) had the poorest municipalities in 2012, and Tarija (0.118) and Santa Cruz (0.169) the least poor. In 2024 Chuquisaca (0.090) and Potosí (0.083) still lead, followed by Beni (0.075), while Pando dropped to fifth (0.068); Tarija (0.027) and Santa Cruz (0.032) remain the least poor. The poorest unit in both periods is TIOC-Raqaypampa (Cochabamba; 0.563 in 2012 and 0.296 in 2024), an indigenous autonomy created after 2012, followed by Poroma (Chuquisaca). Nuestra Señora de La Paz is the least poor in both periods (0.018 and 0.003); in 2024 Colcapirhua, El Alto, Santa Cruz de la Sierra and the very small Trigal (Santa Cruz, about 2,400 people) follow it.
+The poorest unit in both periods is TIOC-Raqaypampa (Cochabamba; 0.563 in 2012 and 0.296 in 2024), an indigenous autonomy created after 2012, followed by Poroma (Chuquisaca). Nuestra Señora de La Paz is the least poor in both periods (0.018 and 0.003); in 2024 Colcapirhua, Trigal (Santa Cruz), Santa Cruz de la Sierra and El Alto follow it.
 
 +++
 
@@ -159,104 +108,102 @@ By department, Chuquisaca (mean 0.323), Pando (0.315) and Potosí (0.279) had th
 
 - How is poverty distributed across the 343 municipalities and 9 departments, and did the pattern change?
 
-```{code-cell} ipython3
-order = by_dep.sort_values(("median", 2012), ascending=False).index
+`geo.distribution()` draws the histogram of a variable. With two periods it overlays them on common bins.
 
-fig, ax = plt.subplots(figsize=(9, 6))
-sns.stripplot(data=long, x="sdg1_2_mpi", y="department", hue="period", order=order, palette=period_palette,
-              dodge=True, size=4, jitter=0.2, alpha=0.7, ax=ax)
-ax.set(xlabel=labels["sdg1_2_mpi"], ylabel="", title="Every municipality, by department and period")
-plt.show()
+```{code-cell} ipython3
+geo.distribution(df, "sdg1_2_mpi")
+```
+
+With `by=`, it compares groups in one year. A box plot shows each department's median, its middle half and its unusual municipalities:
+
+```{code-cell} ipython3
+box_2012 = geo.distribution(df, "sdg1_2_mpi", year=2012, by="department",
+                            kind="box")
+box_2012
 ```
 
 ```{code-cell} ipython3
-fig, axes = plt.subplots(1, 2, figsize=(13, 4.5), sharex=True)
-for ax, year in zip(axes, YEARS):
-    d = long[long["year"] == year]
-    sns.histplot(data=d, x="sdg1_2_mpi", hue="department", hue_order=departments, palette=palette,
-                 multiple="stack", binwidth=0.02, binrange=(0, 0.58), legend=(year == 2024), ax=ax)
-    sns.rugplot(data=d, x="sdg1_2_mpi", color="black", height=0.03, ax=ax)
-    ax.set(xlabel=labels["sdg1_2_mpi"], ylabel="Municipalities", title=f"Distribution of poverty, {year}")
-sns.move_legend(axes[1], "upper left", bbox_to_anchor=(1.01, 1))
-plt.show()
+box_2024 = geo.distribution(df, "sdg1_2_mpi", year=2024, by="department",
+                            kind="box")
+box_2024
 ```
+
+The table behind each figure is `.df`. Side by side, the department means and medians of the two periods:
 
 ```{code-cell} ipython3
-fig, ax = plt.subplots(figsize=(9, 6))
-sns.boxplot(data=long, x="sdg1_2_mpi", y="department", hue="period", order=order, palette=period_palette, ax=ax)
-ax.set(xlabel=labels["sdg1_2_mpi"], ylabel="", title="Poverty by department (ordered by 2012 median)")
-plt.show()
+cols = ["department", "n", "mean", "median", "sd", "min", "max"]
+by_dep = box_2012.df[cols].merge(box_2024.df[cols], on=["department", "n"],
+                                 suffixes=("_2012", "_2024"))
+by_dep.sort_values("mean_2012", ascending=False).round(3)
 ```
+
+How much of the differences between municipalities lies between departments? `geo.theil_decomposition()` splits Theil's inequality index into a part between groups and a part within them.
 
 ```{code-cell} ipython3
-for year in YEARS:
-    d = long[long["year"] == year]
-    median = d["sdg1_2_mpi"].median()
-    between = d.groupby("department")["sdg1_2_mpi"].transform("mean")
-    share = between.var(ddof=0) / d["sdg1_2_mpi"].var(ddof=0)
-    print(f"{year}: national median {median:.3f}; departments explain {share:.0%} of the variance; "
-          f"units above 0.35: {(d['sdg1_2_mpi'] > 0.35).sum()}, above 0.15: {(d['sdg1_2_mpi'] > 0.15).sum()}")
-pando = long[(long["department"] == "Pando")].pivot(index="name", columns="year", values="sdg1_2_mpi")
-print(f"\nPando, 2012: {(pando[2012] >= 0.3).sum()} of {len(pando)} units at 0.30 or more; "
-      f"below the national median: {', '.join(pando.index[pando[2012] < long.loc[long['year'] == 2012, 'sdg1_2_mpi'].median()])}")
+geo.theil_decomposition(df, "sdg1_2_mpi", by="department")
 ```
 
-Departments differ, but municipalities differ much more within departments than the departments differ from one another: departmental means explain only 21% of the variance across municipalities in 2012 and 18% in 2024. In 2012 Cochabamba ran from 0.039 to the highest value in the country (0.563, TIOC-Raqaypampa), and Potosí from 0.051 to 0.496. Chuquisaca and Pando had the highest medians (0.317 and 0.336): 9 of Pando's 15 municipalities scored 0.30 or more, and only four (Cobija, Porvenir, Puerto Rico and Santa Rosa) were below the national median of 0.227. Tarija's poorest municipality scored 0.201. The 2012 distribution has a long right tail, with 43 units above 0.35.
+Departments differ, but municipalities differ much more within departments than the departments differ from one another: only 21% of the Theil index lies between departments, in 2012 and in 2024. In 2012 Cochabamba ran from 0.039 to the highest value in the country (0.563, TIOC-Raqaypampa), and Potosí from 0.051 to 0.496. Pando and Chuquisaca had the highest medians (0.336 and 0.317) and Chuquisaca the highest mean (0.323); Tarija's poorest municipality scored 0.201.
 
-By 2024 the whole distribution has shifted towards zero and narrowed: the national median is 0.053, no unit is above 0.35 and only 17 are above 0.15 (260 were in 2012). The order of the departments is broadly the same, with Chuquisaca and Potosí the poorest and Santa Cruz and Tarija (all below 0.08) the least poor. Pando's mean fell the most, from 0.315 to 0.068.
+By 2024 the whole distribution has shifted towards zero and narrowed: the national median is 0.053 and the interquartile range fell from 0.153 to 0.053. What remains is a long right tail (skewness 1.44). The order of the departments is broadly the same, with Chuquisaca (mean 0.090) and Potosí (0.083) the poorest, followed by Beni (0.075), and Santa Cruz (0.032) and Tarija (0.027) the least poor. Pando's mean fell the most, from 0.315 to 0.068.
 
 +++
 
 ## 4. Change, 2012-2024
 
-The same classes in both maps show the scale of the decline; the third map shows the change in MPI points.
+With a list of years and a classification scheme, `geo.map()` draws the two periods side by side in the same classes (here natural breaks computed over both years), so a colour means the same on both maps.
 
 ```{code-cell} ipython3
-bins = {"bins": [0.05, 0.1, 0.2, 0.3, 0.6]}
-fig, axes = plt.subplots(1, 3, figsize=(15, 6))
-for ax, year in zip(axes, YEARS):
-    gdf.plot(column=f"sdg1_2_mpi_{year}", scheme="user_defined", classification_kwds=bins, cmap="YlOrRd",
-             edgecolor="grey", linewidth=0.2, legend=True, legend_kwds={"title": f"MPI {year}", "loc": "lower left"},
-             ax=ax)
-    ax.set_title(f"Multidimensional poverty, {year}")
-gdf.plot(column="mpi_change", scheme="FisherJenks", k=5, cmap="viridis", edgecolor="grey", linewidth=0.2,
-         legend=True, legend_kwds={"title": "Change", "loc": "lower left"}, ax=axes[2])
-axes[2].set_title("Change in MPI, 2012-2024 (natural breaks)")
-for ax in axes:
-    ax.set_axis_off()
-plt.tight_layout()
-plt.show()
+geo.map(df, "sdg1_2_mpi", year=[2012, 2024], scheme="fisher_jenks")
 ```
+
+`change=True` maps the change itself, 2024 minus 2012, in MPI points:
 
 ```{code-cell} ipython3
-fig, ax = plt.subplots(figsize=(8, 7))
-sns.scatterplot(data=gdf, x="sdg1_2_mpi_2012", y="sdg1_2_mpi_2024", hue="department", hue_order=departments,
-                palette=palette, s=30, ax=ax)
-ax.plot([0, 0.6], [0, 0.6], color="grey", ls="--", lw=1, label="no change")
-ax.set(xlabel=labels["sdg1_2_mpi_2012"], ylabel=labels["sdg1_2_mpi_2024"], xlim=(0, 0.6), ylim=(0, 0.6),
-       title="Poverty in 2024 against poverty in 2012")
-ax.legend(bbox_to_anchor=(1.01, 1), loc="upper left")
-plt.show()
-
-fit = np.polyfit(gdf["sdg1_2_mpi_2012"], gdf["mpi_change"], 1)
-ratio = gdf["sdg1_2_mpi_2024"] / gdf["sdg1_2_mpi_2012"]
-print(f"Units where poverty fell: {(gdf['mpi_change'] < 0).sum()} of {len(gdf)}")
-print(f"Correlation 2012-2024: {gdf['sdg1_2_mpi_2012'].corr(gdf['sdg1_2_mpi_2024']):.2f} "
-      f"(rank: {gdf['sdg1_2_mpi_2012'].corr(gdf['sdg1_2_mpi_2024'], method='spearman'):.2f})")
-print(f"Slope of the change on the 2012 level: {fit[0]:.3f}")
-print(f"MPI 2024 as a share of MPI 2012: median {ratio.median():.2f}, "
-      f"from {ratio.min():.2f} to {ratio.max():.2f}")
-print(f"Coefficient of variation: 2012 {gdf['sdg1_2_mpi_2012'].std() / gdf['sdg1_2_mpi_2012'].mean():.2f}, "
-      f"2024 {gdf['sdg1_2_mpi_2024'].std() / gdf['sdg1_2_mpi_2024'].mean():.2f}")
+geo.map(df, "sdg1_2_mpi", change=True, scheme="fisher_jenks")
 ```
+
+`geo.change()` gives the same numbers as a table: one row per unit with its value in each year, its change in points and in percent, and its rank in each year.
 
 ```{code-cell} ipython3
-cols = ["name", "department", "sdg1_2_mpi_2012", "sdg1_2_mpi_2024", "mpi_change"]
-print("Largest falls\n", gdf.nsmallest(5, "mpi_change")[cols].round(3).to_string(index=False))
-print("\nSmallest falls\n", gdf.nlargest(5, "mpi_change")[cols].round(3).to_string(index=False))
+chg = geo.change(df, "sdg1_2_mpi")
+summary = geo.describe(chg, ["sdg1_2_mpi_change", "sdg1_2_mpi_pct_change"], by=None)
+summary.drop(columns=["variable", "unit"]).round(3)
 ```
 
-Every unit is below the no-change line: poverty fell in all 343. Poorer municipalities fell the most in absolute terms (each 0.1 of MPI in 2012 goes with a further fall of 0.064), and the 2024 values are a median 24% of the 2012 values (from 4% to 67%). The ordering persists (correlation 0.86, rank correlation 0.86), so the poorest places of 2012 are mostly still the poorest. Absolute gaps narrowed (the standard deviation fell from 0.106 to 0.044), but relative gaps widened: the coefficient of variation rose from 0.45 to 0.70, because the least poor municipalities are now very close to zero. The largest fall was in Sena (Pando, -0.402), followed by Tinguipaya (Potosí), Alalay (Cochabamba), Azurduy and Presto (Chuquisaca), all about -0.33. The smallest falls were in places that had little poverty to lose (Nuestra Señora de La Paz, Huachacalla, Colcapirhua, Tarija), with Tolata (Cochabamba, 0.094 to 0.063) the exception.
+Where did poverty fall most and least? The change is negative everywhere, so the "lowest" values are the largest falls.
+
+```{code-cell} ipython3
+geo.extremes(chg, "sdg1_2_mpi_change")
+```
+
+Is the poverty of 2024 related to the poverty of 2012?
+
+```{code-cell} ipython3
+geo.scatter(chg, "sdg1_2_mpi_2012", "sdg1_2_mpi_2024", color="department")
+```
+
+The correlation table (`.gt`) has Pearson's coefficient above the diagonal and Spearman's rank coefficient below it:
+
+```{code-cell} ipython3
+geo.correlation(chg, ["sdg1_2_mpi_2012", "sdg1_2_mpi_2024", "sdg1_2_mpi_change"]).gt
+```
+
+`geo.trend()` follows the mean of each department between the two periods; the thin grey lines are the municipalities.
+
+```{code-cell} ipython3
+geo.trend(df, "sdg1_2_mpi", by="department")
+```
+
+Did the gaps between municipalities narrow? `geo.inequality()` measures them in relative terms, with the Gini index and the coefficient of variation (the standard deviation over the mean).
+
+```{code-cell} ipython3
+geo.inequality(df, "sdg1_2_mpi", measures=["gini", "cv"])
+```
+
+Poverty fell in all 343 units: the change runs from -0.402 to -0.015 MPI points, with a mean of -0.171. In relative terms the falls are similar everywhere: the median unit lost 76% of its 2012 value, and half of the units lost between 70% and 81%. In the scatter, the least-squares line has a slope of 0.359, far below one: the higher the poverty of 2012, the larger the fall in points (the correlation between the 2012 level and the change is -0.95). The ordering persists (correlation 0.86, rank correlation 0.86), so the poorest places of 2012 are mostly still the poorest.
+
+Absolute gaps narrowed (the standard deviation fell from 0.106 to 0.044, and the gap between the poorest and the least poor department mean from 0.205 to 0.063), but relative gaps widened: the coefficient of variation rose from 0.45 to 0.70 and the Gini index from 0.254 to 0.367, because the least poor municipalities are now very close to zero. The largest fall was in Sena (Pando, -0.402), followed by Tinguipaya (Potosí), Alalay (Cochabamba), Azurduy and Presto (Chuquisaca), all about -0.33. Four of the five smallest falls were in the places with the lowest poverty of 2012, which had little to lose (Nuestra Señora de La Paz, Huachacalla, Colcapirhua and Tarija); the fifth is Tolata (Cochabamba, -0.031). Among departments, Pando's mean fell the most (-0.247) and Tarija's the least (-0.091).
 
 +++
 
@@ -264,77 +211,60 @@ Every unit is below the no-change line: poverty fell in all 343. Poorer municipa
 
 - Do the most populous municipalities tend to be less poor?
 
-Population here is the census count of the same year (it replaces the WorldPop estimates the earlier version of this notebook used, which do not cover all 343 units). The 30 most populous municipalities in 2024, coloured by poverty:
+Population here is the census count of the same year. The ten most and the ten least populous units in 2024:
 
 ```{code-cell} ipython3
-top = gdf.nlargest(30, "population_2024").sort_values("population_2024")
-norm = plt.Normalize(gdf["sdg1_2_mpi_2024"].min(), gdf["sdg1_2_mpi_2024"].max())
-cmap = plt.cm.YlOrRd
-
-fig, ax = plt.subplots(figsize=(8, 8))
-ax.barh(top["name"] + " (" + top["department"] + ")", top["population_2024"] / 1e3,
-        color=cmap(norm(top["sdg1_2_mpi_2024"])), edgecolor="grey", linewidth=0.5)
-fig.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), ax=ax, label=labels["sdg1_2_mpi_2024"])
-ax.set(xlabel="Population, thousands (2024 census)", title="The 30 most populous municipalities")
-plt.show()
+size = geo.extremes(df, "population", year=2024, n=10)
+size.fig
 ```
 
-The treemap nests municipalities within departments: the area of each tile is its 2024 population and its colour its 2024 poverty (hover for details; click a department to zoom in).
+The treemap nests municipalities within departments: the area of each tile is its 2024 population and its colour its 2024 poverty (click a department to zoom in). The package has no treemap, so this figure and the next are plain Plotly Express, with `geo.labels()` naming the columns.
 
 ```{code-cell} ipython3
-px.treemap(
-    gdf, path=[px.Constant("Bolivia"), "department", "name"], values="population_2024",
-    color="sdg1_2_mpi_2024", color_continuous_scale="YlOrRd",
-    color_continuous_midpoint=np.average(gdf["sdg1_2_mpi_2024"], weights=gdf["population_2024"]),
-    hover_data={"rank_mpi_2024": True}, labels=labels,
-)
+d24 = df[df["year"] == 2024]
+px.treemap(d24, path=[px.Constant("Bolivia"), "department", "name"],
+           values="population", color="sdg1_2_mpi", labels=geo.labels(d24),
+           title="Population (area) and multidimensional poverty (colour), 2024")
 ```
 
 The same view for 2012, as a sunburst:
 
 ```{code-cell} ipython3
-px.sunburst(
-    gdf, path=["department", "name"], values="population_2012",
-    color="sdg1_2_mpi_2012", color_continuous_scale="YlOrRd",
-    color_continuous_midpoint=np.average(gdf["sdg1_2_mpi_2012"], weights=gdf["population_2012"]),
-    labels={**labels, "population_2012": "Census population (2012)"},
-)
+d12 = df[df["year"] == 2012]
+px.sunburst(d12, path=["department", "name"], values="population",
+            color="sdg1_2_mpi", labels=geo.labels(d12),
+            title="Population (angle) and multidimensional poverty (colour), 2012")
+```
+
+`geo.scatter()` with `log_x=True` puts population on a logarithmic axis and fits the line on its natural logarithm:
+
+```{code-cell} ipython3
+geo.scatter(df, "population", "sdg1_2_mpi", year=2012, color="department",
+            log_x=True)
 ```
 
 ```{code-cell} ipython3
-long["ln_pop"] = np.log(long["population"])
+geo.scatter(df, "population", "sdg1_2_mpi", year=2024, color="department",
+            log_x=True)
+```
 
-fig, axes = plt.subplots(1, 2, figsize=(14, 5.5), sharey=True)
-for ax, year in zip(axes, YEARS):
-    d = long[long["year"] == year]
-    sns.scatterplot(data=d, x="population", y="sdg1_2_mpi", hue="department", hue_order=departments,
-                    palette=palette, s=25, legend=(year == 2024), ax=ax)
-    fit = np.polyfit(d["ln_pop"], d["sdg1_2_mpi"], 1)
-    xs = np.linspace(d["ln_pop"].min(), d["ln_pop"].max(), 100)
-    ax.plot(np.exp(xs), np.polyval(fit, xs), color="black", lw=2)
-    ax.set_xscale("log")
-    ax.set(xlabel=f"Census population {year}, log scale", ylabel=labels["sdg1_2_mpi"], title=str(year))
-    print(f"{year}: slope {fit[0]:.3f} MPI points per log point of population; "
-          f"correlation with log population: {d['ln_pop'].corr(d['sdg1_2_mpi']):.2f}")
-axes[1].legend(bbox_to_anchor=(1.01, 1), loc="upper left")
-fig.suptitle("Population and poverty")
-plt.show()
+The typical municipality is not where the typical Bolivian lives. `geo.aggregate()` computes the national poverty index as a census-population-weighted mean of the municipalities (the rule the metadata declares), to compare with the simple means of section 2. The last lines measure the weight of the ten largest municipalities.
+
+```{code-cell} ipython3
+geo.aggregate(df, to="country", dataset="sdg01", variables="sdg1_2_mpi").round(3)
 ```
 
 ```{code-cell} ipython3
-for year in YEARS:
-    d = long[long["year"] == year]
-    top10 = d.nlargest(10, "population")
-    print(f"{year}: the 10 largest municipalities hold {top10['population'].sum() / d['population'].sum():.0%} "
-          f"of the population; their highest MPI is {top10['sdg1_2_mpi'].max():.3f}. "
-          f"Units with fewer than 20,000 people: {(d['population'] < 20_000).mean():.0%}. "
-          f"Mean MPI: simple {d['sdg1_2_mpi'].mean():.3f}, "
-          f"population-weighted {np.average(d['sdg1_2_mpi'], weights=d['population']):.3f}")
+largest = size.df.loc[size.df["end"] == "highest", "geo_id"]
+top10 = d24[d24["geo_id"].isin(largest)]
+share = top10["population"].sum() / d24["population"].sum()
+print(f"The ten largest municipalities hold {share:.0%} of the 2024 population; "
+      f"their highest MPI is {top10['sdg1_2_mpi'].max():.3f}.")
 ```
 
-More populous municipalities tend to be less poor, in both periods. In 2012 the correlation with log population is -0.34, and a tenfold increase in population goes with an MPI about 0.07 lower (0.031 × ln 10). In 2024 the relation is weaker (correlation -0.23) and the same tenfold increase goes with an MPI only 0.02 lower (0.009 × ln 10), as poverty has fallen most where it was highest. The relationship is loose: municipalities with 5,000 to 20,000 people range from 0.074 to 0.563 in 2012.
+More populous municipalities tend to be less poor, in both periods. In 2012 the correlation with log population is -0.34, and a tenfold increase in population goes with an MPI about 0.07 lower (0.031 × ln 10). In 2024 the relation is weaker (correlation -0.23) and the same tenfold increase goes with an MPI only 0.02 lower (0.009 × ln 10), as poverty has fallen most where it was highest. The relationship is loose: population accounts for 11% of the variation of poverty in 2012 and 5% in 2024.
 
-Population and poverty are concentrated in different places. The ten largest municipalities hold 49% of the population in 2012 and 47% in 2024, and none has an MPI above 0.096 in 2012 or 0.021 in 2024, while about three quarters of the units have fewer than 20,000 people (76% in 2012, 73% in 2024). As a result the population-weighted mean MPI is about half the simple mean: 0.133 against 0.234 in 2012, and 0.033 against 0.063 in 2024. The typical Bolivian lives in a much less poor municipality than the typical municipality suggests.
+Population and poverty are concentrated in different places. The ten largest municipalities hold 47% of the 2024 population and none has an MPI above 0.021, while three quarters of the units have fewer than about 21,000 people. As a result the population-weighted mean MPI is about half the simple mean: 0.133 against 0.234 in 2012, and 0.033 against 0.063 in 2024. The typical Bolivian lives in a much less poor municipality than the typical municipality suggests.
 
 +++
 
@@ -342,95 +272,90 @@ Population and poverty are concentrated in different places. The ten largest mun
 
 - Can night-time lights help us predict poverty?
 
-Lights are available from 2012 to 2020, so we compare them with poverty in 2012, the year both were measured, on the **333 units** with lights. Side by side, the poverty map (three natural breaks) and the night-time lights map, with the ten units without lights in grey. Lights are mapped in quintiles: a few almost unlit municipalities are extreme outliers, and natural breaks would give them a class of their own.
+Lights are measured every year from 2012 to 2020. `geo.trend()` shows the mean of each department over those years, on the 333 units with lights:
 
 ```{code-cell} ipython3
-nl = gdf.dropna(subset=["ln_t400NTLpc"]).copy()
-print(f"units with lights and poverty: {len(nl)}")
+geo.trend(lights, "ln_t400NTLpc", by="department")
+```
 
-fig, axes = plt.subplots(1, 2, figsize=(12, 6))
-gdf.plot(column="sdg1_2_mpi_2012", scheme="FisherJenks", k=3, cmap="YlOrRd", edgecolor="grey", linewidth=0.2,
-         legend=True, legend_kwds={"title": "MPI 2012", "loc": "lower left"}, ax=axes[0])
-gdf.plot(column="ln_t400NTLpc", scheme="Quantiles", k=5, cmap="cividis", edgecolor="grey", linewidth=0.2,
-         legend=True, legend_kwds={"title": "Log lights per capita", "loc": "lower left"},
-         missing_kwds={"color": "lightgrey", "label": "no data"}, ax=axes[1])
-axes[0].set_title("Multidimensional poverty, 2012 (natural breaks)")
-axes[1].set_title("Night-time lights per capita, 2012 (quintiles)")
-for ax in axes:
-    ax.set_axis_off()
-plt.tight_layout()
-plt.show()
+We compare lights with poverty in 2012, the year both were measured. The map shows lights per capita in quintiles: a few almost unlit municipalities are extreme outliers, and natural breaks would give them a class of their own. The ten units without lights are left blank. Compare it with the 2012 poverty map of section 4.
+
+```{code-cell} ipython3
+geo.map(df, "ln_t400NTLpc", year=2012, scheme="quantiles")
 ```
 
 ```{code-cell} ipython3
-fig, ax = plt.subplots(figsize=(9, 6))
-sns.scatterplot(data=nl, x="ln_t400NTLpc", y="sdg1_2_mpi_2012", hue="department", hue_order=departments,
-                palette=palette, s=30, ax=ax)
-sns.regplot(data=nl, x="ln_t400NTLpc", y="sdg1_2_mpi_2012", scatter=False, color="black", ax=ax)
-ax.set(xlabel=labels["ln_t400NTLpc"], ylabel=labels["sdg1_2_mpi_2012"], title="Night-time lights and poverty, 2012")
-ax.legend(bbox_to_anchor=(1.01, 1), loc="upper left")
-plt.show()
-
-fit = np.polyfit(nl["ln_t400NTLpc"], nl["sdg1_2_mpi_2012"], 1)
-r = nl["ln_t400NTLpc"].corr(nl["sdg1_2_mpi_2012"])
-print(f"Slope: {fit[0]:.3f}; correlation: {r:.2f}; R-squared: {r**2:.2f}")
+geo.scatter(df, "ln_t400NTLpc", "sdg1_2_mpi", year=2012, color="department")
 ```
 
-A few municipalities are almost unlit. Are they driving the result? The rank (Spearman) correlation and the correlation without them answer that:
+A few municipalities are almost unlit. Are they driving the result? `geo.extremes()` finds them; the rank (Spearman) correlation, below the diagonal of the table, and the correlation without them answer the question.
 
 ```{code-cell} ipython3
-dark = nl["ln_t400NTLpc"] < 7
-print(nl.loc[dark, ["name", "department", "ln_t400NTLpc", "sdg1_2_mpi_2012", "population_2012"]].round(3).to_string(index=False))
-print(f"\nSpearman correlation: {nl['ln_t400NTLpc'].corr(nl['sdg1_2_mpi_2012'], method='spearman'):.2f}")
-print(f"Pearson correlation without them: {nl.loc[~dark, 'ln_t400NTLpc'].corr(nl.loc[~dark, 'sdg1_2_mpi_2012']):.2f}")
+geo.extremes(df, "ln_t400NTLpc", year=2012, n=3).df
 ```
 
-Do the lights of 2012 also anticipate poverty in 2024, and do the latest lights (2020) relate to it?
+```{code-cell} ipython3
+geo.correlation(df, ["sdg1_2_mpi", "ln_t400NTLpc", "population"], year=2012).gt
+```
 
 ```{code-cell} ipython3
-nl = nl.merge(geo.load("ntl", variables="ln_t400NTLpc", years=2020)[["geo_id", "ln_t400NTLpc"]]
-              .rename(columns={"ln_t400NTLpc": "ln_t400NTLpc_2020"}), on="geo_id")
-print(f"Lights 2012 and MPI 2024: {nl['ln_t400NTLpc'].corr(nl['sdg1_2_mpi_2024']):.2f}")
-print(f"Lights 2020 and MPI 2024: {nl['ln_t400NTLpc_2020'].corr(nl['sdg1_2_mpi_2024']):.2f}")
-print(f"Lights 2012 and the change in MPI: {nl['ln_t400NTLpc'].corr(nl['mpi_change']):.2f}")
+lit = df[df["ln_t400NTLpc"] > 7]
+print(f"Correlation without the three almost unlit units: "
+      f"{geo.scatter(lit, 'ln_t400NTLpc', 'sdg1_2_mpi', year=2012).corr:.2f}")
+```
+
+Do the lights of 2012 also anticipate poverty in 2024, and do the latest lights (2020) relate to it? `wide=` loads one column per year, which we join to the table of changes of section 4. `geo.labels(..., own=...)` gives the new columns a label for the table.
+
+```{code-cell} ipython3
+lights_wide = geo.load("ntl", variables="ln_t400NTLpc", wide="ln_t400NTLpc")
+later = chg.merge(lights_wide[["geo_id", "ln_t400NTLpc2012", "ln_t400NTLpc2020"]],
+                  on="geo_id")
+geo.labels(later, own={"ln_t400NTLpc2012": "Log lights per capita (trend), 2012",
+                       "ln_t400NTLpc2020": "Log lights per capita (trend), 2020"})
+geo.correlation(later, ["sdg1_2_mpi_2024", "sdg1_2_mpi_change",
+                        "ln_t400NTLpc2012", "ln_t400NTLpc2020"]).gt
 ```
 
 Brighter municipalities were less poor. Across the 333 units with lights, the correlation between lights per capita and the MPI in 2012 is -0.54, so lights alone account for 29% of the variation in poverty. An increase of one log point in lights per capita goes with an MPI 0.033 lower.
 
 Three municipalities are almost unlit (Mojinete in Potosí, San Lorenzo in Pando and Exaltación in Beni). They do not drive the result: without them the correlation is -0.57, and the rank correlation is -0.60.
 
-The relation carries over to 2024 almost as strongly: the lights of 2012 correlate -0.49 with poverty in 2024, and the lights of 2020 -0.50. Brighter municipalities saw smaller falls in poverty (correlation 0.50 between lights and the change), largely because they had less poverty to lose.
+The relation carries over to 2024 almost as strongly: the lights of 2012 correlate -0.49 with poverty in 2024, and the lights of 2020 -0.50. Brighter municipalities saw smaller falls in poverty (correlation 0.50 between the lights of 2012 and the change), largely because they had less poverty to lose. Lights themselves rose in 95% of the units between 2012 and 2020, most in Beni and least in Santa Cruz.
 
 - How heterogeneous is the relationship between poverty and night-time lights across departments?
 
+`geo.scatter()` draws one panel, so the small multiples are Plotly Express; the slope and the correlation of each department come from `geo.scatter()` on that department's municipalities.
+
 ```{code-cell} ipython3
-g = sns.lmplot(data=nl, x="ln_t400NTLpc", y="sdg1_2_mpi_2012", col="department", col_order=departments,
-               hue="department", hue_order=departments, palette=palette, col_wrap=3, height=2.8,
-               scatter_kws={"s": 15}, ci=None)
-g.set_axis_labels("Log lights per capita", "MPI 2012")
-g.set_titles("{col_name}")
-plt.show()
+px.scatter(d12, x="ln_t400NTLpc", y="sdg1_2_mpi", facet_col="department",
+           facet_col_wrap=3, trendline="ols", hover_name="name", height=700,
+           labels={"ln_t400NTLpc": "Log lights per capita", "sdg1_2_mpi": "MPI",
+                   "department": "Department"},
+           title="Night-time lights and poverty by department, 2012")
 ```
 
 ```{code-cell} ipython3
-def fit_by_group(d):
-    slope = np.polyfit(d["ln_t400NTLpc"], d["sdg1_2_mpi_2012"], 1)[0]
-    return pd.Series({"municipalities": len(d), "slope": slope,
-                      "correlation": d["ln_t400NTLpc"].corr(d["sdg1_2_mpi_2012"])})
-
-print("Potosí without Mojinete:", fit_by_group(nl[(nl["department"] == "Potosí") & (nl["name"] != "Mojinete")]).round(3).to_dict())
-nl.groupby("department")[["ln_t400NTLpc", "sdg1_2_mpi_2012"]].apply(fit_by_group).round(3).sort_values("slope")
+rows = []
+for department, d in d12.groupby("department"):
+    fit = geo.scatter(d, "ln_t400NTLpc", "sdg1_2_mpi")
+    rows.append({"department": department, "municipalities": fit.n,
+                 "slope": fit.slope, "correlation": fit.corr})
+potosi = d12[(d12["department"] == "Potosí") & (d12["name"] != "Mojinete")]
+fit = geo.scatter(potosi, "ln_t400NTLpc", "sdg1_2_mpi")
+print(f"Potosí without Mojinete: slope {fit.slope:.3f}, correlation {fit.corr:.2f}")
+pd.DataFrame(rows).sort_values("slope").round(3)
 ```
 
-The relationship is negative in all nine departments, but its strength varies. It is steepest and tightest in Cochabamba (slope -0.085, correlation -0.79) and Chuquisaca (-0.068, -0.85), where lights separate the poorer rural municipalities from the rest well. It is weakest in Pando (correlation -0.32) and Santa Cruz (-0.37), and flattest in Beni, Pando and Tarija (slopes between -0.013 and -0.015); in Tarija poverty is uniformly low. Potosí's slope (-0.026) is flattened by Mojinete, its almost unlit outlier: without it the slope is -0.058 and the correlation -0.74.
+The relationship is negative in all nine departments, but its strength varies. It is steepest and tightest in Cochabamba (slope -0.085, correlation -0.79) and Chuquisaca (-0.068, -0.85), where lights separate the poorer rural municipalities from the rest well. It is weakest in Pando (correlation -0.321) and Santa Cruz (-0.365), and flattest in Beni, Pando and Tarija (slopes between -0.013 and -0.015); in Tarija poverty is uniformly low. Potosí's slope (-0.026) is flattened by Mojinete, its almost unlit outlier: without it the slope is -0.058 and the correlation -0.74.
 
 +++
 
 ## Summary
 
 - Multidimensional poverty fell in all 343 municipalities and indigenous autonomies between 2012 and 2024: the municipal mean went from 0.234 to 0.063 (median 0.227 to 0.053), and the population-weighted national mean from 0.133 to 0.033.
-- In both periods poverty varies much more within departments than between them (departments explain about a fifth of the variance). Chuquisaca, Pando and Potosí had the poorest municipalities in 2012; Chuquisaca, Potosí and Beni in 2024. Tarija and Santa Cruz are the least poor in both. TIOC-Raqaypampa is the poorest unit and Nuestra Señora de La Paz the least poor in both periods.
+- In both periods poverty varies much more within departments than between them (about a fifth of the Theil index lies between departments). Chuquisaca, Pando and Potosí had the poorest municipalities in 2012; Chuquisaca, Potosí and Beni in 2024. Tarija and Santa Cruz are the least poor in both. TIOC-Raqaypampa is the poorest unit and Nuestra Señora de La Paz the least poor in both periods.
 - Poorer municipalities fell most in absolute terms and the ordering persisted (correlation 0.86): absolute gaps narrowed, relative gaps widened (coefficient of variation 0.45 to 0.70).
 - Larger municipalities are less poor (correlation with log population -0.34 in 2012, -0.23 in 2024). The large cities have low poverty and hold close to half the population, so the population-weighted MPI is about half the municipal average.
-- Night-time lights per capita are a stronger predictor (correlation -0.54 in 2012, on the 333 units with lights), robust to the few almost unlit municipalities, negative in every department, and still -0.50 between the lights of 2020 and poverty in 2024.
-- The maps show that poverty and lights are spatially clustered. The companion notebooks [`esda`](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/esda.ipynb) and [`esda_dependence`](https://colab.research.google.com/github/quarcs-lab/geo4bolivia/blob/main/notebooks/esda_dependence.ipynb) measure that clustering with spatial weights, Moran's I and LISA.
+- Night-time lights per capita are more closely associated with poverty (correlation -0.54 in 2012, on the 333 units with lights). The association is robust to the few almost unlit municipalities, negative in every department, and still -0.50 between the lights of 2020 and poverty in 2024.
+- The maps show that poverty and lights are spatially clustered. The companion notebooks [`esda`](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/esda.ipynb) and [`esda_dependence`](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/esda_dependence.ipynb) measure that clustering with spatial weights, Moran's I and LISA.
+- These are associations between variables measured in the same places; none of them shows that one causes the other. The [package documentation](https://quarcs-lab.github.io/geo4bolivia/) has every function used here, with an example.

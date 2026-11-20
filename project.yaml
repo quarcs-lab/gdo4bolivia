@@ -10,10 +10,10 @@ package: geo4bolivia
 
 # GitHub repository holding the published files, and the git ref an installed
 # package reads from by default (a release tag freezes the data).
-repository: quarcs-lab/geo4bolivia
+repository: quarcs-lab/gdo4bolivia
 default_ref: main
 
-website: https://quarcs-lab.github.io/geo4bolivia/
+website: https://quarcs-lab.github.io/gdo4bolivia/
 
 country:
   name: Bolivia

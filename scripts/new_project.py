@@ -1,5 +1,8 @@
 """Start a new geo4<country> project from this repository (see TEMPLATE.md).
 
+NOT YET ADAPTED to the two-repository layout of version 0.6 (the package now lives in
+its own repository): it stops with an explanation until it is.
+
 Copies the generic parts (Python package, tests, guides), renames the package,
 writes a fresh project.yaml, scales.yaml, README.md and CLAUDE.md, and leaves out
 everything that belongs to this project: raw inputs, published data, metadata,
@@ -86,6 +89,11 @@ def main(argv=None) -> int:
     p.add_argument("--levels", default="province,district",
                    help="comma-separated scale ids for GADM levels 1, 2, ... (default: province,district)")
     args = p.parse_args(argv)
+    if not (Path(__file__).resolve().parents[1] / "src").is_dir():
+        raise SystemExit(
+            "This generator still builds the one-repository layout of version 0.5 and copies the package\n"
+            "from src/, which moved to its own repository in version 0.6. It has not been adapted to the\n"
+            "two-repository layout yet: see TEMPLATE.md here and in the package repository.")
 
     if not re.fullmatch(r"[a-z][a-z0-9_]*", args.package):
         p.error("--package must be a valid Python name in lowercase, e.g. geo4laos")

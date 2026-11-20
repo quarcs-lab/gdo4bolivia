@@ -17,8 +17,8 @@ The SDG 4 (Quality education) index of the Atlas de los ODS en Bolivia 2026 (SDS
 
 | File | Format |
 | --- | --- |
-| [`data/municipality/sdg04.csv`](https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/sdg04.csv) | CSV |
-| [`data/municipality/sdg04.parquet`](https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/sdg04.parquet) | Parquet |
+| [`data/municipality/sdg04.csv`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg04.csv) | CSV |
+| [`data/municipality/sdg04.parquet`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg04.parquet) | Parquet |
 
 | Variable | Label | Description | Unit | Coverage | Aggregation | Source |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -56,7 +56,7 @@ Without the package:
 ```python
 import pandas as pd
 
-df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/sdg04.csv")
+df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg04.csv")
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -80,7 +80,7 @@ df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/
 
 ## Recommended citation
 
-> GeoDevelopment Observatory of Bolivia (2026). SDG 4: Quality education, from the Atlas de los ODS en Bolivia 2026 (343 municipalities, ~2012 and ~2024). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/sdg04.md
+> GeoDevelopment Observatory of Bolivia (2026). SDG 4: Quality education, from the Atlas de los ODS en Bolivia 2026 (343 municipalities, ~2012 and ~2024). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/sdg04.md
 
 ## License
 

@@ -17,8 +17,8 @@ Annual night-time lights per capita for 333 of Bolivia's 343 municipalities, 201
 
 | File | Format |
 | --- | --- |
-| [`data/municipality/ntl.csv`](https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/ntl.csv) | CSV |
-| [`data/municipality/ntl.parquet`](https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/ntl.parquet) | Parquet |
+| [`data/municipality/ntl.csv`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/ntl.csv) | CSV |
+| [`data/municipality/ntl.parquet`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/ntl.parquet) | Parquet |
 
 | Variable | Label | Description | Unit | Coverage | Aggregation | Source |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -46,7 +46,7 @@ Without the package:
 ```python
 import pandas as pd
 
-df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/ntl.csv")
+df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/ntl.csv")
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -77,7 +77,7 @@ df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/
 
 ## Recommended citation
 
-> GeoDevelopment Observatory of Bolivia (2026). Night-time lights per capita (333 of 343 municipalities, 2012–2020). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/ntl.md
+> GeoDevelopment Observatory of Bolivia (2026). Night-time lights per capita (333 of 343 municipalities, 2012–2020). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/ntl.md
 
 ## License
 

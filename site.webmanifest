@@ -1,8 +1,8 @@
 {
   "name": "GeoDevelopment Observatory of Bolivia",
   "short_name": "GDO-Bolivia",
-  "start_url": "/geo4bolivia/",
-  "scope": "/geo4bolivia/",
+  "start_url": "/gdo4bolivia/",
+  "scope": "/gdo4bolivia/",
   "display": "standalone",
   "background_color": "#071417",
   "theme_color": "#071417",

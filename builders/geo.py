@@ -27,10 +27,10 @@ from __future__ import annotations
 import geopandas as gpd
 import pandas as pd
 
-from .. import store
-from .common import publish_geo
-from .gadm import gadm_units
-from .geoboundaries import from_polygons
+from geo4bolivia import store
+from geo4bolivia.build.common import publish_geo
+from geo4bolivia.build.gadm import gadm_units
+from geo4bolivia.build.geoboundaries import from_polygons
 
 BOUNDARIES_FILE = "raw/boundaries/sdsn2025/sdsn_municipal_boundaries_2025.shp"
 LEVELS = {1: "department", 2: "province", 3: "municipality"}
@@ -118,7 +118,7 @@ def link_ds4bolivia_polygons(df: pd.DataFrame) -> pd.DataFrame:
     that lost territory to the four new units (``changed`` in ``raw/lookups/municipalities343.csv``)
     are dropped, and the new units have none.
     """
-    from .common import ids_from_units
+    from geo4bolivia.build.common import ids_from_units
 
     raw = store.repo_root() / "raw"
     old = pd.read_csv(raw / "lookups/municipalities339_gadm.csv", dtype={"ine_code": str})

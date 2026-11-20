@@ -76,7 +76,7 @@
   "geo:categories": [
     "Economy"
   ],
-  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). Night-time lights per capita (333 of 343 municipalities, 2012–2020). https://github.com/quarcs-lab/geo4bolivia/blob/main/docs/datasets/ntl.md",
+  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). Night-time lights per capita (333 of 343 municipalities, 2012–2020). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/ntl.md",
   "geo:notes": [
     "The values belong to DS4Bolivia's polygons of the 2015 map, so they are published for the 333 municipalities whose territory is unchanged in the 343-unit map of 2025. The six municipalities that lost territory to the units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units (San Pedro de Macha, TIOC-Raqaypampa, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico) have no rows.",
     "Both variables are logs of a ratio, so they cannot be summed or averaged up the hierarchy; their aggregation rule is `none`. Aggregate the levels instead, e.g. NTL = exp(ln_NTLpc) × pop, summed with `pop` from the population dataset.",
@@ -112,7 +112,7 @@
   "resources": [
     {
       "name": "ntl-municipality",
-      "path": "https://raw.githubusercontent.com/quarcs-lab/geo4bolivia/main/data/municipality/ntl.csv",
+      "path": "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/ntl.csv",
       "format": "csv",
       "mediatype": "text/csv",
       "encoding": "utf-8",

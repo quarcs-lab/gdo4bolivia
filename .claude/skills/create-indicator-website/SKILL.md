@@ -6,9 +6,15 @@ description: Turn a new dataset plus its information (source, citation, license,
 # Create an indicator page
 
 One run takes a dataset from `raw/` to a published page at `<website>indicators/<id>/`. The project is
-a geo4<country> repository: read `project.yaml` first (name, `package`, repository, country,
-`site` map settings) and `CLAUDE.md`; never hard-code the country, the repository or the package.
+the data repository of a geo4<country> project: read `project.yaml` first (name, `package`, repository,
+country, `site` map settings) and `CLAUDE.md`; never hard-code the country, the repository or the package.
 Below, `<pkg>` is the `package` in `project.yaml` (the CLI and the import name).
+
+The Python package is a dependency, not part of this repository: `uv sync` installs it (from PyPI, or
+from a checkout next to this one when `pyproject.toml` has a `[tool.uv.sources]` entry), and
+`uv run <pkg> build` runs the project's builders in `builders/`. Adding an indicator changes this
+repository only; if a function of the package needs changing, stop and say so, since that is done in
+the package's repository.
 
 The page is drawn by `IndicatorDetail` in `site/src/app.jsx` and has, in order: title and summary,
 the headline map, **About the dataset** (description, notice, original source with its
@@ -27,8 +33,8 @@ There is no download section, and the page links to no data files.
   it, cite where it came from, flag what you could not confirm, and ask.
 - **Ask before writing** the variable dictionary and the license: show the drafts and
   wait for approval (step 4 and step 5).
-- `raw/` files are never edited; fixes go in the builder.
-- Keep generic files generic (`TEMPLATE.md` lists them).
+- `raw/` files are never edited; fixes go in the builder (`builders/<dataset>.py`).
+- Keep generic files generic (`TEMPLATE.md` lists them): this skill, `scripts/indicator_map.py` and the site's components.
 - Finish with `build`, `validate` and `pytest` all green before committing.
 
 ## Workflow
@@ -61,7 +67,15 @@ Follow `CONTRIBUTING_DATA.md`:
 
 1. `raw/<dataset>/`
 2. `metadata/<dataset>.datapackage.json` and `metadata/index.json`
-3. a builder from `src/<pkg>/build/_template.py`, registered in `DATASETS`
+3. a builder, `builders/<dataset>.py`, started from the package's template and registered in
+   `DATASETS` in `builders/__init__.py`:
+
+   ```bash
+   cp "$(uv run python -c 'import <pkg>.build._template as t; print(t.__file__)')" builders/<dataset>.py
+   ```
+
+   Builders import the package by name (`from <pkg>.build.common import ids_from_units, publish,
+   write_docs`) and each other relatively (`from .geo import ...`).
 
 Metadata properties are listed in [references/metadata-fields.md](references/metadata-fields.md).
 
@@ -105,7 +119,7 @@ uv run <pkg> validate <dataset>
 uv run pytest
 ```
 
-The validator checks:
+`pytest` also checks that every dataset in `metadata/index.json` has a builder. The validator checks:
 - every field has a `title` and a `description`
 - every license has a `name`
 - `geo:map` names a variable that has data in its year
