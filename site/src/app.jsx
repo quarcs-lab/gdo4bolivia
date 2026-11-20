@@ -1587,7 +1587,7 @@ const Footer = () => {
   const band = SECTION_BANDS.footer;
   const imgRef = useParallax();
   return (
-  <footer className="bg-lagoon-950 border-t border-white/10">
+  <footer className="bg-lagoon-950/60 backdrop-blur-sm border-t border-white/10">
     <div className="relative overflow-hidden">
       <div className="absolute inset-0" aria-hidden="true">
         <img ref={imgRef} src={band.image} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover scale-125 saturate-[1.2] brightness-110 will-change-transform" />
@@ -2344,7 +2344,7 @@ const App = () => {
 
   return (
     <ReducedMotionContext.Provider value={reduced}>
-      <div className="min-h-screen bg-lagoon-950 text-salt-200 font-sans selection:bg-brand-rose/40 selection:text-white">
+      <div className="min-h-screen text-salt-200 font-sans selection:bg-brand-rose/40 selection:text-white">
         <Navigation isHome={isHome} />
         <main id="main" tabIndex={-1} className="focus:outline-none">
           {isHome ? <Home /> : <DetailView route={route} />}
