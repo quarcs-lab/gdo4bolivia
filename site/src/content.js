@@ -91,7 +91,7 @@ beta.fig.show()
 print(geo.inequality(ids, "index_sdg").interpret())   # did the gaps narrow?
 lisa = geo.lisa(ids, "index_sdg", year=2024)   # where do highs and lows cluster?
 print(lisa.interpret())
-lisa.fig.show()
+lisa.fig.show()                                # scatterplot and cluster map, side by side
 
 # 2. expdpy goes further with panels: variation between and within units
 df, df_def = geo.for_expdpy(ids)
@@ -2226,7 +2226,7 @@ geo.map(mpi, "sdg1_2_mpi", year=[2012, 2024],
         scheme="fisher_jenks").show()         # both periods, common classes
 res = geo.lisa(mpi, "sdg1_2_mpi", year=2024)  # where does poverty cluster?
 print(res.interpret())                        # the result in words
-res.fig                                       # the interactive cluster map`,
+res.fig                                       # scatterplot and cluster map, side by side`,
       pandas: `import pandas as pd
 import plotly.express as px
 

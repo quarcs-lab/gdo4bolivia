@@ -1022,7 +1022,7 @@ wheels = [
 
 [[package]]
 name = "gdo4bolivia"
-version = "0.6.0"
+version = "0.7.0"
 source = { virtual = "." }
 dependencies = [
     { name = "geo4bolivia", extra = ["all"] },
@@ -1051,7 +1051,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "geo4bolivia", extras = ["all"], specifier = ">=0.6.0" }]
+requires-dist = [{ name = "geo4bolivia", extras = ["all"], specifier = ">=0.7.0" }]
 
 [package.metadata.requires-dev]
 analysis = [
@@ -1076,7 +1076,7 @@ dev = [
 
 [[package]]
 name = "geo4bolivia"
-version = "0.6.0"
+version = "0.7.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "esda", version = "2.9.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
@@ -1103,9 +1103,9 @@ dependencies = [
     { name = "spreg", version = "1.9.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "statsmodels" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1b/5e/f4e5b07c97befba245f69970b77437f8a4b4883c346e30231abf65dc39c3/geo4bolivia-0.6.0.tar.gz", hash = "sha256:c4328abb2a9e3e935f109d4f4cf57a30c290b36434b4fca20cbb6951fd9f0c0d", size = 267451, upload-time = "2026-11-20T03:34:30.252Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b9/61/9787c56a3bae8f755f2d253f38683e622b21e8408549e1142650d3098e92/geo4bolivia-0.7.0.tar.gz", hash = "sha256:79b125f49024da303e89c1b33d5b17a7a7e5f003ab314a15d2ed8bffa5edbef2", size = 269133, upload-time = "2026-11-20T07:46:26.72Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5a/86/81fe65501454cc0484ab671cfe285a6f56607fa8f9407894206542315d38/geo4bolivia-0.6.0-py3-none-any.whl", hash = "sha256:0a49c9b2f543b97409ce0f4b0c95f0c7fea6ebd407994f4a0139606e6dbaa49a", size = 314251, upload-time = "2026-11-20T03:34:28.857Z" },
+    { url = "https://files.pythonhosted.org/packages/38/0b/ffb2708062fcf84ddf56edbbcb16370256aa410532611fb953594cb9fb2c/geo4bolivia-0.7.0-py3-none-any.whl", hash = "sha256:40c52190edbdbd74a0561639e957a2f337c20d36c651ab8eceef377d4c42fc7f", size = 315994, upload-time = "2026-11-20T07:46:25.324Z" },
 ]
 
 [package.optional-dependencies]
