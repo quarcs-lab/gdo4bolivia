@@ -12,6 +12,8 @@ export const LANGUAGES = {
   es: { label: 'Español', short: 'ES' },
 };
 export const DEFAULT_LANGUAGE = 'en';
+// Only the languages above: never an inherited key such as ?lang=toString or a stale stored value
+const known = (lang) => typeof lang === 'string' && Object.hasOwn(LANGUAGES, lang);
 
 // Translations of each language other than English, as separate chunks of the bundle
 const LOADERS = {
@@ -48,13 +50,13 @@ const remember = (lang) => { try { localStorage.setItem(STORE_KEY, lang); } catc
 // ?lang=es in a link, else the visitor's last choice, else the country (time zone), else the browser's language
 export const detectLanguage = () => {
   const param = new URLSearchParams(window.location.search).get('lang');
-  if (param && LANGUAGES[param]) { remember(param); return param; }
+  if (known(param)) { remember(param); return param; }
   const saved = stored();
-  if (saved && LANGUAGES[saved]) return saved;
+  if (known(saved)) return saved;
   const byZone = zoneLanguage();
   if (byZone) return byZone;
   const browser = ((navigator.languages && navigator.languages[0]) || navigator.language || '').slice(0, 2).toLowerCase();
-  return LANGUAGES[browser] ? browser : DEFAULT_LANGUAGE;
+  return known(browser) ? browser : DEFAULT_LANGUAGE;
 };
 
 // ---------------------------------------------------------------- state
@@ -63,21 +65,22 @@ const loaded = { en: { ui: {}, content: null } };
 export const language = () => current;
 
 export const loadLanguage = (lang) => {
-  if (loaded[lang]) return Promise.resolve(loaded[lang]);
-  if (!LOADERS[lang]) return Promise.reject(new Error(`No translation for ${lang}`));
+  if (!known(lang)) return Promise.reject(new Error(`Unknown language ${lang}`));
+  if (Object.hasOwn(loaded, lang)) return Promise.resolve(loaded[lang]);
+  if (!Object.hasOwn(LOADERS, lang)) return Promise.reject(new Error(`No translation for ${lang}`));
   return LOADERS[lang]().then(([ui, content]) => (loaded[lang] = { ui: ui.default || ui, content: content.default || content }));
 };
 
 // Make `lang` current (its translation must be loaded); `save` remembers it as the visitor's choice
 export const setLanguage = (lang, save = false) => {
-  current = loaded[lang] ? lang : DEFAULT_LANGUAGE;
+  current = known(lang) && Object.hasOwn(loaded, lang) ? lang : DEFAULT_LANGUAGE;
   document.documentElement.lang = current;
   if (save) remember(current);
 };
 
 // t('Copy') -> 'Copiar'; t('{n} results', { n: 3 }) fills {placeholders}. Falls back to the English text.
 export const t = (text, vars) => {
-  const s = (current !== DEFAULT_LANGUAGE && loaded[current].ui[text]) || text;
+  const s = (current !== DEFAULT_LANGUAGE && loaded[current]?.ui?.[text]) || text;
   return vars ? s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : s;
 };
 
