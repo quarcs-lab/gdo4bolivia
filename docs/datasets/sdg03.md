@@ -9,20 +9,20 @@ The SDG 3 (Good health and well-being) index of the Atlas de los ODS en Bolivia 
 - **Dataset id:** `sdg03`
 - **Categories:** Social
 
-## Scale: municipality
+## Scale: map343
 
-- **Units:** 343 of 343 municipality units
+- **Units:** 343 of 343 map343 units
 - **Period:** 2012–2024, years 2012, 2024 (686 rows: one per unit and year)
 - **Source geometry:** Municipal statistics of the Atlas, linked by INE municipality code
 
 | File | Format |
 | --- | --- |
-| [`data/municipality/sdg03.csv`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg03.csv) | CSV |
-| [`data/municipality/sdg03.parquet`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg03.parquet) | Parquet |
+| [`data/map343/sdg03.csv`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map343/sdg03.csv) | CSV |
+| [`data/map343/sdg03.parquet`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map343/sdg03.parquet) | Parquet |
 
 | Variable | Label | Description | Unit | Coverage | Aggregation | Source |
 | --- | --- | --- | --- | --- | --- | --- |
-| `geo_id` | Municipality ID | GDO-Bolivia municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; its boundary is in geo/boundaries/. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes. |  | 2012, 2024 | — |  |
+| `geo_id` | Municipality ID | GDO-Bolivia municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; map343; its boundary is in geo/boundaries/map343. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes. |  | 2012, 2024 | — |  |
 | `year` | Period | Period of the values in the row: 2012 holds the Atlas's initial values (near the 2012 census) and 2024 its final values (near the 2024 census). Each variable's actual reference years are given in its description and in geo:reference_years. |  | 2012, 2024 | — |  |
 | `mun_id` | INE municipality code | Official municipality code of the National Statistics Institute (INE), DDPPMM (department, province, municipality) stored as an integer without the leading zero (e.g. 20101 = Nuestra Señora de La Paz), as in the Atlas. The Atlas's rows are linked to geo_id through this code. |  | 2012, 2024 | — | Atlas de los ODS en Bolivia 2026 |
 | `index_sdg3` | Good health and well-being index (0-100) | SDG 3 (Good health and well-being) index of the Atlas de los ODS en Bolivia 2026, on a 0-100 scale where 100 means the goal's targets are met and 0 the worst situation. Following the global SDG Index of SDSN, each of its 7 indicators is rescaled linearly to 0-100 between a worst and a best value (given in each indicator's description), with the direction set so that higher is always better and values beyond the bounds capped; the index is the simple mean of the available rescaled indicators. Components: Births attended by skilled health personnel (%); Infant mortality (per 1,000 live births); Under-5 mortality (per 1,000 live births); HIV incidence (per million people); Tuberculosis incidence (per 100,000 people); Vector-borne disease index (0-1); Mean parity of adolescent women 15-19 (children per woman). Initial value (~2012) stored at 2012 and final value (~2024) at 2024; its components refer to different years around each census. Atlas: “Índice ODS3”. Reference years: 2012: ~2012; 2024: ~2024. | index (0-100) | 2012, 2024 | weighted_mean:population | Atlas de los ODS en Bolivia 2026 |
@@ -42,7 +42,7 @@ import geo4bolivia as geo
 
 geo.dictionary("sdg03")                     # variables, units, aggregation rules
 df = geo.load("sdg03")                      # panel: one row per unit and year
-gdf = geo.load("sdg03", geometry=True)      # with municipality boundaries
+gdf = geo.load("sdg03", geometry=True)      # with map343 boundaries
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -52,7 +52,7 @@ Without the package:
 ```python
 import pandas as pd
 
-df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg03.csv")
+df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map343/sdg03.csv")
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)

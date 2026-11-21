@@ -2,17 +2,18 @@
 
     uv run python scripts/web_boundaries.py [--tolerance METRES] [--digits N]
 
-``geo/boundaries/`` holds SDSN Bolivia's 2025 municipal polygons (``builders/geo.py``), lightly
-simplified for analysis. The browser needs far fewer vertices, so the municipalities are
-simplified again as a coverage (shared borders stay shared, so no slivers or gaps appear),
+``geo/boundaries/`` holds the project's maps (``builders/geo.py``), lightly simplified for
+analysis. The browser needs far fewer vertices, so each map of the finest units (the active
+scales that no other scale nests in: for Bolivia the municipal maps ``map343`` and ``map339``)
+is simplified again as a coverage (shared borders stay shared, so no slivers or gaps appear),
 snapped to a grid of ``--digits`` decimals in longitude/latitude, and written with ``geo_id``
-and ``name``. The departments are the union of those simplified municipalities, so their
-outlines fall exactly on the municipal borders; the salt flats and lakes outside every
-municipality stay holes.
+and ``name``. The departments are the union of the first of those maps, simplified, so their
+outlines fall exactly on its borders; the salt flats and lakes outside every municipality stay
+holes.
 
 Outputs (compact GeoJSON, WGS84), read by site/build.mjs and scripts/indicator_map.py:
 
-- ``site/data/municipality.geojson``: properties ``geo_id``, ``name``
+- ``site/data/<map>.geojson``: one per map of the finest units, properties ``geo_id``, ``name``
 - ``site/data/department.geojson``: properties ``geo_id``, ``name``
 - ``site/data/country.geojson``: the outline (lakes and salt flats filled) for the hero globe
 
@@ -55,25 +56,32 @@ def main() -> None:
     ap.add_argument("--digits", type=int, default=4, help="decimals of longitude/latitude")
     args = ap.parse_args()
 
-    units = pd.read_csv(ROOT / "geo/units.csv", dtype=str).set_index("geo_id")
-    web = gpd.read_parquet(ROOT / "geo/boundaries/municipality.parquet")[["geo_id", "geometry"]]
-    web = web.to_crs(project.equal_area_crs())
-    web["geometry"] = shapely.coverage_simplify(web.geometry.to_numpy(), args.tolerance)
-    web = web.to_crs("EPSG:4326")
-    web["geometry"] = shapely.set_precision(web.geometry.to_numpy(), 10 ** -args.digits)
-    empty = web[web.is_empty]
-    assert empty.empty, f"simplification emptied {sorted(empty['geo_id'])}"
-    print(f"Simplified at {args.tolerance:g} m, {args.digits} decimals: "
-          f"{int(shapely.get_num_coordinates(web.geometry.to_numpy()).sum())} vertices, "
-          f"{int((~web.is_valid).sum())} invalid")
+    import geo4bolivia as geo
 
-    web["name"] = web["geo_id"].map(units["name"])
-    web = web.sort_values("geo_id")[["geo_id", "name", "geometry"]]
-    deps = web.assign(geo_id=web["geo_id"].map(units["department_id"])).dissolve("geo_id").reset_index()
-    deps["geometry"] = shapely.set_precision(deps.geometry.to_numpy(), 10 ** -args.digits)
-    deps["name"] = deps["geo_id"].map(units["name"])
-    to_geojson(web, OUT / "municipality.geojson", args.digits)
-    to_geojson(deps[["geo_id", "name", "geometry"]], OUT / "department.geojson", args.digits)
+    every = pd.read_csv(ROOT / "geo/units.csv", dtype=str)
+    reg = geo.scales(active_only=True)
+    finest = [s for s in reg.index if s != "country" and s not in set(reg["parent"].dropna())]
+    deps = None
+    for sid in finest:
+        units = every[every["scale"].isin([sid, "department", "country"])].set_index("geo_id")
+        web = gpd.read_parquet(ROOT / f"geo/boundaries/{sid}.parquet")[["geo_id", "geometry"]]
+        web = web.to_crs(project.equal_area_crs())
+        web["geometry"] = shapely.coverage_simplify(web.geometry.to_numpy(), args.tolerance)
+        web = web.to_crs("EPSG:4326")
+        web["geometry"] = shapely.set_precision(web.geometry.to_numpy(), 10 ** -args.digits)
+        empty = web[web.is_empty]
+        assert empty.empty, f"{sid}: simplification emptied {sorted(empty['geo_id'])}"
+        print(f"{sid}: simplified at {args.tolerance:g} m, {args.digits} decimals: "
+              f"{int(shapely.get_num_coordinates(web.geometry.to_numpy()).sum())} vertices, "
+              f"{int((~web.is_valid).sum())} invalid")
+        web["name"] = web["geo_id"].map(units["name"])
+        web = web.sort_values("geo_id")[["geo_id", "name", "geometry"]]
+        to_geojson(web, OUT / f"{sid}.geojson", args.digits)
+        if deps is None:                     # the departments: the union of the first map
+            deps = web.assign(geo_id=web["geo_id"].map(units["department_id"])).dissolve("geo_id").reset_index()
+            deps["geometry"] = shapely.set_precision(deps.geometry.to_numpy(), 10 ** -args.digits)
+            deps["name"] = deps["geo_id"].map(units["name"])
+            to_geojson(deps[["geo_id", "name", "geometry"]], OUT / "department.geojson", args.digits)
     # The country's outline for the hero globe: the union of the departments without the lake holes
     iso2 = project.config()["country"]["iso2"]
     outline = shapely.union_all(deps.geometry.to_numpy())

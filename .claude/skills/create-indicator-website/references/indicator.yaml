@@ -2,7 +2,7 @@
 # Fill in what you know; leave the rest empty and the skill will ask. Never guess.
 
 dataset: mydataset            # id: lowercase letters, digits, "_" (becomes file names)
-scale: municipality           # an active scale in geo/scales.yaml
+scale: map343                 # an active scale in geo/scales.yaml (a municipal map: map343, map339)
 files:                        # the raw files in raw/<dataset>/, as received
   - original-file.csv
 unit_key:                     # how rows identify units

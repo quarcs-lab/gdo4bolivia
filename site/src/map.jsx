@@ -10,7 +10,18 @@ import { MAP_VIEW } from './content.js';
 const SITE = __SITE_CONFIG__;   // project.yaml `site`, injected by the build
 const COLORS = { background: '#071417', no_data: '#5c6b6a', classes: ['#1f8a80', '#ec8f99', '#ffd9de'], ...(SITE.colors || {}) };
 const BASEMAP = SITE.basemap || {};
-const BOUNDARY_CREDIT = SITE.boundary_credit ? `Boundaries: ${String(SITE.boundary_credit).replace(/</g, '&lt;')}` : '';
+// project.yaml `site.boundary_credit`: one text, or one per scale (map) with a `default`
+const creditOf = (scale) => {
+  const c = SITE.boundary_credit;
+  const text = c && typeof c === 'object' ? (c[scale] || c.default) : c;
+  return text ? String(text).replace(/</g, '&lt;') : '';
+};
+const boundaryCredit = (scale) => {
+  const own = creditOf(scale);
+  const outlines = creditOf('department');
+  if (!own) return '';
+  return `Boundaries: ${own}${outlines && outlines !== own ? `; department outlines: ${outlines}` : ''}`;
+};
 // Change maps: falls (most negative first) and rises (smallest first), up to three classes each
 const FALLS = ['#13605f', '#3f9c8f', '#9fd3c7'];
 const RISES = ['#f3b3bc', '#ec8f99', '#d84a64'];
@@ -91,7 +102,7 @@ const useMapData = (dataset) => {
     let live = true;
     setState({ status: 'loading' });
     getJSON(`assets/data/${dataset}.json`)
-      .then((data) => Promise.all([data, getJSON(`assets/data/${data.scale || 'municipality'}.geojson`), getJSON('assets/data/department.geojson')]))
+      .then((data) => Promise.all([data, getJSON(`assets/data/${data.scale}.geojson`), getJSON('assets/data/department.geojson')]))
       .then(([data, units, departments]) => { if (live) setState({ status: 'ready', data, units, departments }); })
       .catch(() => { if (live) setState({ status: 'error' }); });
     return () => { live = false; };
@@ -173,7 +184,7 @@ export default function IndicatorMap({ datasets, id = 'map' }) {
       document.head.appendChild(link);
     }
     const map = L.map(el.current, { center: MAP_VIEW.center, zoom: MAP_VIEW.zoom, minZoom: 4, maxZoom: 11, zoomSnap: 0.5, scrollWheelZoom: false, attributionControl: false });
-    L.control.attribution({ prefix: false }).addAttribution([BOUNDARY_CREDIT, BASEMAP.attribution].filter(Boolean).join(' · ')).addTo(map);
+    L.control.attribution({ prefix: false }).addAttribution([boundaryCredit(state.data && state.data.scale), BASEMAP.attribution].filter(Boolean).join(' · ')).addTo(map);
     map.createPane('labels').style.zIndex = 650;
     map.getPane('labels').style.pointerEvents = 'none';
     if (BASEMAP.base) L.tileLayer(BASEMAP.base, { maxZoom: 16 }).addTo(map);

@@ -76,7 +76,7 @@ Everything is at the municipality scale and keyed by `geo_id`:
 | `ln_t400NTLpc` | `ntl` | 2012, 2020 | Hodrick–Prescott trend of the log of night-time lights per capita |
 | infrastructure and connectivity | `sdg07`, `sdg08`, `sdg09`, `sdg11`, `sdg` | 2012, 2024 | see section 2.5 |
 
-The Atlas de los ODS en Bolivia 2026 covers all **343 municipalities and indigenous autonomies** at two points in time, near the 2012 and the 2024 censuses (stored as years 2012 and 2024). Night-time lights per capita are built from gridded population on the older municipal map and cover **333 units**: the four units created since (three indigenous autonomies, TIOC, and San Pedro de Macha) and the six municipalities that ceded territory to them have no lights value. Analyses that involve lights use those 333 units; the rest use all 343.
+The Atlas de los ODS en Bolivia 2026 covers all **343 municipalities and indigenous autonomies** at two points in time, near the 2012 and the 2024 censuses (stored as years 2012 and 2024). Night-time lights per capita are built from gridded population on the older municipal map of 2015, `map339`, and cover its **339 units**: the four units created since (three indigenous autonomies, TIOC, and San Pedro de Macha) have no lights value, and the six municipalities that ceded territory to them are described by their 2015 territory. The two maps share geo IDs, so the datasets join on `geo_id`. Analyses that involve lights use those 339 units on the 2015 map (`map="map339"`); the rest use all 343 on the 2025 map.
 
 The Atlas is published as one dataset per goal (`sdg01` to `sdg17`) plus `sdg` (the overall index, census population and urbanization). `geo.combine` puts the variables of several datasets in one panel, one row per unit and period. Two choices are made here:
 
@@ -89,7 +89,7 @@ infra = ["urbanization", "sdg7_1_cae", "sdg9_8_tfc", "sdg9_8_ci", "sdg9_8_drb", 
 df = geo.combine({"sdg01": ["sdg1_2_mpi"], "sdg": ["population", "urbanization"],
                   "sdg07": ["sdg7_1_cae"], "sdg08": ["sdg8_10_dsb"], "sdg11": ["sdg11_2_atc"],
                   "sdg09": ["sdg9_8_tfc", "sdg9_8_ci", "sdg9_8_drb", "sdg9_1_vpc"]},
-                 scale="municipality")
+                 scale="map343")
 df["urbanization"] = df.groupby("geo_id")["urbanization"].transform("first")   # the 2024 value
 
 ntl = geo.load("ntl", variables="ln_t400NTLpc", years=[2012, 2020])
@@ -98,7 +98,7 @@ df = geo.add_names(df.merge(ntl, on=["geo_id", "year"], how="left"), groups=["de
 df["ln_pop"] = np.log(df["population"])
 labels = {**geo.labels(df), "ln_pop": "Log of population"}
 
-lit = df.dropna(subset=["ln_t400NTLpc"])             # the 333 units with lights
+lit = df.dropna(subset=["ln_t400NTLpc"])             # the 339 units with lights (map339)
 dark = df.loc[df["ln_t400NTLpc"].isna(), "name"].unique()
 print(df["geo_id"].nunique(), "units,", lit["geo_id"].nunique(), "with lights | without:",
       ", ".join(dark))
@@ -220,7 +220,7 @@ The line confirms a negative but weak association: in 2012 each additional log p
 
 ### 2.4 Night-time lights and poverty
 
-Do brighter municipalities have less poverty? This section uses the 333 units with lights. `geo.regression` puts two models side by side: the plain regression, and one with department fixed effects, whose slope compares municipalities of the same department.
+Do brighter municipalities have less poverty? This section uses the 339 units with lights. `geo.regression` puts two models side by side: the plain regression, and one with department fixed effects, whose slope compares municipalities of the same department.
 
 ```{code-cell} ipython3
 geo.scatter(df, "ln_t400NTLpc", "sdg1_2_mpi", year=2012, color="department")
@@ -253,7 +253,7 @@ px.scatter(l12, x="ln_t400NTLpc", y="sdg1_2_mpi", facet_col="department", facet_
            title="Poverty and night-time lights by department, 2012")
 ```
 
-Night-time lights tell more about poverty than population does: on the 333 units with lights, one more log point of lights per capita goes with an MPI 0.033 lower, and lights alone account for 29% of the variation in poverty (R² = 0.293). The link persists in the latest period: poverty in 2024 on lights in 2020 gives a slope of −0.018 and R² = 0.251. With department fixed effects the slope is −0.031 (and R² rises to 0.42): almost all of the association holds between municipalities of the same department.
+Night-time lights tell more about poverty than population does: on the 339 units with lights, one more log point of lights per capita goes with an MPI 0.034 lower, and lights alone account for 29% of the variation in poverty (R² = 0.294). The link persists in the latest period: poverty in 2024 on lights in 2020 gives a slope of −0.018 and R² = 0.255. With department fixed effects the slope is −0.031 (and R² rises to 0.42): almost all of the association holds between municipalities of the same department.
 
 Within every department the 2012 slope is negative, but its size varies more than sixfold. It is steepest in Cochabamba (−0.085) and Chuquisaca (−0.068), where the correlations are also strongest (−0.79 and −0.85), and flattest in Beni (−0.013), Pando (−0.014) and Tarija (−0.015). Potosí's slope (−0.026) is flattened by Mojinete, the single point at the far left of its panel. In 2024 Chuquisaca and Potosí have the strongest correlations (both −0.71), and in Tarija the correlation vanishes (−0.02). Section 6 shows that this heterogeneity is geographic.
 
@@ -274,7 +274,7 @@ Which infrastructure and connectivity indicators move with poverty? From the Atl
 | `sdg8_10_dsb` | Financial access points (per 100,000 people) | 2012, 2024 |
 | `sdg9_1_vpc` | Trunk roads crossing the municipality (number) | 2012, 2024 |
 
-All are measured in the same year as the poverty index, except urbanization (2024 in both periods) and lights (2012 and 2020). `geo.correlation` uses the units with data for every variable, here the 333 with lights. The heatmap shows Spearman (rank) correlations, which are robust to the skewed indicators.
+All are measured in the same year as the poverty index, except urbanization (2024 in both periods) and lights (2012 and 2020). `geo.correlation` uses the units with data for every variable, here the 339 with lights. The heatmap shows Spearman (rank) correlations, which are robust to the skewed indicators.
 
 ```{code-cell} ipython3
 variables = ["sdg1_2_mpi", "ln_t400NTLpc", "ln_pop"] + infra
@@ -297,8 +297,8 @@ with_mpi.sort_values("spearman 2012").round(2)
 Every indicator correlates negatively with poverty in 2012: better-connected municipalities are less poor. The ranking:
 
 - **Electricity coverage** (−0.90) and **fixed or mobile telephone** (−0.89), both from the 2012 census, are near mirror images of poverty. Part of this is mechanical, since census-based poverty measures count deprivations in household services. They are also strongly correlated with each other (0.89).
-- **Internet access** (−0.71), **night-time lights** (−0.60), **urbanization** (−0.55, measured in 2024), **financial access points** (−0.51) and **public-transport seats** (−0.47) come next. For internet access and transit seats the Pearson correlations are weaker (−0.59 and −0.36): the relations are monotonic but far from linear.
-- **Trunk roads** (−0.37), **population** (−0.33) and **mobile base stations** (−0.21) are the weakest.
+- **Internet access** (−0.70), **night-time lights** (−0.61), **urbanization** (−0.55, measured in 2024), **financial access points** (−0.51) and **public-transport seats** (−0.48) come next. For internet access and transit seats the Pearson correlations are weaker (−0.58 and −0.36): the relations are monotonic but far from linear.
+- **Trunk roads** (−0.37), **population** (−0.32) and **mobile base stations** (−0.21) are the weakest.
 
 In 2024 the picture is much the same: electricity coverage (−0.90) is still the closest correlate, while the telephone weakens (−0.69) and mobile base stations change sign (+0.22): by 2024 the poorer municipalities have more base stations per person.
 
@@ -306,7 +306,7 @@ To put these in context, here are the indicators of the whole Atlas most strongl
 
 ```{code-cell} ipython3
 datasets = [d for d in geo.datasets()["dataset"] if d.startswith("sdg")]
-atlas = geo.combine(datasets, scale="municipality")
+atlas = geo.combine(datasets, scale="map343")
 derived = ["sdg1_2_mpi", "sdg1_4_nbi", "sdg5_1_pgm", "sdg10_2_pel", "sdg10_2_mre", "sdg10_2_tpm",
            "sdg10_2_gip", "population", "urbanization", "year"]
 candidates = [c for c in atlas.select_dtypes("number").columns
@@ -348,7 +348,7 @@ fig
 ```
 
 ```{code-cell} ipython3
-geo.map(df, "ln_t400NTLpc", year=2012, scheme="quantiles")
+geo.map(df, "ln_t400NTLpc", year=2012, scheme="quantiles", map="map339")
 ```
 
 The box-plot rule finds no low outliers (the lower fence is below zero) and two high outliers above 0.537 in 2012: TIOC-Raqaypampa (Cochabamba) and Poroma (Chuquisaca). In 2024 it finds twelve, above 0.163, seven of them in Potosí and Chuquisaca.
@@ -368,11 +368,11 @@ Poverty is not scattered at random. The 113 units of the two highest classes of 
 
 ### 4.1 Spatial weights
 
-The spatial functions build queen contiguity weights by default. This notebook keeps the choice of the original: each municipality's neighbours are its **6 nearest municipalities** (by centroid). *k*-nearest neighbours give every unit the same number of neighbours and no islands; the weights are row-standardized, so the spatial lag is the neighbours' average. `geo.weights` builds them, and they are passed as `w=` to every function below. A second set, `w_lit`, is built the same way on the 333 units with lights.
+The spatial functions build queen contiguity weights by default. This notebook keeps the choice of the original: each municipality's neighbours are its **6 nearest municipalities** (by centroid). *k*-nearest neighbours give every unit the same number of neighbours and no islands; the weights are row-standardized, so the spatial lag is the neighbours' average. `geo.weights` builds them, and they are passed as `w=` to every function below. A second set, `w_lit`, is built the same way on the 339 units with lights, on the 2015 map (`map339`) that their values belong to.
 
 ```{code-cell} ipython3
 w = geo.weights(df, method="knn", k=6)
-w_lit = geo.weights(lit, method="knn", k=6)
+w_lit = geo.weights(lit, method="knn", k=6, map="map339")   # lights belong to the 2015 map
 print(w.n, "and", w_lit.n, "units")
 print(geo.connectivity(df, w).interpret())
 ```
@@ -385,18 +385,19 @@ moran12
 ```
 
 ```{code-cell} ipython3
-tests = [("sdg1_2_mpi", 2012, df, w), ("sdg1_2_mpi", 2024, df, w), ("ln_pop", 2012, df, w),
-         ("urbanization", 2024, df, w), ("sdg9_8_tfc", 2012, df, w), ("sdg7_1_cae", 2012, df, w),
-         ("ln_t400NTLpc", 2012, lit, w_lit)]
+tests = [("sdg1_2_mpi", 2012, df, w, "map343"), ("sdg1_2_mpi", 2024, df, w, "map343"),
+         ("ln_pop", 2012, df, w, "map343"), ("urbanization", 2024, df, w, "map343"),
+         ("sdg9_8_tfc", 2012, df, w, "map343"), ("sdg7_1_cae", 2012, df, w, "map343"),
+         ("ln_t400NTLpc", 2012, lit, w_lit, "map339")]
 rows = []
-for variable, year, data, weights in tests:
-    m = geo.moran(data, variable, year=year, w=weights)
+for variable, year, data, weights, on in tests:
+    m = geo.moran(data, variable, year=year, w=weights, map=on)
     rows.append({"variable": labels[variable], "year": year, "units": len(m.df),
                  "Moran's I": m.moran_i, "z": m.z_sim, "pseudo p": m.p_sim})
 pd.DataFrame(rows).round(3)
 ```
 
-Poverty is strongly and significantly clustered: in 2012 Moran's I is 0.45, far above its expected value under spatial randomness (−0.003), with a pseudo p-value of 0.001 (the smallest possible with 999 permutations). It is the most clustered of the variables. In 2024 the clustering is a little weaker (0.39) but still strong. Electricity coverage (0.41), telephones (0.41), log population (0.35), night-time lights (0.32, on the 333 units) and urbanization (0.29) are also significantly clustered. In the scatterplot most municipalities fall in the High-High and Low-Low quadrants: poor municipalities have poor neighbours, and less poor ones less poor neighbours.
+Poverty is strongly and significantly clustered: in 2012 Moran's I is 0.45, far above its expected value under spatial randomness (−0.003), with a pseudo p-value of 0.001 (the smallest possible with 999 permutations). It is the most clustered of the variables. In 2024 the clustering is a little weaker (0.39) but still strong. Electricity coverage (0.41), telephones (0.41), log population (0.35), night-time lights (0.32, on the 339 units of the 2015 map) and urbanization (0.29) are also significantly clustered. In the scatterplot most municipalities fall in the High-High and Low-Low quadrants: poor municipalities have poor neighbours, and less poor ones less poor neighbours.
 
 +++
 
@@ -451,7 +452,7 @@ The clusters are persistent: 259 of the 343 units (76%) are of the same type in 
 
 The bivariate Moran's I relates a municipality's poverty to the **average night-time lights of its neighbours**. Its local version classifies each municipality by its own poverty (first word) and its neighbours' lights (second word): *High-Low* means a poor municipality in a dark neighbourhood, *Low-High* a less poor one in a bright neighbourhood.
 
-The package has no bivariate Moran functions, so this section calls the esda library directly, on the 333 units with lights. The weights are `w_lit` from `geo.weights`; the values must be in the order of the weights (`w_lit.id_order`).
+The package has no bivariate Moran functions, so this section calls the esda library directly, on the 339 units with lights. The weights are `w_lit` from `geo.weights`; the values must be in the order of the weights (`w_lit.id_order`).
 
 ```{code-cell} ipython3
 quadrant = {1: "High-High", 2: "Low-High", 3: "Low-Low", 4: "High-Low"}
@@ -484,7 +485,7 @@ px.scatter(d12, x="poverty (standardized)", y="neighbours' lights (standardized)
 ```
 
 ```{code-cell} ipython3
-gdf = geo.boundaries("municipality").merge(d12[["geo_id", "department", "cluster"]], on="geo_id")
+gdf = geo.boundaries("map339").merge(d12[["geo_id", "department", "cluster"]], on="geo_id")
 gdf["geometry"] = gdf.simplify(0.02)                 # lighter boundaries keep the figure small
 
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index, color="cluster",
@@ -500,22 +501,22 @@ for c in ["Low-High", "High-Low", "Low-Low", "High-High"]:
     units = zip(sel["name"], sel["department"])
     print(f"{c} ({len(sel)}):", ", ".join(f"{n} ({d})" for n, d in units))
 
-# The poverty clusters of section 4.3 (rows) against the bivariate types (columns), 333 units
+# The poverty clusters of section 4.3 (rows) against the bivariate types (columns), 339 units
 both = d12[["geo_id", "cluster"]].merge(lisa12.df[["geo_id", "cluster"]], on="geo_id",
                                         suffixes=("_bivariate", "_poverty"))
 pd.crosstab(both["cluster_poverty"], both["cluster_bivariate"], margins=True)
 ```
 
-The bivariate Moran's I is −0.26 (pseudo p = 0.001): poor municipalities tend to have dark neighbours. The association is weaker than with a municipality's own lights (correlation −0.54), as expected, but clearly significant. It is slightly stronger between poverty in 2024 and lights in 2020 (−0.285, pseudo p = 0.001).
+The bivariate Moran's I is −0.27 (pseudo p = 0.001): poor municipalities tend to have dark neighbours. The association is weaker than with a municipality's own lights (correlation −0.54), as expected, but clearly significant. It is slightly stronger between poverty in 2024 and lights in 2020 (−0.291, pseudo p = 0.001).
 
-The bivariate LISA flags 150 of the 333 municipalities at 10%, dominated by the two "expected" combinations:
+The bivariate LISA flags 154 of the 339 municipalities at 10%, dominated by the two "expected" combinations:
 
-- **Low-High** (68): less poor municipalities in bright neighbourhoods, in Santa Cruz (31), the Cochabamba valley (20), Tarija (8) and around El Alto (La Paz, 5).
-- **High-Low** (44): poor municipalities in dark neighbourhoods, mostly in La Paz (19, from Ixiamas and Apolo in the north to Charazani and Pelechuco), Potosí (9), Pando (5), Beni (4) and Chuquisaca (4).
-- **Low-Low** (28): less poor municipalities with dark neighbours, mainly in La Paz (15; the Yungas towns of Caranavi, Chulumani and Irupana), Beni (6; Trinidad, Rurrenabaque) and Potosí (4; Tupiza, Villazón).
-- **High-High** (10): poor municipalities with bright neighbours, for example Villa Tunari in the Chapare (Cochabamba), and Charagua, Cuevo and San Matías (Santa Cruz).
+- **Low-High** (67): less poor municipalities in bright neighbourhoods, in Santa Cruz (31), the Cochabamba valley (20), Tarija (8) and around El Alto (La Paz, 5).
+- **High-Low** (47): poor municipalities in dark neighbourhoods, mostly in La Paz (22, from Ixiamas and Apolo in the north to Charazani and Pelechuco), Potosí (11, Colquechaca among them), Pando (5), Beni (4) and Chuquisaca (4).
+- **Low-Low** (29): less poor municipalities with dark neighbours, mainly in La Paz (16; the Yungas towns of Caranavi, Chulumani and Irupana), Beni (6; Trinidad, Rurrenabaque) and Potosí (4; Tupiza, Villazón).
+- **High-High** (11): poor municipalities with bright neighbours, for example Villa Tunari in the Chapare (Cochabamba), and Charagua, Cuevo and San Matías (Santa Cruz).
 
-The cross-tabulation links the two analyses. Of the 47 poverty hot spots that have lights, 22 are poor municipalities in dark neighbourhoods; of the 83 cold spots, 56 sit in bright neighbourhoods. Most of the other hot and cold spots (25 and 23) are not significant in the bivariate map.
+The cross-tabulation links the two analyses. Of the 49 poverty hot spots that have lights, 22 are poor municipalities in dark neighbourhoods; of the 83 cold spots, 55 sit in bright neighbourhoods. Most of the other hot and cold spots (27 and 24) are not significant in the bivariate map.
 
 +++
 
@@ -564,9 +565,9 @@ Municipal poverty in 2012 has a Gini of 0.25 and a Theil of 0.10. Only 21% of th
 
 As poverty fell, its *relative* inequality rose: in 2024 the Gini is 0.37 and the Theil 0.22, with the same 21/79 split. Absolute gaps narrowed (the standard deviation fell from 0.106 to 0.044), but the least poor municipalities cut poverty proportionally more than the poorest (section 2.1). On the Lorenz curve, the tenth of the units with the highest values holds 25% of the total in 2024, against 19% in 2012.
 
-Night-time lights per capita are far more unequal (Gini 0.64 and Theil 0.77 in 2012), with a similar split in 2012 (22% between departments). Their Gini fell to 0.57 by 2020, a significant downward trend (that of the Theil index is not significant), and the part between departments fell to 11%.
+Night-time lights per capita are far more unequal (Gini 0.63 and Theil 0.77 in 2012), with a similar split in 2012 (22% between departments). Their Gini fell to 0.57 by 2020, a significant downward trend (that of the Theil index is not significant), and the part between departments fell to 11%.
 
-The spatial Gini shows the clustering from another angle. Neighbour pairs are 1.75% of all pairs (1.81% among the 333 units with lights) but contribute only 1.22% of the Gini of poverty in 2012, 1.28% in 2024 and 1.35% of that of lights in 2012. In all three cases the permutation p-value is 0.001: neighbouring municipalities are much more alike than random pairs.
+The spatial Gini shows the clustering from another angle. Neighbour pairs are 1.75% of all pairs (1.78% among the 339 units with lights) but contribute only 1.22% of the Gini of poverty in 2012, 1.28% in 2024 and 1.32% of that of lights in 2012. In all three cases the permutation p-value is 0.001: neighbouring municipalities are much more alike than random pairs.
 
 +++
 
@@ -574,10 +575,10 @@ The spatial Gini shows the clustering from another angle. Neighbour pairs are 1.
 
 The regression of section 2.4 imposes one slope on all municipalities, and section 2.4 also showed that the slope differs between departments. A geographically weighted regression fits a regression around every municipality, weighting the others by distance, so the slope becomes a surface that can be mapped. `geo.mgwr` fits the multiscale version (MGWR), which finds one **bandwidth** per term: the number of nearest municipalities that enter each local regression. A bandwidth close to the number of units means a relationship that is about the same everywhere; a small one, a relationship that changes over short distances.
 
-The function follows the mgwr library: the variables are z-standardized, so the coefficients are in standard deviations, and the local t-tests are corrected for multiple testing. The sample is the 333 units with lights, and one fit takes about half a minute.
+The function follows the mgwr library: the variables are z-standardized, so the coefficients are in standard deviations, and the local t-tests are corrected for multiple testing. The sample is the 339 units with lights, on the 2015 map (`map="map339"`), and one fit takes about half a minute.
 
 ```{code-cell} ipython3
-mg = geo.mgwr(df, "sdg1_2_mpi", "ln_t400NTLpc", year=2012)
+mg = geo.mgwr(df, "sdg1_2_mpi", "ln_t400NTLpc", year=2012, map="map339")
 print(mg.notes[0])
 mg.gt_bw
 ```
@@ -602,7 +603,7 @@ local.groupby("department", as_index=False).agg(
 The same model for the latest period, poverty in 2024 on lights in 2020:
 
 ```{code-cell} ipython3
-mg24 = geo.mgwr(df, "sdg1_2_mpi", "ln_t400NTLpc", year=2024)
+mg24 = geo.mgwr(df, "sdg1_2_mpi", "ln_t400NTLpc", year=2024, map="map339")
 print("Bandwidths:", mg24.bw, "| 95% intervals:", mg24.bw_interval)
 print(f"R²: global {ols24.summary.loc[0, 'r2']:.3f}, MGWR {mg24.r2:.3f}; negative slopes: "
       f"{(mg24.df[slope] < 0).sum()} of {len(mg24.df)}; significant: "
@@ -611,23 +612,23 @@ print(f"R²: global {ols24.summary.loc[0, 'r2']:.3f}, MGWR {mg24.r2:.3f}; negati
 
 Letting the relationship vary over space improves the fit considerably: R² rises from 0.29 to 0.65.
 
-- **Both terms are local.** The bandwidth of the intercept is 44 nearest municipalities (95% interval 44 to 48), the smallest the search considers, and that of the slope on lights is 64 (64 to 84), against 333 units. The level of poverty at given lights and its link with lights both change across the country.
-- **One sign, many strengths.** All 333 local slopes are negative, from −1.36 to −0.17 standard deviations of poverty per standard deviation of lights (the global slope on that scale is the correlation, −0.54). After the correction for multiple testing, 250 are significant.
-- The relationship is **steepest** in the central-southern Andean valleys, with department means of −1.24 in Cochabamba, −1.02 in Chuquisaca and −0.91 in Potosí, and every slope of Cochabamba and Chuquisaca significant.
-- It is **flattest** in Beni (−0.26), Pando (−0.27) and La Paz (−0.41). Fewer than half of the slopes are significant in Beni (5 of 17) and Santa Cruz (21 of 56).
+- **Both terms are local.** The bandwidth of the intercept is 44 nearest municipalities (95% interval 44 to 48), the smallest the search considers, and that of the slope on lights is 65 (64 to 85), against 339 units. The level of poverty at given lights and its link with lights both change across the country.
+- **One sign, many strengths.** All 339 local slopes are negative, from −1.35 to −0.17 standard deviations of poverty per standard deviation of lights (the global slope on that scale is the correlation, −0.54). After the correction for multiple testing, 260 are significant.
+- The relationship is **steepest** in the central-southern Andean valleys, with department means of −1.23 in Cochabamba, −1.02 in Chuquisaca and −0.92 in Potosí, and every slope of Cochabamba and Chuquisaca significant.
+- It is **flattest** in Beni (−0.29), Pando (−0.28) and La Paz (−0.41). Fewer than half of the slopes are significant in Beni (6 of 19) and Santa Cruz (21 of 56).
 - The local condition numbers are small (at most 4.9, against a threshold of about 30), so the local coefficients are well identified.
 
-The same model for 2024 keeps the intercept local (44) and finds a wider bandwidth for the slope (100, interval 100 to 111); it raises R² from 0.25 to 0.54, and again every local slope is negative (242 of them significant). A single global slope therefore understates the link in the valleys and overstates it in the Amazon and on the Altiplano. These are associations: a local slope can also reflect factors that vary over space and are not in the model. The `esda_heterogeneity` notebook reads this model in full, with the intercept, the fit against global models and the residuals.
+The same model for 2024 keeps the intercept local (44) and finds a wider bandwidth for the slope (101, interval 101 to 112); it raises R² from 0.25 to 0.54, and again every local slope is negative (248 of them significant). A single global slope therefore understates the link in the valleys and overstates it in the Amazon and on the Altiplano. These are associations: a local slope can also reflect factors that vary over space and are not in the model. The `esda_heterogeneity` notebook reads this model in full, with the intercept, the fit against global models and the residuals.
 
 +++
 
 ## 7. Summary
 
 - **Level, spread and change.** In 2012 the municipal MPI averages 0.23 and ranges from 0.018 to 0.56; by 2024 it has fallen in every unit, to an average of 0.06. Chuquisaca, Pando and Potosí are the poorest departments in 2012, Tarija and Santa Cruz the least poor, and the big cities the least poor municipalities. The ranking of municipalities hardly changes (rank correlation 0.86).
-- **Correlates.** Poverty falls with electricity coverage and telephones (Spearman about −0.9), internet, night-time lights (−0.60), urbanization, financial access points and transit, and only weakly with population (−0.33). Lights alone account for 29% of its variation in 2012 and 25% in 2024.
+- **Correlates.** Poverty falls with electricity coverage and telephones (Spearman about −0.9), internet, night-time lights (−0.61), urbanization, financial access points and transit, and only weakly with population (−0.32). Lights alone account for 29% of its variation in 2012 and 25% in 2024.
 - **Clustering.** Poverty is strongly clustered (Moran's I = 0.45 in 2012, 0.39 in 2024). Hot spots lie in the Chuquisaca–Potosí–Cochabamba valleys and, in 2012, in Pando; cold spots in Santa Cruz, the Cochabamba valley, the La Paz–El Alto area and Tarija. By 2024 the hot spots have retreated to the Andean core.
-- **Neighbours' lights.** Poor municipalities tend to have dark neighbours (bivariate Moran's I = −0.26). Most hot spots with a significant bivariate pattern are poor places in dark neighbourhoods, and most cold spots less poor places in bright ones.
+- **Neighbours' lights.** Poor municipalities tend to have dark neighbours (bivariate Moran's I = −0.27). Most hot spots with a significant bivariate pattern are poor places in dark neighbourhoods, and most cold spots less poor places in bright ones.
 - **Inequality.** About four fifths of the inequality in poverty lies within departments, not between them, and relative inequality rose as poverty fell (Gini 0.25 in 2012, 0.37 in 2024).
-- **Heterogeneity.** The lights–poverty slope is negative everywhere but its size varies about eightfold. It is steepest in the central-southern valleys and weakest in the Amazon, and it varies over short distances (a bandwidth of 64 of 333 municipalities in 2012).
+- **Heterogeneity.** The lights–poverty slope is negative everywhere but its size varies about eightfold. It is steepest in the central-southern valleys and weakest in the Amazon, and it varies over short distances (a bandwidth of 65 of 339 municipalities in 2012).
 
 All of these are associations between measured quantities, not causal effects. The methods are explained, with examples, in the package's [articles](https://quarcs-lab.github.io/geo4bolivia/articles/) and [function reference](https://quarcs-lab.github.io/geo4bolivia/reference/).

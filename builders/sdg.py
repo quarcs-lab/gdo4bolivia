@@ -1,4 +1,4 @@
-"""SDG Atlas 2026: raw/sdg -> data/municipality/sdg (the IDS) and sdg01 ... sdg17 (one per goal).
+"""SDG Atlas 2026: raw/sdg -> data/map343/sdg (the IDS) and sdg01 ... sdg17 (one per goal).
 
 The Atlas de los ODS en Bolivia 2026 (Andersen & Argandoña, SDSN Bolivia) measures 81
 indicators of 15 goals (none for SDG 12 or 14) for the 343 municipalities and indigenous
@@ -21,7 +21,7 @@ import pandas as pd
 from geo4bolivia import metadata, store
 from geo4bolivia.build.common import ids_from_units, publish, write_docs
 
-SCALE = "municipality"
+SCALE = "map343"
 RAW = "raw/sdg/atlas_ods_bolivia_2026.xlsx"
 THRESHOLDS = "raw/lookups/sdg2026_thresholds.csv"
 CENSUS = "raw/boundaries/sdsn2025/sdsn_municipal_boundaries_2025.dbf"

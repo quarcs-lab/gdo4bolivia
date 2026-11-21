@@ -64,7 +64,7 @@ warnings.filterwarnings("ignore", module="numba")   # a notice of an optional li
 | `population` | `sdg` | 2012, 2024 | Census population |
 | `ln_t400NTLpc` | `ntl` | 2012–2020 | Long-run trend (HP filter) of the log of night-time lights per capita |
 
-The poverty index comes from the [Atlas de los ODS en Bolivia 2026](https://atlasods.sdsnbolivia.org/) (Andersen & Argandoña, SDSN Bolivia), which computes it from the 2012 and 2024 Population and Housing Censuses for all 343 units. Night-time lights were computed on the older 339-unit map, so they cover **333 units**: the six municipalities that have since lost territory (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four units created after 2012 have no values.
+The poverty index comes from the [Atlas de los ODS en Bolivia 2026](https://atlasods.sdsnbolivia.org/) (Andersen & Argandoña, SDSN Bolivia), which computes it from the 2012 and 2024 Population and Housing Censuses for all 343 units. Night-time lights were computed on the older 339-unit map of 2015 (`map339`), so they cover **339 units**: the four units created after 2012 have no values, and the six municipalities that have since lost territory (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) are described by their 2015 territory. Both maps use the same geo IDs, so the datasets join on `geo_id`.
 
 `geo.load()` returns a panel with one row per unit and year. We join the three variables into one panel; lights enter in 2012, the one year they share with poverty.
 
@@ -98,7 +98,7 @@ geo.extremes(df, "sdg1_2_mpi", year=2012)
 geo.extremes(df, "sdg1_2_mpi", year=2024)
 ```
 
-In 2012 the average municipality had an MPI of 0.234 (median 0.227, standard deviation 0.106), with values from 0.018 to 0.563. By 2024 the average had fallen to 0.063 (median 0.053, standard deviation 0.044), with values from 0.003 to 0.296. Population is very skewed: the median unit had about 12,300 inhabitants in 2024 (10,600 in 2012), while Santa Cruz de la Sierra had 1.61 million. The summary table also shows a gap: lights have 333 units in 2012 and none in 2024.
+In 2012 the average municipality had an MPI of 0.234 (median 0.227, standard deviation 0.106), with values from 0.018 to 0.563. By 2024 the average had fallen to 0.063 (median 0.053, standard deviation 0.044), with values from 0.003 to 0.296. Population is very skewed: the median unit had about 12,300 inhabitants in 2024 (10,600 in 2012), while Santa Cruz de la Sierra had 1.61 million. The summary table also shows a gap: lights have 339 units in 2012 and none in 2024.
 
 The poorest unit in both periods is TIOC-Raqaypampa (Cochabamba; 0.563 in 2012 and 0.296 in 2024), an indigenous autonomy created after 2012, followed by Poroma (Chuquisaca). Nuestra Señora de La Paz is the least poor in both periods (0.018 and 0.003); in 2024 Colcapirhua, Trigal (Santa Cruz), Santa Cruz de la Sierra and El Alto follow it.
 
@@ -272,7 +272,7 @@ Population and poverty are concentrated in different places. The ten largest mun
 
 - Can night-time lights help us predict poverty?
 
-Lights are measured every year from 2012 to 2020. `geo.trend()` shows the mean of each department over those years, on the 333 units with lights:
+Lights are measured every year from 2012 to 2020. `geo.trend()` shows the mean of each department over those years, on the 339 units with lights:
 
 ```{code-cell} ipython3
 geo.trend(lights, "ln_t400NTLpc", by="department")
@@ -281,7 +281,7 @@ geo.trend(lights, "ln_t400NTLpc", by="department")
 We compare lights with poverty in 2012, the year both were measured. The map shows lights per capita in quintiles: a few almost unlit municipalities are extreme outliers, and natural breaks would give them a class of their own. The ten units without lights are left blank. Compare it with the 2012 poverty map of section 4.
 
 ```{code-cell} ipython3
-geo.map(df, "ln_t400NTLpc", year=2012, scheme="quantiles")
+geo.map(df, "ln_t400NTLpc", year=2012, scheme="quantiles", map="map339")
 ```
 
 ```{code-cell} ipython3
@@ -316,9 +316,9 @@ geo.correlation(later, ["sdg1_2_mpi_2024", "sdg1_2_mpi_change",
                         "ln_t400NTLpc2012", "ln_t400NTLpc2020"]).gt
 ```
 
-Brighter municipalities were less poor. Across the 333 units with lights, the correlation between lights per capita and the MPI in 2012 is -0.54, so lights alone account for 29% of the variation in poverty. An increase of one log point in lights per capita goes with an MPI 0.033 lower.
+Brighter municipalities were less poor. Across the 339 units with lights, the correlation between lights per capita and the MPI in 2012 is -0.54, so lights alone account for 29% of the variation in poverty. An increase of one log point in lights per capita goes with an MPI 0.034 lower.
 
-Three municipalities are almost unlit (Mojinete in Potosí, San Lorenzo in Pando and Exaltación in Beni). They do not drive the result: without them the correlation is -0.57, and the rank correlation is -0.60.
+Three municipalities are almost unlit (Mojinete in Potosí, San Lorenzo in Pando and Exaltación in Beni). They do not drive the result: without them the correlation is -0.57, and the rank correlation is -0.61.
 
 The relation carries over to 2024 almost as strongly: the lights of 2012 correlate -0.49 with poverty in 2024, and the lights of 2020 -0.50. Brighter municipalities saw smaller falls in poverty (correlation 0.50 between the lights of 2012 and the change), largely because they had less poverty to lose. Lights themselves rose in 95% of the units between 2012 and 2020, most in Beni and least in Santa Cruz.
 
@@ -356,6 +356,6 @@ The relationship is negative in all nine departments, but its strength varies. I
 - In both periods poverty varies much more within departments than between them (about a fifth of the Theil index lies between departments). Chuquisaca, Pando and Potosí had the poorest municipalities in 2012; Chuquisaca, Potosí and Beni in 2024. Tarija and Santa Cruz are the least poor in both. TIOC-Raqaypampa is the poorest unit and Nuestra Señora de La Paz the least poor in both periods.
 - Poorer municipalities fell most in absolute terms and the ordering persisted (correlation 0.86): absolute gaps narrowed, relative gaps widened (coefficient of variation 0.45 to 0.70).
 - Larger municipalities are less poor (correlation with log population -0.34 in 2012, -0.23 in 2024). The large cities have low poverty and hold close to half the population, so the population-weighted MPI is about half the municipal average.
-- Night-time lights per capita are more closely associated with poverty (correlation -0.54 in 2012, on the 333 units with lights). The association is robust to the few almost unlit municipalities, negative in every department, and still -0.50 between the lights of 2020 and poverty in 2024.
+- Night-time lights per capita are more closely associated with poverty (correlation -0.54 in 2012, on the 339 units with lights). The association is robust to the few almost unlit municipalities, negative in every department, and still -0.50 between the lights of 2020 and poverty in 2024.
 - The maps show that poverty and lights are spatially clustered. The companion notebooks [`esda`](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/esda.ipynb) and [`esda_dependence`](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/esda_dependence.ipynb) measure that clustering with spatial weights, Moran's I and LISA.
 - These are associations between variables measured in the same places; none of them shows that one causes the other. The [package documentation](https://quarcs-lab.github.io/geo4bolivia/) has every function used here, with an example.

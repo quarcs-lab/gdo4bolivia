@@ -1351,7 +1351,7 @@ const IndicatorsSection = () => {
             <div className="bg-amber-950/30 px-4 py-4 md:px-6 border-t border-amber-900/30 flex gap-3">
               <Layers size={20} className="text-amber-400 flex-shrink-0 mt-0.5" />
               <p className="text-sm text-amber-100/80">
-                <strong className="text-amber-200">One ID system for every scale.</strong> Every unit has a geo ID that nests by prefix: municipality <code>BO-04-17-04</code> (Nuestra Señora de La Paz) lies in province <code>BO-04-17</code> (Murillo), which lies in department <code>BO-04</code> (La Paz) and in Bolivia (<code>BO</code>). <a className="underline" href={`${REPO_URL}/blob/main/geo/units.csv`} target="_blank" rel="noopener noreferrer">geo/units.csv<span className="sr-only"> (opens in a new tab)</span></a> links each ID to its name and to its GADM, INE and DS4Bolivia codes, and the <a className="underline" href="tools/geo4bolivia-package/">geo4bolivia Python package</a> loads, links and aggregates data across scales. The municipalities are the {UNIT_COUNTS.municipality} of the SDG Atlas 2026 (SDSN Bolivia’s map of 2025, municipalities and indigenous autonomies), in {UNIT_COUNTS.province} provinces and {UNIT_COUNTS.department} departments. <a className="underline" href={`${REPO_URL}/blob/main/docs/data-infrastructure.md`} target="_blank" rel="noopener noreferrer">How the database works<span className="sr-only"> (opens in a new tab)</span></a>.
+                <strong className="text-amber-200">One ID system for every scale.</strong> Every unit has a geo ID that nests by prefix: municipality <code>BO-04-17-04</code> (Nuestra Señora de La Paz) lies in province <code>BO-04-17</code> (Murillo), which lies in department <code>BO-04</code> (La Paz) and in Bolivia (<code>BO</code>). <a className="underline" href={`${REPO_URL}/blob/main/geo/units.csv`} target="_blank" rel="noopener noreferrer">geo/units.csv<span className="sr-only"> (opens in a new tab)</span></a> links each ID to its name and to its GADM, INE and DS4Bolivia codes, and the <a className="underline" href="tools/geo4bolivia-package/">geo4bolivia Python package</a> loads, links and aggregates data across scales. Municipal maps are named by their number of units: <code>map343</code>, the {UNIT_COUNTS.map343} municipalities and indigenous autonomies of the SDG Atlas 2026 (SDSN Bolivia’s map of 2025), in {UNIT_COUNTS.province} provinces and {UNIT_COUNTS.department} departments, and <code>map339</code>, the {UNIT_COUNTS.map339} municipalities of the 2015 map on which the population, night-time lights and satellite embeddings were computed. A municipality keeps its geo ID on both maps, and each dataset records the map it is on. <a className="underline" href={`${REPO_URL}/blob/main/docs/data-infrastructure.md`} target="_blank" rel="noopener noreferrer">How the database works<span className="sr-only"> (opens in a new tab)</span></a>.
               </p>
             </div>
           </div>
@@ -1767,7 +1767,12 @@ const uniqueSources = (packages, role) => {
   });
 };
 // Boundary files are not covered by the observatory's data license (LICENSE-DATA)
-const BOUNDARY_NOTE = 'The unit boundaries (the maps on this page, geometry=True and geo/boundaries/) are SDSN Bolivia’s municipal map of 2025 (343 municipalities and indigenous autonomies), used and shared with SDSN Bolivia’s permission; please credit “SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/”. The geo IDs follow GADM 4.1’s numbering.';
+// The license of the boundaries a dataset is drawn on, by its map (geo:scale)
+const BOUNDARY_NOTES = {
+  map343: 'The unit boundaries (the maps on this page, geometry=True and geo/boundaries/map343) are SDSN Bolivia’s municipal map of 2025 (map343: 343 municipalities and indigenous autonomies), used and shared with SDSN Bolivia’s permission; please credit “SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/”. The geo IDs follow GADM 4.1’s numbering.',
+  map339: 'The unit boundaries (the maps on this page, geometry=True and geo/boundaries/map339) are GeoBolivia’s municipal map of 2015 (map339: 339 municipalities), as published by geoBoundaries (gbOpen, public domain; Runfola et al. 2020) and used by DS4Bolivia; its municipalities keep their geo IDs in SDSN Bolivia’s map of 2025 (map343), whose union gives the department outlines, used with SDSN Bolivia’s permission. The geo IDs follow GADM 4.1’s numbering.',
+};
+const boundaryNote = (packages) => BOUNDARY_NOTES[packages[0]?.resources?.[0]?.['geo:scale']] || BOUNDARY_NOTES.map343;
 
 const ExternalA = ({ href, children, className = '' }) => (
   <a href={href} target="_blank" rel="noopener noreferrer"
@@ -1853,7 +1858,7 @@ const LicenseBlock = ({ packages }) => {
           })}
         </ul>
       </div>
-      <p className="text-sm text-salt-400 leading-relaxed">{BOUNDARY_NOTE}</p>
+      <p className="text-sm text-salt-400 leading-relaxed">{boundaryNote(packages)}</p>
     </div>
   );
 };

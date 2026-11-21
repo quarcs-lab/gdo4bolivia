@@ -9,20 +9,20 @@ The Sustainable Development Index (IDS) of the Atlas de los ODS en Bolivia 2026 
 - **Dataset id:** `sdg`
 - **Categories:** Social, Economy, Environment, Institutions
 
-## Scale: municipality
+## Scale: map343
 
-- **Units:** 343 of 343 municipality units
+- **Units:** 343 of 343 map343 units
 - **Period:** 2012–2024, years 2012, 2024 (686 rows: one per unit and year)
 - **Source geometry:** Municipal statistics of the Atlas, linked by INE municipality code
 
 | File | Format |
 | --- | --- |
-| [`data/municipality/sdg.csv`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg.csv) | CSV |
-| [`data/municipality/sdg.parquet`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg.parquet) | Parquet |
+| [`data/map343/sdg.csv`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map343/sdg.csv) | CSV |
+| [`data/map343/sdg.parquet`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map343/sdg.parquet) | Parquet |
 
 | Variable | Label | Description | Unit | Coverage | Aggregation | Source |
 | --- | --- | --- | --- | --- | --- | --- |
-| `geo_id` | Municipality ID | GDO-Bolivia municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; its boundary is in geo/boundaries/. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes. |  | 2012, 2024 | — |  |
+| `geo_id` | Municipality ID | GDO-Bolivia municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; map343; its boundary is in geo/boundaries/map343. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes. |  | 2012, 2024 | — |  |
 | `year` | Period | Period of the values in the row: 2012 holds the Atlas's initial values (near the 2012 census) and 2024 its final values (near the 2024 census). Each variable's actual reference years are given in its description and in geo:reference_years. |  | 2012, 2024 | — |  |
 | `mun_id` | INE municipality code | Official municipality code of the National Statistics Institute (INE), DDPPMM (department, province, municipality) stored as an integer without the leading zero (e.g. 20101 = Nuestra Señora de La Paz), as in the Atlas. The Atlas's rows are linked to geo_id through this code. |  | 2012, 2024 | — | Atlas de los ODS en Bolivia 2026 |
 | `index_sdg` | Sustainable Development Index, IDS (0-100) | The Sustainable Development Index (IDS, Índice de Desarrollo Sostenible) of the Atlas de los ODS en Bolivia 2026: the simple mean of the 15 goal indices (SDG 1-11, 13, 15, 16 and 17; the Atlas has none for 12 or 14), each the mean of its rescaled indicators, on a 0-100 scale where 100 means every target is met. 81 indicators in all. Initial value (~2012) stored at 2012 and final value (~2024) at 2024. Atlas: “IDS 2012” and “IDS 2024”. Reference years: 2012: ~2012; 2024: ~2024. | index (0-100) | 2012, 2024 | weighted_mean:population | Atlas de los ODS en Bolivia 2026 |
@@ -38,7 +38,7 @@ import geo4bolivia as geo
 
 geo.dictionary("sdg")                     # variables, units, aggregation rules
 df = geo.load("sdg")                      # panel: one row per unit and year
-gdf = geo.load("sdg", geometry=True)      # with municipality boundaries
+gdf = geo.load("sdg", geometry=True)      # with map343 boundaries
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -48,7 +48,7 @@ Without the package:
 ```python
 import pandas as pd
 
-df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg.csv")
+df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map343/sdg.csv")
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)

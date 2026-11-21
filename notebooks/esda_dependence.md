@@ -164,8 +164,8 @@ Box-plot breaks give each quartile about 85 units by construction. Natural break
 Each municipality is connected to its 6 nearest neighbours (by the distance between centroids), on all 343 units. `geo.weights()` builds the weights row-standardised, so each neighbour counts 1/6. With nearest neighbours no unit is left without neighbours. The same weights serve both periods. The companion notebook `esda` compares them with the package's default, queen contiguity.
 
 ```{code-cell} ipython3
-w = geo.weights("municipality", method="knn", k=6)
-links = geo.connectivity("municipality", w)
+w = geo.weights("map343", method="knn", k=6)
+links = geo.connectivity("map343", w)
 print(f"{links.n_units} units, {links.mean_neighbors:.0f} neighbours each;",
       f"islands: {len(links.islands)}; connected components: {links.n_components}")
 ```

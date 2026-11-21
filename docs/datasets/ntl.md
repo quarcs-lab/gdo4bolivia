@@ -4,25 +4,25 @@
 
 ## Overview
 
-Annual night-time lights per capita for 333 of Bolivia's 343 municipalities, 2012–2020, in natural logs: the total VIIRS Day/Night Band radiance of each municipality divided by its population. A Hodrick–Prescott trend (λ = 400) of the same series isolates its long-run path. Night-time lights are a widely used proxy for local economic activity and electrification.
+Annual night-time lights per capita for Bolivia's 339 municipalities of the 2015 map, 2012–2020, in natural logs: the total VIIRS Day/Night Band radiance of each municipality divided by its population. A Hodrick–Prescott trend (λ = 400) of the same series isolates its long-run path. Night-time lights are a widely used proxy for local economic activity and electrification.
 
 - **Dataset id:** `ntl`
 - **Categories:** Economy
 
-## Scale: municipality
+## Scale: map339
 
-- **Units:** 333 of 343 municipality units
-- **Period:** 2012–2020, annual (2,997 rows: one per unit and year)
-- **Source geometry:** DS4Bolivia polygons (bolivia339geoqueryFull, keyed by asdf_id), matched one-to-one to the 2015 map's municipalities by area overlap; only the 333 municipalities unchanged in the 343-unit map
+- **Units:** 339 of 339 map339 units
+- **Period:** 2012–2020, annual (3,051 rows: one per unit and year)
+- **Source geometry:** DS4Bolivia polygons (bolivia339geoqueryFull, keyed by asdf_id), matched one-to-one to the 2015 map's municipalities by area overlap; all 339, published as map339
 
 | File | Format |
 | --- | --- |
-| [`data/municipality/ntl.csv`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/ntl.csv) | CSV |
-| [`data/municipality/ntl.parquet`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/ntl.parquet) | Parquet |
+| [`data/map339/ntl.csv`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map339/ntl.csv) | CSV |
+| [`data/map339/ntl.parquet`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map339/ntl.parquet) | Parquet |
 
 | Variable | Label | Description | Unit | Coverage | Aggregation | Source |
 | --- | --- | --- | --- | --- | --- | --- |
-| `geo_id` | Municipality ID | Municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; its boundary is in geo/boundaries/. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes. |  | 2012–2020 | — |  |
+| `geo_id` | Municipality ID | Municipality geo ID (BO-DD-PP-MM) of the 2015 municipality map, map339 (339 municipalities; GeoBolivia via geoBoundaries), numbered as in GADM 4.1; its boundary is in geo/boundaries/map339. The same municipality has the same geo ID in map343. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes. |  | 2012–2020 | — |  |
 | `year` | Year | Calendar year of the observation (2012–2020). The 2012 lights composite covers April 2012 to March 2013. |  | 2012–2020 | — |  |
 | `asdf_id` | DS4Bolivia polygon ID | ID (AidData asdf_id) of the geoBoundaries v4 ADM3 polygon on which DS4Bolivia computed the data, matched one-to-one to the municipality by area overlap. |  | 2012–2020 | — | DS4Bolivia |
 | `ln_NTLpc` | Log night-time lights per capita | Natural log of night-time radiance per person, ln(10⁸ × NTL / population). NTL is the sum over the municipality of the EOG Annual VIIRS Nighttime Lights V2 average radiance (background masked, 15 arc-seconds, nW/cm²/sr), extracted with AidData GeoQuery; population is the same year's WorldPop 1 km sum. Missing where no pixel remained lit after masking (2–15 municipalities a year). | log(10⁸ × nW/cm²/sr per person) | 2012–2020 | none | EOG VIIRS nighttime lights and WorldPop, via DS4Bolivia |
@@ -36,7 +36,7 @@ import geo4bolivia as geo
 
 geo.dictionary("ntl")                     # variables, units, aggregation rules
 df = geo.load("ntl")                      # panel: one row per unit and year
-gdf = geo.load("ntl", geometry=True)      # with municipality boundaries
+gdf = geo.load("ntl", geometry=True)      # with map339 boundaries
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -46,16 +46,16 @@ Without the package:
 ```python
 import pandas as pd
 
-df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/ntl.csv")
+df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map339/ntl.csv")
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
 
 ## Notes
 
-- The values belong to DS4Bolivia's polygons of the 2015 map, so they are published for the 333 municipalities whose territory is unchanged in the 343-unit map of 2025. The six municipalities that lost territory to the units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units (San Pedro de Macha, TIOC-Raqaypampa, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico) have no rows.
+- The values belong to DS4Bolivia's polygons of the 2015 map, so they are published on that map, map339 (339 municipalities; boundaries in geo/boundaries/map339). Its municipalities keep their geo IDs in the 343-unit map of 2025 (map343), except that six of them (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) have since lost territory to four new units (San Pedro de Macha, TIOC-Raqaypampa, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico), which have no values here. geo/crosswalks/map339__map343.csv gives the area shares to move the values onto map343 (e.g. with geo.overlay).
 - Both variables are logs of a ratio, so they cannot be summed or averaged up the hierarchy; their aggregation rule is `none`. Aggregate the levels instead, e.g. NTL = exp(ln_NTLpc) × pop, summed with `pop` from the population dataset.
-- Computed by DS4Bolivia on its own municipal polygons (`asdf_id`), geoBoundaries v4 polygons that differ slightly from the SDSN Bolivia 2025 boundaries in geo/boundaries/.
+- Computed by DS4Bolivia on its own municipal polygons (`asdf_id`), geoBoundaries v4 polygons the 2015 map published as map339 (geo/boundaries/map339), which differs slightly from the SDSN Bolivia 2025 map (map343).
 - Population is the gridded estimate of the `pop` dataset.
 
 ## Related notebooks
@@ -77,7 +77,7 @@ df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/
 
 ## Recommended citation
 
-> GeoDevelopment Observatory of Bolivia (2026). Night-time lights per capita (333 of 343 municipalities, 2012–2020). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/ntl.md
+> GeoDevelopment Observatory of Bolivia (2026). Night-time lights per capita (339 municipalities, 2015 map, 2012–2020). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/ntl.md
 
 ## License
 
@@ -85,5 +85,5 @@ df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/
 - Earth Observation Group, Payne Institute for Public Policy, Colorado School of Mines: [Creative Commons Attribution 4.0 International License](https://eogdata.mines.edu/files/EOG_products_CC_License.pdf). Required credit: “This product was made utilizing VIIRS Nighttime Lights (Annual VNL V2) data produced by the Earth Observation Group, Payne Institute for Public Policy, Colorado School of Mines.”
 - WorldPop (University of Southampton, University of Louisville, Université de Namur) and CIESIN, Columbia University: [Creative Commons Attribution 4.0 International License](https://hub.worldpop.org/doi/10.5258/SOTON/WP00647)
 - AidData, William & Mary: [Open Data Commons Attribution License 1.0](https://opendatacommons.org/licenses/by/1-0/)
-- geoBoundaries, William & Mary geoLab: [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/). Required credit: “Boundaries: geoBoundaries (www.geoboundaries.org).”
+- geoBoundaries, William & Mary geoLab: [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/). Required credit: “Boundaries: geoBoundaries (www.geoboundaries.org), from GeoBolivia's municipal map of 2015 (public domain).”
 - Carlos Mendez, Erick Gonzales, Pedro Leoni, Lykke Andersen and Hernán Peralta: [MIT License](https://github.com/quarcs-lab/ds4bolivia/blob/master/LICENSE)

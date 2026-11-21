@@ -63,7 +63,11 @@ def map_boundaries(sid: str):
 
 
 def boundary_credit(sid: str) -> str:
-    return f"Boundaries: {geo.config().get('site', {}).get('boundary_credit', 'see geo/boundaries/')}"
+    """The credit of a scale's boundaries: ``site.boundary_credit`` in project.yaml, one text or one per scale."""
+    credit = geo.config().get("site", {}).get("boundary_credit", "see geo/boundaries/")
+    if isinstance(credit, dict):
+        credit = credit.get(sid, credit.get("default", "see geo/boundaries/"))
+    return f"Boundaries: {credit}"
 
 
 def number(lo: float, hi: float):

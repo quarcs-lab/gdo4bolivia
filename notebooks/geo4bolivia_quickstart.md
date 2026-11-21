@@ -65,7 +65,7 @@ print("geo4bolivia", geo.__version__)
 
 ## 1. Discover what is available
 
-The catalog lists every dataset with its scale, its years and the number of units with data. The SDG Atlas has two periods for all 343 units; the datasets DS4Bolivia computed on the older 2015 map (population, lights, embeddings) cover the 333 municipalities whose territory has not changed since.
+The catalog lists every dataset with its scale, its years and the number of units with data. The SDG Atlas has two periods for all 343 units; the datasets DS4Bolivia computed on the older 2015 map (population, lights, embeddings) are published on that map, `map339`, for its 339 municipalities, which kept their geo IDs in the 2025 map (`map343`).
 
 ```{code-cell} ipython3
 geo.datasets()[["dataset", "title", "years", "units", "variables"]]
@@ -108,7 +108,7 @@ print(geo.cite("sdg03"))
 
 Every published file is a plain URL, so pandas, geopandas, R, Stata or Excel can read it directly:
 
-- **`data/<scale>/<dataset>.csv`**: the indicators, as a panel with one row per unit (`geo_id`) and year
+- **`data/<scale>/<dataset>.csv`**: the indicators, as a panel with one row per unit (`geo_id`) and year; the municipal scales are named after their map: `map343` (SDSN Bolivia 2025, the SDG Atlas) and `map339` (2015, population, lights and embeddings)
 - **`geo/units.csv`**: names, parent units and the codes other sources use (INE, DS4Bolivia, GADM)
 - **`geo/boundaries/<scale>.geojson`**: polygons, keyed by the same `geo_id`
 
@@ -121,9 +121,9 @@ local = next((p for p in here if (p / "geo" / "units.csv").is_file()), None)
 if local is not None:
     BASE = local.as_posix() + "/"
 
-sdg01 = pd.read_csv(BASE + "data/municipality/sdg01.csv")       # 343 units x 2 periods
-units = pd.read_csv(BASE + "geo/units.csv", dtype={"ine_code": str})    # every scale
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+sdg01 = pd.read_csv(BASE + "data/map343/sdg01.csv")             # 343 units x 2 periods
+units = pd.read_csv(BASE + "geo/units.csv", dtype={"ine_code": str})    # every scale and map
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 print(sdg01.shape, units.shape, municipalities.shape)
 sdg01.head()
 ```
@@ -147,7 +147,7 @@ print(type(ids_2024).__name__, ids_2024.shape, "|", pop_wide.shape)
 
 ```{code-cell} ipython3
 cols = ["geo_id", "name", "ine_code", "province_id", "department_id", "area_km2"]
-geo.units("municipality")[cols].head()
+geo.units("map343")[cols].head()
 ```
 
 ## 3. Understand a variable
@@ -206,7 +206,7 @@ px.line(dep, x="year", y="sdg1_2_mpi", color="name", markers=True,
         title="Multidimensional poverty by department (census-population weighted)")
 ```
 
-Night-time lights cover 333 of the 343 municipalities, and the coverage shows it. Their logs have no aggregation rule, so an explicit rule is needed:
+Night-time lights cover the 339 municipalities of the 2015 map (`map339`), but the raw series has no value for a few of them in 2020, and the coverage shows it. Their logs have no aggregation rule, so an explicit rule is needed:
 
 ```{code-cell} ipython3
 ntl_dep = geo.aggregate(geo.load("ntl", years=2020), to="department",
@@ -246,7 +246,7 @@ Municipal statistics from INE (and every DS4Bolivia table) carry codes. Link the
 ```{code-cell} ipython3
 ine = pd.DataFrame({"codigo": [20101, 20105, 70101, 30101, 10101],
                     "teachers": [9120, 6211, 11034, 5980, 2870]})   # illustrative
-linked = geo.link(ine, scale="municipality", on="codigo", key="mun_id")
+linked = geo.link(ine, scale="map343", on="codigo", key="mun_id")
 geo.add_names(linked, groups=["department"])
 ```
 
@@ -256,7 +256,7 @@ Older spellings still link: by default `geo.link()` also tries `name_ds4bolivia`
 for value in ["San Javier", "Cochabmba"]:
     table = pd.DataFrame({"m": [value]})
     try:
-        geo.link(table, scale="municipality", on="m", key="name")
+        geo.link(table, scale="map343", on="m", key="name")
     except ValueError as err:
         print(err, "\n")
 ```
@@ -289,7 +289,7 @@ with rasterio.open("distance_to_main_cities.tif", "w", driver="GTiff", width=nx,
                    transform=from_bounds(x0, y0, x1, y1, nx, ny)) as dst:
     dst.write(km.astype("float32"), 1)
 
-access = geo.zonal("distance_to_main_cities.tif", scale="municipality",
+access = geo.zonal("distance_to_main_cities.tif", scale="map343",
                    stats=["mean", "max"], name="dist_axis_km")
 access.head()
 ```
@@ -335,7 +335,7 @@ variables = {
                          "unit": "km", "aggregation": "max"},
 }
 datapackage = geo.save(
-    access, "market_access", scale="municipality", directory="my_data",
+    access, "market_access", scale="map343", directory="my_data",
     title="Distance to the central axis", variables=variables,
     description="Mean and maximum straight-line distance from each municipality to "
                 "the nearest of La Paz, Cochabamba and Santa Cruz de la Sierra.")

@@ -113,14 +113,14 @@ Common classes show the fall, but they hide the geography of 2024, when almost e
 `geo.connectivity()` draws the links on the map and describes the graph of neighbours:
 
 ```{code-cell} ipython3
-w = geo.weights("municipality", method="knn", k=6)
-geo.connectivity("municipality", w)
+w = geo.weights("map343", method="knn", k=6)
+geo.connectivity("map343", w)
 ```
 
 The package's default, used when no weights are given, is **queen contiguity**: two municipalities are neighbours when they share a border or a corner. How does it compare?
 
 ```{code-cell} ipython3
-queen = geo.connectivity("municipality")
+queen = geo.connectivity("map343")
 print(queen.interpret())
 queen.fig_hist
 ```

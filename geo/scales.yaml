@@ -2,20 +2,22 @@
 #
 # Every unit at every scale has a geo ID matching `id_pattern`. Administrative
 # IDs are numbered as in GADM 4.1 and nest by prefix: BO > BO-04 (La Paz)
-# > BO-04-17 (Murillo) > BO-04-17-04 (Nuestra Señora de La Paz). The boundaries are
-# SDSN Bolivia's municipal map of December 2025 (343 municipalities and indigenous
-# autonomies, used with SDSN Bolivia's permission), and every coarser scale is the exact
-# union of its municipalities. `parent` is the next
-# coarser scale that a unit nests in exactly; units of a scale with
-# `parent: null` (grids, or a municipality map of another vintage) are linked to
-# others by area-weighted spatial overlay instead.
+# > BO-04-17 (Murillo) > BO-04-17-04 (Nuestra Señora de La Paz).
 #
-# Municipality maps change over time as new municipalities are created. Since version
-# 0.4 `municipality` is the 343-unit map of the Atlas de los ODS 2026; the 339 units of
-# the 2015 map kept their IDs and the four new ones were numbered after them. Data that
-# belong to an older map's polygons (pop, ntl, emb) are published only for the units
-# whose polygon did not change. See CONTRIBUTING_DATA.md, "Add a municipality map of
-# another vintage".
+# Municipal maps are named by their number of units: `map343` is SDSN Bolivia's map of
+# December 2025 (343 municipalities and indigenous autonomies of the Atlas de los ODS 2026,
+# used with SDSN Bolivia's permission), and `map339` the map of 2015 (339 municipalities,
+# GeoBolivia via geoBoundaries, public domain), on whose polygons DS4Bolivia computed pop,
+# ntl and the embeddings. The 339 municipalities kept their geo IDs in map343 and the four
+# units created since were numbered after them, so the two maps share IDs: a dataset's
+# metadata names its map (`geo:scale`), and the analysis functions take `map=`.
+# Provinces, departments and the country are exact unions of map343; map339's
+# municipalities nest in them by ID (their outlines differ slightly). A new municipal map
+# is added as its own scale, `map<units>` (see CONTRIBUTING_DATA.md).
+#
+# `parent` is the next coarser scale a unit nests in (exactly, or by ID only where
+# `nesting: ids`). Units of a scale with `parent: null` (grids) are linked to others by
+# area-weighted spatial overlay.
 #
 # status: active  -> units, boundaries and crosswalks are published in geo/
 #         planned -> the scale and its ID scheme are reserved; no units yet
@@ -52,8 +54,8 @@ province:
   source: union of the SDSN Bolivia 2025 municipalities (numbered as GADM 4.1 level 2, plus BO-03-09 for the Territorio Indígena Multiétnico; 113 provinces)
   status: active
 
-municipality:
-  label: Municipality (343)
+map343:
+  label: Municipality (map343, SDSN Bolivia 2025)
   kind: admin
   level: 3
   parent: province
@@ -64,15 +66,18 @@ municipality:
     plus four units created after GADM's map
   status: active
 
-municipality_ine:
-  label: Municipality (current INE map)
-  kind: custom
+map339:
+  label: Municipality (map339, 2015 map)
+  kind: admin
   level: 3
-  parent: null      # linked to the administrative scales by area-weighted overlay
-  id_pattern: '^BO-INE-\d{6}$'
-  example: BO-INE-020101    # La Paz
-  source: Instituto Nacional de Estadística (INE) municipal codes (6 digits, DDPPMM)
-  status: planned
+  parent: province
+  id_pattern: '^BO-\d{2}-\d{2}-\d{2}$'
+  example: BO-04-17-04      # Nuestra Señora de La Paz
+  digits: 2
+  source: GeoBolivia's municipal map of 2015 (339 municipalities), via geoBoundaries (gbOpen BOL ADM3, public domain)
+    and DS4Bolivia (asdf_id), numbered as GADM 4.1 level 3
+  nesting: ids              # in its province by geo ID; its outlines differ slightly from map343's unions
+  status: active
 
 grid10k:
   label: 10 km grid cell

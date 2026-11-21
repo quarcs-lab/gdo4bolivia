@@ -1,7 +1,7 @@
 {
   "name": "embpw",
   "title": "Satellite embeddings 2017 (population-weighted)",
-  "description": "Sixty-four satellite embedding dimensions (A00–A63) for 333 of Bolivia's 343 municipalities in 2017: the population-weighted mean, over each municipality, of the annual 10 m embeddings from the Google Satellite Embedding dataset (AlphaEarth Foundations), which summarise Sentinel-2, Landsat and other imagery. The dimensions are abstract features, designed as inputs to machine-learning models, e.g. to predict poverty.",
+  "description": "Sixty-four satellite embedding dimensions (A00–A63) for Bolivia's 339 municipalities of the 2015 map in 2017: the population-weighted mean, over each municipality, of the annual 10 m embeddings from the Google Satellite Embedding dataset (AlphaEarth Foundations), which summarise Sentinel-2, Landsat and other imagery. The dimensions are abstract features, designed as inputs to machine-learning models, e.g. to predict poverty.",
   "version": "1.0.0",
   "licenses": [
     {
@@ -47,7 +47,7 @@
         "title": "Creative Commons Attribution 4.0 International License",
         "path": "https://creativecommons.org/licenses/by/4.0/"
       },
-      "geo:attribution": "Boundaries: geoBoundaries (www.geoboundaries.org)."
+      "geo:attribution": "Boundaries: geoBoundaries (www.geoboundaries.org), from GeoBolivia's municipal map of 2015 (public domain)."
     },
     {
       "title": "Mendez, C., Gonzales, E., Leoni, P., Andersen, L., & Peralta, H. (2026). DS4Bolivia: A Data Science Repository to Study GeoSpatial Development in Bolivia [Data set]. GitHub.",
@@ -65,11 +65,11 @@
     "Environment",
     "Economy"
   ],
-  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). Satellite embeddings 2017, population-weighted (333 of 343 municipalities). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/embpw.md",
+  "geo:citation": "GeoDevelopment Observatory of Bolivia (2026). Satellite embeddings 2017, population-weighted (339 municipalities, 2015 map). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/embpw.md",
   "geo:notes": [
-    "The values belong to DS4Bolivia's polygons of the 2015 map, so they are published for the 333 municipalities whose territory is unchanged in the 343-unit map of 2025. The six municipalities that lost territory to the units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units (San Pedro de Macha, TIOC-Raqaypampa, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico) have no rows.",
+    "The values belong to DS4Bolivia's polygons of the 2015 map, so they are published on that map, map339 (339 municipalities; boundaries in geo/boundaries/map339). Its municipalities keep their geo IDs in the 343-unit map of 2025 (map343), except that six of them (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) have since lost territory to four new units (San Pedro de Macha, TIOC-Raqaypampa, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico), which have no values here. geo/crosswalks/map339__map343.csv gives the area shares to move the values onto map343 (e.g. with geo.overlay).",
     "The dimensions are not interpretable one by one and should not be aggregated; their aggregation rule is `none`.",
-    "Computed by DS4Bolivia in Google Earth Engine on its own municipal polygons (`asdf_id`), geoBoundaries v4 polygons that differ slightly from the SDSN Bolivia 2025 boundaries in geo/boundaries/.",
+    "Computed by DS4Bolivia in Google Earth Engine on its own municipal polygons (`asdf_id`), geoBoundaries v4 polygons the 2015 map published as map339 (geo/boundaries/map339), which differs slightly from the SDSN Bolivia 2025 map (map343).",
     "Each pixel is weighted by WorldPop 100 m population, spread evenly over its 10 m pixels (code/aggregate-satellite-embedings-to-adm-pop-weighted1.js in DS4Bolivia), so the embeddings describe where people live. For the area-weighted version, see the `emb` dataset."
   ],
   "geo:notebooks": [
@@ -80,12 +80,12 @@
   ],
   "resources": [
     {
-      "name": "embpw-municipality",
-      "path": "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/embpw.csv",
+      "name": "embpw-map339",
+      "path": "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map339/embpw.csv",
       "format": "csv",
       "mediatype": "text/csv",
       "encoding": "utf-8",
-      "geo:scale": "municipality",
+      "geo:scale": "map339",
       "geo:period": [
         2017,
         2017
@@ -93,10 +93,10 @@
       "geo:years": [
         2017
       ],
-      "geo:units": 333,
-      "geo:path": "data/municipality/embpw.csv",
-      "geo:parquet": "data/municipality/embpw.parquet",
-      "geo:source_geometry": "DS4Bolivia polygons (bolivia339geoqueryFull, keyed by asdf_id), matched one-to-one to the 2015 map's municipalities by area overlap; only the 333 municipalities unchanged in the 343-unit map",
+      "geo:units": 339,
+      "geo:path": "data/map339/embpw.csv",
+      "geo:parquet": "data/map339/embpw.parquet",
+      "geo:source_geometry": "DS4Bolivia polygons (bolivia339geoqueryFull, keyed by asdf_id), matched one-to-one to the 2015 map's municipalities by area overlap; all 339, published as map339",
       "schema": {
         "primaryKey": [
           "geo_id",
@@ -107,7 +107,7 @@
             "name": "geo_id",
             "title": "Municipality ID",
             "type": "string",
-            "description": "Municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; its boundary is in geo/boundaries/. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes.",
+            "description": "Municipality geo ID (BO-DD-PP-MM) of the 2015 municipality map, map339 (339 municipalities; GeoBolivia via geoBoundaries), numbered as in GADM 4.1; its boundary is in geo/boundaries/map339. The same municipality has the same geo ID in map343. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes.",
             "geo:role": "id",
             "constraints": {
               "required": true,

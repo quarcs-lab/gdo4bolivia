@@ -61,7 +61,7 @@ The `geo4bolivia` command and the helpers the builders use come from the Python 
    import plotly.express as px
 
    BASE = "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/"
-   df = pd.read_csv(BASE + "data/municipality/pop.csv")
+   df = pd.read_csv(BASE + "data/map339/pop.csv")
    px.histogram(df[df.year == 2020], x="pop_density", title="Population density, 2020")
    ```
    [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -85,7 +85,7 @@ The `geo4bolivia` command and the helpers the builders use come from the Python 
 
 ## Add a new spatial scale
 
-Scales are registered in [`geo/scales.yaml`](geo/scales.yaml). `municipality_ine` and `grid10k` are already reserved (`status: planned`).
+Scales are registered in [`geo/scales.yaml`](geo/scales.yaml). `grid10k` is already reserved (`status: planned`); municipal maps are scales named `map<units>` (below).
 
 - **Administrative scales** nest by prefix: `BO-04-17-04` lies in province `BO-04-17`.
   1. Put the boundaries in `raw/boundaries/`.
@@ -94,16 +94,19 @@ Scales are registered in [`geo/scales.yaml`](geo/scales.yaml). `municipality_ine
 - **Groupings** (unions of whole units of another scale, e.g. statistical regions made of whole departments) set `children:` to the scale they group. They then nest exactly and work with `geo.aggregate()`.
 - **Grids, custom zones and historical boundaries** do not nest. Give them an `id_pattern` such as `^BO-G10K-r\d{3}c\d{3}$` and boundaries in `geo/boundaries/<scale>.parquet`. Use `geo.overlay()` / `geo.overlay_weights()` to move data onto or off them with area weights.
 
-### Add a municipality map of another vintage
+### Add a municipal map
 
-Bolivia keeps creating municipalities and indigenous autonomies. Since version 0.4 the `municipality` scale is SDSN Bolivia's map of 2025 (343 units, the units of the SDG Atlas 2026), which replaced GeoBolivia's 2015 map (339). The switch kept every published ID meaningful: the 339 units kept their geo IDs and the four new ones were numbered after the last municipality of their province (a new province where INE created one). A future map can be adopted the same way when its new units are carved out of existing ones:
+Bolivia keeps creating municipalities and indigenous autonomies, so every municipal map is a scale of its own, named by its number of units: `map343` (SDSN Bolivia's map of 2025, the units of the SDG Atlas 2026) and `map339` (GeoBolivia's map of 2015, on whose polygons DS4Bolivia computed `pop`, `ntl`, `emb` and `embpw`). Data stay on the map they were computed on, and the package's spatial functions draw and find neighbours on that map (`map=` names it for a table that does not record it).
+
+A new map keeps every published ID meaningful when its new units are carved out of existing ones: the units that exist on both maps keep their geo IDs, and the new ones are numbered after the last municipality of their province (a new province where INE created one). The maps then share IDs, as map339 and map343 do:
 
 1. **Boundaries.** Put the official map in `raw/boundaries/<source><year>/` unedited, with an INE code per polygon, and document it in `raw/README.md` (source, license, citation).
 2. **Match it.** Write a one-off script like `scripts/match_municipalities343.py` that matches the map to the current geo IDs by INE code, numbers the new units, compares each polygon with its old one (area overlap) and flags the units whose territory `changed`. Review its lookup (`raw/lookups/municipalities<N>.csv`) by hand.
-3. **Build.** Point `builders/geo.py` at the new map and lookup (new provinces go in `NEW_PROVINCES`), and update `N_MUNICIPALITIES`, the scale's label in `geo/scales.yaml` and `tests/test_project.py`.
-4. **Data on the old polygons.** Datasets computed on the previous polygons (here `pop`, `ntl`, `emb`, `embpw`, from DS4Bolivia) apply only to units whose territory did not change: `link_ds4bolivia_polygons()` in `builders/geo.py` keeps those and drops the rest. Recompute such datasets on the new polygons when their rasters are available.
-5. **Website.** Regenerate `site/data/` (`scripts/web_boundaries.py`) and every map and card; rename the page IDs if they carry the unit count, with `REDIRECTS` from the old ones.
+3. **Register it.** Add `map<N>` to `geo/scales.yaml` with the same `id_pattern` and `parent: province`. If the provinces stay unions of another map, add `nesting: ids` (its units lie in their province by ID; the validator then only asks for most of each unit to lie inside it).
+4. **Build.** In `builders/geo.py`, add its units (`geo_id`, `scale`, `name`, `parent_id` and source keys) and its layer (`from_polygons(..., scale="map<N>")`), as `_units_2015()` does for map339; new provinces go in `NEW_PROVINCES`. Add a crosswalk to the other maps by area, as `_crosswalk_2015()` does (`geo/crosswalks/map339__map343.csv`). If the new map should become the one the provinces and departments are unions of, switch `MAP` and `LEVELS`.
+5. **Data.** Publish each dataset on the map it was computed on (`geo:scale` in its metadata, `SCALE` in its builder). Update `tests/test_project.py`.
+6. **Website.** Regenerate `site/data/` (`scripts/web_boundaries.py` writes one file per map), its credit in `project.yaml` (`site.boundary_credit`), and every map and card of the datasets on it; rename the page IDs that carry the unit count (`municipalities<N>-<dataset>`), with `REDIRECTS` from the old ones.
 
-When a map cannot keep the IDs (e.g. municipalities merged or redrawn wholesale), add it as its own scale instead: `municipality_ine` is reserved for an INE map, with IDs `BO-INE-DDPPMM`. Register it in `geo/scales.yaml` (`status: active`, `parent: null` unless every unit lies at least 99.5% inside one province), add its units and layer in `builders/geo.py`, link it to `municipality` with `geo.overlay_weights("municipality", "municipality_ine", id_col="geo_id")` and `geo.overlay()`, and give datasets on it a resource with `geo:scale: municipality_ine`.
+When a map's units cannot keep the IDs (e.g. municipalities merged or redrawn wholesale), give it its own `id_pattern` (e.g. `^BO-INE-\d{6}$`) and `parent: null` unless every unit lies at least 99.5% inside one province, and link it to the other maps with `geo.overlay_weights("map343", "<scale>", id_col="geo_id")` and `geo.overlay()`.
 
 After any change: `uv run geo4bolivia build && uv run geo4bolivia validate && uv run pytest`.

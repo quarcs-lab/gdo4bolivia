@@ -40,12 +40,12 @@
   },
   "resources": [
     {
-      "name": "sdg09-municipality",
-      "path": "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/sdg09.csv",
+      "name": "sdg09-map343",
+      "path": "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map343/sdg09.csv",
       "format": "csv",
       "mediatype": "text/csv",
       "encoding": "utf-8",
-      "geo:scale": "municipality",
+      "geo:scale": "map343",
       "geo:period": [
         2012,
         2024
@@ -55,8 +55,8 @@
         2024
       ],
       "geo:units": 343,
-      "geo:path": "data/municipality/sdg09.csv",
-      "geo:parquet": "data/municipality/sdg09.parquet",
+      "geo:path": "data/map343/sdg09.csv",
+      "geo:parquet": "data/map343/sdg09.parquet",
       "geo:source_geometry": "Municipal statistics of the Atlas, linked by INE municipality code",
       "schema": {
         "fields": [
@@ -64,7 +64,7 @@
             "name": "geo_id",
             "title": "Municipality ID",
             "type": "string",
-            "description": "GDO-Bolivia municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; its boundary is in geo/boundaries/. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes.",
+            "description": "GDO-Bolivia municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; map343; its boundary is in geo/boundaries/map343. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes.",
             "geo:role": "id",
             "constraints": {
               "required": true,

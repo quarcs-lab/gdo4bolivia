@@ -72,24 +72,24 @@ res.fig                                            # the interactive cluster map
 
 ## 📊 GeoDevelopment Indicators
 
-All data share one spatial backbone. Every unit at every scale has a **geo ID** that nests by prefix (numbered as in GADM 4.1): municipality `BO-04-17-04` (Nuestra Señora de La Paz) lies in province `BO-04-17` (Murillo), which lies in department `BO-04` (La Paz), which lies in Bolivia `BO`. INE codes, DS4Bolivia's `asdf_id` and GADM codes are kept as columns of [`geo/units.csv`](geo/units.csv). The municipalities are the 343 municipalities and indigenous autonomies (GAIOC) of SDSN Bolivia's municipal map of 2025, the units of the SDG Atlas 2026; provinces, departments and the country are their exact unions. Each dataset is a panel with one row per unit (`geo_id`) and year, published as CSV and Parquet.
+All data share one spatial backbone. Every unit at every scale has a **geo ID** that nests by prefix (numbered as in GADM 4.1): municipality `BO-04-17-04` (Nuestra Señora de La Paz) lies in province `BO-04-17` (Murillo), which lies in department `BO-04` (La Paz), which lies in Bolivia `BO`. INE codes, DS4Bolivia's `asdf_id` and GADM codes are kept as columns of [`geo/units.csv`](geo/units.csv). The municipalities are the 343 municipalities and indigenous autonomies (GAIOC) of SDSN Bolivia's municipal map of 2025 (`map343`), the units of the SDG Atlas 2026; provinces, departments and the country are their exact unions. The 339 municipalities of the 2015 map (`map339`) keep the same geo IDs. Each dataset is a panel with one row per unit (`geo_id`) and year, published as CSV and Parquet.
 
 | Dataset | Title | Scale | Period | Files |
 | --- | --- | --- | --- | --- |
-| [`sdg`](docs/datasets/sdg.md) | SDG Atlas 2026: the Sustainable Development Index (IDS) and its ranking, with census population | 343 municipalities | ~2012, ~2024 | [`data/municipality/`](data/municipality/) |
-| [`sdg01`](docs/datasets/sdg01.md) … [`sdg17`](docs/datasets/sdg17.md) | SDG Atlas 2026, one dataset per goal: the goal index and its 81 indicators in all | 343 municipalities | ~2012, ~2024 | [`data/municipality/`](data/municipality/) |
-| [`pop`](docs/datasets/pop.md) | Population (gridded estimates) | 333 municipalities | 2001–2020 | [`data/municipality/`](data/municipality/) |
-| [`ntl`](docs/datasets/ntl.md) | Night-time lights per capita (log) and its long-run trend | 333 municipalities | 2012–2020 | [`data/municipality/`](data/municipality/) |
-| [`emb`](docs/datasets/emb.md) | Satellite embeddings, 64 dimensions, area-weighted | 333 municipalities | 2017 | [`data/municipality/`](data/municipality/) |
-| [`embpw`](docs/datasets/embpw.md) | Satellite embeddings, 64 dimensions, population-weighted | 333 municipalities | 2017 | [`data/municipality/`](data/municipality/) |
-| [`geo`](geo/) | Units, names, codes, boundaries and crosswalks for every scale | 466 units | — | [`geo/`](geo/) |
+| [`sdg`](docs/datasets/sdg.md) | SDG Atlas 2026: the Sustainable Development Index (IDS) and its ranking, with census population | 343 municipalities (map343) | ~2012, ~2024 | [`data/map343/`](data/map343/) |
+| [`sdg01`](docs/datasets/sdg01.md) … [`sdg17`](docs/datasets/sdg17.md) | SDG Atlas 2026, one dataset per goal: the goal index and its 81 indicators in all | 343 municipalities (map343) | ~2012, ~2024 | [`data/map343/`](data/map343/) |
+| [`pop`](docs/datasets/pop.md) | Population (gridded estimates) | 339 municipalities (map339, 2015 map) | 2001–2020 | [`data/map339/`](data/map339/) |
+| [`ntl`](docs/datasets/ntl.md) | Night-time lights per capita (log) and its long-run trend | 339 municipalities (map339, 2015 map) | 2012–2020 | [`data/map339/`](data/map339/) |
+| [`emb`](docs/datasets/emb.md) | Satellite embeddings, 64 dimensions, area-weighted | 339 municipalities (map339, 2015 map) | 2017 | [`data/map339/`](data/map339/) |
+| [`embpw`](docs/datasets/embpw.md) | Satellite embeddings, 64 dimensions, population-weighted | 339 municipalities (map339, 2015 map) | 2017 | [`data/map339/`](data/map339/) |
+| [`geo`](geo/) | Units, names, codes, boundaries and crosswalks for every scale and map | 805 units | — | [`geo/`](geo/) |
 
 Each dataset has three descriptions:
 - a [Frictionless datapackage](metadata/)
 - a generated page in [`docs/datasets/`](docs/datasets/), with its variable dictionary, coverage, sources and citation
 - its rows in [`definitions_gdo-bolivia.csv`](definitions_gdo-bolivia.csv), which lists every variable of every dataset
 
-The SDG Atlas 2026 measures each indicator twice, near the 2012 census and near the 2024 census; the panels store the two periods as 2012 and 2024, and each variable's actual reference years are in its metadata. New municipalities keep being created in Bolivia: since version 0.4 the municipalities are SDSN Bolivia's 343-unit map of 2025. The 339 municipalities of GeoBolivia's 2015 map kept their geo IDs (numbered as in GADM 4.1) and the four units created since were numbered after them. Population, night-time lights and satellite embeddings were computed on the 2015 polygons, so they cover the 333 municipalities whose territory did not change ([how maps change](CONTRIBUTING_DATA.md#add-a-municipality-map-of-another-vintage)).
+The SDG Atlas 2026 measures each indicator twice, near the 2012 census and near the 2024 census; the panels store the two periods as 2012 and 2024, and each variable's actual reference years are in its metadata. New municipalities keep being created in Bolivia, so the municipal maps are named by their number of units: `map343` is SDSN Bolivia's map of 2025 (the units of the SDG Atlas 2026) and `map339` GeoBolivia's map of 2015. The 339 municipalities of 2015 kept their geo IDs (numbered as in GADM 4.1) in map343, and the four units created since were numbered after them. Population, night-time lights and satellite embeddings were computed on the 2015 polygons, so they are published on map339, for all 339 municipalities. Each dataset records its map, and the package's spatial functions use it (`map=` names it when a table you built mixes them) ([how maps change](CONTRIBUTING_DATA.md#add-a-municipal-map)).
 
 ### Load the data: two ways
 
@@ -107,7 +107,7 @@ geo.describe(mpi)                                  # labelled summary per period
 geo.change(mpi, "sdg1_2_mpi")                      # change and rank change per unit
 geo.aggregate(mpi, to=["department", "country"],
               dataset="sdg01")                     # census-population weighted
-geo.combine(["ntl", "pop"], scale="municipality")  # two datasets, one panel
+geo.combine(["ntl", "pop"], scale="map339")  # two datasets, one panel
 geo.load("ntl", ref="v0.7.2")                      # a frozen release of the data
 geo.map(mpi, "sdg1_2_mpi", year=2024)              # interactive map (Plotly)
 ```
@@ -122,9 +122,10 @@ import geopandas as gpd
 import plotly.express as px
 
 BASE = "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/"
-df = pd.read_csv(BASE + "data/municipality/sdg.csv")   # geo_id, year, variables
+df = pd.read_csv(BASE + "data/map343/sdg.csv")   # geo_id, year, variables
 units = pd.read_csv(BASE + "geo/units.csv")             # names, parents, codes
-gdf = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")   # polygons
+units = units[units["scale"] == "map343"]               # one map: one row per unit
+gdf = gpd.read_file(BASE + "geo/boundaries/map343.geojson")   # polygons
 gdf = gdf.merge(df[df.year == 2024], on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index, color="index_sdg",
                   hover_name="name", center={"lat": -16.3, "lon": -64}, zoom=4)
@@ -173,15 +174,15 @@ The package can also:
 import pandas as pd
 import geo4bolivia as geo
 
-mine = pd.DataFrame({"mun_id": [20101, 70101], "year": 2020,
+mine = pd.DataFrame({"mun_id": [20101, 70101], "year": 2024,
                      "teachers": [9120, 11034]})
-mine = geo.link(mine, scale="municipality", on="mun_id",
+mine = geo.link(mine, scale="map343", on="mun_id",
                 key="mun_id")               # INE code 20101 -> BO-04-17-04
-ntl = geo.zonal("viirs_2020.tif", scale="municipality",
-                name="ntl", year=2020)      # your raster: ntl_sum, ntl_mean
-panel = geo.combine(["pop"], scale="municipality", years=2020, extra=[ntl, mine])
-geo.save(panel, "my_indicator", scale="municipality", directory="my_data")
-geo.map(panel, "ntl_mean", year=2020)       # maps and analyses take your panel too
+ntl = geo.zonal("viirs_2024.tif", scale="map343",
+                name="ntl", year=2024)      # your raster: ntl_sum, ntl_mean
+panel = geo.combine(["sdg"], scale="map343", years=2024, extra=[ntl, mine])
+geo.save(panel, "my_indicator", scale="map343", directory="my_data")
+geo.map(panel, "ntl_mean", year=2024)       # maps and analyses take your panel too
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -270,7 +271,7 @@ gdo4bolivia/
 ├── scripts/                      # web_boundaries.py, indicator maps, site images, new_project.py (template)
 ├── images/                       # Site assets
 ├── .github/workflows/            # pages.yml (builds and deploys the website)
-├── CONTRIBUTING_DATA.md          # How to add a dataset, a scale or a municipality map of another vintage
+├── CONTRIBUTING_DATA.md          # How to add a dataset, a scale or a municipal map
 ├── TEMPLATE.md                   # The two-repository layout and the geo4<country> template
 ├── pyproject.toml, uv.lock       # Environment (uv): the geo4bolivia package and the notebooks' libraries
 └── CITATION.cff, LICENSE (code), LICENSE-DATA (data), CLAUDE.md

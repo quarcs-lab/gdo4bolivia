@@ -4,25 +4,25 @@
 
 ## Overview
 
-Sixty-four satellite embedding dimensions (A00–A63) for 333 of Bolivia's 343 municipalities in 2017: the area-weighted mean, over each municipality, of the annual 10 m embeddings from the Google Satellite Embedding dataset (AlphaEarth Foundations), which summarise Sentinel-2, Landsat and other imagery. The dimensions are abstract features, designed as inputs to machine-learning models, e.g. to predict poverty.
+Sixty-four satellite embedding dimensions (A00–A63) for Bolivia's 339 municipalities of the 2015 map in 2017: the area-weighted mean, over each municipality, of the annual 10 m embeddings from the Google Satellite Embedding dataset (AlphaEarth Foundations), which summarise Sentinel-2, Landsat and other imagery. The dimensions are abstract features, designed as inputs to machine-learning models, e.g. to predict poverty.
 
 - **Dataset id:** `emb`
 - **Categories:** Environment, Economy
 
-## Scale: municipality
+## Scale: map339
 
-- **Units:** 333 of 343 municipality units
-- **Period:** 2017–2017, years 2017 (333 rows: one per unit and year)
-- **Source geometry:** DS4Bolivia polygons (bolivia339geoqueryFull, keyed by asdf_id), matched one-to-one to the 2015 map's municipalities by area overlap; only the 333 municipalities unchanged in the 343-unit map
+- **Units:** 339 of 339 map339 units
+- **Period:** 2017–2017, years 2017 (339 rows: one per unit and year)
+- **Source geometry:** DS4Bolivia polygons (bolivia339geoqueryFull, keyed by asdf_id), matched one-to-one to the 2015 map's municipalities by area overlap; all 339, published as map339
 
 | File | Format |
 | --- | --- |
-| [`data/municipality/emb.csv`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/emb.csv) | CSV |
-| [`data/municipality/emb.parquet`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/emb.parquet) | Parquet |
+| [`data/map339/emb.csv`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map339/emb.csv) | CSV |
+| [`data/map339/emb.parquet`](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map339/emb.parquet) | Parquet |
 
 | Variable | Label | Description | Unit | Coverage | Aggregation | Source |
 | --- | --- | --- | --- | --- | --- | --- |
-| `geo_id` | Municipality ID | Municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; its boundary is in geo/boundaries/. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes. |  | 2017 | — |  |
+| `geo_id` | Municipality ID | Municipality geo ID (BO-DD-PP-MM) of the 2015 municipality map, map339 (339 municipalities; GeoBolivia via geoBoundaries), numbered as in GADM 4.1; its boundary is in geo/boundaries/map339. The same municipality has the same geo ID in map343. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes. |  | 2017 | — |  |
 | `year` | Year | Year of the satellite embeddings (2017). |  | 2017 | — |  |
 | `asdf_id` | DS4Bolivia polygon ID | ID (AidData asdf_id) of the geoBoundaries v4 ADM3 polygon on which DS4Bolivia computed the data, matched one-to-one to the municipality by area overlap. |  | 2017 | — | DS4Bolivia |
 | `A00` | Embedding A00 (area-weighted) | Dimension 0 of the 64-dimensional Google Satellite Embedding V1 (AlphaEarth Foundations), annual 10 m embeddings for 2017, averaged over the municipality with Earth Engine's mean reducer at 10 m, which weights each pixel by its area of overlap. An abstract feature without a physical unit: together the 64 dimensions summarise the year's multi-sensor appearance of the land surface (Sentinel-2, Landsat, radar and other inputs). | embedding value | 2017 | none | Google Satellite Embedding V1 via DS4Bolivia |
@@ -98,7 +98,7 @@ import geo4bolivia as geo
 
 geo.dictionary("emb")                     # variables, units, aggregation rules
 df = geo.load("emb")                      # panel: one row per unit and year
-gdf = geo.load("emb", geometry=True)      # with municipality boundaries
+gdf = geo.load("emb", geometry=True)      # with map339 boundaries
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -108,16 +108,16 @@ Without the package:
 ```python
 import pandas as pd
 
-df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/emb.csv")
+df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map339/emb.csv")
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
 
 ## Notes
 
-- The values belong to DS4Bolivia's polygons of the 2015 map, so they are published for the 333 municipalities whose territory is unchanged in the 343-unit map of 2025. The six municipalities that lost territory to the units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units (San Pedro de Macha, TIOC-Raqaypampa, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico) have no rows.
+- The values belong to DS4Bolivia's polygons of the 2015 map, so they are published on that map, map339 (339 municipalities; boundaries in geo/boundaries/map339). Its municipalities keep their geo IDs in the 343-unit map of 2025 (map343), except that six of them (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) have since lost territory to four new units (San Pedro de Macha, TIOC-Raqaypampa, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico), which have no values here. geo/crosswalks/map339__map343.csv gives the area shares to move the values onto map343 (e.g. with geo.overlay).
 - The dimensions are not interpretable one by one and should not be aggregated; their aggregation rule is `none`.
-- Computed by DS4Bolivia in Google Earth Engine on its own municipal polygons (`asdf_id`), geoBoundaries v4 polygons that differ slightly from the SDSN Bolivia 2025 boundaries in geo/boundaries/.
+- Computed by DS4Bolivia in Google Earth Engine on its own municipal polygons (`asdf_id`), geoBoundaries v4 polygons the 2015 map published as map339 (geo/boundaries/map339), which differs slightly from the SDSN Bolivia 2025 map (map343).
 - Every 10 m pixel counts the same (code/aggregate-satellite-embedings-to-adm.js in DS4Bolivia). For the population-weighted version, see the `embpw` dataset.
 
 ## Related notebooks
@@ -132,11 +132,11 @@ df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/
 
 ## Recommended citation
 
-> GeoDevelopment Observatory of Bolivia (2026). Satellite embeddings 2017, area-weighted (333 of 343 municipalities). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/emb.md
+> GeoDevelopment Observatory of Bolivia (2026). Satellite embeddings 2017, area-weighted (339 municipalities, 2015 map). https://github.com/quarcs-lab/gdo4bolivia/blob/main/docs/datasets/emb.md
 
 ## License
 
 - These files: [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/)
 - Google and Google DeepMind: [Creative Commons Attribution 4.0 International License](https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_SATELLITE_EMBEDDING_V1_ANNUAL#terms-of-use). Required credit: “The AlphaEarth Foundations Satellite Embedding dataset is produced by Google and Google DeepMind.”
-- geoBoundaries, William & Mary geoLab: [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/). Required credit: “Boundaries: geoBoundaries (www.geoboundaries.org).”
+- geoBoundaries, William & Mary geoLab: [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/). Required credit: “Boundaries: geoBoundaries (www.geoboundaries.org), from GeoBolivia's municipal map of 2015 (public domain).”
 - Carlos Mendez, Erick Gonzales, Pedro Leoni, Lykke Andersen and Hernán Peralta: [MIT License](https://github.com/quarcs-lab/ds4bolivia/blob/master/LICENSE)

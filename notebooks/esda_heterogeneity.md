@@ -60,7 +60,7 @@ print("geo4bolivia", geo.__version__)
 
 ## 1. Load the data
 
-Poverty comes from the SDG Atlas, which gives each of the 343 municipalities and indigenous autonomies two values: one near the 2012 census and one near the 2024 census, stored as the years 2012 and 2024. Night-time lights per capita (`ntl`, 2012–2020) are built from gridded population on the older municipal map, so they cover **333 units**: the four units created since (three indigenous autonomies, TIOC, and San Pedro de Macha) and the six municipalities that ceded territory to them have no lights value.
+Poverty comes from the SDG Atlas, which gives each of the 343 municipalities and indigenous autonomies two values: one near the 2012 census and one near the 2024 census, stored as the years 2012 and 2024. Night-time lights per capita (`ntl`, 2012–2020) are built from gridded population on the older municipal map of 2015, `map339`, so they cover its **339 units**: the four units created since (three indigenous autonomies, TIOC, and San Pedro de Macha) have no lights value, and the six municipalities that ceded territory to them are described by their 2015 territory. The two maps share geo IDs, so the datasets join on `geo_id`; the spatial steps use the 2015 map (`map="map339"`), the polygons the lights belong to.
 
 `ln_t400NTLpc` is the Hodrick–Prescott trend of the log of lights per capita, which removes year-to-year noise. The lights of 2012 go with the poverty of 2012, and the lights of 2020 with the poverty of 2024: the lights of 2020 are stored below in the rows of 2024, so that each period is one "year" of the panel.
 
@@ -69,7 +69,8 @@ mpi = geo.load("sdg01", variables="sdg1_2_mpi", groups=["department"])
 ntl = geo.load("ntl", variables="ln_t400NTLpc", years=[2012, 2020])
 ntl["year"] = ntl["year"].replace({2020: 2024})     # lights of 2020 next to poverty of ~2024
 
-df = mpi.merge(ntl, on=["geo_id", "year"])          # inner join: the 333 units with lights
+df = mpi.merge(ntl, on=["geo_id", "year"])          # inner join: the 339 units with lights
+# lights belong to the polygons of the 2015 map, so the spatial steps below use map="map339"
 no_lights = mpi.loc[~mpi["geo_id"].isin(ntl["geo_id"]), "name"].unique()
 print(df["geo_id"].nunique(), "units | without lights:", ", ".join(no_lights))
 df.head()
@@ -79,7 +80,7 @@ df.head()
 geo.describe(df)
 ```
 
-Between the two periods poverty fell sharply and its spread narrowed, while lights per capita rose and their spread (in logs) narrowed too. The darkest unit in 2012 is far from the rest: a log of 0.86, against a first quartile of 12.0.
+Between the two periods poverty fell sharply and its spread narrowed, while lights per capita rose and their spread (in logs) narrowed too. The darkest unit in 2012 is far from the rest: a log of 0.86, against a first quartile of 12.1.
 
 +++
 
@@ -98,29 +99,29 @@ ols = geo.regression(df, "sdg1_2_mpi", "ln_t400NTLpc", year=2012)
 ols.gt
 ```
 
-Across the country, brighter municipalities are less poor. The slope is −0.033: one more log point of lights per capita (about 2.7 times more light per person) goes with an MPI 0.033 lower, about a third of the standard deviation of poverty across these units (0.104). Lights alone account for 29% of the variation in poverty (R² = 0.293). The cloud of points is wide, which suggests that one line may not fit every region.
+Across the country, brighter municipalities are less poor. The slope is −0.034: one more log point of lights per capita (about 2.7 times more light per person) goes with an MPI 0.034 lower, about a third of the standard deviation of poverty across these units (0.103). Lights alone account for 29% of the variation in poverty (R² = 0.294). The cloud of points is wide, which suggests that one line may not fit every region.
 
 ### What the global model leaves out
 
 If one line described every part of the country, its residuals would be scattered over the map at random. `geo.spatial_diagnostics` tests that: Moran's I of the residuals, and the Lagrange multiplier tests for the two standard spatial models.
 
 ```{code-cell} ipython3
-diag = geo.spatial_diagnostics(df, "sdg1_2_mpi", "ln_t400NTLpc", year=2012)
+diag = geo.spatial_diagnostics(df, "sdg1_2_mpi", "ln_t400NTLpc", year=2012, map="map339")
 diag
 ```
 
-The residuals are clearly clustered: their Moran's I is 0.351, and every test rejects the absence of spatial dependence. Neighbouring municipalities are poorer, or less poor, than their lights predict *together*. The tests point to a spatial lag model, which would keep one slope and add the neighbours' poverty. This notebook asks a different question: whether the slope itself changes from place to place.
+The residuals are clearly clustered: their Moran's I is 0.352, and every test rejects the absence of spatial dependence. Neighbouring municipalities are poorer, or less poor, than their lights predict *together*. The tests point to a spatial lag model, which would keep one slope and add the neighbours' poverty. This notebook asks a different question: whether the slope itself changes from place to place.
 
 +++
 
 ## 3. MGWR in 2012
 
-A geographically weighted regression fits a regression at every municipality, giving more weight to the municipalities near it. Each coefficient becomes a surface that can be mapped. The **bandwidth** is the number of nearest municipalities that enter each local regression: a small bandwidth means a relationship that changes over short distances, and a bandwidth close to the number of units (333) one that is about the same everywhere.
+A geographically weighted regression fits a regression at every municipality, giving more weight to the municipalities near it. Each coefficient becomes a surface that can be mapped. The **bandwidth** is the number of nearest municipalities that enter each local regression: a small bandwidth means a relationship that changes over short distances, and a bandwidth close to the number of units (339) one that is about the same everywhere.
 
 The multiscale version (MGWR) finds **one bandwidth per term**, here one for the intercept and one for the slope on lights. `geo.mgwr` follows the workflow of the [mgwr library](https://github.com/pysal/mgwr): the variables are z-standardized, so the coefficients are in standard deviations; the kernel is an adaptive bisquare; the bandwidths minimise the AICc; and the local t-tests of each term are corrected for multiple testing. One fit takes about half a minute.
 
 ```{code-cell} ipython3
-mg = geo.mgwr(df, "sdg1_2_mpi", "ln_t400NTLpc", year=2012)
+mg = geo.mgwr(df, "sdg1_2_mpi", "ln_t400NTLpc", year=2012, map="map339")
 print(mg.interpret())
 ```
 
@@ -135,7 +136,7 @@ print("Bandwidths:", mg.bw)
 print("95% intervals:", mg.bw_interval)
 ```
 
-MGWR selects **44 nearest municipalities for the intercept** (95% interval 44 to 48) and **64 for the slope on lights** (64 to 84). Both are far below 333, so both the level of poverty at given lights and its link with lights are local processes. The slope varies over a somewhat larger scale than the intercept, and the two intervals do not overlap: a single bandwidth for both terms would have hidden that difference.
+MGWR selects **44 nearest municipalities for the intercept** (95% interval 44 to 48) and **65 for the slope on lights** (64 to 85). Both are far below 339, so both the level of poverty at given lights and its link with lights are local processes. The slope varies over a somewhat larger scale than the intercept, and the two intervals do not overlap: a single bandwidth for both terms would have hidden that difference.
 
 One limit to know: the search of the mgwr library does not try very small bandwidths. With two terms the smallest it considers is 44, so read the bandwidth of the intercept as "as local as the search goes": the true scale may be smaller.
 
@@ -177,11 +178,11 @@ print("Highest intercepts:", names(local.nlargest(5, "const_coef"), "const_coef"
 print("Lowest intercepts:", names(local.nsmallest(5, "const_coef"), "const_coef"))
 ```
 
-- **The sign never changes.** Every one of the 333 local slopes is negative, from −1.36 to −0.17 standard deviations of poverty per standard deviation of lights. The global slope on the same scale is the correlation of section 2, −0.54. More light goes with less poverty everywhere; what varies is the strength, about eightfold.
-- **The slope is steepest in the Andean valleys.** The department averages are −1.24 in Cochabamba, −1.02 in Chuquisaca and −0.91 in Potosí, and the steepest slopes of all are around the city of Cochabamba (Colomi, Sacaba, Cochabamba, Colcapirhua, San Benito: about −1.35).
-- **It is flattest in the Amazonian north.** Beni averages −0.26 and Pando −0.27, with Baures, Magdalena and Huacaraje in Beni the flattest (−0.17 to −0.19). The slopes of La Paz (−0.41) and Santa Cruz (−0.48) are also weaker than the global one.
-- **Potosí and Oruro are split.** Their slopes spread more than those of any other department (standard deviations 0.45 and 0.28). On the map they are steep next to the valleys and flat in the south-west of Potosí and the west of Oruro.
-- **The intercept map** shows the level of poverty at average lights, in standard deviations. On average it is positive (poorer than the lights suggest) in Pando (0.47), Chuquisaca (0.43) and Cochabamba (0.39), and negative in La Paz (−0.25) and Santa Cruz (−0.29). The highest intercepts are in the south-east of Chuquisaca and the neighbouring Chaco of Santa Cruz, and the lowest in the city of La Paz and the Yungas north of it.
+- **The sign never changes.** Every one of the 339 local slopes is negative, from −1.35 to −0.17 standard deviations of poverty per standard deviation of lights. The global slope on the same scale is the correlation of section 2, −0.54. More light goes with less poverty everywhere; what varies is the strength, about eightfold.
+- **The slope is steepest in the Andean valleys.** The department averages are −1.23 in Cochabamba, −1.02 in Chuquisaca and −0.92 in Potosí, and the steepest slopes of all are around the city of Cochabamba (Colomi, Sacaba, Cochabamba, Colcapirhua: about −1.34) and in Puna, Potosí.
+- **It is flattest in the Amazonian north.** Beni averages −0.29 and Pando −0.28, with Baures, Magdalena and Huacaraje in Beni the flattest (−0.17 to −0.19). The slopes of La Paz (−0.41) and Santa Cruz (−0.47) are also weaker than the global one.
+- **Potosí and Oruro are split.** Their slopes spread more than those of any other department (standard deviations 0.44 and 0.28). On the map they are steep next to the valleys and flat in the south-west of Potosí and the west of Oruro.
+- **The intercept map** shows the level of poverty at average lights, in standard deviations. On average it is positive (poorer than the lights suggest) in Pando (0.46), Chuquisaca (0.42) and Cochabamba (0.38), and negative in La Paz (−0.26) and Santa Cruz (−0.30). The highest intercepts are in the south-east of Chuquisaca and the neighbouring Chaco of Santa Cruz, and the lowest in the city of La Paz and the Yungas north of it.
 
 ### Significance and local collinearity
 
@@ -197,7 +198,7 @@ print("Local condition number: median", round(mg.df["local_cn"].median(), 2),
       "| maximum", round(mg.df["local_cn"].max(), 2))
 ```
 
-After the correction (critical |t| of 2.92 for the slope, against the usual 1.96), **250 of the 333 slopes are significant**; without it, 324 would be. The table above gives them by department: all the slopes of Chuquisaca, Cochabamba and Tarija are significant, and most of those of Potosí (32 of 37) and La Paz (72 of 87). Fewer than half are in Santa Cruz (21 of 56) and Beni (5 of 17), where the slopes are also flat.
+After the correction (critical |t| of 2.92 for the slope, against the usual 1.96), **260 of the 339 slopes are significant**; without it, 330 would be. The table above gives them by department: all the slopes of Chuquisaca, Cochabamba and Tarija are significant, and most of those of Potosí (35 of 40) and La Paz (74 of 87). Fewer than half are in Santa Cruz (21 of 56) and Beni (6 of 19), where the slopes are also flat.
 
 The local condition numbers are small (median 1.4, maximum 4.9, far below 30): with one regressor, the intercept and the slope are well identified everywhere.
 
@@ -221,7 +222,7 @@ def compare(year, mg):
     """Global models on the z-standardized variables of one period, against MGWR."""
     z = standardized(df[df["year"] == year], ["sdg1_2_mpi", "ln_t400NTLpc"])
     ols_z = geo.regression(z, "sdg1_2_mpi", "ln_t400NTLpc")
-    lag = geo.spatial_model(z, "sdg1_2_mpi", "ln_t400NTLpc", model="lag")
+    lag = geo.spatial_model(z, "sdg1_2_mpi", "ln_t400NTLpc", model="lag", map="map339")
     print(f"Global standardized slope: {ols_z.df['estimate'][0]:.2f} | "
           f"spatial lag model: AIC {lag.aic:.1f}, rho {lag.rho:.2f}")
     table = pd.DataFrame(
@@ -235,24 +236,24 @@ compare(2012, mg)
 ```
 
 ```{code-cell} ipython3
-resid = geo.moran(mg.df, "residual")
+resid = geo.moran(mg.df, "residual", map="map339")
 print(f"Moran's I of the residuals: least squares {diag.moran_i_resid:.3f}, "
       f"MGWR {resid.moran_i:.3f} (pseudo p = {resid.p_sim:.3f})")
 ```
 
-- **Against least squares.** Letting the intercept and the slope vary raises R² from 0.293 to 0.645 (adjusted: 0.291 to 0.605) and lowers the AICc from 835.6 to 678.1. The AICc penalises the extra flexibility: MGWR uses the equivalent of 33.9 parameters, against 2.
-- **Against the spatial lag model.** A single slope with a spatial lag has an AIC of 740.8: better than least squares, and well above the 678.1 of MGWR. The two criteria count parameters slightly differently, so the comparison is approximate, but the gap is wide. In 2012, coefficients that vary over space describe these data better than one slope with spatial dependence.
-- **Residuals.** MGWR absorbs most of the spatial pattern that least squares left in its residuals: their Moran's I falls from 0.351 to 0.091, small but still distinguishable from zero (pseudo p = 0.006). `mg.fig` maps them.
+- **Against least squares.** Letting the intercept and the slope vary raises R² from 0.294 to 0.647 (adjusted: 0.292 to 0.607) and lowers the AICc from 850.3 to 688.6. The AICc penalises the extra flexibility: MGWR uses the equivalent of 34.4 parameters, against 2.
+- **Against the spatial lag model.** A single slope with a spatial lag has an AIC of 751.6: better than least squares, and well above the 688.6 of MGWR. The two criteria count parameters slightly differently, so the comparison is approximate, but the gap is wide. In 2012, coefficients that vary over space describe these data better than one slope with spatial dependence.
+- **Residuals.** MGWR absorbs most of the spatial pattern that least squares left in its residuals: their Moran's I falls from 0.352 to 0.089, small but still distinguishable from zero (pseudo p = 0.004). `mg.fig` maps them.
 
 +++
 
 ## 4. MGWR in 2024
 
-The Atlas measures poverty again around the 2024 census; the lights series ends in 2020. The same steps, on the same 333 units, show whether the link has changed. Because MGWR standardizes the variables within each period, the slopes of the two periods are comparable even though poverty fell a lot.
+The Atlas measures poverty again around the 2024 census; the lights series ends in 2020. The same steps, on the same 339 units, show whether the link has changed. Because MGWR standardizes the variables within each period, the slopes of the two periods are comparable even though poverty fell a lot.
 
 ```{code-cell} ipython3
 ols24 = geo.regression(df, "sdg1_2_mpi", "ln_t400NTLpc", year=2024)
-diag24 = geo.spatial_diagnostics(df, "sdg1_2_mpi", "ln_t400NTLpc", year=2024)
+diag24 = geo.spatial_diagnostics(df, "sdg1_2_mpi", "ln_t400NTLpc", year=2024, map="map339")
 slope24 = ols24.df.set_index("term").loc["ln_t400NTLpc"]
 corr24 = geo.scatter(df, "ln_t400NTLpc", "sdg1_2_mpi", year=2024).corr
 print(f"Global slope {slope24['estimate']:.4f} (SE {slope24['std_error']:.4f}), "
@@ -261,7 +262,7 @@ print(f"Moran's I of its residuals {diag24.moran_i_resid:.3f}; the tests point t
 ```
 
 ```{code-cell} ipython3
-mg24 = geo.mgwr(df, "sdg1_2_mpi", "ln_t400NTLpc", year=2024)
+mg24 = geo.mgwr(df, "sdg1_2_mpi", "ln_t400NTLpc", year=2024, map="map339")
 mg24.gt_bw
 ```
 
@@ -270,7 +271,7 @@ mg24.figs["ln_t400NTLpc"]
 ```
 
 ```{code-cell} ipython3
-resid24 = geo.moran(mg24.df, "residual")
+resid24 = geo.moran(mg24.df, "residual", map="map339")
 print("Bandwidths:", mg24.bw, "| 95% intervals:", mg24.bw_interval)
 print("Significant slopes:", mg24.df["ln_t400NTLpc_significant"].sum(), "of", len(mg24.df),
       "| negative slopes:", (mg24.df["ln_t400NTLpc_coef"] < 0).sum(),
@@ -307,10 +308,10 @@ px.bar(long, x="department", y="mean local slope", color="period", barmode="grou
 means.sort_values("2012").round(2)
 ```
 
-- **The global link persists and is a little weaker.** In 2024 the slope is −0.018 in MPI units, about half the slope of 2012, but poverty itself is far lower. On the standardized scale the association falls only from −0.54 to −0.50, and R² from 0.293 to 0.251. The residuals of the global model are as clustered as before (Moran's I 0.340).
-- **It is still local.** MGWR keeps the intercept bandwidth at 44 (interval 44 to 48) and raises R² to 0.536 (adjusted 0.492), with an AICc of 755.9 against 854.8 for least squares. The Moran's I of the residuals falls to 0.084. The spatial lag model comes closer than in 2012: its AIC is 771.8.
-- **The slope varies over a broader scale.** Its bandwidth rises from 64 to 100 nearest municipalities (interval 100 to 111, which does not overlap the 64 to 84 of 2012), and the range of the local slopes narrows: −0.94 to −0.17, against −1.36 to −0.17 in 2012. All 333 are again negative, 242 are significant after the correction, and no local condition number exceeds 3.2.
-- **The map is much the same.** The two sets of local slopes correlate at 0.84. The steep slopes of the valleys moved towards the rest: Cochabamba's average goes from −1.24 to −0.77 and Chuquisaca's from −1.02 to −0.77, while Tarija's strengthens (−0.57 to −0.74). Potosí (−0.83) now has the steepest average slope, and La Paz (−0.23) the flattest.
+- **The global link persists and is a little weaker.** In 2024 the slope is −0.018 in MPI units, about half the slope of 2012, but poverty itself is far lower. On the standardized scale the association falls only from −0.54 to −0.50, and R² from 0.294 to 0.255. The residuals of the global model are as clustered as before (Moran's I 0.337).
+- **It is still local.** MGWR keeps the intercept bandwidth at 44 (interval 44 to 48) and raises R² to 0.541 (adjusted 0.496), with an AICc of 766.4 against 868.4 for least squares. The Moran's I of the residuals falls to 0.072. The spatial lag model comes closer than in 2012: its AIC is 784.2.
+- **The slope varies over a broader scale.** Its bandwidth rises from 65 to 101 nearest municipalities (interval 101 to 112, which does not overlap the 64 to 85 of 2012), and the range of the local slopes narrows: −0.96 to −0.17, against −1.35 to −0.17 in 2012. All 339 are again negative, 248 are significant after the correction, and no local condition number exceeds 3.2.
+- **The map is much the same.** The two sets of local slopes correlate at 0.84. The steep slopes of the valleys moved towards the rest: Cochabamba's average goes from −1.23 to −0.77 and Chuquisaca's from −1.02 to −0.78, while Tarija's strengthens (−0.57 to −0.74). Potosí (−0.84) now has the steepest average slope, and La Paz (−0.23) the flattest.
 
 Lights in 2020 precede poverty in 2024 by four years, so this is a comparison of patterns, not a test of how lights predict later poverty.
 
@@ -318,9 +319,9 @@ Lights in 2020 precede poverty in 2024 by four years, so this is a comparison of
 
 ## Summary
 
-- **One sign, many strengths.** In both periods, every one of the 333 local slopes is negative: brighter municipalities are less poor everywhere. The strength of the link varies about eightfold in 2012 (−1.36 to −0.17) and less in 2024 (−0.94 to −0.17).
-- **The global model misses a spatial pattern.** One slope for the country accounts for 29% of the variation in poverty in 2012 and leaves clustered residuals (Moran's I = 0.351). MGWR accounts for 65%, has a much lower AICc than least squares and than a spatial lag model, and leaves residuals that are only weakly clustered (0.091).
-- **Two local processes, at different scales.** The intercept has a bandwidth of 44 nearest municipalities in both periods, the smallest the search considers. The slope on lights has one of 64 in 2012 and 100 in 2024: the link became more alike across the country.
+- **One sign, many strengths.** In both periods, every one of the 339 local slopes is negative: brighter municipalities are less poor everywhere. The strength of the link varies about eightfold in 2012 (−1.35 to −0.17) and less in 2024 (−0.96 to −0.17).
+- **The global model misses a spatial pattern.** One slope for the country accounts for 29% of the variation in poverty in 2012 and leaves clustered residuals (Moran's I = 0.352). MGWR accounts for 65%, has a much lower AICc than least squares and than a spatial lag model, and leaves residuals that are only weakly clustered (0.089).
+- **Two local processes, at different scales.** The intercept has a bandwidth of 44 nearest municipalities in both periods, the smallest the search considers. The slope on lights has one of 65 in 2012 and 101 in 2024: the link became more alike across the country.
 - **Where lights are informative.** As a proxy for poverty, night-time lights carry most information in the Andean valleys of Cochabamba, Chuquisaca and Potosí, and least in the Amazonian north (Beni, Pando), where the local slopes are flattest, and in Santa Cruz, where most are not significant. The companion notebook `embeddings_mpi_ml` tests whether satellite embeddings do better.
 - **Caveats.** These are associations from a model with one explanatory variable, not causal effects. MGWR shows where an association differs, not why: local coefficients absorb omitted factors that vary over space (altitude, remoteness, access to markets). Each local regression rests on few units, and the 2024 fit pairs poverty with lights of four years earlier.
 

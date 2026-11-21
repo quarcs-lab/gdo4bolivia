@@ -89,13 +89,13 @@ municipality:
 | `country` | 1 | `BO` | `BO` | — |
 | `department` | 9 | `BO-NN` | `BO-04` (La Paz) | country |
 | `province` | 113 | `BO-NN-NN` | `BO-04-17` (Murillo) | department → country |
-| `municipality` | 343 | `BO-NN-NN-NN` | `BO-04-17-04` (Nuestra Señora de La Paz) | province → department → country |
-| `municipality_ine` | planned | `BO-INE-NNNNNN` | `BO-INE-020101` | (overlay) |
+| `map343` | 343 | `BO-NN-NN-NN` | `BO-04-17-04` (Nuestra Señora de La Paz) | province → department → country |
+| `map339` | 339 | `BO-NN-NN-NN` | `BO-04-17-04` (the same municipality, on the 2015 map) | province → department → country (by ID) |
 | `grid10k` | planned | `BO-G10K-rNNNcNNN` | `BO-G10K-r012c034` | (overlay) |
 
 Administrative numbers follow the GADM order; the boundaries are SDSN Bolivia's municipal map of 2025 (343 municipalities and indigenous autonomies, used with SDSN Bolivia's permission), attached to the IDs by INE code (`scripts/match_municipalities343.py`, `builders/geo.py`, and the package's `geo4bolivia.build.geoboundaries`); the four units created after GADM's map are numbered after the last municipality of their province. The map leaves salt flats and lakes outside every unit, so they are holes at every scale and `area_km2` excludes them. Codes from other sources are **kept as columns**, never used as keys: Bolivia's INE codes order the departments differently (La Paz is `BO-04` here and `02` in INE), so `ine_code` is a column of `geo/units.csv`, next to DS4Bolivia's `asdf_id` and the INE `mun_id`.
 
-**Municipality maps of other vintages.** New municipalities are created over time. Version 0.4 replaced GeoBolivia's 2015 map (339 municipalities) with SDSN Bolivia's 2025 map (343): the 339 kept their IDs and the 4 new units got new ones, so an ID never changes meaning. Six municipalities lost territory to the new units; data computed on the 2015 polygons (`pop`, `ntl`, `emb`, `embpw`) are published only for the 333 unchanged units. A map whose units cannot keep the IDs becomes a scale of its own (the planned `municipality_ine`) linked by `overlay()`. See [`CONTRIBUTING_DATA.md`](../CONTRIBUTING_DATA.md).
+**Municipal maps, named by their number of units.** New municipalities are created over time, so each municipal map is a scale of its own named `map<units>`. `map343` is SDSN Bolivia's map of 2025 (the SDG Atlas 2026); `map339` is GeoBolivia's map of 2015 (339 municipalities, as geoBoundaries publishes it, public domain), on whose polygons DS4Bolivia computed `pop`, `ntl`, `emb` and `embpw`, which are therefore published on it. The 339 municipalities kept their IDs in map343 and the 4 new units got new ones, so an ID never changes meaning, and the two maps **share geo IDs**: six municipalities (Colquechaca, Mizque, Porco, Tomave, San Ignacio, Santa Ana) have one ID and two outlines. That is why each dataset records its map (`geo:scale` in its metadata, and `df.attrs["geo:scale"]` on what `geo.load()` returns) and every spatial function of the package takes `map=` for a table that does not say. map339's units nest in map343's provinces by ID (`nesting: ids` in `scales.yaml`); `geo/crosswalks/map339__map343.csv` gives the share of each 2015 unit's area in each 2025 unit, to move data between the maps (`geo.overlay()`). See [`CONTRIBUTING_DATA.md`](../CONTRIBUTING_DATA.md).
 
 ---
 
@@ -103,9 +103,9 @@ Administrative numbers follow the GADM order; the boundaries are SDSN Bolivia's 
 
 | File | Contents |
 | --- | --- |
-| `units.csv` / `.parquet` | One row per unit of every scale: `geo_id`, `scale`, `name`, `parent_id`; one `<scale>_id` column per scale it lies in (`country_id`, `department_id`, `province_id`, `municipality_id`); source keys (`gid` = GADM, `ine_code` = INE, and for municipalities `asdf_id` = DS4Bolivia polygon, `mun_id` = INE code as an integer); DS4Bolivia's and GADM's spellings (`name_ds4bolivia`, `name_gadm`); `area_km2` |
-| `boundaries/<scale>.geojson` / `.parquet` | Polygons in WGS 84 with `geo_id` and `name`. Coarser scales are dissolved from the finest one, so they nest exactly |
-| `crosswalks/<from>__<to>.csv` | `geo_id_from`, `geo_id_to`, `weight_area` for every nested pair, finer to coarser (`municipality__province.csv`) |
+| `units.csv` / `.parquet` | One row per unit of every scale and map (filter on `scale` before joining on `geo_id`): `geo_id`, `scale`, `name`, `parent_id`; one `<scale>_id` column per scale it lies in (`country_id`, `department_id`, `province_id`, `map343_id`, `map339_id`); a municipality has a row on each map it is on, so `geo_id` is unique within a scale; source keys (`gid` = GADM, `ine_code` = INE, and for municipalities `asdf_id` = DS4Bolivia polygon, `mun_id` = INE code as an integer); DS4Bolivia's and GADM's spellings (`name_ds4bolivia`, `name_gadm`); `area_km2` |
+| `boundaries/<scale>.geojson` / `.parquet` | Polygons in WGS 84 with `geo_id` and `name`, one file per scale and map (`map343`, `map339`). Coarser scales are dissolved from map343, so they nest exactly |
+| `crosswalks/<from>__<to>.csv` | `geo_id_from`, `geo_id_to`, `weight_area` for every nested pair, finer to coarser (`map343__province.csv`), and between the two maps (`map339__map343.csv`, area shares) |
 
 The `<scale>_id` columns make any join across scales a one-liner: every municipality row already says its province, department and country.
 
@@ -118,8 +118,8 @@ The `<scale>_id` columns make any join across scales a one-liner: every municipa
 A **dataset** is a set of variables from one source, published at one or more scales:
 
 ```
-data/municipality/ntl.csv        geo_id, year, asdf_id, ln_NTLpc, ln_t400NTLpc
-data/municipality/ntl.parquet    the same table, typed and compressed
+data/map339/ntl.csv        geo_id, year, asdf_id, ln_NTLpc, ln_t400NTLpc
+data/map339/ntl.parquet    the same table, typed and compressed
 metadata/ntl.datapackage.json
 docs/datasets/ntl.md             generated: dictionary, coverage, sources, citation
 ```
@@ -128,12 +128,12 @@ Each table is a **long panel**: one row per unit and year, sorted by `geo_id` an
 
 | Dataset | Scale | Years | Variables |
 | --- | --- | --- | --- |
-| `sdg` | municipality (343) | 2012, 2024 | SDG Atlas 2026: the Sustainable Development Index (IDS), its ranking, census population and urbanization |
-| `sdg01` … `sdg17` | municipality (343) | 2012, 2024 | SDG Atlas 2026, one dataset per goal: the goal index and its indicators (81 in all) |
-| `pop` | municipality (333 of 343) | 2001–2020 | gridded population |
-| `ntl` | municipality (333 of 343) | 2012–2020 | log night-time lights per capita and its HP trend |
-| `emb` | municipality (333 of 343) | 2017 | 64 satellite embedding dimensions, area-weighted |
-| `embpw` | municipality (333 of 343) | 2017 | the same, population-weighted |
+| `sdg` | map343 (343) | 2012, 2024 | SDG Atlas 2026: the Sustainable Development Index (IDS), its ranking, census population and urbanization |
+| `sdg01` … `sdg17` | map343 (343) | 2012, 2024 | SDG Atlas 2026, one dataset per goal: the goal index and its indicators (81 in all) |
+| `pop` | map339 (339) | 2001–2020 | gridded population |
+| `ntl` | map339 (339) | 2012–2020 | log night-time lights per capita and its HP trend |
+| `emb` | map339 (339) | 2017 | 64 satellite embedding dimensions, area-weighted |
+| `embpw` | map339 (339) | 2017 | the same, population-weighted |
 
 Sources measured at a few points in time fit the same shape. The SDG Atlas 2026 measures each indicator twice, near the 2012 census and near the 2024 census, from sources of different years (e.g. poverty from the 2012 and 2024 censuses, child malnutrition from the 2008 and 2023 health surveys, crop production as averages of 2013–15 and 2022–24). Its datasets store the two periods at the nominal years 2012 and 2024, so every variable can be compared between them, and each field's `geo:reference_years` gives the actual years behind each stored year.
 
@@ -174,7 +174,7 @@ Sources measured at a few points in time fit the same shape. The SDG Atlas 2026 
 | `mean`, `min`, `max` | unweighted summaries (use with care) | — |
 | `none` | values that cannot be aggregated without more data | logs, HP trends, per-capita values without population |
 
-`aggregate()` raises an error for `none` variables you ask for explicitly and otherwise leaves them out with a warning; `combine()` drops them with a warning. Pass `rules=` to keep them. Every result has `n_units` (the units that contributed) and `coverage` (their share of all the units in the target): night-time lights, for example, cover 333 of the 343 municipalities.
+`aggregate()` raises an error for `none` variables you ask for explicitly and otherwise leaves them out with a warning; `combine()` drops them with a warning. Pass `rules=` to keep them. Every result has `n_units` (the units that contributed) and `coverage` (their share of all the units in the target): a dataset with gaps shows them there; night-time lights, for example, have no raw value for a few municipalities in some years.
 
 The SDG Atlas's indicators, goal indices and IDS aggregate as census-population-weighted means (`weighted_mean:population`: the 2012 census for ~2012, the 2024 census for ~2024), with the weights loaded from the `sdg` dataset through `geo:weights`. These are approximations of the department and national values, not the Atlas's own figures. The ranking does not aggregate (`none`). `overlay()` needs you to say which variables are *extensive* (totals, split by area) and which are *intensive* (rates, area-weighted means).
 
@@ -195,16 +195,17 @@ import plotly.express as px
 
 BASE = "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/"
 
-df = pd.read_csv(BASE + "data/municipality/ntl.csv")                   # panel: geo_id, year, variables
+df = pd.read_csv(BASE + "data/map339/ntl.csv")                   # panel: geo_id, year, variables
 units = pd.read_csv(BASE + "geo/units.csv")                             # names, parents, source keys
+units = units[units["scale"] == "map339"]                               # one row per unit of ntl's map
 df = df.merge(units[["geo_id", "name", "department_id"]], on="geo_id")
 
-gdf = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")       # polygons with geo_id, name
+gdf = gpd.read_file(BASE + "geo/boundaries/map339.geojson")             # ntl's map: polygons with geo_id, name
 gdf = gdf.merge(df.loc[df.year == 2020, ["geo_id", "ln_NTLpc"]], on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index, color="ln_NTLpc",
                   hover_name="name", center={"lat": -16.3, "lon": -64}, zoom=4).show()
 
-xw = pd.read_csv(BASE + "geo/crosswalks/municipality__department.csv")  # municipality -> department
+xw = pd.read_csv(BASE + "geo/crosswalks/map343__department.csv")  # municipality -> department
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -227,9 +228,9 @@ gdf = geo.load("ntl", years=2020, geometry=True) # GeoDataFrame, ready to map
 w   = geo.load("pop", wide="pop")                # wide: pop2001 ... pop2020
 mpi = geo.load("sdg01", variables="sdg1_2_mpi",
                years=2012)                       # one SDG indicator, ~2012
-names = geo.units("municipality")                # names, parents, source keys
+names = geo.units("map343")                # names, parents, source keys
 shapes = geo.boundaries("department")
-xw = geo.crosswalk("municipality", "department")
+xw = geo.crosswalk("map343", "department")
 sdg = geo.load("sdg", groups=["department"])     # the Sustainable Development Index
 geo.describe(sdg)                                # summary per year, with labels
 geo.change(sdg, "index_sdg")                     # first-to-last change and ranks
@@ -279,7 +280,7 @@ geo.check(mine, scale="department")                             # [] means it is
 
 # DS4Bolivia tables and INE statistics: link by their codes
 codes = pd.DataFrame({"mun_id": [20101, 70101], "teachers": [9120, 11034]})
-codes = geo.link(codes, scale="municipality", on="mun_id", key="mun_id")   # BO-04-17-04, BO-08-01-05
+codes = geo.link(codes, scale="map343", on="mun_id", key="mun_id")   # BO-04-17-04, BO-08-01-05
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -296,10 +297,10 @@ Summarise any GeoTIFF (an Earth Engine export, WorldPop, a land-cover map) over 
 !pip install -q "geo4bolivia[raster]"
 import geo4bolivia as geo
 
-lights = geo.zonal("viirs_2020.tif", scale="municipality", stats=["sum", "mean"], name="ntl", year=2020)
+lights = geo.zonal("viirs_2020.tif", scale="map343", stats=["sum", "mean"], name="ntl", year=2020)
 # geo_id, year, ntl_sum, ntl_mean
 
-series = geo.zonal({2019: "viirs_2019.tif", 2020: "viirs_2020.tif"}, scale="municipality", name="ntl")
+series = geo.zonal({2019: "viirs_2019.tif", 2020: "viirs_2020.tif"}, scale="map343", name="ntl")
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -316,11 +317,11 @@ import geo4bolivia as geo
 
 import numpy as np
 
-panel = geo.combine(["ntl", "pop"], scale="municipality", years=(2012, 2020))
+panel = geo.combine(["ntl", "pop"], scale="map339", years=(2012, 2020))
 panel["ntl"] = np.exp(panel["ln_NTLpc"]) * panel["pop"]          # total lights, from the per-capita log
 
 # add your own data at the same scale
-panel = geo.combine(["pop"], scale="municipality", extra=[my_municipal_table])
+panel = geo.combine(["sdg"], scale="map343", extra=[my_municipal_table])
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -349,7 +350,7 @@ geo.aggregate(geo.load("sdg01", variables="sdg1_2_mpi", years=2012), to="departm
 
 # onto units that do not nest: a grid, watersheds, a newer municipality map
 cells = geo.overlay(pop, my_grid, extensive=["pop"], id_col="cell")
-weights = geo.overlay_weights("municipality", my_zones, id_col="zone")   # the area shares used
+weights = geo.overlay_weights("map343", my_zones, id_col="zone")   # the area shares used
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -364,7 +365,7 @@ import geo4bolivia as geo
 
 import numpy as np
 
-panel = geo.combine(["ntl", "pop"], scale="municipality", years=(2012, 2020))
+panel = geo.combine(["ntl", "pop"], scale="map339", years=(2012, 2020))
 panel["ntl"] = np.exp(panel["ln_NTLpc"]) * panel["pop"]
 dep = geo.aggregate(panel[["geo_id", "year", "ntl", "pop"]], to="department", rules={"ntl": "sum", "pop": "sum"})
 dep["ln_NTLpc"] = np.log(dep["ntl"] / dep["pop"])
@@ -427,7 +428,7 @@ Three conventions to remember:
 import numpy as np
 import geo4bolivia as geo
 
-panel = geo.combine(["ntl", "pop"], scale="municipality", years=(2012, 2020))
+panel = geo.combine(["ntl", "pop"], scale="map339", years=(2012, 2020))
 panel["ln_pop"] = np.log(panel["pop"])
 
 geo.trend(panel, "ln_NTLpc", by="department").fig.show()   # paths, by department

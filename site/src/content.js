@@ -28,9 +28,9 @@ export const MAP_VIEW = { center: [-16.3, -64.6], zoom: 5 };
 export const REDIRECTS = {
   'tools/geo4bolivia-reference': PACKAGE_DOCS_URL + 'reference/',
   'indicators/municipalities339-sdg': 'indicators/municipalities343-sdg',   // the combined SDG page of 0.2
-  'indicators/municipalities339-ntl': 'indicators/municipalities343-ntl',
-  'indicators/municipalities339-pop': 'indicators/municipalities343-pop',
-  'indicators/municipalities339-emb': 'indicators/municipalities343-emb',
+  'indicators/municipalities343-ntl': 'indicators/municipalities339-ntl',   // on map343 in 0.4–0.7
+  'indicators/municipalities343-pop': 'indicators/municipalities339-pop',   // on map343 in 0.4–0.7
+  'indicators/municipalities343-emb': 'indicators/municipalities339-emb',   // on map343 in 0.4–0.7
   'indicators/municipalities339-sdg01': 'indicators/municipalities343-sdg01',
   'indicators/municipalities339-sdg02': 'indicators/municipalities343-sdg02',
   'indicators/municipalities339-sdg03': 'indicators/municipalities343-sdg03',
@@ -143,7 +143,7 @@ df = geo.load("sdg", variables="index_sdg")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg")
 wide = wide.add_prefix("y")
 wide["change"] = wide["y2024"] - wide["y2012"]
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="change", hover_name="name",
            labels={"y2012": "IDS, ~2012", "change": "Change in the IDS (points)"},
            title="Initial IDS and its change, ~2012 to ~2024")`,
@@ -153,8 +153,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg.csv")  # geo_id, year, index_sdg, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg.csv")  # geo_id, year, index_sdg, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 ids = df.loc[df["year"] == 2024, ["geo_id", "index_sdg", "rank_sdg"]]
 gdf = municipalities.merge(ids, on="geo_id")
@@ -190,7 +190,7 @@ px.scatter(pd.DataFrame(rows), x="index", y="goal", color="period",
 df = geo.load("sdg", variables="rank_sdg")
 wide = df.pivot(index="geo_id", columns="year", values="rank_sdg")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Rank ~2012 (1 = best)", "y2024": "Rank ~2024"},
            title="IDS national ranking, ~2012 and ~2024")`,
@@ -220,7 +220,7 @@ df = geo.load("sdg")
 wide = df.pivot(index="geo_id", columns="year", values=["index_sdg", "population"])
 gain = wide[("index_sdg", 2024)] - wide[("index_sdg", 2012)]
 out = (gain * wide[("population", 2024)]).rename("points").reset_index()
-names = geo.units("municipality").set_index("geo_id")["name"]
+names = geo.units("map343").set_index("geo_id")["name"]
 out["name"] = out["geo_id"].map(names)
 px.bar(out.nlargest(12, "points"), x="points", y="name",
        labels={"points": "Gain in the IDS × population 2024", "name": ""},
@@ -257,7 +257,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg01", variables="index_sdg1")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg1")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
            title="SDG 1: No poverty index, ~2012 and ~2024")`,
@@ -267,8 +267,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg01.csv")  # geo_id, year, mun_id, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg01.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg1"]]
 gdf = municipalities.merge(index, on="geo_id")
@@ -287,7 +287,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg01", variables="index_sdg1")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg1")
 wide["change"] = wide[2024] - wide[2012]
-gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+gdf = geo.boundaries("map343").merge(wide["change"].reset_index(),
                                            on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="change", hover_name="name",
@@ -307,7 +307,7 @@ bounds = {"sdg1_2_mpi": (0.563, 0), "sdg1_4_eep": (100, 0), "sdg1_4_nbi": (100, 
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+df["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg1", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg1": "No poverty index (0-100)"},
@@ -349,13 +349,13 @@ px.scatter(dep.sort_values("index_sdg1"), x="index_sdg1", y="department",
       },
       {
         title: "Poverty and night-time lights",
-        text: "Links multidimensional poverty near 2012 with the trend of night-time lights per capita in 2012 from the observatory's ntl dataset (333 municipalities whose territory did not change).",
+        text: "Links multidimensional poverty near 2012 with the trend of night-time lights per capita in 2012 from the observatory's ntl dataset (the 339 municipalities of the 2015 map, which keep their geo IDs in the 343-unit map).",
         code: `${PYTHON_SETUP}
 
 mpi = geo.load("sdg01", variables="sdg1_2_mpi", years=2012)
 ntl = geo.load("ntl", variables="ln_t400NTLpc", years=2012)
 df = mpi.merge(ntl, on=["geo_id", "year"])
-df["name"] = df["geo_id"].map(geo.units("municipality").set_index("geo_id")["name"])
+df["name"] = df["geo_id"].map(geo.units("map343").set_index("geo_id")["name"])
 px.scatter(df, x="ln_t400NTLpc", y="sdg1_2_mpi", hover_name="name",
            labels={"ln_t400NTLpc": "Log night-time lights per capita (trend)",
                    "sdg1_2_mpi": "Multidimensional poverty index"},
@@ -392,7 +392,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg02", variables="index_sdg2")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg2")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
            title="SDG 2: Zero hunger index, ~2012 and ~2024")`,
@@ -402,8 +402,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg02.csv")  # geo_id, year, mun_id, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg02.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg2"]]
 gdf = municipalities.merge(index, on="geo_id")
@@ -422,7 +422,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg02", variables="index_sdg2")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg2")
 wide["change"] = wide[2024] - wide[2012]
-gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+gdf = geo.boundaries("map343").merge(wide["change"].reset_index(),
                                            on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="change", hover_name="name",
@@ -443,7 +443,7 @@ bounds = {"sdg2_2_smu": (38.2, 0), "sdg2_2_dcn": (50.2, 0), "sdg2_2_osn": (11.8,
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+df["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg2", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg2": "Zero hunger index (0-100)"},
@@ -515,7 +515,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg03", variables="index_sdg3")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg3")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
            title="SDG 3: Good health and well-being index, ~2012 and ~2024")`,
@@ -525,8 +525,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg03.csv")  # geo_id, year, mun_id, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg03.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg3"]]
 gdf = municipalities.merge(index, on="geo_id")
@@ -545,7 +545,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg03", variables="index_sdg3")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg3")
 wide["change"] = wide[2024] - wide[2012]
-gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+gdf = geo.boundaries("map343").merge(wide["change"].reset_index(),
                                            on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="change", hover_name="name",
@@ -566,7 +566,7 @@ bounds = {"sdg3_1_cpp": (0, 100), "sdg3_2_tmi": (39.7, 1.1), "sdg3_2_tmn": (130.
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+df["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg3", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg3": "Good health and well-being index (0-100)"},
@@ -638,7 +638,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg04", variables="index_sdg4")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg4")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
            title="SDG 4: Quality education index, ~2012 and ~2024")`,
@@ -648,8 +648,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg04.csv")  # geo_id, year, mun_id, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg04.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg4"]]
 gdf = municipalities.merge(index, on="geo_id")
@@ -668,7 +668,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg04", variables="index_sdg4")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg4")
 wide["change"] = wide[2024] - wide[2012]
-gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+gdf = geo.boundaries("map343").merge(wide["change"].reset_index(),
                                            on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="change", hover_name="name",
@@ -691,7 +691,7 @@ bounds = {"sdg4_1_asm": (26, 0), "sdg4_1_ash": (26, 0), "sdg4_2_tam": (0, 100),
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+df["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg4", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg4": "Quality education index (0-100)"},
@@ -765,7 +765,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg05", variables="index_sdg5")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg5")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
            title="SDG 5: Gender equality index, ~2012 and ~2024")`,
@@ -775,8 +775,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg05.csv")  # geo_id, year, mun_id, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg05.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg5"]]
 gdf = municipalities.merge(index, on="geo_id")
@@ -795,7 +795,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg05", variables="index_sdg5")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg5")
 wide["change"] = wide[2024] - wide[2012]
-gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+gdf = geo.boundaries("map343").merge(wide["change"].reset_index(),
                                            on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="change", hover_name="name",
@@ -816,7 +816,7 @@ bounds = {"sdg5_1_pga": (0, 1), "sdg5_1_pgm": (0, 1), "sdg5_1_pge": (0, 1),
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+df["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg5", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg5": "Gender equality index (0-100)"},
@@ -888,7 +888,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg06", variables="index_sdg6")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg6")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
            title="SDG 6: Clean water and sanitation index, ~2012 and ~2024")`,
@@ -898,8 +898,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg06.csv")  # geo_id, year, mun_id, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg06.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg6"]]
 gdf = municipalities.merge(index, on="geo_id")
@@ -918,7 +918,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg06", variables="index_sdg6")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg6")
 wide["change"] = wide[2024] - wide[2012]
-gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+gdf = geo.boundaries("map343").merge(wide["change"].reset_index(),
                                            on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="change", hover_name="name",
@@ -938,7 +938,7 @@ bounds = {"sdg6_1_cap": (21.4, 100), "sdg6_2_cas": (2.7, 100), "sdg6_3_tar": (0,
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+df["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg6", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg6": "Clean water and sanitation index (0-100)"},
@@ -1009,7 +1009,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg07", variables="index_sdg7")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg7")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
            title="SDG 7: Affordable and clean energy index, ~2012 and ~2024")`,
@@ -1019,8 +1019,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg07.csv")  # geo_id, year, mun_id, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg07.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg7"]]
 gdf = municipalities.merge(index, on="geo_id")
@@ -1039,7 +1039,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg07", variables="index_sdg7")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg7")
 wide["change"] = wide[2024] - wide[2012]
-gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+gdf = geo.boundaries("map343").merge(wide["change"].reset_index(),
                                            on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="change", hover_name="name",
@@ -1059,7 +1059,7 @@ bounds = {"sdg7_1_cep": (0, 523), "sdg7_1_cae": (0, 100), "sdg7_1_mcc": (69, 0),
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+df["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg7", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg7": "Affordable and clean energy index (0-100)"},
@@ -1130,7 +1130,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg08", variables="index_sdg8")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg8")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
            title="SDG 8: Decent work and economic growth index, ~2012 and ~2024")`,
@@ -1140,8 +1140,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg08.csv")  # geo_id, year, mun_id, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg08.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg8"]]
 gdf = municipalities.merge(index, on="geo_id")
@@ -1160,7 +1160,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg08", variables="index_sdg8")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg8")
 wide["change"] = wide[2024] - wide[2012]
-gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+gdf = geo.boundaries("map343").merge(wide["change"].reset_index(),
                                            on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="change", hover_name="name",
@@ -1181,7 +1181,7 @@ bounds = {"sdg8_5_tgm": (36.1, 89.7), "sdg8_5_tgh": (68.6, 92.9), "sdg8_6_etm":
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+df["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg8", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg8": "Decent work and economic growth index (0-100)"},
@@ -1253,7 +1253,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg09", variables="index_sdg9")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg9")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
            title="SDG 9 index, ~2012 and ~2024")`,
@@ -1263,8 +1263,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg09.csv")  # geo_id, year, mun_id, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg09.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg9"]]
 gdf = municipalities.merge(index, on="geo_id")
@@ -1283,7 +1283,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg09", variables="index_sdg9")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg9")
 wide["change"] = wide[2024] - wide[2012]
-gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+gdf = geo.boundaries("map343").merge(wide["change"].reset_index(),
                                            on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="change", hover_name="name",
@@ -1303,7 +1303,7 @@ bounds = {"sdg9_1_vpc": (0, 3), "sdg9_8_ci": (0, 100), "sdg9_8_drb": (0, 3),
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+df["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg9", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg9": "Index (0-100)"},
@@ -1374,7 +1374,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg10", variables="index_sdg10")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg10")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
            title="SDG 10: Reduced inequalities index, ~2012 and ~2024")`,
@@ -1384,8 +1384,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg10.csv")  # geo_id, year, mun_id, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg10.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg10"]]
 gdf = municipalities.merge(index, on="geo_id")
@@ -1404,7 +1404,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg10", variables="index_sdg10")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg10")
 wide["change"] = wide[2024] - wide[2012]
-gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+gdf = geo.boundaries("map343").merge(wide["change"].reset_index(),
                                            on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="change", hover_name="name",
@@ -1425,7 +1425,7 @@ bounds = {"sdg10_2_esp": (48.1, 1), "sdg10_2_pel": (0, 1), "sdg10_2_mre": (0, 1)
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+df["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg10", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg10": "Reduced inequalities index (0-100)"},
@@ -1497,7 +1497,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg11", variables="index_sdg11")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg11")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
            title="SDG 11 index, ~2012 and ~2024")`,
@@ -1507,8 +1507,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg11.csv")  # geo_id, year, mun_id, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg11.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg11"]]
 gdf = municipalities.merge(index, on="geo_id")
@@ -1527,7 +1527,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg11", variables="index_sdg11")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg11")
 wide["change"] = wide[2024] - wide[2012]
-gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+gdf = geo.boundaries("map343").merge(wide["change"].reset_index(),
                                            on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="change", hover_name="name",
@@ -1548,7 +1548,7 @@ bounds = {"sdg11_1_thm": (68.2, 12.6), "sdg11_1_ssb": (100, 0), "sdg11_1_ava": (
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+df["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg11", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg11": "Index (0-100)"},
@@ -1620,7 +1620,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg13", variables="index_sdg13")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg13")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
            title="SDG 13: Climate action index, ~2012 and ~2024")`,
@@ -1630,8 +1630,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg13.csv")  # geo_id, year, mun_id, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg13.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg13"]]
 gdf = municipalities.merge(index, on="geo_id")
@@ -1650,7 +1650,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg13", variables="index_sdg13")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg13")
 wide["change"] = wide[2024] - wide[2012]
-gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+gdf = geo.boundaries("map343").merge(wide["change"].reset_index(),
                                            on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="change", hover_name="name",
@@ -1670,7 +1670,7 @@ bounds = {"sdg13_1_fec": (87.6, 0), "sdg13_1_icc": (3, 0), "sdg13_2_epb": (44.9,
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+df["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg13", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg13": "Climate action index (0-100)"},
@@ -1741,7 +1741,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg15", variables="index_sdg15")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg15")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
            title="SDG 15: Life on land index, ~2012 and ~2024")`,
@@ -1751,8 +1751,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg15.csv")  # geo_id, year, mun_id, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg15.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg15"]]
 gdf = municipalities.merge(index, on="geo_id")
@@ -1771,7 +1771,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg15", variables="index_sdg15")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg15")
 wide["change"] = wide[2024] - wide[2012]
-gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+gdf = geo.boundaries("map343").merge(wide["change"].reset_index(),
                                            on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="change", hover_name="name",
@@ -1791,7 +1791,7 @@ bounds = {"sdg15_1_sap": (0, 60), "sdg15_2_tpb": (7.3, 0), "sdg15_5_pbd": (2, 0)
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+df["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg15", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg15": "Life on land index (0-100)"},
@@ -1862,7 +1862,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg16", variables="index_sdg16")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg16")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
            title="SDG 16 index, ~2012 and ~2024")`,
@@ -1872,8 +1872,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg16.csv")  # geo_id, year, mun_id, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg16.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg16"]]
 gdf = municipalities.merge(index, on="geo_id")
@@ -1892,7 +1892,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg16", variables="index_sdg16")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg16")
 wide["change"] = wide[2024] - wide[2012]
-gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+gdf = geo.boundaries("map343").merge(wide["change"].reset_index(),
                                            on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="change", hover_name="name",
@@ -1912,7 +1912,7 @@ bounds = {"sdg16_1_thp": (9, 0), "sdg16_6_cep": (17.7, 94.9), "sdg16_7_tcs": (16
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+df["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg16", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg16": "Index (0-100)"},
@@ -1983,7 +1983,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg17", variables="index_sdg17")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg17")
 wide = wide.add_prefix("y")
-wide["name"] = geo.units("municipality").set_index("geo_id")["name"]
+wide["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(wide, x="y2012", y="y2024", hover_name="name",
            labels={"y2012": "Index, ~2012", "y2024": "Index, ~2024"},
            title="SDG 17: Partnerships for the goals index, ~2012 and ~2024")`,
@@ -1993,8 +1993,8 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg17.csv")  # geo_id, year, mun_id, ...
-municipalities = gpd.read_file(BASE + "geo/boundaries/municipality.geojson")
+df = pd.read_csv(BASE + "data/map343/sdg17.csv")  # geo_id, year, mun_id, ...
+municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg17"]]
 gdf = municipalities.merge(index, on="geo_id")
@@ -2013,7 +2013,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
 df = geo.load("sdg17", variables="index_sdg17")
 wide = df.pivot(index="geo_id", columns="year", values="index_sdg17")
 wide["change"] = wide[2024] - wide[2012]
-gdf = geo.boundaries("municipality").merge(wide["change"].reset_index(),
+gdf = geo.boundaries("map343").merge(wide["change"].reset_index(),
                                            on="geo_id")
 px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           color="change", hover_name="name",
@@ -2032,7 +2032,7 @@ bounds = {"sdg17_1_iil": (0, 51.7), "sdg17_18_ipc": (0, 1526)}  # (worst, best)
 scores = pd.DataFrame({v: 100 * (df[v] - w) / (b - w)
                        for v, (w, b) in bounds.items()}).clip(0, 100)
 df["computed"] = scores.mean(axis=1)  # skips missing indicators
-df["name"] = geo.units("municipality").set_index("geo_id")["name"]
+df["name"] = geo.units("map343").set_index("geo_id")["name"]
 px.scatter(df, x="computed", y="index_sdg17", hover_name="name",
            labels={"computed": "Computed from the indicators",
                    "index_sdg17": "Partnerships for the goals index (0-100)"},
@@ -2074,23 +2074,23 @@ px.scatter(dep.sort_values("index_sdg17"), x="index_sdg17", y="department",
     ],
   },
   {
-    id: 'municipalities343-ntl', type: 'indicator', section: 'indicators',
+    id: 'municipalities339-ntl', type: 'indicator', section: 'indicators',
     title: 'Night-time lights per capita',
-    scope: '333 of 343 municipalities · 2012–2020',
-    summary: 'Nine years of VIIRS night-time lights per person for 333 municipalities, with a long-run trend: a satellite proxy for local economic activity.',
-    description: 'Annual night-time lights per capita for 333 of Bolivia’s 343 municipalities from 2012 to 2020: the summed radiance of the Earth Observation Group’s annual VIIRS night-time lights (version 2, background masked) over each municipality, divided by its WorldPop population, in natural logs. A Hodrick–Prescott trend (λ = 400) of the same series separates the long-run path from year-to-year noise; it is complete for every municipality, while the raw log is missing where a municipality had no measurable light. Night-time lights track electrification and economic activity where official local statistics are scarce. The values were computed on DS4Bolivia’s polygons of the 2015 municipal map, so they are published for the 333 municipalities whose territory did not change; the six that lost territory to the four units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units have no data.',
-    geography: 'Municipality', units: 333, period: '2012–2020', frequency: 'Annual', key: 'geo_id', idExample: 'BO-04-17-04',
+    scope: '339 municipalities (2015 map) · 2012–2020',
+    summary: 'Nine years of VIIRS night-time lights per person for 339 municipalities, with a long-run trend: a satellite proxy for local economic activity.',
+    description: 'Annual night-time lights per capita for Bolivia’s 339 municipalities of the 2015 map from 2012 to 2020: the summed radiance of the Earth Observation Group’s annual VIIRS night-time lights (version 2, background masked) over each municipality, divided by its WorldPop population, in natural logs. A Hodrick–Prescott trend (λ = 400) of the same series separates the long-run path from year-to-year noise; it is complete for every municipality, while the raw log is missing where a municipality had no measurable light. Night-time lights track electrification and economic activity where official local statistics are scarce. The values were computed on DS4Bolivia’s polygons of the 2015 municipal map, so they are published on that map, map339, for all its 339 municipalities, which keep their geo IDs in the 343-unit map of 2025. Six of them (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) have since lost territory to four new units, which have no data; their values describe their 2015 territory.',
+    geography: 'Municipality (map339, 2015 map)', units: 339, period: '2012–2020', frequency: 'Annual', key: 'geo_id', idExample: 'BO-04-17-04',
     categories: ['Economy'], tags: ['night-time lights', 'VIIRS', 'remote sensing', 'panel data'],
     image: 'images/indicators/ntl.webp',
-    imageAlt: 'Map of log night-time lights per capita in 2020 across 343 Bolivian municipalities and indigenous autonomies in three natural-break classes: highest across Santa Cruz, the Chaco and the southern altiplano, lowest in northern La Paz, parts of Pando and clusters in the Potosí and Chuquisaca valleys',
+    imageAlt: 'Map of log night-time lights per capita in 2020 across Bolivia’s 339 municipalities of the 2015 map in three natural-break classes: highest across Santa Cruz, the Chaco and the southern altiplano, lowest in northern La Paz, parts of Pando and clusters in the Potosí and Chuquisaca valleys',
     map: 'images/indicators/ntl-map.webp',
-    mapAlt: 'Map of log night-time lights per capita in 2020 across 343 Bolivian municipalities and indigenous autonomies in three natural-break classes: highest across Santa Cruz, the Chaco and the southern altiplano, lowest in northern La Paz, parts of Pando and clusters in the Potosí and Chuquisaca valleys. Legend: High 14.5 to 17.9 (108 municipalities), Middle 13.0 to 14.5 (143), Low 10.5 to 13.0 (77), no data 15.',
+    mapAlt: 'Map of log night-time lights per capita in 2020 across Bolivia’s 339 municipalities of the 2015 map in three natural-break classes: highest across Santa Cruz, the Chaco and the southern altiplano, lowest in northern La Paz, parts of Pando and clusters in the Potosí and Chuquisaca valleys. Legend: High 14.5 to 17.9 (108 municipalities), Middle 13.0 to 14.5 (143), Low 10.5 to 13.0 (77), no data 15.',
     date: '2026-10-28', pinned: false, dataset: 'ntl',
     code: {
       python: `${PYTHON_SETUP}
 
 df = geo.load("ntl")
-df = df.merge(geo.units("municipality")[["geo_id", "department_id"]], on="geo_id")
+df = df.merge(geo.units("map339")[["geo_id", "department_id"]], on="geo_id")
 
 # Long-run trend of lights per capita: mean by department
 trend = df.groupby(["year", "department_id"], as_index=False)["ln_t400NTLpc"].mean()
@@ -2103,8 +2103,9 @@ title="Night-time lights by department")`,
 import plotly.express as px
 
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/ntl.csv")
-units = pd.read_csv(BASE + "geo/units.csv")
+df = pd.read_csv(BASE + "data/map339/ntl.csv")
+units = pd.read_csv(BASE + "geo/units.csv")   # every scale and map
+units = units[units["scale"].isin(["map339", "department"])]
 df = df.merge(units[["geo_id", "department_id"]], on="geo_id")
 
 # Long-run trend of lights per capita: mean by department
@@ -2116,17 +2117,17 @@ title="Night-time lights by department")`,
     },
   },
   {
-    id: 'municipalities343-pop', type: 'indicator', section: 'indicators',
+    id: 'municipalities339-pop', type: 'indicator', section: 'indicators',
     title: 'Population',
-    scope: '333 of 343 municipalities · 2001–2020',
-    summary: 'Two decades of gridded population estimates and population density for 333 municipalities: the denominator for per-capita indicators and population-weighted averages.',
-    description: 'Annual population estimates for 333 of Bolivia’s 343 municipalities from 2001 to 2020, computed by summing WorldPop’s 1 km gridded population over each municipality, and the population density (people per km²) of each municipality. Population sums up the hierarchy, so it gives provincial, departmental and national totals directly, and it is the weight for population-weighted averages of rates such as poverty. These are gridded estimates, not INE’s official projections; census population for 2012 and 2024, for all 343 units, is in the sdg dataset. The values were computed on DS4Bolivia’s polygons of the 2015 municipal map, so they are published for the 333 municipalities whose territory did not change; the six that lost territory to the four units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units have no data.',
-    geography: 'Municipality', units: 333, period: '2001–2020', frequency: 'Annual', key: 'geo_id', idExample: 'BO-04-17-04',
+    scope: '339 municipalities (2015 map) · 2001–2020',
+    summary: 'Two decades of gridded population estimates and population density for 339 municipalities: the denominator for per-capita indicators and population-weighted averages.',
+    description: 'Annual population estimates for Bolivia’s 339 municipalities of the 2015 map from 2001 to 2020, computed by summing WorldPop’s 1 km gridded population over each municipality, and the population density (people per km²) of each municipality. Population sums up the hierarchy, so it gives provincial, departmental and national totals directly, and it is the weight for population-weighted averages of rates such as poverty. These are gridded estimates, not INE’s official projections; census population for 2012 and 2024, for all 343 units, is in the sdg dataset. The values were computed on DS4Bolivia’s polygons of the 2015 municipal map, so they are published on that map, map339, for all its 339 municipalities, which keep their geo IDs in the 343-unit map of 2025. Six of them (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) have since lost territory to four new units, which have no data; their values describe their 2015 territory.',
+    geography: 'Municipality (map339, 2015 map)', units: 339, period: '2001–2020', frequency: 'Annual', key: 'geo_id', idExample: 'BO-04-17-04',
     categories: ['Social'], tags: ['population', 'WorldPop', 'demography', 'panel data'],
     image: 'images/indicators/pop.webp',
-    imageAlt: 'Map of population density in 2020 across 343 Bolivian municipalities and indigenous autonomies in three natural-break classes on a log scale: densest in the La Paz–El Alto, Cochabamba, Santa Cruz, Sucre and Tarija urban areas, intermediate across the altiplano and valleys, sparsest in the northern and eastern lowlands',
+    imageAlt: 'Map of population density in 2020 across Bolivia’s 339 municipalities of the 2015 map in three natural-break classes on a log scale: densest in the La Paz–El Alto, Cochabamba, Santa Cruz, Sucre and Tarija urban areas, intermediate across the altiplano and valleys, sparsest in the northern and eastern lowlands',
     map: 'images/indicators/pop-map.webp',
-    mapAlt: 'Map of population density in 2020 across 343 Bolivian municipalities and indigenous autonomies in three natural-break classes on a log scale: densest in the La Paz–El Alto, Cochabamba, Santa Cruz, Sucre and Tarija urban areas, intermediate across the altiplano and valleys, sparsest in the northern and eastern lowlands. Legend: High 42 to 2,860 people per km² (55 municipalities), Middle 4 to 42 (199), Low 0 to 4 (79), no data 10.',
+    mapAlt: 'Map of population density in 2020 across Bolivia’s 339 municipalities of the 2015 map in three natural-break classes on a log scale: densest in the La Paz–El Alto, Cochabamba, Santa Cruz, Sucre and Tarija urban areas, intermediate across the altiplano and valleys, sparsest in the northern and eastern lowlands. Legend: High 42 to 2,860 people per km² (55 municipalities), Middle 4 to 42 (199), Low 0 to 4 (79), no data 10.',
     date: '2026-10-28', pinned: false, dataset: 'pop',
     code: {
       python: `${PYTHON_SETUP}
@@ -2143,8 +2144,9 @@ labels={"pop": "Population"}, title="Population by department, 2001-2020")`,
 import plotly.express as px
 
 BASE = "${RAW_URL}"
-pop = pd.read_csv(BASE + "data/municipality/pop.csv")
-units = pd.read_csv(BASE + "geo/units.csv")
+pop = pd.read_csv(BASE + "data/map339/pop.csv")
+units = pd.read_csv(BASE + "geo/units.csv")   # every scale and map
+units = units[units["scale"].isin(["map339", "department"])]
 pop = pop.merge(units[["geo_id", "department_id"]], on="geo_id")
 
 # Totals by department, 2001-2020
@@ -2155,17 +2157,17 @@ labels={"pop": "Population"}, title="Population by department, 2001-2020")`,
     },
   },
   {
-    id: 'municipalities343-emb', type: 'indicator', section: 'indicators',
+    id: 'municipalities339-emb', type: 'indicator', section: 'indicators',
     title: 'Satellite embeddings',
-    scope: '333 of 343 municipalities · 64 dimensions · 2017',
-    summary: 'What 333 municipalities look like from space, each compressed by a deep-learning model into 64 numbers: features for machine learning.',
-    description: 'Sixty-four satellite embedding dimensions (A00–A63) for 333 of Bolivia’s 343 municipalities in 2017, averaged from the annual 10 m Google Satellite Embedding dataset (AlphaEarth Foundations). The model summarises Sentinel-2, Landsat and other imagery into abstract features that capture land cover, texture, roads and buildings. Two versions are published: `emb`, the area-weighted mean over each municipality, and `embpw`, weighted by population so that it describes where people live. The dimensions are not interpretable one by one; they are inputs to models, for example to predict poverty. The values were computed on DS4Bolivia’s polygons of the 2015 municipal map, so they are published for the 333 municipalities whose territory did not change; the six that lost territory to the four units created since (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) and the four new units have no data.',
-    geography: 'Municipality', units: 333, period: '2017', frequency: 'One year', key: 'geo_id', idExample: 'BO-04-17-04',
+    scope: '339 municipalities (2015 map) · 64 dimensions · 2017',
+    summary: 'What 339 municipalities look like from space, each compressed by a deep-learning model into 64 numbers: features for machine learning.',
+    description: 'Sixty-four satellite embedding dimensions (A00–A63) for Bolivia’s 339 municipalities of the 2015 map in 2017, averaged from the annual 10 m Google Satellite Embedding dataset (AlphaEarth Foundations). The model summarises Sentinel-2, Landsat and other imagery into abstract features that capture land cover, texture, roads and buildings. Two versions are published: `emb`, the area-weighted mean over each municipality, and `embpw`, weighted by population so that it describes where people live. The dimensions are not interpretable one by one; they are inputs to models, for example to predict poverty. The values were computed on DS4Bolivia’s polygons of the 2015 municipal map, so they are published on that map, map339, for all its 339 municipalities, which keep their geo IDs in the 343-unit map of 2025. Six of them (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) have since lost territory to four new units, which have no data; their values describe their 2015 territory.',
+    geography: 'Municipality (map339, 2015 map)', units: 339, period: '2017', frequency: 'One year', key: 'geo_id', idExample: 'BO-04-17-04',
     categories: ['Environment', 'Economy'], tags: ['satellite embeddings', 'AlphaEarth', 'machine learning', 'remote sensing'],
     image: 'images/indicators/emb.webp',
-    imageAlt: 'Map of satellite embedding dimension A00 (area-weighted) in 2017 across 343 Bolivian municipalities and indigenous autonomies in three natural-break classes: low across the altiplano and western valleys, middle across Beni and Pando, high across Santa Cruz and the Chaco',
+    imageAlt: 'Map of satellite embedding dimension A00 (area-weighted) in 2017 across Bolivia’s 339 municipalities of the 2015 map in three natural-break classes: low across the altiplano and western valleys, middle across Beni and Pando, high across Santa Cruz and the Chaco',
     map: 'images/indicators/emb-map.webp',
-    mapAlt: 'Map of satellite embedding dimension A00 (area-weighted) in 2017 across 343 Bolivian municipalities and indigenous autonomies in three natural-break classes: low across the altiplano and western valleys, middle across Beni and Pando, high across Santa Cruz and the Chaco. Legend: High 0.046 to 0.164 (49 municipalities), Middle −0.055 to 0.046 (94), Low −0.165 to −0.055 (190), no data 10.',
+    mapAlt: 'Map of satellite embedding dimension A00 (area-weighted) in 2017 across Bolivia’s 339 municipalities of the 2015 map in three natural-break classes: low across the altiplano and western valleys, middle across Beni and Pando, high across Santa Cruz and the Chaco. Legend: High 0.046 to 0.164 (49 municipalities), Middle −0.055 to 0.046 (94), Low −0.165 to −0.055 (190), no data 10.',
     date: '2026-10-28', pinned: false, dataset: 'emb', datasets: ['emb', 'embpw'],
     code: {
       python: `${PYTHON_SETUP}
@@ -2177,7 +2179,7 @@ emb["pc1"] = PCA(1).fit_transform(X)[:, 0]
 
 # How the first component relates to multidimensional poverty (2012)
 mpi = geo.load("sdg01", variables="sdg1_2_mpi", years=2012)
-names = geo.units("municipality")[["geo_id", "name"]]
+names = geo.units("map339")[["geo_id", "name"]]
 df = emb[["geo_id", "pc1"]].merge(mpi, on="geo_id").merge(names, on="geo_id")
 px.scatter(df, x="pc1", y="sdg1_2_mpi", hover_name="name", trendline="ols",
    labels={"pc1": "First principal component", "sdg1_2_mpi": "MPI, 2012"},
@@ -2186,7 +2188,7 @@ px.scatter(df, x="pc1", y="sdg1_2_mpi", hover_name="name", trendline="ols",
 import plotly.express as px
 
 BASE = "${RAW_URL}"
-emb = pd.read_csv(BASE + "data/municipality/embpw.csv")   # geo_id, year, asdf_id, A00-A63
+emb = pd.read_csv(BASE + "data/map339/embpw.csv")   # geo_id, year, asdf_id, A00-A63
 
 # Distribution of each of the 64 dimensions across municipalities
 px.box(emb.filter(regex=r"^A\\d{2}$"),
@@ -2232,8 +2234,9 @@ import plotly.express as px
 
 # The same files without the package: plain URLs
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/municipality/sdg01.csv")
+df = pd.read_csv(BASE + "data/map343/sdg01.csv")
 units = pd.read_csv(BASE + "geo/units.csv")      # names, parents, INE codes
+units = units[units["scale"].isin(["map343", "department"])]   # sdg01's map
 df = df.merge(units[["geo_id", "name", "department_id"]], on="geo_id")
 df["department"] = df["department_id"].map(units.set_index("geo_id")["name"])
 df["period"] = df["year"].astype(str)
@@ -2266,10 +2269,10 @@ px.box(df, x="department", y="sdg1_2_mpi", color="period",
     title: 'expdpy: explore and model panel data',
     scope: '!pip install -q geo4bolivia expdpy',
     summary: 'A companion package for specialised panel-data methods, beyond geo4bolivia’s built-in analyses: the split of variation between and within units, correlated random effects, instrumental variables, event studies and robust inference, each with a plain-language reading. geo4bolivia hands it Bolivian panels in one line.',
-    description: 'geo4bolivia runs the fundamental panel analyses itself: trends, regressions, and pooled, between, fixed- and random-effects models with a Hausman test. expdpy (a Python port of ExPanDaR) is its companion for going further with panels. Its explore functions describe a panel’s structure, decompose variation into between and within components (xtsum), and chart trajectories, distributions, transitions, missing values and correlations. Its analyze functions add correlated random effects, joint tests, fixest-style regressions with fixed effects and clustered or Driscoll–Kraay standard errors, wild-bootstrap inference, instrumental variables and event studies. Its learn functions simulate each concept from a known truth. Every result has an interactive figure or table and an interpret() method. The observatory’s datasets are exactly the long panels expdpy expects: geo.for_expdpy() hands them over, labelled and with the department of each municipality, in one line. The SDG Atlas gives two periods (~2012 and ~2024) for 343 units; night-time lights give a nine-year panel (2012–2020) for 333.',
+    description: 'geo4bolivia runs the fundamental panel analyses itself: trends, regressions, and pooled, between, fixed- and random-effects models with a Hausman test. expdpy (a Python port of ExPanDaR) is its companion for going further with panels. Its explore functions describe a panel’s structure, decompose variation into between and within components (xtsum), and chart trajectories, distributions, transitions, missing values and correlations. Its analyze functions add correlated random effects, joint tests, fixest-style regressions with fixed effects and clustered or Driscoll–Kraay standard errors, wild-bootstrap inference, instrumental variables and event studies. Its learn functions simulate each concept from a known truth. Every result has an interactive figure or table and an interpret() method. The observatory’s datasets are exactly the long panels expdpy expects: geo.for_expdpy() hands them over, labelled and with the department of each municipality, in one line. The SDG Atlas gives two periods (~2012 and ~2024) for 343 units; night-time lights give a nine-year panel (2012–2020) for the 339 municipalities of the 2015 map.',
     tags: ['Python', 'panel data', 'econometrics', 'fixed effects', 'ExPanDaR'],
     image: 'images/tools/expdpy-package.webp',
-    imageAlt: 'Night-time lights per capita trajectories of 333 Bolivian municipalities, 2012–2020, with department means and the between/within split of their variation',
+    imageAlt: 'Night-time lights per capita trajectories of 339 Bolivian municipalities, 2012–2020, with department means and the between/within split of their variation',
     date: '2026-11-17', pinned: true,
     install: `!pip install -q geo4bolivia expdpy`,
     quickstart: {
@@ -2306,12 +2309,12 @@ df = ex.set_labels(df, df_def, set_panel=True)
 display(ex.explore_xtsum_table(df, var=["sdg1_2_mpi"]).gt)
 ex.explore_transition_matrix(df, "sdg1_2_mpi").fig` },
       { id: 'trajectories', title: 'A longer panel: night-time lights, 2012–2020',
-        text: 'Nine years of lights per capita for 333 municipalities: one line per municipality and the mean by department.',
+        text: 'Nine years of lights per capita for 339 municipalities: one line per municipality and the mean by department.',
         code: `!pip install -q geo4bolivia expdpy
 import geo4bolivia as geo
 import expdpy as ex
 
-df, df_def = geo.for_expdpy("ntl", groups=["department"])   # 333 units
+df, df_def = geo.for_expdpy("ntl", groups=["department"])   # 339 units
 df = ex.set_labels(df, df_def, set_panel=True)
 ex.explore_spaghetti_plot(df, "ln_t400NTLpc").fig.show()
 ex.explore_trend_plot_by_group(df, group_var="department",
@@ -2345,7 +2348,7 @@ ex.analyze_panel_table(df, "index_sdg", ["ln_pop"]).etable` },
       { label: 'Source code', url: 'https://github.com/cmg777/expdpy', kind: 'github' },
       { label: 'No-code Analyze app', url: 'https://expdpy-analyze.streamlit.app', kind: 'launch' },
     ],
-    related: ['geo4bolivia-package', 'geometrics-package', 'three-packages', 'municipalities343-sdg', 'municipalities343-ntl'],
+    related: ['geo4bolivia-package', 'geometrics-package', 'three-packages', 'municipalities343-sdg', 'municipalities339-ntl'],
   },
   {
     id: 'geometrics-package', type: 'package', section: 'tools',
@@ -2445,7 +2448,7 @@ theil.fig` },
     id: 'geo4bolivia-quickstart', type: 'notebook', section: 'tools',
     title: 'Find, load and understand Bolivia’s subnational data with geo4bolivia',
     summary: 'A tour of the geo4bolivia package as a Colab notebook: discover the datasets and their documentation, load panels with and without the package, describe and map a variable, compare ~2012 with ~2024, move data across scales, link your own table, build an indicator from a raster, and take a first look at the built-in analyses.',
-    description: 'This Colab notebook introduces the geo4bolivia package step by step on the data of Bolivia’s 343 municipalities and indigenous autonomies. It searches the catalog, reads a dataset’s documentation, actual reference years and citation, and loads the same files as plain URLs and with the package, with names and departments. It describes education by period and by department and maps it interactively. It compares the two periods of the Sustainable Development Index: the index rose in 342 of the 343 units, by 10 points on average, and rose most where it started lowest (correlation −0.43). Aggregated with census-population weights, national multidimensional poverty fell from 0.133 to 0.033, and every department’s fell to between 18% and 32% of its 2012 value; night-time lights cover 333 of the 343 municipalities, as the coverage column shows. The notebook then links tables by department names in any spelling and by INE codes, shows how shared names and typos are reported, builds a market-access indicator from a raster with zonal statistics, spreads the 2024 census population onto a 25 km grid and saves the result in the observatory’s format. Its last part introduces the package’s built-in analyses, each in one call with an interactive figure and a reading of the result in words, and points to the package’s documentation site for the rest.',
+    description: 'This Colab notebook introduces the geo4bolivia package step by step on the data of Bolivia’s 343 municipalities and indigenous autonomies. It searches the catalog, reads a dataset’s documentation, actual reference years and citation, and loads the same files as plain URLs and with the package, with names and departments. It describes education by period and by department and maps it interactively. It compares the two periods of the Sustainable Development Index: the index rose in 342 of the 343 units, by 10 points on average, and rose most where it started lowest (correlation −0.43). Aggregated with census-population weights, national multidimensional poverty fell from 0.133 to 0.033, and every department’s fell to between 18% and 32% of its 2012 value; night-time lights cover the 339 municipalities of the 2015 map (map339), and the coverage column shows the few without a raw value in 2020. The notebook then links tables by department names in any spelling and by INE codes, shows how shared names and typos are reported, builds a market-access indicator from a raster with zonal statistics, spreads the 2024 census population onto a 25 km grid and saves the result in the observatory’s format. Its last part introduces the package’s built-in analyses, each in one call with an interactive figure and a reading of the result in words, and points to the package’s documentation site for the rest.',
     tags: ['geo4bolivia', 'quickstart', 'Python', 'Colab'],
     image: 'images/tools/geo4bolivia-quickstart.webp',
     imageAlt: 'Map of multidimensional poverty by Bolivian department in 2024, weighted by census population',
@@ -2461,16 +2464,16 @@ theil.fig` },
     id: 'mpi-eda', type: 'notebook', section: 'tools',
     title: 'Exploratory data analysis of multidimensional poverty',
     summary: 'How multidimensional poverty varies across 343 municipalities and 9 departments, how it changed between the 2012 and 2024 censuses, and how it relates to population and night-time lights.',
-    description: 'This Colab notebook explores the Multidimensional Poverty Index of the 2012 and 2024 censuses, from the SDG Atlas of Bolivia 2026, across Bolivia’s 343 municipalities and indigenous autonomies. Poverty fell in every unit: the municipal mean dropped from 0.234 to 0.063 and the population-weighted mean from 0.133 to 0.033. Chuquisaca and Potosí have the poorest municipalities in both periods and Tarija the least poor, but poverty varies far more within departments than between them (departments explain about a fifth of the variance). The poorest places fell most in absolute terms and the ranking persisted (correlation 0.86). On the 333 units with satellite data, brighter municipalities are less poor (correlation −0.54 in 2012), and the relation is negative in all nine departments.',
+    description: 'This Colab notebook explores the Multidimensional Poverty Index of the 2012 and 2024 censuses, from the SDG Atlas of Bolivia 2026, across Bolivia’s 343 municipalities and indigenous autonomies. Poverty fell in every unit: the municipal mean dropped from 0.234 to 0.063 and the population-weighted mean from 0.133 to 0.033. Chuquisaca and Potosí have the poorest municipalities in both periods and Tarija the least poor, but poverty varies far more within departments than between them (departments explain about a fifth of the variance). The poorest places fell most in absolute terms and the ranking persisted (correlation 0.86). On the 339 units of the 2015 map, which have satellite data, brighter municipalities are less poor (correlation −0.54 in 2012), and the relation is negative in all nine departments.',
     tags: ['EDA', 'poverty', 'night-time lights', 'Python'],
     image: 'images/tools/eda.webp',
-    imageAlt: 'Scatter plot of multidimensional poverty against log night-time lights per capita for 333 Bolivian municipalities in 2012, with a negative fitted line (r = −0.54)',
+    imageAlt: 'Scatter plot of multidimensional poverty against log night-time lights per capita for 339 Bolivian municipalities in 2012, with a negative fitted line (r = −0.54)',
     date: '2026-10-28', pinned: false,
     links: [
       { label: 'Open in Colab', url: COLAB_URL + 'eda.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/eda.ipynb', kind: 'github' },
     ],
-    related: ['municipalities343-sdg01', 'municipalities343-ntl', 'mpi-esda'],
+    related: ['municipalities343-sdg01', 'municipalities339-ntl', 'mpi-esda'],
   },
   {
     id: 'mpi-esda', type: 'notebook', section: 'tools',
@@ -2506,7 +2509,7 @@ theil.fig` },
     id: 'mpi-esda-inequality', type: 'notebook', section: 'tools',
     title: 'Spatial inequality of poverty and night-time lights',
     summary: 'Gini, Theil between and within departments, and the spatial Gini of multidimensional poverty in 2012 and 2024, and of night-time lights.',
-    description: 'This Colab notebook measures inequality in the Multidimensional Poverty Index across Bolivia’s 343 municipalities and indigenous autonomies in 2012 and 2024, and in log night-time lights per capita in 2012 on the 333 units with data. As poverty fell, its relative inequality rose: the Gini went from 0.25 to 0.37 and the Theil index from 0.10 to 0.22, while the absolute spread narrowed. About 79% of poverty inequality lies within departments in both periods (83% for lights). Spatial Gini tests (p = 0.001) show that neighbouring municipalities are more alike than random pairs, and a department table compares simple and census-weighted poverty (0.133 nationally in 2012, 0.033 in 2024).',
+    description: 'This Colab notebook measures inequality in the Multidimensional Poverty Index across Bolivia’s 343 municipalities and indigenous autonomies in 2012 and 2024, and in log night-time lights per capita in 2012 on the 339 units of the 2015 map. As poverty fell, its relative inequality rose: the Gini went from 0.25 to 0.37 and the Theil index from 0.10 to 0.22, while the absolute spread narrowed. About 79% of poverty inequality lies within departments in both periods (83% for lights). Spatial Gini tests (p = 0.001) show that neighbouring municipalities are more alike than random pairs, and a department table compares simple and census-weighted poverty (0.133 nationally in 2012, 0.033 in 2024).',
     tags: ['inequality', 'Theil', 'Gini', 'spatial Gini'],
     image: 'images/tools/esda-inequality.webp',
     imageAlt: 'Quintile map of multidimensional poverty in 2024 across Bolivia’s 343 municipalities, with the borders of the nine departments used to decompose inequality',
@@ -2515,31 +2518,31 @@ theil.fig` },
       { label: 'Open in Colab', url: COLAB_URL + 'esda_inequality.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/esda_inequality.ipynb', kind: 'github' },
     ],
-    related: ['municipalities343-sdg01', 'municipalities343-ntl', 'geo4bolivia-package'],
+    related: ['municipalities343-sdg01', 'municipalities339-ntl', 'geo4bolivia-package'],
   },
   {
     id: 'mpi-esda-heterogeneity', type: 'notebook', section: 'tools',
     title: 'Where do lights predict poverty? Multiscale GWR',
     summary: 'Is night-time light linked to poverty in the same way everywhere? A national regression and a multiscale geographically weighted regression (MGWR) of municipal poverty on lights per capita, for 2012 and 2024.',
-    description: 'This Colab notebook regresses the multidimensional poverty index of the SDG Atlas of Bolivia 2026 on log night-time lights per capita for the 333 municipalities with lights data, first in 2012 and then with poverty in 2024 on lights in 2020. One national slope explains 29% of the variation in 2012. A multiscale geographically weighted regression (MGWR, with geo4bolivia’s geo.mgwr), which lets the intercept and the slope vary over space, each at its own scale, with bandwidths of 44 neighbours for the intercept and 64 for the slope, raises R² to 0.65. Every local slope is negative, but the link is almost five times stronger in Cochabamba than in Beni. By 2024 the link is a little weaker (national R² 0.25) and the slope’s bandwidth widens to 100 neighbours.',
+    description: 'This Colab notebook regresses the multidimensional poverty index of the SDG Atlas of Bolivia 2026 on log night-time lights per capita for the 339 municipalities with lights data (the 2015 map), first in 2012 and then with poverty in 2024 on lights in 2020. One national slope explains 29% of the variation in 2012. A multiscale geographically weighted regression (MGWR, with geo4bolivia’s geo.mgwr), which lets the intercept and the slope vary over space, each at its own scale, with bandwidths of 44 neighbours for the intercept and 65 for the slope, raises R² to 0.65. Every local slope is negative, but the link is about four times stronger in Cochabamba than in Beni. By 2024 the link is a little weaker (national R² 0.25) and the slope’s bandwidth widens to 101 neighbours.',
     tags: ['MGWR', 'spatial heterogeneity', 'night-time lights', 'geo4bolivia'],
     image: 'images/tools/esda-heterogeneity.webp',
-    imageAlt: 'Map of the significant local slopes of a multiscale GWR of poverty on night-time lights in 2012 across 333 Bolivian municipalities (bandwidth 64), steepest in Cochabamba, Chuquisaca and Potosí',
+    imageAlt: 'Map of the significant local slopes of a multiscale GWR of poverty on night-time lights in 2012 across 339 Bolivian municipalities (bandwidth 65), steepest in Cochabamba, Chuquisaca and Potosí',
     date: '2026-10-28', pinned: false,
     links: [
       { label: 'Open in Colab', url: COLAB_URL + 'esda_heterogeneity.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/esda_heterogeneity.ipynb', kind: 'github' },
     ],
-    related: ['municipalities343-ntl', 'municipalities343-sdg01', 'geo4bolivia-package'],
+    related: ['municipalities339-ntl', 'municipalities343-sdg01', 'geo4bolivia-package'],
   },
   {
     id: 'mpi-eda-esda', type: 'notebook', section: 'tools',
     title: 'Poverty in Bolivia: an extended EDA and ESDA',
     summary: 'Exploratory and spatial analysis of multidimensional poverty in 343 municipalities, 2012 and 2024: correlates, clusters, bivariate LISA with night-time lights, inequality and a multiscale GWR.',
-    description: 'This Colab notebook uses the SDG Atlas of Bolivia 2026 to explore multidimensional poverty in 343 municipalities and indigenous autonomies around the 2012 and 2024 censuses. The municipal index fell from an average of 0.234 to 0.063, in every unit, but the ranking barely changed (rank correlation 0.86). Poverty moves most closely with electricity coverage and telephones (Spearman about −0.9) and is strongly clustered (Moran’s I 0.45 in 2012, 0.39 in 2024), with hot spots in the Chuquisaca–Potosí–Cochabamba valleys. A bivariate LISA on the 333 units with lights shows that poor municipalities tend to have dark neighbours (bivariate Moran’s I −0.26). Relative inequality rose as poverty fell (Gini 0.25 to 0.37), and a multiscale geographically weighted regression (MGWR) shows that the lights–poverty link is negative everywhere but strongest in the central-southern valleys.',
+    description: 'This Colab notebook uses the SDG Atlas of Bolivia 2026 to explore multidimensional poverty in 343 municipalities and indigenous autonomies around the 2012 and 2024 censuses. The municipal index fell from an average of 0.234 to 0.063, in every unit, but the ranking barely changed (rank correlation 0.86). Poverty moves most closely with electricity coverage and telephones (Spearman about −0.9) and is strongly clustered (Moran’s I 0.45 in 2012, 0.39 in 2024), with hot spots in the Chuquisaca–Potosí–Cochabamba valleys. A bivariate LISA on the 339 units with lights (the 2015 map) shows that poor municipalities tend to have dark neighbours (bivariate Moran’s I −0.27). Relative inequality rose as poverty fell (Gini 0.25 to 0.37), and a multiscale geographically weighted regression (MGWR) shows that the lights–poverty link is negative everywhere but strongest in the central-southern valleys.',
     tags: ['EDA', 'ESDA', 'bivariate LISA', 'infrastructure'],
     image: 'images/tools/eda-esda.webp',
-    imageAlt: 'Bivariate LISA map of 333 Bolivian municipalities relating each one’s poverty in 2012 to its neighbours’ night-time lights',
+    imageAlt: 'Bivariate LISA map of 339 Bolivian municipalities relating each one’s poverty in 2012 to its neighbours’ night-time lights',
     date: '2026-10-28', pinned: false,
     links: [
       { label: 'Open in Colab', url: COLAB_URL + 'eda_esda.ipynb', kind: 'colab' },
@@ -2581,16 +2584,16 @@ theil.fig` },
     id: 'embeddings-mpi-ml', type: 'notebook', section: 'tools',
     title: 'Predicting poverty from satellite embeddings',
     summary: 'Machine-learning models predict municipal multidimensional poverty in 2012 and 2024 from 2017 satellite embeddings and night-time lights, with random and spatial cross-validation.',
-    description: 'This Colab notebook trains random forests and XGBoost to predict the Multidimensional Poverty Index of the SDG Atlas of Bolivia 2026 for the 2012 and 2024 censuses from the 64 dimensions of Google’s 2017 satellite embeddings, and compares them with a baseline of night-time lights and population. It uses the 333 municipalities whose territory is unchanged since the older map the features were computed on. Under random 5-fold cross-validation, population-weighted embeddings plus lights explain 62% of the variance in 2012 poverty and 49% in 2024, against at most 35% for lights and population alone. When a whole department is held out, the best R² falls to 0.32 and 0.20, and the errors cluster by department; maps of the out-of-fold residuals show where the models fail, for example in Pando in 2012.',
+    description: 'This Colab notebook trains random forests and XGBoost to predict the Multidimensional Poverty Index of the SDG Atlas of Bolivia 2026 for the 2012 and 2024 censuses from the 64 dimensions of Google’s 2017 satellite embeddings, and compares them with a baseline of night-time lights and population. It uses the 339 municipalities of the 2015 map the features were computed on. Under random 5-fold cross-validation, population-weighted embeddings plus lights explain 64% of the variance in 2012 poverty and 52% in 2024, against at most 38% for lights and population alone. When a whole department is held out, the best R² falls to 0.32 and 0.20, and the errors cluster by department; maps of the out-of-fold residuals show where the models fail, for example in Pando in 2012.',
     tags: ['machine learning', 'satellite embeddings', 'poverty', 'spatial cross-validation'],
     image: 'images/tools/embeddings-mpi-ml.webp',
-    imageAlt: 'Scatter plot of out-of-fold predicted against observed multidimensional poverty in 2012 for 333 municipalities, from XGBoost on satellite embeddings, lights and population, random 5-fold cross-validation, R² 0.62',
+    imageAlt: 'Scatter plot of out-of-fold predicted against observed multidimensional poverty in 2012 for 339 municipalities, from XGBoost on satellite embeddings, lights and population, random 5-fold cross-validation, R² 0.62',
     date: '2026-10-28', pinned: true,
     links: [
       { label: 'Open in Colab', url: COLAB_URL + 'embeddings_mpi_ml.ipynb', kind: 'colab' },
       { label: 'View on GitHub', url: REPO_URL + '/blob/main/notebooks/embeddings_mpi_ml.ipynb', kind: 'github' },
     ],
-    related: ['municipalities343-emb', 'municipalities343-sdg01', 'mpi-eda'],
+    related: ['municipalities339-emb', 'municipalities343-sdg01', 'mpi-eda'],
   },
 
   // ---------------------------------------------------------------- Tools: apps
@@ -2607,7 +2610,7 @@ theil.fig` },
       { label: 'Launch app', url: 'https://carlos-mendez.projects.earthengine.app/view/geoexplorer1v100bolivia', kind: 'launch' },
       { label: 'Source code', url: REPO_URL + '/blob/main/apps/geoexplorer1v100bolivia.js', kind: 'github' },
     ],
-    related: ['municipalities343-ntl', 'municipalities343-pop'],
+    related: ['municipalities339-ntl', 'municipalities339-pop'],
   },
 
   // ---------------------------------------------------------------- Projects
@@ -2645,7 +2648,7 @@ theil.fig` },
     links: [
       { label: 'Visit the project', url: 'https://quarcs-lab.github.io/scspill/', kind: 'external' },
     ],
-    related: ['geometrics-package', 'expdpy-package', 'municipalities343-ntl'],
+    related: ['geometrics-package', 'expdpy-package', 'municipalities339-ntl'],
   },
   {
     id: 'local-pollution-dynamics', type: 'project', section: 'projects',
@@ -2658,7 +2661,7 @@ theil.fig` },
     imageAlt: 'Illustration of the lowlands around Santa Cruz de la Sierra at dusk, with rose haze drifting over the city lights and a satellite scanning from above',
     date: '2026-11-17', pinned: true,
     links: [],
-    related: ['municipalities343-ntl', 'municipalities343-pop', 'municipalities343-sdg13'],
+    related: ['municipalities339-ntl', 'municipalities339-pop', 'municipalities343-sdg13'],
   },
 
   // ---------------------------------------------------------------- Insights

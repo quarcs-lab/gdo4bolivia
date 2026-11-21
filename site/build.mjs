@@ -9,7 +9,7 @@
 // Generic: the site's identity comes from project.yaml and site/src/content.js.
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync, createReadStream, statSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync, createReadStream, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
 import { basename, dirname, extname, join, resolve } from 'node:path';
@@ -116,8 +116,9 @@ for (const d of DATASETS) {
   mapData[d] = { dataset: d, title: pkg.title, scale, units: ids, variables: vars, default: pkg['geo:map'] || null };
   write(`assets/data/${d}.json`, JSON.stringify(mapData[d]));
 }
-for (const f of ['municipality.geojson', 'department.geojson', 'country.geojson']) {
-  if (existsSync(join(SITE, 'data', f))) cpSync(join(SITE, 'data', f), join(OUT, 'assets/data', f));
+// the boundaries of every map (scripts/web_boundaries.py): one file per scale, named after it
+for (const f of readdirSync(join(SITE, 'data')).filter((name) => name.endsWith('.geojson'))) {
+  cpSync(join(SITE, 'data', f), join(OUT, 'assets/data', f));
 }
 
 // --------------------------------------------------------------------------- search index

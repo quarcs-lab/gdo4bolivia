@@ -25,7 +25,7 @@ How they fit together:
 > **geo4bolivia** was created from [geo4cambodia](https://github.com/quarcs-lab/geo4cambodia), the reference implementation, with `scripts/new_project.py`. This page is kept as in geo4cambodia, so "this repository" in the steps below means geo4cambodia. What geo4bolivia adapted:
 >
 > - three admin levels from one GADM level-3 file (`--levels department,province,municipality`), with the 5 Lake Titicaca polygons dropped before `from_gadm()`
-> - a new municipality map adopted in place (version 0.4: SDSN Bolivia's 343-unit map; old units keep their IDs, new ones are numbered after them, polygon-based data only for unchanged units; `municipality_ine` stays reserved for maps that cannot keep the IDs, see [`CONTRIBUTING_DATA.md`](CONTRIBUTING_DATA.md))
+> - municipal maps as scales named by their number of units (version 0.8: `map343`, SDSN Bolivia's map of 2025, and `map339`, the 2015 map that DS4Bolivia's data were computed on; units on both keep one geo ID, new ones are numbered after them, see [`CONTRIBUTING_DATA.md`](CONTRIBUTING_DATA.md#add-a-municipal-map))
 > - a country-fitted equal-area projection in `project.yaml`
 > - values stored at nominal years with their actual reference years (`geo:reference_years`, see `metadata/sdg01.datapackage.json`)
 >

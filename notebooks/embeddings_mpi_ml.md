@@ -30,7 +30,7 @@ Outline:
 
 It builds on DS4Bolivia's `run_poverty_prediction.py` script, with different targets, a spatial validation and a lights baseline.
 
-**Why 333 municipalities.** The geo IDs follow SDSN Bolivia's 2025 map of **343** municipalities and indigenous autonomies (GAIOC). The embeddings, lights and population were computed by DS4Bolivia on the polygons of the older 339-unit map, so they are published only for the **333 units whose territory is unchanged**. Four units were created after 2012 (TIOC-Raqaypampa, San Pedro de Macha, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico), and the six municipalities they were carved from (Mizque, Colquechaca, Porco, Tomave, San Ignacio and Santa Ana) lost territory; these ten have no features. The poverty index covers all 343, so the models use the 333 units with both.
+**Why 339 municipalities.** The poverty index follows SDSN Bolivia's 2025 map of **343** municipalities and indigenous autonomies (GAIOC), `map343`. The embeddings, lights and population were computed by DS4Bolivia on the polygons of the older 2015 map, so they are published on that map, `map339`, for its **339 municipalities**. The two maps share geo IDs: the 339 municipalities kept theirs in 2025. Four units were created after 2012 (TIOC-Raqaypampa, San Pedro de Macha, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico) and have no features; the six municipalities they were carved from (Mizque, Colquechaca, Porco, Tomave, San Ignacio and Santa Ana) keep features that describe their 2015 territory. The models use the 339 units with both, and the spatial checks use the 2015 map (`map="map339"`), the polygons the features belong to.
 
 **A caveat on timing.** The embeddings summarise imagery of **2017**, which lies between the two censuses: five years after 2012 and seven before 2024. The models therefore predict poverty from a landscape observed at a different date. Settlements, roads and land cover change slowly, so the embeddings still carry information about living conditions at both dates, but the mismatch is a limitation. The lights and population baseline is aligned as closely as the data allow: 2012 for the 2012 target and 2020, the latest year available, for the 2024 target.
 
@@ -107,7 +107,7 @@ for t in TARGETS:
 print(f"Correlation of MPI 2012 with MPI 2024: {np.corrcoef(y[2012], y[2024])[0, 1]:.2f}")
 ```
 
-Among the 333 units, mean poverty fell from 0.231 in 2012 to 0.062 in 2024, and its standard deviation from 0.103 to 0.042, so the 2024 target has a much smaller variance. The ordering of municipalities changed less: the two targets are correlated at 0.86. R² (the share of each target's own variance explained) is comparable across the two targets; RMSE and MAE are not.
+Among the 339 units, mean poverty fell from 0.232 in 2012 to 0.062 in 2024, and its standard deviation from 0.103 to 0.042, so the 2024 target has a much smaller variance. The ordering of municipalities changed less: the two targets are correlated at 0.86. R² (the share of each target's own variance explained) is comparable across the two targets; RMSE and MAE are not.
 
 The four feature sets, for each target (the lights and population columns change with the target year):
 
@@ -137,7 +137,7 @@ Every municipality is predicted **out of fold**, by a model that did not see it 
 - **Random 5-fold CV**: municipalities are shuffled into 5 folds. Neighbours of a test municipality are usually in the training set, so this measures *interpolation* within regions the model knows.
 - **Spatial CV by department**: `GroupKFold` with the 9 departments as groups, i.e. leave one department out. The model must predict a whole department it has never seen, a much harder and more honest test of *transfer* to new regions.
 
-The metrics are computed on the pooled out-of-fold predictions of all 333 municipalities: 2 targets × 4 feature sets × 2 models × 2 designs = 32 cross-validations.
+The metrics are computed on the pooled out-of-fold predictions of all 339 municipalities: 2 targets × 4 feature sets × 2 models × 2 designs = 32 cross-validations.
 
 ```{code-cell} ipython3
 def make_models():
@@ -203,20 +203,20 @@ plt.show()
 
 **Random 5-fold CV, MPI 2012.**
 
-- The lights-and-population baseline explains about a third of the variance in poverty with the random forest (R² 0.35) and a fifth with XGBoost (0.21).
-- Area-weighted embeddings do no better (0.33–0.38).
-- **Population-weighted embeddings do much better** (0.49–0.52, RMSE 0.071–0.074 against 0.083 for the random-forest baseline). Averaging the imagery where people live, rather than over forests, salt flats and mountains, is what makes the embeddings informative about living conditions.
-- Adding lights and population to them gives the best fit: **R² 0.62 with XGBoost** (RMSE 0.064, MAE 0.049) and 0.56 with the random forest.
+- The lights-and-population baseline explains about a third of the variance in poverty with the random forest (R² 0.38) and less with XGBoost (0.31).
+- Area-weighted embeddings do no better (0.32–0.35).
+- **Population-weighted embeddings do much better** (0.50–0.55, RMSE 0.070–0.073 against 0.081 for the random-forest baseline). Averaging the imagery where people live, rather than over forests, salt flats and mountains, is what makes the embeddings informative about living conditions.
+- Adding lights and population to them gives the best fit: **R² 0.64 with XGBoost** (RMSE 0.062, MAE 0.049) and 0.56 with the random forest.
 
 **Random 5-fold CV, MPI 2024.** The ranking of the feature sets is the same, at lower levels.
 
-- Lights and population (2020) carry almost no information about poverty in 2024 (R² 0.15 with the random forest, 0.02 with XGBoost).
-- Area-weighted embeddings reach 0.28–0.29, population-weighted ones 0.41–0.43, and with lights and population **0.49 with XGBoost** (RMSE 0.030, MAE 0.022) and 0.45 with the random forest.
+- Lights and population (2020) carry little information about poverty in 2024 (R² 0.20 with the random forest, 0.12 with XGBoost).
+- Area-weighted embeddings reach 0.31–0.34, population-weighted ones 0.43–0.46, and with lights and population **0.52 with XGBoost** (RMSE 0.029, MAE 0.021) and 0.48 with the random forest.
 
 **Spatial CV (leave one department out).** Every model loses most of its accuracy.
 
-- For 2012 the best is XGBoost with population-weighted embeddings and lights (R² 0.32, RMSE 0.085), closely followed by the random forest (0.30). Population-weighted embeddings alone and the random-forest baseline reach about 0.20–0.21; area-weighted embeddings only 0.04–0.05, and the XGBoost baseline −0.01.
-- For 2024 the best is the random forest with population-weighted embeddings and lights (R² 0.20, RMSE 0.037), against 0.14 for XGBoost. Area-weighted embeddings explain nothing (0.00–0.03) and the lights baseline has a negative R² (−0.00 and −0.05), so it predicts an unseen department no better than the national mean would.
+- For 2012 the best is XGBoost with population-weighted embeddings and lights (R² 0.32, RMSE 0.085), closely followed by the random forest (0.31). Population-weighted embeddings alone and the random-forest baseline reach about 0.21; area-weighted embeddings only 0.03–0.06, and the XGBoost baseline 0.01.
+- For 2024 the best is the random forest with population-weighted embeddings and lights (R² 0.20, RMSE 0.037), against 0.17 for XGBoost. Area-weighted embeddings explain nothing (−0.04 to 0.01) and the lights baseline is no better (0.01 and −0.03), so it predicts an unseen department no better than the national mean would.
 - Much of what the models learn under random CV is therefore regional: they recognise the poverty level of a department from its neighbours in the training set, and that knowledge does not transfer to a department they have never seen.
 
 The two algorithms perform similarly. XGBoost is better under random CV with every embedding set, while under spatial CV the lead changes with the target; neither was tuned.
@@ -225,7 +225,7 @@ The two algorithms perform similarly. XGBoost is better under random CV with eve
 
 ## 4. Feature importance
 
-Which embedding dimensions matter? For each target we refit both models on all 333 municipalities with the population-weighted embeddings and rank the 64 dimensions by the random forest's impurity importance and XGBoost's gain. The dimensions are abstract features learned from imagery, not named land-cover classes, so they are best read as "which parts of the embedding space separate poor from less-poor municipalities".
+Which embedding dimensions matter? For each target we refit both models on all 339 municipalities with the population-weighted embeddings and rank the 64 dimensions by the random forest's impurity importance and XGBoost's gain. The dimensions are abstract features learned from imagery, not named land-cover classes, so they are best read as "which parts of the embedding space separate poor from less-poor municipalities".
 
 ```{code-cell} ipython3
 X_imp = X_embpw
@@ -260,10 +260,10 @@ top20 = {t: set(importance[(t, "Random forest")].nlargest(20).index) for t in TA
 print("Random-forest top-20 dimensions shared by the two targets:", len(top20[2012] & top20[2024]))
 ```
 
-Two dimensions lead for both targets and both models: **A59** (first for the random forest in both years and for XGBoost in 2024, with 5.1–6.7% of the importance) and **A30** (first for XGBoost in 2012). Both are positively correlated with poverty (A59 +0.39 in 2012 and +0.42 in 2024; A30 +0.44 and +0.37). Beyond them, importance is spread thinly:
+Two dimensions lead for both targets and both models: **A59** (first for the random forest in both years and for XGBoost in 2024, with 4.8–6.5% of the importance) and **A30** (first for XGBoost in 2012). Both are positively correlated with poverty (A59 +0.38 in 2012 and +0.42 in 2024; A30 +0.44 and +0.37). Beyond them, importance is spread thinly:
 
-- 43 (random forest) and 40 (XGBoost) of the 64 dimensions are needed to reach 80% of the total importance, for either target.
-- 15 (2012) and 14 (2024) dimensions appear in both models' top-20 lists, and 15 of the random forest's top 20 are the same for the two targets: the same parts of the embedding space separate poorer from less-poor municipalities in 2012 and in 2024.
+- 43–44 (random forest) and 38–39 (XGBoost) of the 64 dimensions are needed to reach 80% of the total importance.
+- 14 dimensions appear in both models' top-20 lists in each year, and 14 of the random forest's top 20 are the same for the two targets: the same parts of the embedding space separate poorer from less-poor municipalities in 2012 and in 2024.
 
 No small subset of dimensions carries the signal. Impurity and gain importances are also unstable when features are correlated, as embedding dimensions are, so the ranks beyond the first few are indicative only.
 
@@ -299,7 +299,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-The figure shows XGBoost with population-weighted embeddings and lights, the model with the best average R² over the two targets and the two designs (0.39, against 0.38 for the random forest).
+The figure shows XGBoost with population-weighted embeddings and lights, the model with the best average R² over the two targets and the two designs (0.41, against 0.39 for the random forest).
 
 - **Under random CV** the points follow the diagonal but are compressed towards the mean, as is typical of tree ensembles. The poorest municipalities (MPI above about 0.4 in 2012 and 0.15 in 2024) are predicted too low and the least poor ones too high.
 - **Under spatial CV** the cloud is much wider, and colours separate. In both years many La Paz municipalities are predicted poorer than they are, while the poorest municipalities of Chuquisaca (and, in 2012, of Pando) are predicted far less poor.
@@ -308,7 +308,7 @@ The figure shows XGBoost with population-weighted embeddings and lights, the mod
 
 ## 6. Where the model fails: out-of-fold residuals
 
-Residuals are observed minus predicted MPI: **red** municipalities are poorer than the model predicts, **blue** ones less poor. We put them in a table with one row per municipality and target year, the shape `geo.map()` and `geo.moran()` take. The maps show the spatial design for both targets, each on its own colour scale centred at zero; the ten units without features are not drawn.
+Residuals are observed minus predicted MPI: **red** municipalities are poorer than the model predicts, **blue** ones less poor. We put them in a table with one row per municipality and target year, the shape `geo.map()` and `geo.moran()` take. The maps show the spatial design for both targets, each on its own colour scale centred at zero; the four units without features are not drawn.
 
 ```{code-cell} ipython3
 RESID = {"Random 5-fold": "resid_random", "Spatial (by department)": "resid_spatial"}
@@ -319,17 +319,17 @@ resid = pd.concat([
     for t in TARGETS], ignore_index=True)
 
 for t in TARGETS:
-    geo.map(resid, "resid_spatial", year=t, color_continuous_scale="RdBu_r",
+    geo.map(resid, "resid_spatial", year=t, map="map339", color_continuous_scale="RdBu_r",
             color_continuous_midpoint=0, labels={"resid_spatial": "observed − predicted MPI"},
             title=f"Out-of-fold residuals, MPI {t}, spatial CV").show()
 ```
 
-Are the errors spatially clustered? [`geo.moran()`](https://quarcs-lab.github.io/geo4bolivia/reference/moran.html) computes Moran's I of the residuals with its default weights, queen contiguity among the 333 units with data, and 999 permutations:
+Are the errors spatially clustered? [`geo.moran()`](https://quarcs-lab.github.io/geo4bolivia/reference/moran.html) computes Moran's I of the residuals with its default weights, queen contiguity among the 339 units with data on the 2015 map (`map="map339"`, the polygons the features belong to), and 999 permutations:
 
 ```{code-cell} ipython3
 for t in TARGETS:
     for cv_name, col in RESID.items():
-        res = geo.moran(resid, col, year=t)
+        res = geo.moran(resid, col, year=t, map="map339")
         print(f"MPI {t}, {cv_name} CV: Moran's I = {res.moran_i:.3f}, p = {res.p_sim:.3f}")
 print("Weights:", res.w_spec)
 ```
@@ -353,19 +353,19 @@ for t in TARGETS:
 
 Coipasa (Oruro) touches no other municipality, because the Coipasa salt flat, a hole in the map, surrounds it; the package links it to its nearest unit, as the description of the weights says.
 
-- **Under random CV** the residuals are small and only weakly clustered for 2012 (Moran's I = 0.083, p = 0.013), and not clustered at all for 2024 (I = −0.002, p = 0.466).
-- **Under spatial CV** they are strongly clustered (I = 0.431 for 2012 and 0.342 for 2024, both p = 0.001). The errors are shared by whole departments: the model carries the poverty level of the training departments into the held-out one.
-- **2012.** **Pando** is the hardest department (RMSE 0.120): it is poorer than predicted by 0.079 on average, and Sena and San Pedro by about 0.23. Chuquisaca (+0.070 on average; Azurduy +0.23) and two Oruro municipalities (El Choro, Toledo) are also poorer than predicted. Tarija (−0.089) and **La Paz** (−0.061) are less poor than predicted; in La Paz the largest errors are in the Yungas and the mining valleys (Yanacachi −0.27, Cajuata, Coripata, Cairoma, Tipuani), predicted about 0.19–0.27 too poor.
-- **2024.** The errors are smaller in absolute terms (department RMSEs 0.021–0.048), as the target itself varies less, but the pattern persists: La Paz is again less poor than predicted (−0.030 on average; Yanacachi, Coripata and Coroico in the Yungas), and Chuquisaca poorer (+0.021; Azurduy, Incahuasi, Poroma). El Choro (Oruro) has the largest positive residual (+0.16). Pando's bias has gone (−0.016).
+- **Under random CV** the residuals are small and only weakly clustered for 2012 (Moran's I = 0.088, p = 0.007), and not clustered for 2024 (I = 0.022, p = 0.238).
+- **Under spatial CV** they are strongly clustered (I = 0.445 for 2012 and 0.351 for 2024, both p = 0.001). The errors are shared by whole departments: the model carries the poverty level of the training departments into the held-out one.
+- **2012.** **Pando** is the hardest department (RMSE 0.126): it is poorer than predicted by 0.086 on average, and Sena and San Pedro by about 0.23–0.24. Chuquisaca (+0.066 on average; Azurduy +0.19) and two Oruro municipalities (El Choro, Toledo) are also poorer than predicted. Tarija (−0.086) and **La Paz** (−0.066) are less poor than predicted; in La Paz the largest errors are in the Yungas and the mining valleys (Yanacachi −0.28, Cajuata, Quime, Tipuani, Irupana), predicted about 0.19–0.28 too poor.
+- **2024.** The errors are smaller in absolute terms (department RMSEs 0.021–0.048), as the target itself varies less, but the pattern persists: La Paz is again less poor than predicted (−0.030 on average; Yanacachi, Tipuani, Coripata and Coroico in the Yungas), and Chuquisaca poorer (+0.022; Azurduy, Incahuasi, Poroma). El Choro (Oruro) has the largest positive residual (+0.16). Pando's bias has gone (−0.017).
 
 +++
 
 ## 7. Summary
 
-- **Satellite embeddings carry real information about poverty.** Under random cross-validation, population-weighted embeddings explain about half of the variance in municipal MPI in 2012 (R² 0.49–0.52), against a fifth to a third for night-time lights and population (0.21–0.35); combining both reaches 0.62.
-- **The same imagery also predicts poverty in 2024**, at a lower level: 0.41–0.43 with population-weighted embeddings and 0.49 combined, while lights and population alone are almost uninformative (0.02–0.15). Poverty in 2024 is much lower and more compressed, which leaves less variance for any feature to explain.
-- **How the embeddings are aggregated matters.** Population-weighted averages clearly beat area-weighted ones (0.49–0.52 against 0.33–0.38 in 2012; 0.41–0.43 against 0.28–0.29 in 2024).
+- **Satellite embeddings carry real information about poverty.** Under random cross-validation, population-weighted embeddings explain about half of the variance in municipal MPI in 2012 (R² 0.50–0.55), against a third or less for night-time lights and population (0.31–0.38); combining both reaches 0.64.
+- **The same imagery also predicts poverty in 2024**, at a lower level: 0.43–0.46 with population-weighted embeddings and 0.52 combined, while lights and population alone explain little (0.12–0.20). Poverty in 2024 is much lower and more compressed, which leaves less variance for any feature to explain.
+- **How the embeddings are aggregated matters.** Population-weighted averages clearly beat area-weighted ones (0.50–0.55 against 0.32–0.35 in 2012; 0.43–0.46 against 0.31–0.34 in 2024).
 - **Predicting an unseen region is much harder.** With whole departments held out, the best R² falls to 0.32 (2012) and 0.20 (2024), and errors cluster by department. These models can fill gaps *within* regions that have survey data. They should not be used to map poverty blindly in a region with no ground truth, unless some local data are available to calibrate them.
-- **Caveats.** The embeddings describe 2017, between the two censuses. There are only 333 observations (the ten units whose territory changed after 2012 have no features) and the hyperparameters were not tuned. Importances are indicative, and the predictions are associations, not causal effects.
+- **Caveats.** The embeddings describe 2017, between the two censuses. There are only 339 observations (the four units created after 2012 have no features, and the six that lost territory to them are described by their 2015 territory) and the hyperparameters were not tuned. Importances are indicative, and the predictions are associations, not causal effects.
 
 Related notebooks: `esda_heterogeneity` (how the lights–poverty relationship varies across space), `esda_inequality` and `sdg_dynamics` (how the SDG indices and poverty changed between 2012 and 2024).

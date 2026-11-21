@@ -18,7 +18,7 @@ The project belongs to the family of `geo4<country>` projects that started with 
 | File | What it explains |
 | --- | --- |
 | `docs/data-infrastructure.md` | How the indicators database works: scales, geo IDs, units, metadata, aggregation rules, loading with and without the package, recipes for building and analysing indicators, an overview of the package |
-| `CONTRIBUTING_DATA.md` | Step by step: add a dataset, a spatial scale, or a municipality map of another vintage |
+| `CONTRIBUTING_DATA.md` | Step by step: add a dataset, a spatial scale, or a municipal map |
 | `raw/README.md` | Every raw input, the 343-unit map and DS4Bolivia's polygon data, and DS4Bolivia's swapped homonyms |
 | `TEMPLATE.md` | The two-repository layout, and what is generic and what is project-specific |
 | The package repository (`quarcs-lab/geo4bolivia`; the sibling folder `../geo4bolivia-package`): `CLAUDE.md`, `TEMPLATE.md`, `RELEASING.md` | The package's modules and conventions, the contract between the two repositories, releasing on PyPI |
@@ -61,6 +61,8 @@ You are in the **data repository**. The local folder names do not match the GitH
 2. Data, once PyPI has it: `geo4bolivia[all]>=X.Y.Z` and `version` in `pyproject.toml`, `CITATION.cff`, `ref="vX.Y.Z"` in `README.md`, `CLAUDE.md` and `docs/data-infrastructure.md`; `uv lock --refresh-package geo4bolivia` (retry for a minute while PyPI indexes it), `uv sync`, `validate`, `pytest`; commit "Depend on geo4bolivia X.Y.Z: ...", tag, push `main` and the tag.
 3. Check `gh run list` in both (CI, Docs, Release, Pages) and the live sites.
 
+**A change of the data layout** (a renamed scale, moved files, as in 0.8.0 when `municipality` became `map343` and `map339`) reverses the first two steps: the released package reads the data repository's `main`, and the package's docs build reads it too, so push the data repository's `main` first (still depending on the previous package), then release the package, then raise the data repository's dependency and tag it. Released versions that do not pin `ref=` break in between, so do it in one sitting, and say so in the changelog.
+
 A push carrying many re-executed `docs/_freeze` pages can fail with "the remote end hung up unexpectedly": retry with `git -c http.postBuffer=524288000 push origin main`.
 
 ## Quick start prompts
@@ -96,7 +98,7 @@ CONTRIBUTING_DATA.md, and register it on the website."
   | File | Builds |
   | --- | --- |
   | `__init__.py` | the registry: `build_geo` and `DATASETS` |
-  | `geo.py` | `geo/`: units, boundaries and crosswalks of every active scale, from SDSN Bolivia's 343-unit map and the lookups in `raw/lookups/`; also `link_ds4bolivia_polygons()`, which keeps polygon-based data for the 333 unchanged units |
+  | `geo.py` | `geo/`: units, boundaries and crosswalks of every active scale, from SDSN Bolivia's 343-unit map (map343), DS4Bolivia's 2015 polygons (map339) and the lookups in `raw/lookups/`, plus the crosswalk `map339__map343`; also `link_ds4bolivia_polygons()`, which gives polygon-based data their map339 geo IDs |
   | `sdg.py` | `sdg` (the IDS, its ranking, census population, urbanization) and `sdg01`…`sdg17` from the Atlas workbook (`BUILDERS`); checks the workbook against the normalisation bounds |
   | `pop.py` | `pop` (with `pop_density`) |
   | `ntl.py` | `ntl` |
@@ -114,7 +116,7 @@ CONTRIBUTING_DATA.md, and register it on the website."
 - **`notebooks/`**: Colab notebooks paired with MyST `.md` files through jupytext. They load the data with geo4bolivia and run their analyses with its functions (`geo.map`, `geo.moran`, `geo.lisa`, `geo.beta_convergence`, `geo.inequality`, `geo.mgwr`, ...), keeping other libraries for what the package does not cover.
   - `geo4bolivia_quickstart`: the package tutorial (discover, load, understand, change, scales, link, raster, save).
   - `three_packages`: one question (did the IDS converge, ~2012 to ~2024?) answered with geo4bolivia, then taken one specialised step further with expdpy and with geometrics.
-  - `eda`, `esda`, `esda_dependence`, `esda_inequality`, `esda_heterogeneity`, `eda_esda`: ported from DS4Bolivia, on multidimensional poverty (`sdg1_2_mpi`, 2012 and 2024) and night-time lights (333 units).
+  - `eda`, `esda`, `esda_dependence`, `esda_inequality`, `esda_heterogeneity`, `eda_esda`: ported from DS4Bolivia, on multidimensional poverty (`sdg1_2_mpi`, 2012 and 2024) and night-time lights (339 units of map339).
   - `embeddings_mpi_ml`: predicting poverty from satellite embeddings (scikit-learn, xgboost).
   - `sdg_dynamics`: change, convergence, rank mobility and spatial dynamics of the SDG Atlas 2026, ~2012 to ~2024.
   - The notebooks of the package's own guides and articles are in the package repository (`notebooks/` there), not here.
@@ -122,7 +124,7 @@ CONTRIBUTING_DATA.md, and register it on the website."
 - **`code/`**: pointers to data-preparation code.
 - **`images/`**: site assets.
 - **`.claude/skills/create-indicator-website/`**: the skill that turns a dataset and its information into an indicator page (generic; port it with the template).
-- **Licenses**: code MIT (`LICENSE`), data CC BY 4.0 (`LICENSE-DATA`), except where a source requires otherwise. Every boundary (`geo/boundaries/`, `site/data/`, every map) comes from SDSN Bolivia's municipal map of 2025, which states no open license and is used and shared with SDSN Bolivia's permission; credit it as "SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/". No GADM geometry is in the repository since version 0.2; GADM's codes and names stay as source keys (`gid`, `name_gadm`). The SDG Atlas 2026 states no open license either and is used with SDSN Bolivia's permission.
+- **Licenses**: code MIT (`LICENSE`), data CC BY 4.0 (`LICENSE-DATA`), except where a source requires otherwise. The boundaries of map343 and of every coarser scale (`geo/boundaries/`, `site/data/`, every map) come from SDSN Bolivia's municipal map of 2025, which states no open license and is used and shared with SDSN Bolivia's permission; credit it as "SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/". map339's come from GeoBolivia's municipal map of 2015 as geoBoundaries publishes it (gbOpen BOL ADM3, public domain; credit geoBoundaries, Runfola et al. 2020). `project.yaml` `site.boundary_credit` gives each map's credit. No GADM geometry is in the repository since version 0.2; GADM's codes and names stay as source keys (`gid`, `name_gadm`). The SDG Atlas 2026 states no open license either and is used with SDSN Bolivia's permission.
 - `geo4cambodia/` and `ds4bolivia/` at the root, if present, are local reference clones. They are ignored by git and pytest; never edit or commit them.
 
 ## Environment setup (uv)
@@ -155,21 +157,23 @@ uv run python scripts/web_boundaries.py    # regenerate the website's boundaries
 
 ## Spatial scales and geo IDs
 
-Every unit has one **geo ID** (`geo_id`). Administrative IDs are numbered as in GADM 4.1 and nest by prefix. The boundaries are SDSN Bolivia's municipal map of 2025 (343 municipalities and indigenous autonomies, GAIOC, the units of the SDG Atlas 2026), coverage-cleaned and lightly simplified (~100 m); provinces, departments and the country are their exact unions. Source keys are kept as columns in `geo/units.csv`.
+Every unit has one **geo ID** (`geo_id`). Administrative IDs are numbered as in GADM 4.1 and nest by prefix. **Municipal maps are scales named by their number of units**: `map343` is SDSN Bolivia's municipal map of 2025 (343 municipalities and indigenous autonomies, GAIOC, the units of the SDG Atlas 2026), `map339` GeoBolivia's map of 2015 (339 municipalities, via geoBoundaries, public domain; DS4Bolivia's polygons). Both are coverage-cleaned and lightly simplified (~100 m); provinces, departments and the country are exact unions of map343, and map339's units nest in them by ID (`nesting: ids`). The two maps share geo IDs, so a geo ID alone does not say which map: each dataset records its map (`geo:scale`), and the package's spatial functions take `map=`. Source keys are kept as columns in `geo/units.csv`.
 
 | Scale | Units | geo ID | Source keys kept | Datasets |
 | --- | --- | --- | --- | --- |
 | `country` | 1 | `BO` | `gid` | — |
 | `department` | 9 | `BO-04` (La Paz) | `gid` (GADM), `ine_code` (`02`) | — |
 | `province` | 113 | `BO-04-17` (Murillo) | `gid`, `ine_code` (`0201`) | — |
-| `municipality` | 343 | `BO-04-17-04` (Nuestra Señora de La Paz) | `gid` (`GID_3`), `ine_code` (`020101`), `asdf_id` (DS4Bolivia polygon; empty for the 10 changed units), `mun_id` (INE code as integer), `name_ds4bolivia`, `name_gadm` | `sdg`, `sdg01`…`sdg17` (343); `pop`, `ntl`, `emb`, `embpw` (333) |
-| `municipality_ine`, `grid10k` | planned | `BO-INE-020101`, `BO-G10K-r012c034` | — | — |
+| `map343` | 343 | `BO-04-17-04` (Nuestra Señora de La Paz) | `gid` (`GID_3`), `ine_code` (`020101`), `asdf_id` (DS4Bolivia polygon; empty for the 10 changed units), `mun_id` (INE code as integer), `name_ds4bolivia`, `name_gadm` | `sdg`, `sdg01`…`sdg17` (343) |
+| `map339` | 339 | `BO-04-17-04` (the same IDs as map343) | the same, `asdf_id` for all 339 | `pop`, `ntl`, `emb`, `embpw` (339) |
+| `grid10k` | planned | `BO-G10K-r012c034` | — | — |
 
-- Every unit row carries `<scale>_id` columns for each scale it lies in (`department_id`, `province_id`, ...).
+- Every unit row carries `<scale>_id` columns for each scale it lies in (`department_id`, `province_id`, ...). A municipality has one row per map, so `geo_id` is unique within a scale, not across `geo/units.csv`.
+- `geo/crosswalks/map339__map343.csv` gives the share of each map339 unit's area in each map343 unit (slivers under 1% dropped), to move data between the maps.
 - Department and province numbers follow GADM order and **differ from INE codes** (La Paz is `BO-04` here and `02` in INE). GADM skips province index 1 in La Paz, so La Paz provinces run `BO-04-02` to `BO-04-21`.
 - **Holes.** The map leaves the salt flats of Uyuni and Coipasa and lakes Poopó and Uru Uru outside every municipality, so they are holes at every scale and `area_km2` excludes them. Lake Titicaca lies outside the country.
 - Harmonized names: municipalities follow the SDG Atlas 2026 (e.g. "Nuestra Señora de La Paz"; the SDSN map's fuller name where the Atlas shortens it); departments use DS4Bolivia's spelling; provinces come from `raw/lookups/province_names.csv` (hand-checked; GADM writes names without spaces; SDSN's province names have typos). `name_ds4bolivia` and `name_gadm` keep the older spellings.
-- **Municipality vintages.** Since version 0.4 the `municipality` scale is SDSN Bolivia's 343-unit map of 2025. The 339 units of the 2015 map (GeoBolivia, numbered as GADM) kept their geo IDs; the four created since (TIOC-Raqaypampa `BO-02-12-04`, San Pedro de Macha `BO-07-04-05`, TIOC-Jatun Ayllu Yura `BO-07-02-04`, TIOC-Territorio Indígena Multiétnico `BO-03-09-01` in the new province `BO-03-09`) are numbered after them. Six municipalities lost territory to them (Colquechaca, Mizque, Porco, Tomave, San Ignacio, Santa Ana); data computed on the 2015 polygons (`pop`, `ntl`, `emb`, `embpw`) are published only for the 333 unchanged units. A future map is added the same way (`raw/lookups/municipalities<N>.csv`), or as its own scale (`municipality_ine` is reserved) when its units cannot keep the IDs. See `CONTRIBUTING_DATA.md`.
+- **Municipal maps.** Since version 0.8 every municipal map is its own scale, `map<units>` (until 0.7 the one map was the scale `municipality`, the 343-unit map). The 339 units of the 2015 map (GeoBolivia, numbered as GADM) kept their geo IDs in map343; the four created since (TIOC-Raqaypampa `BO-02-12-04`, San Pedro de Macha `BO-07-04-05`, TIOC-Jatun Ayllu Yura `BO-07-02-04`, TIOC-Territorio Indígena Multiétnico `BO-03-09-01` in the new province `BO-03-09`) are numbered after them. Six municipalities lost territory to them (Colquechaca, Mizque, Porco, Tomave, San Ignacio, Santa Ana): same geo ID, two outlines. Data computed on the 2015 polygons (`pop`, `ntl`, `emb`, `embpw`) are published on map339 for all 339 units. A future map becomes another scale (`map<N>`, with `raw/lookups/municipalities<N>.csv`); see `CONTRIBUTING_DATA.md`. Merging a map339 panel with a map343 panel on `geo_id` works (the IDs are shared), but pandas drops the recorded map, so spatial calls on the result need `map="map339"` or `map="map343"`.
 - **DS4Bolivia's swapped homonyms.** San Javier (Beni/Santa Cruz), El Puente (Tarija/Santa Cruz) and Santa Rosa (Beni/Pando): DS4Bolivia attaches each pair's attribute rows (names, INE codes, SDG Atlas 2020 values) to the other polygon. Polygon-based data (`pop`, `ntl`, `emb`, `embpw`) link by `asdf_id`; the SDG Atlas 2026 links by INE code. Evidence in `raw/README.md`; `swapped` flags them in the lookup.
 - Municipality names repeat across departments (eight names shared by 17 units: seven pairs and San Pedro three times) and four provinces are called Cercado, so link municipal tables by code (`key="mun_id"`, `"ine_code"` or `"asdf_id"`) rather than by name. `geo.link()` refuses ambiguous names instead of guessing.
 
@@ -179,9 +183,9 @@ Every unit has one **geo ID** (`geo_id`). Administrative IDs are numbered as in 
 | --- | --- | --- |
 | `sdg` | 2012, 2024 | Atlas de los ODS en Bolivia 2026 (Andersen & Argandoña, SDSN Bolivia): the Sustainable Development Index `index_sdg` (IDS, mean of the 15 goal indices, 0–100) and its ranking `rank_sdg`; census `population` (2012, 2024; `sum`) and `urbanization` (2024; `weighted_mean:population`) |
 | `sdg01`…`sdg17` | 2012, 2024 | the Atlas's goals, one dataset per goal (15; none for SDG 12 or 14): the goal index `index_sdgN` (0–100) and its 2–11 indicators `sdg<goal>_<target>_<code>` (81 in all; `sdg1_2_mpi` is multidimensional poverty). **Two periods stored at the nominal years 2012 (~2012) and 2024 (~2024)**; each field's actual years are in `geo:reference_years` (e.g. 2008 and 2023 for the health survey). Normalisation bounds: `raw/lookups/sdg2026_thresholds.csv` (Cuadro 21) |
-| `pop` | 2001–2020 | gridded population (WorldPop 1 km, via DS4Bolivia), 333 units; `sum`. `pop_density` (people per km² of the unit's area); `none` |
-| `ntl` | 2012–2020 | `ln_NTLpc` = ln(10⁸ × EOG VIIRS radiance / WorldPop) and its HP trend `ln_t400NTLpc`, 333 units; logs, so `none` |
-| `emb`, `embpw` | 2017 | 64 satellite embedding dimensions (A00–A63), area- and population-weighted, 333 units; `none` |
+| `pop` | 2001–2020 | gridded population (WorldPop 1 km, via DS4Bolivia), map339 (339 units); `sum`. `pop_density` (people per km² of the unit's 2015 area); `none` |
+| `ntl` | 2012–2020 | `ln_NTLpc` = ln(10⁸ × EOG VIIRS radiance / WorldPop) and its HP trend `ln_t400NTLpc`, map339 (339 units); logs, so `none` |
+| `emb`, `embpw` | 2017 | 64 satellite embedding dimensions (A00–A63), area- and population-weighted, map339 (339 units); `none` |
 
 Load one SDG indicator in both periods: `geo.load("sdg01", variables="sdg1_2_mpi")`; one period: `years=2024`; its change per unit: `geo.change(df, "sdg1_2_mpi")`. Every SDG variable but `rank_sdg` aggregates as a census-population-weighted mean (`weighted_mean:population`), and the package loads the weights from `sdg` itself (`geo:weights`): `geo.aggregate(df, to="department", dataset="sdg01")`. These approximate, but are not, the Atlas's department figures.
 
@@ -200,13 +204,13 @@ mpi = geo.load("sdg01", variables="sdg1_2_mpi", groups=["department"])   # + nam
 geo.describe(mpi); geo.change(mpi, "sdg1_2_mpi")    # labelled summary; change and ranks per unit
 gdf = geo.load("ntl", years=2020, geometry=True)    # with boundaries
 wide = geo.load("pop", wide="pop")                  # one column per year
-geo.units("municipality"); geo.boundaries("department"); geo.crosswalk("municipality", "province")
+geo.units("map343"); geo.boundaries("department"); geo.crosswalk("map339", "map343")   # maps: map343, map339
 geo.aggregate(geo.load("pop"), to="department", dataset="pop")       # up the hierarchy (metadata rules)
-panel = geo.combine(["ntl", "pop"], scale="municipality", extra=[my_panel])   # datasets on one scale
+panel = geo.combine(["ntl", "pop"], scale="map339", extra=[my_panel])   # datasets on one scale
 geo.overlay(pop_2020, grid_gdf, extensive=["pop"], id_col="cell")    # non-nested units, area-weighted
-mine = geo.link(table, scale="municipality", on="mun_id", key="mun_id")   # INE codes -> geo_id
-geo.zonal("raster.tif", scale="municipality", stats=["sum", "mean"], name="ntl", year=2020)   # [raster]
-geo.save(panel, "name", scale="municipality", directory="my_data", variables={...})
+mine = geo.link(table, scale="map343", on="mun_id", key="mun_id")   # INE codes -> geo_id
+geo.zonal("raster.tif", scale="map343", stats=["sum", "mean"], name="ntl", year=2020)   # [raster]
+geo.save(panel, "name", scale="map343", directory="my_data", variables={...})
 
 # --- analyse: the first argument is a dataset id or a panel with geo_id (and year)
 # every function but map returns a result with .fig (Plotly), .df, .gt (where a table helps) and .interpret()
@@ -216,8 +220,8 @@ geo.scatter("sdg", "urbanization", "index_sdg", year=2024)            # two vari
 geo.trend("ntl", "ln_NTLpc", by="department")                         # a variable over time
 geo.map(mpi, "sdg1_2_mpi", year=[2012, 2024], scheme="fisher_jenks")  # a Plotly figure: both years, common classes
 geo.map(mpi, "sdg1_2_mpi", change=True)                               # change between the first and last year
-w = geo.weights("municipality", method="knn", k=6)                    # optional: every spatial function defaults to queen
-geo.connectivity("municipality", w)                                   # the neighbour links on a map
+w = geo.weights("map343", method="knn", k=6)                    # optional: every spatial function defaults to queen
+geo.connectivity("map343", w)                                   # the neighbour links on a map
 geo.moran(mpi, "sdg1_2_mpi", year=2024); geo.lisa(mpi, "sdg1_2_mpi", year=2024, w=w)   # global and local clustering
 geo.beta_convergence("sdg", "index_sdg")       # LEVELS (logged internally); two years suffice; model="sdm" adds space
 geo.sigma_convergence("pop", "pop")            # LEVELS; needs 3+ years (pop, ntl), not the two-period SDG data
@@ -239,7 +243,7 @@ df, df_def = geo.for_expdpy("ntl", groups=["department"])            # for expdp
 
 - **Use the package's analysis functions first.** Write an analysis by hand with esda, spreg or statsmodels, or hand the data to expdpy or geometrics, only for a method the package does not have (e.g. plain GWR, bivariate LISA, event studies, machine learning). Arguments and results of every function are in the reference, https://quarcs-lab.github.io/geo4bolivia/reference/; check a signature with `help(geo.lisa)` before writing code.
 - **Location of the data.** Outside the repo, the package reads from GitHub: `ref=` or `GEO4BOLIVIA_REF` pins a tag or commit (`ref="v0.7.2"`), and `GEO4BOLIVIA_DATA_DIR` points it to a checkout. Inside the repo it reads local files.
-- **Without the package**, use the raw URLs, e.g. `https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/municipality/ntl.csv`.
+- **Without the package**, use the raw URLs, e.g. `https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map339/ntl.csv`.
 - **Documentation must always show both ways** of loading: with the package and with plain URLs.
 
 ## Updating the website

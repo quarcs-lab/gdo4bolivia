@@ -77,7 +77,7 @@ GOALS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 16, 17]
 
 ids = geo.load("sdg", variables=["index_sdg", "population"], groups=["department"])
 mpi = geo.load("sdg01", variables="sdg1_2_mpi", groups=["department"])
-goals = geo.combine({f"sdg{g:02d}": [f"index_sdg{g}"] for g in GOALS}, scale="municipality")
+goals = geo.combine({f"sdg{g:02d}": [f"index_sdg{g}"] for g in GOALS}, scale="map343")
 
 print("Units:", ids["geo_id"].nunique(), "| periods:", sorted(ids["year"].unique().tolist()),
       "| goal indices:", goals.shape[1] - 2)

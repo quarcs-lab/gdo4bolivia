@@ -445,7 +445,7 @@ def geometrics_card(geo, plt):
     import libpysal
     from esda.moran import Moran, Moran_Local
     ids = geo.load("sdg", years=2024, variables="index_sdg")
-    g = geo.boundaries("municipality").merge(ids, on="geo_id")
+    g = geo.boundaries("map343").merge(ids, on="geo_id")
     w = libpysal.weights.Queen.from_dataframe(g, use_index=False, silence_warnings=True)
     w.transform = "r"
     y = g["index_sdg"].to_numpy()
@@ -476,7 +476,7 @@ def geometrics_card(geo, plt):
 
 def expdpy_card(geo, plt):
     ntl = geo.load("ntl")
-    u = geo.units("municipality")[["geo_id", "department_id"]]
+    u = geo.units("map339")[["geo_id", "department_id"]]
     deps = geo.units("department").set_index("geo_id")["name"]
     d = ntl.merge(u, on="geo_id")
     fig = plt.figure(figsize=(16, 9))
@@ -508,7 +508,7 @@ def insight_card(geo, plt):
 
     goals = ["sdg02", "sdg04", "sdg10"]
     sdg = pd.concat([geo.load(d, years=2024).set_index("geo_id") for d in goals], axis=1).reset_index()
-    g = geo.boundaries("municipality").merge(sdg, on="geo_id")
+    g = geo.boundaries("map343").merge(sdg, on="geo_id")
     panels = [("sdg2_2_dcn", "Chronic child\nmalnutrition (2023)"), ("sdg10_2_esp", "Non-Spanish\nspeakers (2024)"),
               ("sdg4_1_ash", "Secondary dropout,\nboys (2022–24)"), ("sdg4_1_asm", "Secondary dropout,\ngirls (2022–23)"),
               ("sdg10_4_gin", "Inequality in years\nof education (2024)")]
@@ -570,18 +570,20 @@ def notebook_cards(geo, plt) -> None:
     from libpysal import weights
 
     crs = geo.config()["equal_area_crs"]
-    units = geo.units("municipality")
+    units = geo.units("map343")
     deps = geo.boundaries("department").to_crs(crs)
     # every unit, poverty in 2024 (the latest period), for the maps of the ESDA notebooks
     all24 = (geo.load("sdg01", variables="sdg1_2_mpi", years=2024, geometry=True)
                 .merge(units[["geo_id", "department_id"]], on="geo_id").to_crs(crs))
     W24 = weights.KNN.from_dataframe(all24, k=6)
     W24.transform = "r"
-    # the units with night-time lights (333), poverty in 2012, for the notebooks that use lights
-    mpi = geo.load("sdg01", variables="sdg1_2_mpi", years=2012, geometry=True)
+    # the units with night-time lights (the 339 of the 2015 map, drawn on it), poverty in 2012, for the
+    # notebooks that use lights
+    mpi = geo.load("sdg01", variables="sdg1_2_mpi", years=2012)
     ntl = geo.load("ntl", variables="ln_t400NTLpc", years=2012)
-    gdf = (mpi.merge(ntl[["geo_id", "ln_t400NTLpc"]], on="geo_id")
-              .merge(units[["geo_id", "department_id"]], on="geo_id").to_crs(crs).reset_index(drop=True))
+    gdf = (geo.boundaries("map339")[["geo_id", "geometry"]]
+              .merge(mpi, on="geo_id").merge(ntl[["geo_id", "ln_t400NTLpc"]], on="geo_id")
+              .merge(geo.units("map339")[["geo_id", "department_id"]], on="geo_id").to_crs(crs).reset_index(drop=True))
     W = weights.KNN.from_dataframe(gdf, k=6)
     W.transform = "r"
     quad = {1: "High-high", 2: "Low-high", 3: "Low-low", 4: "High-low"}
@@ -651,7 +653,7 @@ def notebook_cards(geo, plt) -> None:
     save_fig(fig, tools / "esda-inequality.webp")
 
     # esda_heterogeneity: significant local slopes of the package's multiscale GWR (standardized variables)
-    mg = geo.mgwr(pd.DataFrame(gdf.drop(columns="geometry")), "sdg1_2_mpi", "ln_t400NTLpc")
+    mg = geo.mgwr(pd.DataFrame(gdf.drop(columns="geometry")), "sdg1_2_mpi", "ln_t400NTLpc", map="map339")
     local = mg.df.set_index("geo_id")
     gdf["slope"] = gdf["geo_id"].map(local["ln_t400NTLpc_coef"])
     sig = gdf["geo_id"].map(local["ln_t400NTLpc_significant"]).fillna(False).to_numpy(dtype=bool)
@@ -738,7 +740,7 @@ def pillars() -> None:
     from shapely import affinity
     plt = mpl()
     print("pillars")
-    mun = geo.boundaries("municipality")
+    mun = geo.boundaries("map343")
     outline_geom = country()
     mpi = mun.merge(geo.load("sdg01", variables="sdg1_2_mpi", years=2024), on="geo_id")
     ntl = mun.merge(geo.load("ntl", years=2020), on="geo_id")
@@ -801,7 +803,7 @@ def pillars() -> None:
     import mapclassify
     mpi.assign(_c=mapclassify.Quantiles(mpi["sdg1_2_mpi"], k=8).yb).plot(column="_c", cmap=site_cmap(8).reversed(),
                                                                        ax=ax, edgecolor=SURFACE, linewidth=0.2)
-    d = geo.load("ntl").merge(geo.units("municipality")[["geo_id", "department_id"]], on="geo_id")
+    d = geo.load("ntl").merge(geo.units("map339")[["geo_id", "department_id"]], on="geo_id")
     series = d.groupby(["year"])["ln_t400NTLpc"].quantile([0.25, 0.5, 0.75]).unstack()
     for k, (y0, title) in enumerate([(0.66, "lines"), (0.43, "bars"), (0.2, "density")]):
         a = fig.add_axes([0.62, y0, 0.28, 0.18]); a.set_facecolor(RAISED)

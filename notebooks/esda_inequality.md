@@ -20,7 +20,7 @@ Part of the [GeoDevelopment Observatory of Bolivia](https://quarcs-lab.github.io
 How unequal are Bolivia's municipalities, how much of that inequality is regional, and did it change as poverty fell? This notebook measures inequality in two indicators with the [`geo4bolivia`](https://quarcs-lab.github.io/geo4bolivia/) package:
 
 - **Multidimensional poverty** (`sdg1_2_mpi`, Multidimensional Poverty Index, 0–1; **higher = poorer**) of the *Atlas de los ODS en Bolivia 2026* (SDSN Bolivia), computed from the population censuses of 2012 and 2024, for all **343 municipalities and indigenous autonomies**, in **both periods**.
-- **Night-time lights per capita** (`ln_t400NTLpc`, the Hodrick–Prescott trend of log lights per person), every year from 2012 to 2020. Lights and the WorldPop population behind them cover only **333 units**: the 6 municipalities that lost territory to the new indigenous autonomies (Colquechaca, Mizque, Porco, Tomave, San Ignacio, Santa Ana) and the 4 new units have no data. Every result for lights is computed on those 333 units.
+- **Night-time lights per capita** (`ln_t400NTLpc`, the Hodrick–Prescott trend of log lights per person), every year from 2012 to 2020. Lights and the WorldPop population behind them were computed on the 2015 municipal map, `map339`, and cover its **339 units**: the 4 units created since have no data, and the 6 municipalities that later lost territory to them (Colquechaca, Mizque, Porco, Tomave, San Ignacio, Santa Ana) are described by their 2015 territory. Every result for lights is computed on those 339 units, on the 2015 map.
 
 Outline:
 
@@ -65,7 +65,7 @@ Each municipality has one `geo_id` (e.g. `BO-04-17-04`, Nuestra Señora de La Pa
 
 ```{code-cell} ipython3
 mpi = geo.load("sdg01", variables=MPI, groups=["department"])      # 343 units
-ntl = geo.load("ntl", variables=NTL, groups=["department"])        # 333 units
+ntl = geo.load("ntl", variables=NTL, groups=["department"])        # 339 units (map339)
 
 for name, panel in [("poverty", mpi), ("lights", ntl)]:
     years = sorted(panel["year"].unique().tolist())
@@ -109,7 +109,7 @@ Poverty fell sharply: the municipal mean MPI dropped from 0.234 in 2012 (range 0
 
 In both periods the poorest fifth lies mainly in Potosí, Chuquisaca, Cochabamba, La Paz and Oruro (57 of its 69 units in 2012, 60 of 68 in 2024). Pando had 8 units in the poorest fifth in 2012 and has 3 in 2024. Santa Cruz has one unit in it in 2012 and none in 2024, and Tarija none in either period.
 
-Log lights per capita (333 units) average 13.0 in 2012, with the middle half between 12.0 and 14.3 and a few very dark units (the minimum is 0.86). By 2020 the mean is 14.0 and the standard deviation has fallen from 1.68 to 1.18.
+Log lights per capita (339 units) average 13.0 in 2012, with the middle half between 12.1 and 14.3 and a few very dark units (the minimum is 0.86). By 2020 the mean is 14.0 and the standard deviation has fallen from 1.67 to 1.18.
 
 Before decomposing, the department averages show how large the regional gaps are. The plain mean gives every municipality the same weight. `geo.aggregate()` computes the population-weighted mean: the metadata of `sdg01` say that the MPI aggregates with census population as weights, and the package loads them.
 
@@ -163,7 +163,7 @@ The Theil index of poverty **more than doubled**, from 0.104 in 2012 to 0.219 in
 
 **Most inequality is within departments**: 79% in both periods. Differences between department averages account for the other 21%, a share that random groups of the same sizes did not reach in 999 trials (pseudo p-value 0.001). The split is stable: inequality rose by about the same proportion between and within departments. Bolivia's municipal disparities are therefore mostly local: each department contains both poor and less poor municipalities.
 
-For lights, 82% to 83% of the Theil index lies within departments in 2012 and in 2020; the between share is 17% in 2012, peaks at 20% in 2016 and 2017, and is 18% in 2020. The level of the index is another matter. It is far smaller than that of poverty (0.010 in 2012) and falls every year, to 0.004 in 2020, but neither fact means what it would for a variable in levels. Lights enter in logarithms, which compresses their dispersion by construction, and the Theil and Gini of a logged variable fall mechanically when lights grow everywhere by the same proportion, because the mean of the logs rises. The standard deviation of the logs does not have that problem, and it fell from 1.68 to 1.18 (section 2): dispersion in lights did narrow. Read the indices of lights for their split between and within departments, and for neighbours in section 5, not for their level.
+For lights, 82% to 83% of the Theil index lies within departments in 2012 and in 2020; the between share is 17% in 2012, peaks at 20% in 2016 and 2017, and is 18% in 2020. The level of the index is another matter. It is far smaller than that of poverty (0.009 in 2012) and falls every year, to 0.004 in 2020, but neither fact means what it would for a variable in levels. Lights enter in logarithms, which compresses their dispersion by construction, and the Theil and Gini of a logged variable fall mechanically when lights grow everywhere by the same proportion, because the mean of the logs rises. The standard deviation of the logs does not have that problem, and it fell from 1.67 to 1.18 (section 2): dispersion in lights did narrow. Read the indices of lights for their split between and within departments, and for neighbours in section 5, not for their level.
 
 +++
 
@@ -210,7 +210,7 @@ The Gini of poverty rose from 0.254 in 2012 to 0.367 in 2024 (by 45%): the expec
 
 The Lorenz curve of 2024 lies below that of 2012. The half of the municipalities with the lowest MPI holds 32% of the total in 2012 and 25% in 2024; the tenth with the highest MPI holds 19%, then 25%. Remaining poverty is more concentrated in the poorest municipalities.
 
-The Gini of log lights falls from 0.068 in 2012 to 0.047 in 2020, about 4.6% a year. The caveat of section 3 applies: part of that fall is the rising mean of the logs. The series is also a smoothed trend, so its years are not independent observations and the significance of the fitted trend overstates the evidence.
+The Gini of log lights falls from 0.068 in 2012 to 0.047 in 2020, about 4.5% a year. The caveat of section 3 applies: part of that fall is the rising mean of the logs. The series is also a smoothed trend, so its years are not independent observations and the significance of the fitted trend overstates the evidence.
 
 +++
 
@@ -218,7 +218,7 @@ The Gini of log lights falls from 0.068 in 2012 to 0.047 in 2020, about 4.6% a y
 
 The spatial Gini (Rey and Smith, 2013) splits the Gini into the contribution of pairs of **neighbouring** municipalities and that of all other pairs. If inequality had no spatial structure, neighbours would differ as much as any random pair, and their share of the Gini would roughly equal their share of all pairs. A smaller share means neighbours are more alike than random pairs (positive spatial autocorrelation). The pseudo p-value compares the observed split with 999 random reshuffles of the values across the map.
 
-`spatial=True` used the package's default weights, queen contiguity among the units with data: 343 for poverty and 333 for lights, where a unit without data is nobody's neighbour. Only who is a neighbour matters here, not the size of the weights. The column `gini_spatial` is the part of the Gini owed to neighbouring pairs, and `gini_spatial_p` its pseudo p-value.
+`spatial=True` used the package's default weights, queen contiguity among the units with data: 343 for poverty (on the 2025 map) and 339 for lights (on the 2015 map they belong to), where a unit without data is nobody's neighbour. Only who is a neighbour matters here, not the size of the weights. The column `gini_spatial` is the part of the Gini owed to neighbouring pairs, and `gini_spatial_p` its pseudo p-value.
 
 ```{code-cell} ipython3
 def neighbour_shares(result, w):
@@ -243,7 +243,7 @@ w6 = geo.weights(mpi, method="knn", k=6)
 neighbour_shares(geo.inequality(mpi, MPI, w=w6, permutations=999), w6).round(4)
 ```
 
-With queen contiguity on the 343 units, pairs of neighbours are 1.61% of all pairs of municipalities, and under random reshuffling they would carry about the same share of the Gini. In fact they carry 1.14% of poverty inequality in 2012 and 1.17% in 2024. For lights (333 units) neighbours are 1.63% of pairs and carry 1.16% of the Gini in 2012 and 1.18% in 2020. The difference is significant in every case (pseudo p-value 0.001, the smallest that 999 permutations allow): **inequality is spatially structured**. Neighbours resemble each other, and almost all inequality (about 98.8% of the Gini) comes from pairs of municipalities that are not neighbours.
+With queen contiguity on the 343 units, pairs of neighbours are 1.61% of all pairs of municipalities, and under random reshuffling they would carry about the same share of the Gini. In fact they carry 1.14% of poverty inequality in 2012 and 1.17% in 2024. For lights (339 units) neighbours are 1.63% of pairs and carry 1.16% of the Gini in 2012 and 1.18% in 2020. The difference is significant in every case (pseudo p-value 0.001, the smallest that 999 permutations allow): **inequality is spatially structured**. Neighbours resemble each other, and almost all inequality (about 98.8% of the Gini) comes from pairs of municipalities that are not neighbours.
 
 The 6 nearest neighbours give the same reading: they are 1.75% of all pairs and carry 1.22% of the Gini of poverty in 2012 and 1.28% in 2024. With both definitions the neighbour share rose slightly between the two periods, so neighbours became a little less alike relative to other pairs, in line with the lower Moran's I of 2024 in `esda`.
 
@@ -266,7 +266,7 @@ both[both["year"].isin([2012, 2020, 2024])].droplevel(1).round(4)
 - Municipal **poverty fell sharply but became more unequal in relative terms**: the Gini rose from 0.25 to 0.37 and the Theil index from 0.10 to 0.22 between 2012 and 2024, because the poorest municipalities reduced their poverty proportionally less. The tenth of the municipalities with the highest MPI holds 25% of the total in 2024, against 19% in 2012.
 - **Most inequality lies within departments**: 79% for poverty in both periods and 82% to 83% for lights. Departmental averages hide most of the disparities between municipalities.
 - Inequality is **spatially structured** in both periods and for both indicators: neighbouring municipalities resemble each other, so the poor and the less poor municipalities form regional clusters that cut across department boundaries.
-- Lights are measured in logs, so the level and the fall of their Gini and Theil indices are not comparable with those of poverty; their dispersion (the standard deviation of the logs) fell from 1.68 in 2012 to 1.18 in 2020.
+- Lights are measured in logs, so the level and the fall of their Gini and Theil indices are not comparable with those of poverty; their dispersion (the standard deviation of the logs) fell from 1.67 in 2012 to 1.18 in 2020.
 - These are descriptions of how the indicators are distributed. They are associations, not evidence of what causes the gaps.
 
 Function pages: [`distribution`](https://quarcs-lab.github.io/geo4bolivia/reference/distribution.html), [`map`](https://quarcs-lab.github.io/geo4bolivia/reference/map.html), [`aggregate`](https://quarcs-lab.github.io/geo4bolivia/reference/aggregate.html), [`theil_decomposition`](https://quarcs-lab.github.io/geo4bolivia/reference/theil_decomposition.html), [`inequality`](https://quarcs-lab.github.io/geo4bolivia/reference/inequality.html), [`weights`](https://quarcs-lab.github.io/geo4bolivia/reference/weights.html).
