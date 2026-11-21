@@ -47,8 +47,9 @@ const itemPath = (item) => `${item.section}/${item.id}/`;
 
 // --------------------------------------------------------------------------- code-box notebooks
 // Every code box gets a Colab notebook with exactly its code (site/src/snippets.js): written into
-// notebooks/snippets/ and committed, since Colab opens them from GitHub. --check-notebooks (CI)
-// writes nothing and fails if they are missing or out of date.
+// notebooks/snippets/ and committed, since Colab opens them from GitHub. --check-notebooks writes
+// nothing and fails if they are missing or out of date; --notebooks-only stops after this step.
+// On a push to main the Pages workflow regenerates and commits them itself.
 {
   const S = await import(pathToFileURL(join(SITE, 'src/snippets.js')));
   const dir = join(ROOT, 'notebooks', S.SNIPPETS_DIR);
@@ -77,6 +78,7 @@ const itemPath = (item) => `${item.section}/${item.id}/`;
     for (const d of readdirSync(dir)) if (statSync(join(dir, d)).isDirectory() && !readdirSync(join(dir, d)).length) rmSync(join(dir, d), { recursive: true });
   }
   console.log(`code-box notebooks: ${wanted.size} in notebooks/${S.SNIPPETS_DIR}/ (${changed.length} written, ${stale.length} removed)`);
+  if (argv.includes('--notebooks-only')) process.exit(0);
 }
 
 rmSync(OUT, { recursive: true, force: true });

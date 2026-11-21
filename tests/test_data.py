@@ -5,10 +5,6 @@ package's repository, quarcs-lab/geo4bolivia, and run against this repository's 
 Facts about Bolivia are in tests/test_project.py.
 """
 
-import subprocess
-import sys
-from pathlib import Path
-
 from geo4bolivia import metadata, validate
 from geo4bolivia.build import load_builders
 
@@ -23,11 +19,3 @@ def test_every_dataset_has_a_builder():
     assert callable(builders.build_geo)
     assert set(builders.DATASETS) == set(metadata.dataset_ids())
 
-
-def test_docs_colab_notebooks_are_up_to_date():
-    """Every Python block of the Markdown docs has its Colab notebook (scripts/doc_notebooks.py).
-
-    `geo4bolivia build` rewrites docs/datasets/*.md: run the script after it."""
-    script = Path(__file__).resolve().parents[1] / "scripts" / "doc_notebooks.py"
-    run = subprocess.run([sys.executable, str(script), "--check"], capture_output=True, text=True)
-    assert run.returncode == 0, run.stderr

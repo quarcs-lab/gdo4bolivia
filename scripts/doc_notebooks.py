@@ -10,7 +10,8 @@ code ready to run (as the website's code boxes do, site/src/snippets.js). Badges
 notebook (notebooks/README.md) are left alone. The notebooks are committed: Colab opens them from GitHub.
 
 `geo4bolivia build` rewrites docs/datasets/*.md with badges to a blank notebook, then runs this script
-(`after_build` in builders/__init__.py). tests/test_data.py and the website's CI fail while anything is out of date.
+(`after_build` in builders/__init__.py). The website's workflow (.github/workflows/pages.yml) runs it on
+every push to main and commits what changed; on a pull request it runs --check.
 
 Generic, standard library only: the repository and its branch come from project.yaml.
 """
