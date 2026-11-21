@@ -40,7 +40,6 @@ The `geo4bolivia` command and the helpers the builders use come from the Python 
 4. **Build and check:**
    ```bash
    uv run geo4bolivia build <dataset>
-   uv run python scripts/doc_notebooks.py   # the dataset docs' Colab notebooks
    uv run geo4bolivia validate <dataset>
    uv run pytest
    ```
@@ -110,4 +109,4 @@ A new map keeps every published ID meaningful when its new units are carved out 
 
 When a map's units cannot keep the IDs (e.g. municipalities merged or redrawn wholesale), give it its own `id_pattern` (e.g. `^BO-INE-\d{6}$`) and `parent: null` unless every unit lies at least 99.5% inside one province, and link it to the other maps with `geo.overlay_weights("map343", "<scale>", id_col="geo_id")` and `geo.overlay()`.
 
-After any change: `uv run geo4bolivia build && uv run python scripts/doc_notebooks.py && uv run geo4bolivia validate && uv run pytest` (the script gives every Python block of the docs, including the dataset docs the build rewrites, a Colab notebook of its own).
+After any change: `uv run geo4bolivia build && uv run geo4bolivia validate && uv run pytest`. The build ends by giving every Python block of the docs a Colab notebook of its own (`scripts/doc_notebooks.py`); after editing a doc by hand, run that script yourself.

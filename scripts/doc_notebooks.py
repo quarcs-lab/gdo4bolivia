@@ -9,8 +9,8 @@ exactly its code, notebooks/docs/<doc>/box-<n>.ipynb, and the badge is pointed a
 code ready to run (as the website's code boxes do, site/src/snippets.js). Badges that link to any other
 notebook (notebooks/README.md) are left alone. The notebooks are committed: Colab opens them from GitHub.
 
-`geo4bolivia build` rewrites docs/datasets/*.md with badges to a blank notebook: run this script after
-it. tests/test_data.py and the website's CI fail while anything is out of date.
+`geo4bolivia build` rewrites docs/datasets/*.md with badges to a blank notebook, then runs this script
+(`after_build` in builders/__init__.py). tests/test_data.py and the website's CI fail while anything is out of date.
 
 Generic, standard library only: the repository and its branch come from project.yaml.
 """

@@ -179,7 +179,7 @@ Check in the browser (claude-in-chrome):
 ### 9. Ship
 
 Update `CLAUDE.md`'s dataset table and anything else that lists datasets, run `build`,
-`uv run python scripts/doc_notebooks.py` (the dataset docs' Colab notebooks), `validate` and `pytest` once more, then commit everything the build regenerated (data, docs,
+`validate` and `pytest` once more, then commit everything the build regenerated (data, docs,
 catalog, images, and the code boxes' Colab notebooks in `notebooks/snippets/`, which the
 website's build writes; CI fails when they are stale) with the attribution lines, and push to the default branch. If the user
 asked for a branch and PR instead, do that.
