@@ -111,6 +111,11 @@ rob = gm.analyze_spatial_model_by_weights(
 print(rob.interpret())
 rob.fig`;
 
+// Code boxes shown on several pages: each gets one notebook, notebooks/snippets/<id>.ipynb (site/src/snippets.js)
+export const SHARED_SNIPPETS = {
+  'three-packages': { code: THREE_PACKAGES_EXAMPLE, title: 'One question, three packages', page: 'tools/geo4bolivia-package/' },
+};
+
 export const CONTENT_REGISTRY = [
   // ---------------------------------------------------------------- Indicators
   {

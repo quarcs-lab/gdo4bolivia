@@ -208,7 +208,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index, color="ln_NTLp
 xw = pd.read_csv(BASE + "geo/crosswalks/map343__department.csv")  # municipality -> department
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/data-infrastructure/box-1.ipynb)
 
 ### B. With the package (Python)
 
@@ -239,7 +239,7 @@ geo.map(sdg, "index_sdg", year=[2012, 2024],
         scheme="fisher_jenks")                   # interactive map, both periods
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/data-infrastructure/box-2.ipynb)
 
 Inside a clone of this repository the package reads the local files (or set `GEO4BOLIVIA_DATA_DIR` to a clone). Anywhere else it downloads them from GitHub, caching each file for the session. `ref=` always reads from GitHub.
 
@@ -283,7 +283,7 @@ codes = pd.DataFrame({"mun_id": [20101, 70101], "teachers": [9120, 11034]})
 codes = geo.link(codes, scale="map343", on="mun_id", key="mun_id")   # BO-04-17-04, BO-08-01-05
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/data-infrastructure/box-3.ipynb)
 
 Unmatched values raise an error that suggests the closest spelling (`errors="warn"` to continue). Pass `key=` to match a specific code: `"gid"` (GADM), `"ine_code"` (INE, as text with leading zeros, e.g. `"020101"`), `"mun_id"` (INE, as a number) or `"asdf_id"` (DS4Bolivia polygon).
 
@@ -303,7 +303,7 @@ lights = geo.zonal("viirs_2020.tif", scale="map343", stats=["sum", "mean"], name
 series = geo.zonal({2019: "viirs_2019.tif", 2020: "viirs_2020.tif"}, scale="map343", name="ntl")
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/data-infrastructure/box-4.ipynb)
 
 Pixels count when their centre falls inside a unit (`all_touched=True` for very small units); nodata is ignored. URLs work too.
 
@@ -324,7 +324,7 @@ panel["ntl"] = np.exp(panel["ln_NTLpc"]) * panel["pop"]          # total lights,
 panel = geo.combine(["sdg"], scale="map343", extra=[my_municipal_table])
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/data-infrastructure/box-5.ipynb)
 
 Variables without an aggregation rule are dropped with a warning when they would need aggregating; columns with the same name get the dataset id as prefix (e.g. `emb_A00`, `embpw_A00`).
 
@@ -353,7 +353,7 @@ cells = geo.overlay(pop, my_grid, extensive=["pop"], id_col="cell")
 weights = geo.overlay_weights("map343", my_zones, id_col="zone")   # the area shares used
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/data-infrastructure/box-6.ipynb)
 
 `overlay()` assumes values are spread evenly within each source unit. Totals (`extensive`) are split by area and summed; rates (`intensive`) are area-weighted means.
 
@@ -378,7 +378,7 @@ geo.save(dep[["geo_id", "year", "ln_NTLpc"]], "ntl_department", scale="departmen
 # my_data/data/department/ntl_department.csv, .parquet and my_data/metadata/ntl_department.datapackage.json
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/data-infrastructure/box-7.ipynb)
 
 The output has the same layout and metadata as the published datasets, so it is easy to share or contribute.
 
@@ -403,7 +403,7 @@ print(res.interpret())
 res.fig
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/data-infrastructure/box-8.ipynb)
 
 | Question | Functions |
 | --- | --- |
@@ -439,7 +439,7 @@ print(res.interpret())                               # with the Hausman test
 res.fig                                              # the coefficients compared
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/data-infrastructure/box-9.ipynb)
 
 `res.gt` is the regression table and `res.df` the tidy coefficients. The models describe associations in the data, not causal effects. `geo.mgwr()` (the `[mgwr]` extra) maps how an association changes from place to place; it is a multiscale GWR, and the package has no plain GWR.
 
@@ -462,7 +462,7 @@ df = gm.set_labels(df, df_dict, set_panel=True)
 gm.explore_spacetime_heatmap(df, "ln_NTLpc").fig     # every unit in every year
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/data-infrastructure/box-10.ipynb)
 
 Both analyse a variable as given, except geometrics' β- and σ-convergence functions, which take levels and log them internally, like the package's own.
 

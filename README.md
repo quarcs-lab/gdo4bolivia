@@ -49,7 +49,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index, color="index_s
                   hover_name="name", center={"lat": -16.3, "lon": -64}, zoom=4)
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/readme/box-1.ipynb)
 
 The package also runs the standard analyses, each in one call that returns a figure, a table and a reading of the numbers in words:
 
@@ -66,7 +66,7 @@ print(res.interpret())                             # the result in words
 res.fig                                            # the interactive cluster map
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/readme/box-2.ipynb)
 
 ---
 
@@ -112,7 +112,7 @@ geo.load("ntl", ref="v0.8.0")                      # a frozen release of the dat
 geo.map(mpi, "sdg1_2_mpi", year=2024)              # interactive map (Plotly)
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/readme/box-3.ipynb)
 
 **2. Without the package.** Every file is a plain URL that pandas and geopandas (preinstalled in Colab, like plotly) read directly:
 
@@ -131,7 +131,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index, color="index_s
                   hover_name="name", center={"lat": -16.3, "lon": -64}, zoom=4)
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/readme/box-4.ipynb)
 
 ### Analyse the data
 
@@ -146,7 +146,7 @@ print(res.interpret())                           # up between ~2012 and ~2024?
 res.fig
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/readme/box-5.ipynb)
 
 | You want to know | Functions |
 | --- | --- |
@@ -185,7 +185,7 @@ geo.save(panel, "my_indicator", scale="map343", directory="my_data")
 geo.map(panel, "ntl_mean", year=2024)       # maps and analyses take your panel too
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/readme/box-6.ipynb)
 
 The full guide is [`docs/data-infrastructure.md`](docs/data-infrastructure.md). It covers the scales and IDs, the metadata and aggregation rules, and recipes for building indicators. To add a dataset to the observatory, see [`CONTRIBUTING_DATA.md`](CONTRIBUTING_DATA.md).
 

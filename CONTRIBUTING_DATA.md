@@ -40,6 +40,7 @@ The `geo4bolivia` command and the helpers the builders use come from the Python 
 4. **Build and check:**
    ```bash
    uv run geo4bolivia build <dataset>
+   uv run python scripts/doc_notebooks.py   # the dataset docs' Colab notebooks
    uv run geo4bolivia validate <dataset>
    uv run pytest
    ```
@@ -53,7 +54,7 @@ The `geo4bolivia` command and the helpers the builders use come from the Python 
    print(geo.dictionary("pop"))                 # the variables, as the metadata describe them
    geo.map("pop", "pop_density", year=2020)     # the published values on a map
    ```
-   [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+   [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/contributing-data/box-1.ipynb)
 
    And by plain URL, once the files are pushed:
    ```python
@@ -64,7 +65,7 @@ The `geo4bolivia` command and the helpers the builders use come from the Python 
    df = pd.read_csv(BASE + "data/map339/pop.csv")
    px.histogram(df[df.year == 2020], x="pop_density", title="Population density, 2020")
    ```
-   [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+   [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/contributing-data/box-2.ipynb)
 5. **Optional: add it to the website.** The `create-indicator-website` skill (`.claude/skills/`) does this end to end. By hand:
    - render the headline map and the card with `uv run python scripts/indicator_map.py <dataset>`
    - add an `indicator` entry to `CONTENT_REGISTRY` in `site/src/content.js` (copy an existing one)
@@ -109,4 +110,4 @@ A new map keeps every published ID meaningful when its new units are carved out 
 
 When a map's units cannot keep the IDs (e.g. municipalities merged or redrawn wholesale), give it its own `id_pattern` (e.g. `^BO-INE-\d{6}$`) and `parent: null` unless every unit lies at least 99.5% inside one province, and link it to the other maps with `geo.overlay_weights("map343", "<scale>", id_col="geo_id")` and `geo.overlay()`.
 
-After any change: `uv run geo4bolivia build && uv run geo4bolivia validate && uv run pytest`.
+After any change: `uv run geo4bolivia build && uv run python scripts/doc_notebooks.py && uv run geo4bolivia validate && uv run pytest` (the script gives every Python block of the docs, including the dataset docs the build rewrites, a Colab notebook of its own).

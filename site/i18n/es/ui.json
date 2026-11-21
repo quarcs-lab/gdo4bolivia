@@ -7,6 +7,7 @@
  ", {n} without data": ", {n} sin datos",
  "1 result": "1 resultado",
  ": a blank notebook (opens in a new tab)": ": un notebook en blanco (se abre en una pestaña nueva)",
+ ": a notebook with this code (opens in a new tab)": ": un notebook con este código (se abre en una pestaña nueva)",
  "About": "Acerca de",
  "About the dataset": "Acerca del conjunto de datos",
  "About the observatory": "Acerca del observatorio",

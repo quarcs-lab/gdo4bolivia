@@ -101,7 +101,7 @@ df = geo.load("emb")                      # panel: one row per unit and year
 gdf = geo.load("emb", geometry=True)      # with map339 boundaries
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/datasets/emb/box-1.ipynb)
 
 Without the package:
 
@@ -111,7 +111,7 @@ import pandas as pd
 df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map339/emb.csv")
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/datasets/emb/box-2.ipynb)
 
 ## Notes
 

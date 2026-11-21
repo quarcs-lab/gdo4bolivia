@@ -7,6 +7,7 @@ import {
   SITE_URL, REPO_URL, PACKAGE_DOCS_URL, RAW_URL, COLAB_URL, COLAB_EMPTY, SHORT_NAME, CITE_AUTHORS,
   CONTENT_REGISTRY, REDIRECTS, PEOPLE, CONTACTS, CITATION_APA, CITATION_BIB, THREE_PACKAGES_EXAMPLE,
 } from './content.js';
+import { snippetPath, sharedSnippetPath } from './snippets.js';
 import { LANGUAGES, detectLanguage, loadLanguage, setLanguage, language, t, localized, fetchMetadataTranslation, translatePackage } from './i18n.js';
 
 // The content in the current language (site/i18n/<lang>/); CONTENT_REGISTRY is the English source
@@ -397,15 +398,17 @@ const CopyButton = ({ text, label }) => {
   );
 };
 
-// Opens a blank Colab notebook to paste the snippet into; styled like CopyButton
-const ColabButton = () => (
-  <a href={COLAB_EMPTY} target="_blank" rel="noopener noreferrer"
+// Opens the box's own notebook in Colab (notebooks/snippets/, written by site/build.mjs from
+// site/src/snippets.js), or a blank notebook for a box without one; styled like CopyButton
+const ColabButton = ({ notebook }) => (
+  <a href={notebook ? COLAB_URL + notebook : COLAB_EMPTY} target="_blank" rel="noopener noreferrer"
      className="text-salt-400 hover:text-white transition-colors flex items-center gap-1 text-xs uppercase font-bold tracking-wider">
     <img src="https://colab.research.google.com/img/colab_favicon_256px.png" alt="" width="14" height="14" />
-    <span>{t('Open in Colab')}<span className="sr-only">{t(': a blank notebook (opens in a new tab)')}</span></span>
+    <span>{t('Open in Colab')}<span className="sr-only">{notebook ? t(': a notebook with this code (opens in a new tab)') : t(': a blank notebook (opens in a new tab)')}</span></span>
   </a>
 );
 
+// colab: the box's notebook path inside notebooks/ (snippetPath), or true for a blank notebook
 const CodeBlock = ({ code, language = 'python', title, colab = false }) => {
   const highlighted = useMemo(() => highlightCode(code, language), [code, language]);
   return (
@@ -426,7 +429,7 @@ const CodeBlock = ({ code, language = 'python', title, colab = false }) => {
       </div>
       {colab && (
         <div className="flex justify-end px-4 py-2 bg-white/5 border-t border-white/10">
-          <ColabButton />
+          <ColabButton notebook={typeof colab === 'string' ? colab : null} />
         </div>
       )}
     </div>
@@ -438,7 +441,7 @@ const CODE_TABS = [['python', 'Python · package'], ['pandas', 'Python · URL']]
 const CODE_LANG = { pandas: 'python' };
 const CODE_TITLE = { python: 'Colab · with geo4bolivia', pandas: 'Colab · without the package' };
 
-const CodeTabs = ({ code, idPrefix }) => {
+const CodeTabs = ({ code, idPrefix, itemId, slot = '' }) => {
   const tabs = CODE_TABS.filter(([k]) => code[k]);
   const [active, setActive] = useState(tabs[0][0]);
   // ARIA tabs pattern: arrow keys (and Home/End) move between tabs; only the active tab is in the tab order
@@ -464,7 +467,7 @@ const CodeTabs = ({ code, idPrefix }) => {
       </div>
       {tabs.map(([k]) => (
         <div key={k} role="tabpanel" id={`${idPrefix}-panel-${k}`} aria-labelledby={`${idPrefix}-tab-${k}`} hidden={active !== k}>
-          <CodeBlock code={code[k]} language={CODE_LANG[k] || k} title={t(CODE_TITLE[k] || 'example')} colab />
+          <CodeBlock code={code[k]} language={CODE_LANG[k] || k} title={t(CODE_TITLE[k] || 'example')} colab={itemId ? snippetPath(itemId, slot + k) : true} />
         </div>
       ))}
     </div>
@@ -1399,7 +1402,7 @@ const IndicatorsSection = () => {
           <p className="text-salt-400 max-w-2xl mb-6">{language() === 'es'
             ? <>Dos formas de empezar. Con el paquete <a className="text-brand-turquoise underline decoration-brand-turquoise/50 underline-offset-2" href="tools/geo4bolivia-package/">geo4bolivia</a>, una línea le da un panel con nombres y límites. Sin él, cada archivo es una URL simple que pandas lee directamente. Cada fragmento funciona tal cual en un notebook en blanco de Google Colab: su primera línea instala lo que le falta a Colab.</>
             : <>Two ways in. With the <a className="text-brand-turquoise underline decoration-brand-turquoise/50 underline-offset-2" href="tools/geo4bolivia-package/">geo4bolivia</a> package, one line gives you a panel with names and boundaries. Without it, every file is a plain URL that pandas reads directly. Every snippet runs as-is in a blank Google Colab notebook: its first line installs what Colab lacks.</>}</p>
-          <CodeTabs code={byId('municipalities343-sdg').code} idPrefix="home-code" />
+          <CodeTabs code={byId('municipalities343-sdg').code} idPrefix="home-code" itemId="municipalities343-sdg" />
         </AnimateIn>
       </div>
     </section>
@@ -1724,14 +1727,14 @@ const DetailShell = ({ item, children, aside, lead }) => {
 };
 
 // Short recipes under an indicator's main example: a heading, one sentence and a Python snippet each
-const CodeExamples = ({ examples }) => (
+const CodeExamples = ({ examples, itemId }) => (
   <div className="mt-10 space-y-8">
     <h3 className="text-xl font-bold tracking-tight text-white">{t('More examples')}</h3>
-    {examples.map((ex) => (
+    {examples.map((ex, i) => (
       <div key={ex.title}>
         <h4 className="text-lg font-semibold text-white mb-1">{ex.title}</h4>
         {ex.text && <p className="text-salt-300 leading-relaxed mb-3">{ex.text}</p>}
-        <CodeBlock code={ex.code} language="python" title={t(CODE_TITLE.python)} colab />
+        <CodeBlock code={ex.code} language="python" title={t(CODE_TITLE.python)} colab={snippetPath(itemId, `example-${i + 1}`)} />
       </div>
     ))}
   </div>
@@ -2028,8 +2031,8 @@ const IndicatorDetail = ({ item }) => {
           : <MetadataStatus state={meta} ids={ids} />}
       </Block>
       <Block title={t('Use it in your code')} id="d-code">
-        <CodeTabs code={item.code} idPrefix={`code-${item.id}`} />
-        {item.examples?.length > 0 && <CodeExamples examples={item.examples} />}
+        <CodeTabs code={item.code} idPrefix={`code-${item.id}`} itemId={item.id} />
+        {item.examples?.length > 0 && <CodeExamples examples={item.examples} itemId={item.id} />}
       </Block>
       <Block title={t('License')} id="d-license">
         {ready ? <LicenseBlock packages={meta.packages} /> : <MetadataStatus state={meta} ids={ids} />}
@@ -2100,12 +2103,12 @@ const PackageDetail = ({ item }) => {
         <PackageWorkflow current={item.id} compact />
       </Block>
       <Block title={t('Install')} id="p-install">
-        <CodeBlock title="Colab" language="text" code={item.install} colab />
+        <CodeBlock title="Colab" language="text" code={item.install} colab={snippetPath(item.id, 'install')} />
         <p className="text-sm text-salt-400 mt-3">{t('Run this in a Google Colab code cell (Python 3.11+).')}{item.installNote ? ` ${item.installNote}` : ''}</p>
       </Block>
       <Block title={t('Quickstart')} id="p-quick">
         {item.quickstart.pandas && <p className="text-salt-300 leading-relaxed mb-4">{t("Load data with the package, or read the same files without it.")}</p>}
-        <CodeTabs code={item.quickstart} idPrefix={`quick-${item.id}`} />
+        <CodeTabs code={item.quickstart} idPrefix={`quick-${item.id}`} itemId={item.id} slot="quickstart-" />
       </Block>
       {steps.length > 0 && (
         <Block title={t('Tutorial')} id="p-tutorial">
@@ -2117,7 +2120,7 @@ const PackageDetail = ({ item }) => {
                   <span className="font-mono text-sm text-brand-turquoise">{String(i + 1).padStart(2, '0')}</span>{st.title}
                 </h3>
                 <p className="text-salt-300 leading-relaxed mb-4">{st.text}</p>
-                <CodeBlock code={st.code} language="python" title={t(CODE_TITLE.python)} colab />
+                <CodeBlock code={st.code} language="python" title={t(CODE_TITLE.python)} colab={snippetPath(item.id, `step-${st.id}`)} />
               </li>
             ))}
           </ol>
@@ -2126,12 +2129,12 @@ const PackageDetail = ({ item }) => {
       {item.build && (
         <Block title={t('Build your own indicator')} id="p-build">
           <p className="text-salt-300 leading-relaxed mb-4">{t("Link your own data to the observatory’s units, extract indicators from rasters, combine them with the published datasets, and save the result in the same documented format.")}</p>
-          <CodeBlock title="my_indicator.py" language="python" code={item.build} colab />
+          <CodeBlock title="my_indicator.py" language="python" code={item.build} colab={snippetPath(item.id, 'build')} />
         </Block>
       )}
       <Block title={t('One question, three packages')} id="p-example">
         <p className="text-salt-300 leading-relaxed mb-4">{language() === 'es' ? <>¿Convergieron los municipios de Bolivia en desarrollo sostenible entre ~2012 y ~2024? geo4bolivia la responde por sí solo: carga y mapea el índice, prueba la convergencia β, compara la desigualdad en los dos periodos y localiza los conglomerados. Cada compañero añade luego un paso especializado: expdpy separa la variación entre y dentro de los municipios, y geometrics verifica que el resultado espacial se mantenga con siete matrices de pesos. {notebook && <>El <a className="text-brand-turquoise hover:underline" href={itemHref(notebook)}>notebook</a> desarrolla la pregunta, con los resultados.</>}</> : <>Did Bolivia’s municipalities converge in sustainable development between ~2012 and ~2024? geo4bolivia answers it on its own: it loads and maps the index, tests β-convergence, compares inequality in the two periods and locates the clusters. Each companion then adds one specialised step: expdpy splits the variation between and within municipalities, and geometrics checks that the spatial result holds under seven weights matrices. {notebook && <>The <a className="text-brand-turquoise hover:underline" href={itemHref(notebook)}>notebook</a> works the question through, with the results.</>}</>}</p>
-        <CodeBlock code={THREE_PACKAGES_EXAMPLE} language="python" title="three_packages.py" colab />
+        <CodeBlock code={THREE_PACKAGES_EXAMPLE} language="python" title="three_packages.py" colab={sharedSnippetPath('three-packages')} />
       </Block>
       <Block title={t('What it does')} id="p-features">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

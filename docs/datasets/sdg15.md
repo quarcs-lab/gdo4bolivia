@@ -42,7 +42,7 @@ df = geo.load("sdg15")                      # panel: one row per unit and year
 gdf = geo.load("sdg15", geometry=True)      # with map343 boundaries
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/datasets/sdg15/box-1.ipynb)
 
 Without the package:
 
@@ -52,7 +52,7 @@ import pandas as pd
 df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/map343/sdg15.csv")
 ```
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/datasets/sdg15/box-2.ipynb)
 
 ## Notes
 

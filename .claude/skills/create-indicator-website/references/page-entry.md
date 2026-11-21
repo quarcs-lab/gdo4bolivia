@@ -47,6 +47,9 @@ download links: the page no longer uses them.
     ends with the result's own figure instead (`res.fig`, or the figure `geo.map()` returns), after
     `print(res.interpret())` where the reading helps. Check each call with `help(geo.<function>)` or in
     the package's function reference (`geo.config()["documentation"]`, under `reference/`).
+- **Self-contained.** Every box (each tab and each of `examples`) opens as its own Colab notebook
+  (`notebooks/snippets/<id>/`, written by the website's build): it must run alone in a fresh
+  session, with its own install line and imports, never relying on another box.
 - **Lines of about 84 characters at most.**
 - **Examples** (optional): 2–4 recipes of 8–20 lines that show how to use the dataset's
   variables (e.g. rebuild a composite index from its components, rank departments, relate two
