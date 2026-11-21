@@ -1,0 +1,49 @@
+{
+ "title": "ODS 11: Ciudades y comunidades sostenibles (Atlas de los ODS en Bolivia 2026)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID de GDO-Bolivia del municipio (BO-DD-PP-MM) en el mapa municipal de 343 unidades (SDSN Bolivia 2025: municipios y autonomías indígenas), numerado como en GADM 4.1 más cuatro unidades creadas desde entonces; map343; su límite está en geo/boundaries/map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); la numeración de departamentos y provincias sigue el orden de GADM y difiere de los códigos del INE."
+  },
+  "year": {
+   "title": "Periodo",
+   "description": "Periodo de los valores de la fila: 2012 contiene los valores iniciales del Atlas (hacia el censo de 2012) y 2024 sus valores finales (hacia el censo de 2024). Los años de referencia reales de cada variable se indican en su descripción y en geo:reference_years."
+  },
+  "mun_id": {
+   "title": "Código municipal del INE",
+   "description": "Código oficial del municipio del Instituto Nacional de Estadística (INE), DDPPMM (departamento, provincia, municipio), almacenado como entero sin el cero inicial (p. ej., 20101 = Nuestra Señora de La Paz), como en el Atlas. Las filas del Atlas se vinculan a geo_id mediante este código."
+  },
+  "index_sdg11": {
+   "title": "Índice de ciudades y comunidades sostenibles (0-100)",
+   "description": "Índice del ODS 11 (Ciudades y comunidades sostenibles) del Atlas de los ODS en Bolivia 2026, en una escala de 0 a 100 donde 100 significa que las metas del objetivo se cumplen y 0 la peor situación. Siguiendo el Índice ODS global de la SDSN, cada uno de sus 7 indicadores se reescala linealmente de 0 a 100 entre un valor peor y uno mejor (indicados en la descripción de cada indicador), con la dirección fijada de modo que un valor más alto sea siempre mejor y acotando los valores fuera de los límites; el índice es la media simple de los indicadores reescalados disponibles. Componentes: Hogares con hacinamiento (%); Hogares sin servicio sanitario (%); Vivienda adecuada (% de viviendas); Asientos en transporte colectivo (por 1000 habitantes); Gasto público en residuos sólidos (Bs por persona al año); Recolección de residuos sólidos (% de viviendas); Concentración de PM2.5 (µg/m³). Valor inicial (~2012) almacenado en 2012 y valor final (~2024) en 2024; sus componentes se refieren a distintos años en torno a cada censo. Atlas: “Índice ODS11”."
+  },
+  "sdg11_1_thm": {
+   "title": "Hogares con hacinamiento (%)",
+   "description": "Porcentaje de hogares con más de dos personas por dormitorio. Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda del INE de 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 11 se reescala linealmente de 0 a 100 entre 68.2 (peor, 0) y 12.6 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 15 y grandes desafíos a partir de 30. Indicador del Atlas 11_01_01_01_thm, “Porcentaje de hogares con hacinamiento” (Andersen & Argandoña 2026)."
+  },
+  "sdg11_1_ssb": {
+   "title": "Hogares sin servicio sanitario (%)",
+   "description": "Porcentaje de hogares sin servicio sanitario, baño o letrina. Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda del INE de 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 11 se reescala linealmente de 0 a 100 entre 100 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 15 y grandes desafíos a partir de 50. Indicador del Atlas 11_01_01_02_ssb, “Porcentaje de hogares sin servicio sanitario o baño” (Andersen & Argandoña 2026)."
+  },
+  "sdg11_1_ava": {
+   "title": "Vivienda adecuada (% de viviendas)",
+   "description": "Porcentaje de viviendas que el INE califica como adecuadas (calificación promedio alta en materiales de construcción de paredes, techo y piso; servicios básicos; y hacinamiento). Fuente: tabulados del INE de los Censos de Población y Vivienda de 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 11 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 85 y grandes desafíos a partir de 50. Indicador del Atlas 11_01_01_03_ava, “Porcentaje de viviendas adecuadas” (Andersen & Argandoña 2026)."
+  },
+  "sdg11_2_atc": {
+   "title": "Asientos en transporte colectivo (por 1000 habitantes)",
+   "description": "Asientos disponibles en transporte colectivo por cada 1000 habitantes: buses, microbuses y minibuses registrados en el parque automotor municipal multiplicados por sus asientos. Fuente: INE, parque automotor por municipio. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 11 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 342 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 93 y grandes desafíos a partir de 5. Indicador del Atlas 11_02_01_04_atc, “Asientos disponibles en transporte colectivo (por 1000 habitantes)” (Andersen & Argandoña 2026)."
+  },
+  "sdg11_6_ipr": {
+   "title": "Gasto público en residuos sólidos (Bs por persona al año)",
+   "description": "Inversión y gasto público municipal en gestión de residuos sólidos por persona, promediados en tres años. Fuente: Fundación Jubileo (2024), presupuestos de los gobiernos autónomos municipales por programa y tipo de gasto. Valor inicial promedio 2012–2014 (almacenado en 2012) y valor final promedio 2022–2024 (almacenado en 2024). En el índice del ODS 11 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 287.7 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 200 y grandes desafíos a partir de 50. Indicador del Atlas 11_06_01_05_ipr, “Inversión y gasto público municipal en residuos sólidos (Bs./persona/año)” (Andersen & Argandoña 2026)."
+  },
+  "sdg11_6_srr": {
+   "title": "Recolección de residuos sólidos (% de viviendas)",
+   "description": "Porcentaje de viviendas que eliminan su basura mediante un basurero o contenedor público o un carro recolector. Fuente: tabulados del INE de los Censos de Población y Vivienda de 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 11 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 90 y grandes desafíos a partir de 10. Indicador del Atlas 11_06_01_06_srr, “Porcentaje de viviendas con servicio de recolección de residuos sólidos” (Andersen & Argandoña 2026)."
+  },
+  "sdg11_6_ica": {
+   "title": "Concentración de PM2.5 (µg/m³)",
+   "description": "Concentración media anual de material particulado fino (PM2.5) en las áreas pobladas del municipio: estimaciones satelitales de PM2.5 promediadas sobre los manzanos censales del INE y promediadas en tres años. Fuente: estimaciones satelitales de PM2.5 de MODIS Terra-Aqua y manzanos censales del INE. Valor inicial promedio 2010–2012 (almacenado en 2012) y valor final promedio 2021–2023 (almacenado en 2024). En el índice del ODS 11 se reescala linealmente de 0 a 100 entre 31 (peor, 0) y 5 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 10 y grandes desafíos a partir de 25. Indicador del Atlas 11_06_02_07_ica, “Concentración media anual de PM2.5 (µg/m3)” (Andersen & Argandoña 2026)."
+  }
+ }
+}

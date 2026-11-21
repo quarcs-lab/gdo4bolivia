@@ -1,0 +1,1254 @@
+{
+ "site": {
+  "SITE_NAME": "Observatorio de GeoDesarrollo de Bolivia",
+  "DEFAULT_TITLE": "Observatorio de GeoDesarrollo de Bolivia | GDO-Bolivia",
+  "SITE_DESCRIPTION": "GDO-Bolivia es una plataforma de acceso público con indicadores subnacionales, notebooks, aplicaciones web, proyectos de investigación y hallazgos para monitorear el desarrollo regional sostenible en Bolivia con datos satelitales e inteligencia artificial."
+ },
+ "workflow": {
+  "geo4bolivia-package": {
+   "role": "Encontrar, cargar, mapear y analizar los datos",
+   "text": "El punto de partida y, a menudo, todo lo que se necesita. Busque las variables y cargue cualquier indicador como un panel etiquetado con nombres y límites; luego mapéelo y ejecute los análisis fundamentales con una sola llamada cada uno: dependencia espacial, convergencia, transiciones, desigualdad, regresión, modelos de panel y espaciales, y MGWR. Cada resultado incluye una figura interactiva y una lectura en palabras."
+  },
+  "expdpy-package": {
+   "role": "Métodos especializados para paneles",
+   "text": "Un complemento para métodos de panel especializados que van más allá de los de geo4bolivia: cuánta de la variación se da entre unidades o dentro de ellas, efectos aleatorios correlacionados, variables instrumentales, estudios de eventos e inferencia robusta. geo.for_expdpy() le entrega cualquier panel, etiquetado."
+  },
+  "geometrics-package": {
+   "role": "Métodos especializados para el espacio",
+   "text": "Un complemento para métodos espaciales especializados que van más allá de los de geo4bolivia: si los efectos de derrame de un modelo espacial resisten un cambio de matriz de pesos, y entornos didácticos que simulan cada concepto a partir de una verdad conocida. geo.for_geometrics() le entrega cualquier panel con sus límites."
+  }
+ },
+ "items": {
+  "municipalities343-sdg": {
+   "title": "Índice de Desarrollo Sostenible (IDS)",
+   "summary": "El Índice de Desarrollo Sostenible (IDS) del Atlas de los ODS en Bolivia 2026, que resume 81 indicadores de 15 objetivos, y su ranking nacional, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El Índice de Desarrollo Sostenible (IDS) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas (GAIOC) de Bolivia, hacia el censo de 2012 y hacia el censo de 2024, con su ranking nacional. El IDS resume 81 indicadores de 15 Objetivos de Desarrollo Sostenible (todos excepto los ODS 12 y 14): cada indicador se reescala entre un valor peor y uno mejor fijados por el Atlas (0 = peor, 100 = meta cumplida), el índice de cada objetivo es la media de sus indicadores reescalados y el IDS es la media simple de los 15 índices de los objetivos, siguiendo el Índice ODS global de la SDSN. Entre los dos periodos, el IDS mediano pasó de 49.6 a 59.8; subió en 342 de las 343 unidades, y las unidades que partieron más abajo fueron las que más ganaron, un proceso de convergencia territorial. Se incluyen la población censal de 2012 y 2024 y la tasa de urbanización de 2024 como contexto y como ponderadores. Los índices de los objetivos y sus indicadores están en los quince conjuntos de datos por objetivo, de sdg01 a sdg17.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Social",
+    "Economía",
+    "Medio ambiente",
+    "Instituciones"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "desarrollo sostenible",
+    "convergencia",
+    "ranking"
+   ],
+   "imageAlt": "Mapa del Índice de Desarrollo Sostenible, IDS (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 60.5 – 77.3 (151); Medio 51.7 – 60.5 (173); Bajo 37.2 – 51.7 (19). Más altos: Nuestra Señora de La Paz, Tarija y Sucre.",
+   "mapAlt": "Dos mapas del Índice de Desarrollo Sostenible, IDS (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 60.5 – 77.3 (21 unidades hacia 2012, 151 hacia 2024); Medio 51.7 – 60.5 (93 unidades hacia 2012, 173 hacia 2024); Bajo 37.2 – 51.7 (229 unidades hacia 2012, 19 hacia 2024). Más altos hacia 2024: Nuestra Señora de La Paz, Tarija y Sucre.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para los indicadores volátiles) se indican en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Qué objetivos cambiaron",
+     "text": "Promedia cada uno de los 15 índices de los objetivos entre los municipios en los dos periodos: los objetivos que más avanzaron y los que retrocedieron."
+    },
+    {
+     "title": "Movilidad en el ranking",
+     "text": "Grafica el puesto nacional de cada unidad en los dos periodos: las unidades por encima de la diagonal bajaron en el ranking y las que están por debajo subieron."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el IDS dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    },
+    {
+     "title": "Dónde el avance llegó a más personas",
+     "text": "Multiplica la ganancia de cada unidad en el IDS por su población de 2024, la medida de “progreso masivo” del Atlas: las grandes ciudades encabezan la lista incluso donde sus ganancias fueron moderadas."
+    }
+   ],
+   "scope": "343 municipios · 81 indicadores de 15 ODS en un índice · ~2012 y ~2024"
+  },
+  "municipalities343-sdg01": {
+   "title": "ODS 1: Fin de la pobreza",
+   "summary": "El índice del ODS 1 (Fin de la pobreza) del Atlas de los ODS en Bolivia 2026 y sus 4 indicadores, pobreza multidimensional, necesidades básicas insatisfechas, pobreza energética y acceso a los tres servicios básicos, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El índice del ODS 1 (Fin de la pobreza) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas (GAIOC) de Bolivia, con los 4 indicadores que lo componen: índice de pobreza multidimensional (0-1) (2012 y 2024); pobreza energética (% de viviendas) (2016 y 2024); necesidades básicas insatisfechas (% de la población) (2012 y 2024); acceso a los 3 servicios básicos (% de hogares) (2012 y 2024). Cada indicador se mide dos veces, hacia el censo de 2012 y hacia el censo de 2024, y el observatorio almacena los dos valores como 2012 y 2024 para poder estudiar su cambio. El índice va de 0 (peor situación) a 100 (metas cumplidas): cada indicador se reescala linealmente entre un valor peor y uno mejor fijados por el Atlas, con tope, de modo que un valor más alto siempre es mejor, y el índice es la media simple de los indicadores reescalados disponibles. Entre los dos periodos, el índice mediano pasó de 32.8 a 53.9 y subió en 340 de las 343 unidades.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Social"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "pobreza",
+    "pobreza multidimensional",
+    "servicios básicos"
+   ],
+   "imageAlt": "Mapa del índice de Fin de la pobreza (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 55.9 – 91.7 (155); Medio 34.1 – 55.9 (152); Bajo 0.7 – 34.1 (36). Más altos: Nuestra Señora de La Paz, Bermejo y Colcapirhua.",
+   "mapAlt": "Dos mapas del índice de Fin de la pobreza (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 55.9 – 91.7 (55 unidades hacia 2012, 155 hacia 2024); Medio 34.1 – 55.9 (107 unidades hacia 2012, 152 hacia 2024); Bajo 0.7 – 34.1 (181 unidades hacia 2012, 36 hacia 2024). Más altos hacia 2024: Nuestra Señora de La Paz, Bermejo y Colcapirhua.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para los indicadores volátiles) se indican en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Mapear el cambio, de ~2012 a ~2024",
+     "text": "Resta el índice inicial del final: los valores positivos señalan los municipios que se acercaron a las metas del objetivo."
+    },
+    {
+     "title": "Recalcular el índice a partir de sus indicadores",
+     "text": "Reescala cada indicador entre los valores peor y mejor del Atlas (Cuadro 21), lo limita al rango 0-100 y promedia los disponibles, lo que reproduce el índice publicado."
+    },
+    {
+     "title": "Qué indicadores cambiaron",
+     "text": "Compara el puntaje reescalado medio (0-100) de cada indicador en los dos periodos: la distancia entre los puntos es el avance, y los puntos más bajos muestran dónde el objetivo está más lejos."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el índice dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    },
+    {
+     "title": "Pobreza y luces nocturnas",
+     "text": "Vincula la pobreza multidimensional hacia 2012 con la tendencia de las luces nocturnas per cápita en 2012 del conjunto de datos ntl del observatorio (los 339 municipios del mapa de 2015, que conservan sus geo IDs en el mapa de 343 unidades)."
+    }
+   ],
+   "scope": "343 municipios · 4 indicadores y el índice del ODS 1 · ~2012 y ~2024"
+  },
+  "municipalities343-sdg02": {
+   "title": "ODS 2: Hambre cero",
+   "summary": "El índice del ODS 2 (Hambre cero) del Atlas de los ODS en Bolivia 2026 y sus 7 indicadores, desnutrición crónica y sobrepeso en niños, obesidad y anemia en mujeres, y producción, rendimiento y diversificación agrícolas, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El índice del ODS 2 (Hambre cero) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas (GAIOC) de Bolivia, con los 7 indicadores que lo componen: obesidad en mujeres de 15-49 años (%) (2008 y 2023); desnutrición crónica en menores de 5 años (%) (2008 y 2023); sobrepeso en menores de 5 años (%) (2008 y 2023); anemia en mujeres de 15-49 años (%) (2008 y 2023); producción agrícola (t por persona por año) (promedio 2013–2015 y promedio 2022–2024); rendimiento agrícola (t por ha por año) (promedio 2013–2015 y promedio 2022–2024); índice de diversificación agrícola (0-1) (promedio 2013–2015 y promedio 2022–2024). Cada indicador se mide dos veces, hacia el censo de 2012 y hacia el censo de 2024, y el observatorio almacena los dos valores como 2012 y 2024 para poder estudiar su cambio. El índice va de 0 (peor situación) a 100 (metas cumplidas): cada indicador se reescala linealmente entre un valor peor y uno mejor fijados por el Atlas, con tope, de modo que un valor más alto siempre es mejor, y el índice es la media simple de los indicadores reescalados disponibles. Entre los dos periodos, el índice mediano pasó de 38.4 a 38.8 y subió en 174 de las 343 unidades. Algunos indicadores faltan para parte de las unidades (Producción agrícola (t por persona por año), Rendimiento agrícola (t por ha por año) e Índice de diversificación agrícola (0-1)); el índice promedia los disponibles.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Social",
+    "Economía"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "hambre",
+    "desnutrición",
+    "agricultura"
+   ],
+   "imageAlt": "Mapa del índice de Hambre cero (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 43.4 – 56.8 (74); Medio 35.6 – 43.4 (190); Bajo 20.8 – 35.6 (79). Más altos: Alto Beni, Santa Rosa y Puerto Villarroel.",
+   "mapAlt": "Dos mapas del índice de Hambre cero (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 43.4 – 56.8 (113 unidades hacia 2012, 74 hacia 2024); Medio 35.6 – 43.4 (113 unidades hacia 2012, 190 hacia 2024); Bajo 20.8 – 35.6 (117 unidades hacia 2012, 79 hacia 2024). Más altos hacia 2024: Alto Beni, Santa Rosa y Puerto Villarroel.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para los indicadores volátiles) se indican en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Mapear el cambio, de ~2012 a ~2024",
+     "text": "Resta el índice inicial del final: los valores positivos señalan los municipios que se acercaron a las metas del objetivo."
+    },
+    {
+     "title": "Recalcular el índice a partir de sus indicadores",
+     "text": "Reescala cada indicador entre los valores peor y mejor del Atlas (Cuadro 21), lo limita al rango 0-100 y promedia los disponibles, lo que reproduce el índice publicado."
+    },
+    {
+     "title": "Qué indicadores cambiaron",
+     "text": "Compara el puntaje reescalado medio (0-100) de cada indicador en los dos periodos: la distancia entre los puntos es el avance, y los puntos más bajos muestran dónde el objetivo está más lejos."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el índice dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    }
+   ],
+   "scope": "343 municipios · 7 indicadores y el índice del ODS 2 · ~2012 y ~2024"
+  },
+  "municipalities343-sdg03": {
+   "title": "ODS 3: Salud y bienestar",
+   "summary": "El índice del ODS 3 (Salud y bienestar) del Atlas de los ODS en Bolivia 2026 y sus 7 indicadores, parto atendido por personal calificado, mortalidad infantil y en la niñez, VIH, tuberculosis y enfermedades transmitidas por vectores, y fecundidad adolescente, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El índice del ODS 3 (Salud y bienestar) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas (GAIOC) de Bolivia, con los 7 indicadores que lo componen: partos atendidos por personal de salud calificado (%) (2012 y 2024); mortalidad infantil (por 1000 nacidos vivos) (2008 y 2023); mortalidad en menores de 5 años (por 1000 nacidos vivos) (2008 y 2023); incidencia de VIH (por millón de personas) (promedio 2011–2013 y promedio 2022–2024); incidencia de tuberculosis (por 100 000 personas) (promedio 2011–2013 y promedio 2022–2024); índice de enfermedades transmitidas por vectores (0-1) (promedio 2011–2013 y promedio 2022–2024); paridez media de mujeres adolescentes de 15-19 años (hijos por mujer) (2012 y 2024). Cada indicador se mide dos veces, hacia el censo de 2012 y hacia el censo de 2024, y el observatorio almacena los dos valores como 2012 y 2024 para poder estudiar su cambio. El índice va de 0 (peor situación) a 100 (metas cumplidas): cada indicador se reescala linealmente entre un valor peor y uno mejor fijados por el Atlas, con tope, de modo que un valor más alto siempre es mejor, y el índice es la media simple de los indicadores reescalados disponibles. Entre los dos periodos, el índice mediano pasó de 65.6 a 81.2 y subió en 312 de las 343 unidades.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Social"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "salud",
+    "mortalidad infantil",
+    "enfermedades infecciosas"
+   ],
+   "imageAlt": "Mapa del índice de Salud y bienestar (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 78.3 – 98.9 (207); Medio 64.6 – 78.3 (111); Bajo 43.6 – 64.6 (25). Más altos: Villa Gualberto Villarroel, Carangas y Postrervalle.",
+   "mapAlt": "Dos mapas del índice de Salud y bienestar (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 78.3 – 98.9 (53 unidades hacia 2012, 207 hacia 2024); Medio 64.6 – 78.3 (128 unidades hacia 2012, 111 hacia 2024); Bajo 43.6 – 64.6 (162 unidades hacia 2012, 25 hacia 2024). Más altos hacia 2024: Villa Gualberto Villarroel, Carangas y Postrervalle.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para los indicadores volátiles) se indican en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Mapear el cambio, de ~2012 a ~2024",
+     "text": "Resta el índice inicial del final: los valores positivos señalan los municipios que se acercaron a las metas del objetivo."
+    },
+    {
+     "title": "Recalcular el índice a partir de sus indicadores",
+     "text": "Reescala cada indicador entre los valores peor y mejor del Atlas (Cuadro 21), lo limita al rango 0-100 y promedia los disponibles, lo que reproduce el índice publicado."
+    },
+    {
+     "title": "Qué indicadores cambiaron",
+     "text": "Compara el puntaje reescalado medio (0-100) de cada indicador en los dos periodos: la distancia entre los puntos es el avance, y los puntos más bajos muestran dónde el objetivo está más lejos."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el índice dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    }
+   ],
+   "scope": "343 municipios · 7 indicadores y el índice del ODS 3 · ~2012 y ~2024"
+  },
+  "municipalities343-sdg04": {
+   "title": "ODS 4: Educación de calidad",
+   "summary": "El índice del ODS 4 (Educación de calidad) del Atlas de los ODS en Bolivia 2026 y sus 11 indicadores, abandono escolar en secundaria, asistencia a educación inicial, años de educación y educación superior de mujeres y hombres, alfabetización y docentes calificados, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El índice del ODS 4 (Educación de calidad) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas (GAIOC) de Bolivia, con los 11 indicadores que lo componen: tasa de abandono en secundaria, mujeres (%) (promedio 2012–2014 y promedio 2022–2023); tasa de abandono en secundaria, hombres (%) (promedio 2012–2014 y promedio 2022–2024); asistencia a educación inicial, niñas de 4-5 años (%) (2012 y 2024); asistencia a educación inicial, niños de 4-5 años (%) (2012 y 2024); años de educación, mujeres de 25-35 años (2012 y 2024); años de educación, hombres de 25-35 años (2012 y 2024); educación superior, mujeres de 19 años o más (%) (2012 y 2024); educación superior, hombres de 19 años o más (%) (2012 y 2024); tasa de alfabetización, 15 años o más (%) (2012 y 2024); docentes calificados, nivel inicial (%) (promedio 2012–2014 y promedio 2022–2024); docentes calificados, nivel secundario (%) (promedio 2012–2014 y promedio 2022–2024). Cada indicador se mide dos veces, hacia el censo de 2012 y hacia el censo de 2024, y el observatorio almacena los dos valores como 2012 y 2024 para poder estudiar su cambio. El índice va de 0 (peor situación) a 100 (metas cumplidas): cada indicador se reescala linealmente entre un valor peor y uno mejor fijados por el Atlas, con tope, de modo que un valor más alto siempre es mejor, y el índice es la media simple de los indicadores reescalados disponibles. Entre los dos periodos, el índice mediano pasó de 47.6 a 69.5 y subió en 343 de las 343 unidades. Algunos indicadores faltan para parte de las unidades (Tasa de abandono en secundaria, mujeres (%), Tasa de abandono en secundaria, hombres (%), Docentes calificados, nivel inicial (%) y Docentes calificados, nivel secundario (%)); el índice promedia los disponibles.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Social"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "educación",
+    "alfabetización",
+    "abandono escolar"
+   ],
+   "imageAlt": "Mapa del índice de Educación de calidad (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 62.4 – 94.7 (274); Medio 45.5 – 62.4 (67); Bajo 18.6 – 45.5 (2). Más altos: Nuestra Señora de La Paz, Colcapirhua y Oruro.",
+   "mapAlt": "Dos mapas del índice de Educación de calidad (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 62.4 – 94.7 (25 unidades hacia 2012, 274 hacia 2024); Medio 45.5 – 62.4 (182 unidades hacia 2012, 67 hacia 2024); Bajo 18.6 – 45.5 (136 unidades hacia 2012, 2 hacia 2024). Más altos hacia 2024: Nuestra Señora de La Paz, Colcapirhua y Oruro.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para los indicadores volátiles) se indican en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Mapear el cambio, de ~2012 a ~2024",
+     "text": "Resta el índice inicial del final: los valores positivos señalan los municipios que se acercaron a las metas del objetivo."
+    },
+    {
+     "title": "Recalcular el índice a partir de sus indicadores",
+     "text": "Reescala cada indicador entre los valores peor y mejor del Atlas (Cuadro 21), lo limita al rango 0-100 y promedia los disponibles, lo que reproduce el índice publicado."
+    },
+    {
+     "title": "Qué indicadores cambiaron",
+     "text": "Compara el puntaje reescalado medio (0-100) de cada indicador en los dos periodos: la distancia entre los puntos es el avance, y los puntos más bajos muestran dónde el objetivo está más lejos."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el índice dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    }
+   ],
+   "scope": "343 municipios · 11 indicadores y el índice del ODS 4 · ~2012 y ~2024"
+  },
+  "municipalities343-sdg05": {
+   "title": "ODS 5: Igualdad de género",
+   "summary": "El índice del ODS 5 (Igualdad de género) del Atlas de los ODS en Bolivia 2026 y sus 6 indicadores, paridad de género en abandono escolar, pobreza, educación, participación laboral y trabajo de cuidado, y mujeres entre los concejales electos, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El índice del ODS 5 (Igualdad de género) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas (GAIOC) de Bolivia, con los 6 indicadores que lo componen: paridad de género en el abandono en secundaria (hombres/mujeres) (promedio 2012–2014 y promedio 2022–2024); paridad de género en la pobreza multidimensional (jefe hombre/jefa mujer) (2012 y 2024); paridad de género en años de educación, 25-35 años (mujeres/hombres) (2012 y 2024); paridad de género en la participación en la fuerza laboral (mujeres/hombres) (2012 y 2024); paridad de género en el trabajo doméstico y de cuidado, 15-24 años (hombres/mujeres) (2012 y 2024); mujeres entre los concejales electos (%) (2015 y 2021). Cada indicador se mide dos veces, hacia el censo de 2012 y hacia el censo de 2024, y el observatorio almacena los dos valores como 2012 y 2024 para poder estudiar su cambio. El índice va de 0 (peor situación) a 100 (metas cumplidas): cada indicador se reescala linealmente entre un valor peor y uno mejor fijados por el Atlas, con tope, de modo que un valor más alto siempre es mejor, y el índice es la media simple de los indicadores reescalados disponibles. Entre los dos periodos, el índice mediano pasó de 73.5 a 81.9 y subió en 322 de las 343 unidades. Algunos indicadores faltan para parte de las unidades (Paridad de género en el abandono en secundaria (hombres/mujeres) y Mujeres entre los concejales electos (%)); el índice promedia los disponibles.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Social"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "género",
+    "paridad de género",
+    "representación política"
+   ],
+   "imageAlt": "Mapa del índice de Igualdad de género (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 80.3 – 95.0 (223); Medio 73.0 – 80.3 (103); Bajo 56.6 – 73.0 (17). Más altos: Papel Pampa, Tacachi y El Choro.",
+   "mapAlt": "Dos mapas del índice de Igualdad de género (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 80.3 – 95.0 (9 unidades hacia 2012, 223 hacia 2024); Medio 73.0 – 80.3 (174 unidades hacia 2012, 103 hacia 2024); Bajo 56.6 – 73.0 (160 unidades hacia 2012, 17 hacia 2024). Más altos hacia 2024: Papel Pampa, Tacachi y El Choro.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para los indicadores volátiles) se indican en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Mapear el cambio, de ~2012 a ~2024",
+     "text": "Resta el índice inicial del final: los valores positivos señalan los municipios que se acercaron a las metas del objetivo."
+    },
+    {
+     "title": "Recalcular el índice a partir de sus indicadores",
+     "text": "Reescala cada indicador entre los valores peor y mejor del Atlas (Cuadro 21), lo limita al rango 0-100 y promedia los disponibles, lo que reproduce el índice publicado."
+    },
+    {
+     "title": "Qué indicadores cambiaron",
+     "text": "Compara el puntaje reescalado medio (0-100) de cada indicador en los dos periodos: la distancia entre los puntos es el avance, y los puntos más bajos muestran dónde el objetivo está más lejos."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el índice dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    }
+   ],
+   "scope": "343 municipios · 6 indicadores y el índice del ODS 5 · ~2012 y ~2024"
+  },
+  "municipalities343-sdg06": {
+   "title": "ODS 6: Agua limpia y saneamiento",
+   "summary": "El índice del ODS 6 (Agua limpia y saneamiento) del Atlas de los ODS en Bolivia 2026 y sus 3 indicadores, agua potable, saneamiento y tratamiento de aguas residuales, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El índice del ODS 6 (Agua limpia y saneamiento) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas (GAIOC) de Bolivia, con los 3 indicadores que lo componen: cobertura de agua potable (% de la población) (2012 y 2024); cobertura de saneamiento (% de la población) (2012 y 2024); aguas residuales tratadas (%) (2013 y 2024). Cada indicador se mide dos veces, hacia el censo de 2012 y hacia el censo de 2024, y el observatorio almacena los dos valores como 2012 y 2024 para poder estudiar su cambio. El índice va de 0 (peor situación) a 100 (metas cumplidas): cada indicador se reescala linealmente entre un valor peor y uno mejor fijados por el Atlas, con tope, de modo que un valor más alto siempre es mejor, y el índice es la media simple de los indicadores reescalados disponibles. Entre los dos periodos, el índice mediano pasó de 25.5 a 40.9 y subió en 335 de las 343 unidades.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Social",
+    "Medio ambiente"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "agua",
+    "saneamiento",
+    "aguas residuales"
+   ],
+   "imageAlt": "Mapa del índice de Agua limpia y saneamiento (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 45.8 – 86.9 (110); Medio 26.9 – 45.8 (206); Bajo 0.0 – 26.9 (27). Más altos: Yacuiba, Porongo y Vallegrande.",
+   "mapAlt": "Dos mapas del índice de Agua limpia y saneamiento (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 45.8 – 86.9 (17 unidades hacia 2012, 110 hacia 2024); Medio 26.9 – 45.8 (136 unidades hacia 2012, 206 hacia 2024); Bajo 0.0 – 26.9 (190 unidades hacia 2012, 27 hacia 2024). Más altos hacia 2024: Yacuiba, Porongo y Vallegrande.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para los indicadores volátiles) se indican en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Mapear el cambio, de ~2012 a ~2024",
+     "text": "Resta el índice inicial del final: los valores positivos señalan los municipios que se acercaron a las metas del objetivo."
+    },
+    {
+     "title": "Recalcular el índice a partir de sus indicadores",
+     "text": "Reescala cada indicador entre los valores peor y mejor del Atlas (Cuadro 21), lo limita al rango 0-100 y promedia los disponibles, lo que reproduce el índice publicado."
+    },
+    {
+     "title": "Qué indicadores cambiaron",
+     "text": "Compara el puntaje reescalado medio (0-100) de cada indicador en los dos periodos: la distancia entre los puntos es el avance, y los puntos más bajos muestran dónde el objetivo está más lejos."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el índice dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    }
+   ],
+   "scope": "343 municipios · 3 indicadores y el índice del ODS 6 · ~2012 y ~2024"
+  },
+  "municipalities343-sdg07": {
+   "title": "ODS 7: Energía asequible y no contaminante",
+   "summary": "El índice del ODS 7 (Energía asequible y no contaminante) del Atlas de los ODS en Bolivia 2026 y sus 4 indicadores, cobertura y consumo de electricidad, medidores eléctricos inactivos y energía limpia para cocinar, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El índice del ODS 7 (Energía asequible y no contaminante) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas (GAIOC) de Bolivia, con los 4 indicadores que lo componen: consumo residencial de electricidad (kWh por persona por año) (2016 y 2024); cobertura de electricidad (% de la población) (2012 y 2024); medidores residenciales con consumo cero durante 6 meses o más (%) (2016 y 2024); energía limpia para cocinar (% de la población) (2012 y 2024). Cada indicador se mide dos veces, hacia el censo de 2012 y hacia el censo de 2024, y el observatorio almacena los dos valores como 2012 y 2024 para poder estudiar su cambio. El índice va de 0 (peor situación) a 100 (metas cumplidas): cada indicador se reescala linealmente entre un valor peor y uno mejor fijados por el Atlas, con tope, de modo que un valor más alto siempre es mejor, y el índice es la media simple de los indicadores reescalados disponibles. Entre los dos periodos, el índice mediano pasó de 51.1 a 61.8 y subió en 315 de las 343 unidades. Algunos indicadores faltan para parte de las unidades (Medidores residenciales con consumo cero durante 6 meses o más (%)); el índice promedia los disponibles.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Economía",
+    "Medio ambiente"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "energía",
+    "electricidad",
+    "cocina limpia"
+   ],
+   "imageAlt": "Mapa del índice de Energía asequible y no contaminante (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 70.8 – 98.5 (99); Medio 50.3 – 70.8 (158); Bajo 9.4 – 50.3 (86). Más altos: Trinidad, Cobija y Santa Cruz de la Sierra.",
+   "mapAlt": "Dos mapas del índice de Energía asequible y no contaminante (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 70.8 – 98.5 (59 unidades hacia 2012, 99 hacia 2024); Medio 50.3 – 70.8 (124 unidades hacia 2012, 158 hacia 2024); Bajo 9.4 – 50.3 (160 unidades hacia 2012, 86 hacia 2024). Más altos hacia 2024: Trinidad, Cobija y Santa Cruz de la Sierra.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para los indicadores volátiles) se indican en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Mapear el cambio, de ~2012 a ~2024",
+     "text": "Resta el índice inicial del final: los valores positivos señalan los municipios que se acercaron a las metas del objetivo."
+    },
+    {
+     "title": "Recalcular el índice a partir de sus indicadores",
+     "text": "Reescala cada indicador entre los valores peor y mejor del Atlas (Cuadro 21), lo limita al rango 0-100 y promedia los disponibles, lo que reproduce el índice publicado."
+    },
+    {
+     "title": "Qué indicadores cambiaron",
+     "text": "Compara el puntaje reescalado medio (0-100) de cada indicador en los dos periodos: la distancia entre los puntos es el avance, y los puntos más bajos muestran dónde el objetivo está más lejos."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el índice dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    }
+   ],
+   "scope": "343 municipios · 4 indicadores y el índice del ODS 7 · ~2012 y ~2024"
+  },
+  "municipalities343-sdg08": {
+   "title": "ODS 8: Trabajo decente y crecimiento económico",
+   "summary": "El índice del ODS 8 (Trabajo decente y crecimiento económico) del Atlas de los ODS en Bolivia 2026 y sus 7 indicadores, participación laboral y jóvenes que no estudian ni trabajan, por sexo, empleo y PIB turísticos, y puntos de acceso financiero, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El índice del ODS 8 (Trabajo decente y crecimiento económico) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas (GAIOC) de Bolivia, con los 7 indicadores que lo componen: tasa de participación en la fuerza laboral, mujeres de 14 años o más (%) (2012 y 2024); tasa de participación en la fuerza laboral, hombres de 14 años o más (%) (2012 y 2024); mujeres jóvenes que no estudian ni forman parte de la fuerza laboral, 15-24 años (%) (2012 y 2024); hombres jóvenes que no estudian ni forman parte de la fuerza laboral, 15-24 años (%) (2012 y 2024); empleo en actividades relacionadas con el turismo (%) (2012 y 2024); participación del turismo en el PIB (%) (2016 y 2025); puntos de acceso financiero (por 100 000 personas) (2012 y 2024). Cada indicador se mide dos veces, hacia el censo de 2012 y hacia el censo de 2024, y el observatorio almacena los dos valores como 2012 y 2024 para poder estudiar su cambio. El índice va de 0 (peor situación) a 100 (metas cumplidas): cada indicador se reescala linealmente entre un valor peor y uno mejor fijados por el Atlas, con tope, de modo que un valor más alto siempre es mejor, y el índice es la media simple de los indicadores reescalados disponibles. Entre los dos periodos, el índice mediano pasó de 35.2 a 52.9 y subió en 339 de las 343 unidades. Algunos indicadores faltan para parte de las unidades (Participación del turismo en el PIB (%)); el índice promedia los disponibles.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Economía"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "empleo",
+    "participación laboral",
+    "inclusión financiera"
+   ],
+   "imageAlt": "Mapa del índice de Trabajo decente y crecimiento económico (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 55.4 – 82.0 (132); Medio 39.7 – 55.4 (190); Bajo 7.8 – 39.7 (21). Más altos: Copacabana, Samaipata y Puerto Menor de Rurrenabaque.",
+   "mapAlt": "Dos mapas del índice de Trabajo decente y crecimiento económico (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 55.4 – 82.0 (5 unidades hacia 2012, 132 hacia 2024); Medio 39.7 – 55.4 (93 unidades hacia 2012, 190 hacia 2024); Bajo 7.8 – 39.7 (245 unidades hacia 2012, 21 hacia 2024). Más altos hacia 2024: Copacabana, Samaipata y Puerto Menor de Rurrenabaque.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para los indicadores volátiles) se indican en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Mapear el cambio, de ~2012 a ~2024",
+     "text": "Resta el índice inicial del final: los valores positivos señalan los municipios que se acercaron a las metas del objetivo."
+    },
+    {
+     "title": "Recalcular el índice a partir de sus indicadores",
+     "text": "Reescala cada indicador entre los valores peor y mejor del Atlas (Cuadro 21), lo limita al rango 0-100 y promedia los disponibles, lo que reproduce el índice publicado."
+    },
+    {
+     "title": "Qué indicadores cambiaron",
+     "text": "Compara el puntaje reescalado medio (0-100) de cada indicador en los dos periodos: la distancia entre los puntos es el avance, y los puntos más bajos muestran dónde el objetivo está más lejos."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el índice dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    }
+   ],
+   "scope": "343 municipios · 7 indicadores y el índice del ODS 8 · ~2012 y ~2024"
+  },
+  "municipalities343-sdg09": {
+   "title": "ODS 9: Industria, innovación e infraestructura",
+   "summary": "El índice del ODS 9 (Industria, innovación e infraestructura) del Atlas de los ODS en Bolivia 2026 y sus 4 indicadores, carreteras troncales, acceso a internet, teléfonos y radiobases de telefonía móvil, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El índice del ODS 9 (Industria, innovación e infraestructura) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas de Bolivia (GAIOC), con los 4 indicadores que lo componen: carreteras troncales que cruzan el municipio (número) (2012 y 2024); acceso a internet, fijo o móvil (% de hogares) (2012 y 2024); radiobases de telefonía móvil (por cada 1000 personas) (2012 y 2024); teléfono fijo o móvil (% de hogares) (2012 y 2024). Cada indicador se mide dos veces, hacia el censo de 2012 y hacia el censo de 2024, y el observatorio almacena ambos valores como 2012 y 2024 para poder estudiar su cambio. El índice va de 0 (peor situación) a 100 (metas cumplidas): cada indicador se reescala linealmente entre un valor peor y uno mejor fijados por el Atlas, con tope, de modo que un valor más alto siempre es mejor, y el índice es la media simple de los indicadores reescalados disponibles. Entre los dos periodos la mediana del índice pasó de 21.2 a 51.8, y subió en 343 de las 343 unidades.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Economía"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "infraestructura",
+    "internet",
+    "telecomunicaciones"
+   ],
+   "imageAlt": "Mapa del índice de Industria, innovación e infraestructura (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 48.4 – 78.8 (217); Medio 27.3 – 48.4 (126); Bajo 1.3 – 27.3 (0). Más altos: Nuestra Señora de La Paz, Padcaya y Curahuara de Carangas.",
+   "mapAlt": "Dos mapas del índice de Industria, innovación e infraestructura (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 48.4 – 78.8 (5 unidades hacia 2012, 217 hacia 2024); Medio 27.3 – 48.4 (92 unidades hacia 2012, 126 hacia 2024); Bajo 1.3 – 27.3 (246 unidades hacia 2012, 0 hacia 2024). Más altos hacia 2024: Nuestra Señora de La Paz, Padcaya y Curahuara de Carangas.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para indicadores volátiles) figuran en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Mapear el cambio, de ~2012 a ~2024",
+     "text": "Resta el índice inicial del final: los valores positivos señalan los municipios que se acercaron a las metas del objetivo."
+    },
+    {
+     "title": "Recalcular el índice a partir de sus indicadores",
+     "text": "Reescala cada indicador entre los valores peor y mejor del Atlas (Cuadro 21), lo acota a 0-100 y promedia los disponibles, lo que reproduce el índice publicado."
+    },
+    {
+     "title": "Qué indicadores cambiaron",
+     "text": "Compara el puntaje reescalado medio (0-100) de cada indicador en los dos periodos: la distancia entre los puntos es el avance, y los puntos más bajos señalan dónde el objetivo está más lejos."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el índice dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    }
+   ],
+   "scope": "343 municipios · 4 indicadores y el índice del ODS 9 · ~2012 y ~2024"
+  },
+  "municipalities343-sdg10": {
+   "title": "ODS 10: Reducción de las desigualdades",
+   "summary": "El índice del ODS 10 (Reducción de las desigualdades) del Atlas de los ODS en Bolivia 2026 y sus 6 indicadores, población que no habla castellano, brechas de pobreza por etnia, migración y edad, y los coeficientes de Gini de la pobreza y de la educación, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El índice del ODS 10 (Reducción de las desigualdades) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas de Bolivia (GAIOC), con los 6 indicadores que lo componen: población que no habla castellano (%) (2012 y 2024); paridad de la pobreza multidimensional por etnia e idioma (no indígena/indígena) (2012 y 2024); paridad de la pobreza multidimensional por migración (no migrante/migrante) (2012 y 2024); paridad de la pobreza multidimensional de las personas mayores (jefe de hogar más joven/mayor) (2012 y 2024); coeficiente de Gini de la pobreza multidimensional (0-1) (2012 y 2024); coeficiente de Gini de los años de educación, 25-65 años (0-1) (2012 y 2024). Cada indicador se mide dos veces, hacia el censo de 2012 y hacia el censo de 2024, y el observatorio almacena ambos valores como 2012 y 2024 para poder estudiar su cambio. El índice va de 0 (peor situación) a 100 (metas cumplidas): cada indicador se reescala linealmente entre un valor peor y uno mejor fijados por el Atlas, con tope, de modo que un valor más alto siempre es mejor, y el índice es la media simple de los indicadores reescalados disponibles. Entre los dos periodos la mediana del índice pasó de 80.8 a 81.1, y subió en 212 de las 343 unidades.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Social"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "desigualdad",
+    "idioma",
+    "brechas de pobreza"
+   ],
+   "imageAlt": "Mapa del índice de Reducción de las desigualdades (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 82.6 – 95.2 (135); Medio 73.7 – 82.6 (166); Bajo 59.6 – 73.7 (42). Más altos: Yunguyo del Litoral, Cobija y Riberalta.",
+   "mapAlt": "Dos mapas del índice de Reducción de las desigualdades (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 82.6 – 95.2 (143 unidades hacia 2012, 135 hacia 2024); Medio 73.7 – 82.6 (116 unidades hacia 2012, 166 hacia 2024); Bajo 59.6 – 73.7 (84 unidades hacia 2012, 42 hacia 2024). Más altos hacia 2024: Yunguyo del Litoral, Cobija y Riberalta.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para indicadores volátiles) figuran en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Mapear el cambio, de ~2012 a ~2024",
+     "text": "Resta el índice inicial del final: los valores positivos señalan los municipios que se acercaron a las metas del objetivo."
+    },
+    {
+     "title": "Recalcular el índice a partir de sus indicadores",
+     "text": "Reescala cada indicador entre los valores peor y mejor del Atlas (Cuadro 21), lo acota a 0-100 y promedia los disponibles, lo que reproduce el índice publicado."
+    },
+    {
+     "title": "Qué indicadores cambiaron",
+     "text": "Compara el puntaje reescalado medio (0-100) de cada indicador en los dos periodos: la distancia entre los puntos es el avance, y los puntos más bajos señalan dónde el objetivo está más lejos."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el índice dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    }
+   ],
+   "scope": "343 municipios · 6 indicadores y el índice del ODS 10 · ~2012 y ~2024"
+  },
+  "municipalities343-sdg11": {
+   "title": "ODS 11: Ciudades y comunidades sostenibles",
+   "summary": "El índice del ODS 11 (Ciudades y comunidades sostenibles) del Atlas de los ODS en Bolivia 2026 y sus 7 indicadores, hacinamiento, baños, vivienda adecuada, transporte público, gasto y recolección de residuos sólidos, y contaminación por PM2.5, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El índice del ODS 11 (Ciudades y comunidades sostenibles) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas de Bolivia (GAIOC), con los 7 indicadores que lo componen: hogares con hacinamiento (%) (2012 y 2024); hogares sin baño (%) (2012 y 2024); vivienda adecuada (% de viviendas) (2012 y 2024); asientos de transporte público (por cada 1000 personas) (2012 y 2024); gasto público en residuos sólidos (Bs por persona al año) (promedio 2012–2014 y promedio 2022–2024); recolección de residuos sólidos (% de viviendas) (2012 y 2024); concentración de PM2.5 (µg/m³) (promedio 2010–2012 y promedio 2021–2023). Cada indicador se mide dos veces, hacia el censo de 2012 y hacia el censo de 2024, y el observatorio almacena ambos valores como 2012 y 2024 para poder estudiar su cambio. El índice va de 0 (peor situación) a 100 (metas cumplidas): cada indicador se reescala linealmente entre un valor peor y uno mejor fijados por el Atlas, con tope, de modo que un valor más alto siempre es mejor, y el índice es la media simple de los indicadores reescalados disponibles. Entre los dos periodos la mediana del índice pasó de 26.0 a 37.2, y subió en 340 de las 343 unidades.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Social"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "ciudades",
+    "vivienda",
+    "contaminación del aire"
+   ],
+   "imageAlt": "Mapa del índice de Ciudades y comunidades sostenibles (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 48.9 – 88.1 (60); Medio 30.7 – 48.9 (192); Bajo 7.6 – 30.7 (91). Más altos: Nuestra Señora de La Paz, El Alto y Tarija.",
+   "mapAlt": "Dos mapas del índice de Ciudades y comunidades sostenibles (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 48.9 – 88.1 (16 unidades hacia 2012, 60 hacia 2024); Medio 30.7 – 48.9 (83 unidades hacia 2012, 192 hacia 2024); Bajo 7.6 – 30.7 (244 unidades hacia 2012, 91 hacia 2024). Más altos hacia 2024: Nuestra Señora de La Paz, El Alto y Tarija.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para indicadores volátiles) figuran en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Mapear el cambio, de ~2012 a ~2024",
+     "text": "Resta el índice inicial del final: los valores positivos señalan los municipios que se acercaron a las metas del objetivo."
+    },
+    {
+     "title": "Recalcular el índice a partir de sus indicadores",
+     "text": "Reescala cada indicador entre los valores peor y mejor del Atlas (Cuadro 21), lo acota a 0-100 y promedia los disponibles, lo que reproduce el índice publicado."
+    },
+    {
+     "title": "Qué indicadores cambiaron",
+     "text": "Compara el puntaje reescalado medio (0-100) de cada indicador en los dos periodos: la distancia entre los puntos es el avance, y los puntos más bajos señalan dónde el objetivo está más lejos."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el índice dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    }
+   ],
+   "scope": "343 municipios · 7 indicadores y el índice del ODS 11 · ~2012 y ~2024"
+  },
+  "municipalities343-sdg13": {
+   "title": "ODS 13: Acción por el clima",
+   "summary": "El índice del ODS 13 (Acción por el clima) del Atlas de los ODS en Bolivia 2026 y sus 5 indicadores, familias afectadas por eventos climáticos extremos, vulnerabilidad al cambio climático y emisiones de CO2 por pérdida de bosque, transporte e incendios, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El índice del ODS 13 (Acción por el clima) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas de Bolivia (GAIOC), con los 5 indicadores que lo componen: familias afectadas por eventos climáticos extremos (%) (promedio 2011–2013 y promedio 2021–2023); índice de vulnerabilidad al cambio climático (0-3) (2012 y 2024); emisiones de CO2 por pérdida de bosque (t por persona al año) (promedio 2011–2013 y promedio 2021–2023); emisiones de CO2 del transporte (t por persona al año) (2015 y 2024); emisiones de CO2 por incendios (t por persona al año) (promedio 2011–2013 y promedio 2020–2022). Cada indicador se mide dos veces, hacia el censo de 2012 y hacia el censo de 2024, y el observatorio almacena ambos valores como 2012 y 2024 para poder estudiar su cambio. El índice va de 0 (peor situación) a 100 (metas cumplidas): cada indicador se reescala linealmente entre un valor peor y uno mejor fijados por el Atlas, con tope, de modo que un valor más alto siempre es mejor, y el índice es la media simple de los indicadores reescalados disponibles. Entre los dos periodos la mediana del índice pasó de 82.6 a 72.8, y subió en 75 de las 343 unidades. Faltan algunos indicadores para parte de las unidades (Emisiones de CO2 por pérdida de bosque (t por persona al año)); el índice promedia los disponibles.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Medio ambiente"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "cambio climático",
+    "emisiones de CO₂",
+    "eventos extremos"
+   ],
+   "imageAlt": "Mapa del índice de Acción por el clima (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 78.6 – 100.0 (118); Medio 61.2 – 78.6 (149); Bajo 27.4 – 61.2 (76). Más altos: El Alto, Villazón y Sipesipe.",
+   "mapAlt": "Dos mapas del índice de Acción por el clima (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 78.6 – 100.0 (243 unidades hacia 2012, 118 hacia 2024); Medio 61.2 – 78.6 (60 unidades hacia 2012, 149 hacia 2024); Bajo 27.4 – 61.2 (40 unidades hacia 2012, 76 hacia 2024). Más altos hacia 2024: El Alto, Villazón y Sipesipe.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para indicadores volátiles) figuran en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Mapear el cambio, de ~2012 a ~2024",
+     "text": "Resta el índice inicial del final: los valores positivos señalan los municipios que se acercaron a las metas del objetivo."
+    },
+    {
+     "title": "Recalcular el índice a partir de sus indicadores",
+     "text": "Reescala cada indicador entre los valores peor y mejor del Atlas (Cuadro 21), lo acota a 0-100 y promedia los disponibles, lo que reproduce el índice publicado."
+    },
+    {
+     "title": "Qué indicadores cambiaron",
+     "text": "Compara el puntaje reescalado medio (0-100) de cada indicador en los dos periodos: la distancia entre los puntos es el avance, y los puntos más bajos señalan dónde el objetivo está más lejos."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el índice dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    }
+   ],
+   "scope": "343 municipios · 5 indicadores y el índice del ODS 13 · ~2012 y ~2024"
+  },
+  "municipalities343-sdg15": {
+   "title": "ODS 15: Vida de ecosistemas terrestres",
+   "summary": "El índice del ODS 15 (Vida de ecosistemas terrestres) del Atlas de los ODS en Bolivia 2026 y sus 4 indicadores, áreas protegidas, pérdida de bosque y pérdida de biodiversidad por deforestación e incendios, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El índice del ODS 15 (Vida de ecosistemas terrestres) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas de Bolivia (GAIOC), con los 4 indicadores que lo componen: superficie declarada protegida (%) (2012 y 2025); tasa de pérdida de bosque (% por año) (promedio 2012–2014 y promedio 2022–2024); pérdida de biodiversidad por deforestación (índice) (2012 y 2024); pérdida de biodiversidad por incendios (índice) (2012 y 2024). Cada indicador se mide dos veces, hacia el censo de 2012 y hacia el censo de 2024, y el observatorio almacena ambos valores como 2012 y 2024 para poder estudiar su cambio. El índice va de 0 (peor situación) a 100 (metas cumplidas): cada indicador se reescala linealmente entre un valor peor y uno mejor fijados por el Atlas, con tope, de modo que un valor más alto siempre es mejor, y el índice es la media simple de los indicadores reescalados disponibles. Entre los dos periodos la mediana del índice pasó de 55.5 a 54.2, y subió en 103 de las 343 unidades. Faltan algunos indicadores para parte de las unidades (Tasa de pérdida de bosque (% por año) y Pérdida de biodiversidad por deforestación (índice)); el índice promedia los disponibles.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Medio ambiente"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "áreas protegidas",
+    "deforestación",
+    "biodiversidad"
+   ],
+   "imageAlt": "Mapa del índice de Vida de ecosistemas terrestres (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 81.0 – 100.0 (56); Medio 60.1 – 81.0 (95); Bajo 9.0 – 60.1 (192). Más altos: Eucaliptus, Santos Mercado y Nueva Esperanza.",
+   "mapAlt": "Dos mapas del índice de Vida de ecosistemas terrestres (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 81.0 – 100.0 (50 unidades hacia 2012, 56 hacia 2024); Medio 60.1 – 81.0 (111 unidades hacia 2012, 95 hacia 2024); Bajo 9.0 – 60.1 (182 unidades hacia 2012, 192 hacia 2024). Más altos hacia 2024: Eucaliptus, Santos Mercado y Nueva Esperanza.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para indicadores volátiles) figuran en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Mapear el cambio, de ~2012 a ~2024",
+     "text": "Resta el índice inicial del final: los valores positivos señalan los municipios que se acercaron a las metas del objetivo."
+    },
+    {
+     "title": "Recalcular el índice a partir de sus indicadores",
+     "text": "Reescala cada indicador entre los valores peor y mejor del Atlas (Cuadro 21), lo acota a 0-100 y promedia los disponibles, lo que reproduce el índice publicado."
+    },
+    {
+     "title": "Qué indicadores cambiaron",
+     "text": "Compara el puntaje reescalado medio (0-100) de cada indicador en los dos periodos: la distancia entre los puntos es el avance, y los puntos más bajos señalan dónde el objetivo está más lejos."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el índice dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    }
+   ],
+   "scope": "343 municipios · 4 indicadores y el índice del ODS 15 · ~2012 y ~2024"
+  },
+  "municipalities343-sdg16": {
+   "title": "ODS 16: Paz, justicia e instituciones sólidas",
+   "summary": "El índice del ODS 16 (Paz, justicia e instituciones sólidas) del Atlas de los ODS en Bolivia 2026 y sus 4 indicadores, homicidios, ejecución presupuestaria municipal, conflictos sociales y registro de nacimientos, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El índice del ODS 16 (Paz, justicia e instituciones sólidas) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas de Bolivia (GAIOC), con los 4 indicadores que lo componen: tasa de homicidios (por cada 100 000 personas) (promedio 2017–2019 y promedio 2022–2024); ejecución presupuestaria (%) (promedio 2011–2013 y promedio 2021–2023); conflictos sociales (eventos por año) (promedio 2018–2020 y promedio 2022–2024); niños menores de 5 años inscritos en el registro civil (%) (2012 y 2024). Cada indicador se mide dos veces, hacia el censo de 2012 y hacia el censo de 2024, y el observatorio almacena ambos valores como 2012 y 2024 para poder estudiar su cambio. El índice va de 0 (peor situación) a 100 (metas cumplidas): cada indicador se reescala linealmente entre un valor peor y uno mejor fijados por el Atlas, con tope, de modo que un valor más alto siempre es mejor, y el índice es la media simple de los indicadores reescalados disponibles. Entre los dos periodos la mediana del índice pasó de 77.5 a 85.5, y subió en 272 de las 343 unidades.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Instituciones"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "homicidios",
+    "finanzas municipales",
+    "registro de nacimientos"
+   ],
+   "imageAlt": "Mapa del índice de Paz, justicia e instituciones sólidas (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 82.1 – 96.3 (211); Medio 66.9 – 82.1 (72); Bajo 32.9 – 66.9 (60). Más altos: San Pedro, Tomina y Porvenir.",
+   "mapAlt": "Dos mapas del índice de Paz, justicia e instituciones sólidas (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 82.1 – 96.3 (79 unidades hacia 2012, 211 hacia 2024); Medio 66.9 – 82.1 (190 unidades hacia 2012, 72 hacia 2024); Bajo 32.9 – 66.9 (74 unidades hacia 2012, 60 hacia 2024). Más altos hacia 2024: San Pedro, Tomina y Porvenir.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para indicadores volátiles) figuran en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Mapear el cambio, de ~2012 a ~2024",
+     "text": "Resta el índice inicial del final: los valores positivos señalan los municipios que se acercaron a las metas del objetivo."
+    },
+    {
+     "title": "Recalcular el índice a partir de sus indicadores",
+     "text": "Reescala cada indicador entre los valores peor y mejor del Atlas (Cuadro 21), lo acota a 0-100 y promedia los disponibles, lo que reproduce el índice publicado."
+    },
+    {
+     "title": "Qué indicadores cambiaron",
+     "text": "Compara el puntaje reescalado medio (0-100) de cada indicador en los dos periodos: la distancia entre los puntos es el avance, y los puntos más bajos señalan dónde el objetivo está más lejos."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el índice dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    }
+   ],
+   "scope": "343 municipios · 4 indicadores y el índice del ODS 16 · ~2012 y ~2024"
+  },
+  "municipalities343-sdg17": {
+   "title": "ODS 17: Alianzas para lograr los objetivos",
+   "summary": "El índice del ODS 17 (Alianzas para lograr los objetivos) del Atlas de los ODS en Bolivia 2026 y sus 2 indicadores, ingresos municipales de fuentes propias e inversión pública por persona, para cada municipio hacia 2012 y hacia 2024.",
+   "description": "El índice del ODS 17 (Alianzas para lograr los objetivos) del Atlas de los ODS en Bolivia 2026 (Andersen y Argandoña, SDSN Bolivia) para los 343 municipios y autonomías indígenas de Bolivia (GAIOC), con los 2 indicadores que lo componen: ingresos municipales de fuentes propias (%) (promedio 2011–2013 y promedio 2021–2023); inversión pública (Bs por persona) (2012 y 2023). Cada indicador se mide dos veces, hacia el censo de 2012 y hacia el censo de 2024, y el observatorio almacena ambos valores como 2012 y 2024 para poder estudiar su cambio. El índice va de 0 (peor situación) a 100 (metas cumplidas): cada indicador se reescala linealmente entre un valor peor y uno mejor fijados por el Atlas, con tope, de modo que un valor más alto siempre es mejor, y el índice es la media simple de los indicadores reescalados disponibles. Entre los dos periodos la mediana del índice pasó de 25.0 a 30.1, y subió en 195 de las 343 unidades. Faltan algunos indicadores para parte de las unidades (Ingresos municipales de fuentes propias (%) e Inversión pública (Bs por persona)); el índice promedia los disponibles.",
+   "geography": "Municipio",
+   "period": "~2012 y ~2024",
+   "frequency": "Dos periodos (inicial ~2012, final ~2024)",
+   "categories": [
+    "Instituciones"
+   ],
+   "tags": [
+    "ODS",
+    "Atlas de los ODS 2026",
+    "finanzas municipales",
+    "impuestos locales",
+    "inversión pública"
+   ],
+   "imageAlt": "Mapa del índice de Alianzas para lograr los objetivos (0-100) hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales: Alto 46.1 – 100.0 (83); Medio 24.5 – 46.1 (125); Bajo 0.0 – 24.5 (135). Más altos: Carangas, La Rivera y Coipasa.",
+   "mapAlt": "Dos mapas del índice de Alianzas para lograr los objetivos (0-100) hacia 2012 y hacia 2024 en los 343 municipios y autonomías indígenas de Bolivia, en tres clases de cortes naturales comunes a ambos periodos. Leyenda: Alto 46.1 – 100.0 (51 unidades hacia 2012, 83 hacia 2024); Medio 24.5 – 46.1 (124 unidades hacia 2012, 125 hacia 2024); Bajo 0.0 – 24.5 (168 unidades hacia 2012, 135 hacia 2024). Más altos hacia 2024: Carangas, La Rivera y Coipasa.",
+   "notice": "Ambos periodos se almacenan en años nominales: 2012 contiene los valores iniciales del Atlas (~2012) y 2024 sus valores finales (~2024). Los años de referencia efectivos de cada indicador (p. ej., 2008 y 2023 para la encuesta de salud, promedios trienales para indicadores volátiles) figuran en su descripción, en Variables. Las cuatro autonomías indígenas y los municipios creados después de 2012 tienen valores en ambos periodos.",
+   "examples": [
+    {
+     "title": "Mapear el cambio, de ~2012 a ~2024",
+     "text": "Resta el índice inicial del final: los valores positivos señalan los municipios que se acercaron a las metas del objetivo."
+    },
+    {
+     "title": "Recalcular el índice a partir de sus indicadores",
+     "text": "Reescala cada indicador entre los valores peor y mejor del Atlas (Cuadro 21), lo acota a 0-100 y promedia los disponibles, lo que reproduce el índice publicado."
+    },
+    {
+     "title": "Qué indicadores cambiaron",
+     "text": "Compara el puntaje reescalado medio (0-100) de cada indicador en los dos periodos: la distancia entre los puntos es el avance, y los puntos más bajos señalan dónde el objetivo está más lejos."
+    },
+    {
+     "title": "Ordenar los departamentos",
+     "text": "Promedia el índice dentro de cada departamento, ponderando los municipios por su población censal, en ambos periodos."
+    }
+   ],
+   "scope": "343 municipios · 2 indicadores y el índice del ODS 17 · ~2012 y ~2024"
+  },
+  "municipalities339-ntl": {
+   "title": "Luces nocturnas per cápita",
+   "summary": "Nueve años de luces nocturnas VIIRS por persona para 339 municipios, con una tendencia de largo plazo: un indicador satelital aproximado de la actividad económica local.",
+   "description": "Luces nocturnas anuales per cápita para los 339 municipios de Bolivia del mapa de 2015, de 2012 a 2020: la radiancia sumada de las luces nocturnas anuales VIIRS del Earth Observation Group (versión 2, con el fondo enmascarado) sobre cada municipio, dividida por su población de WorldPop, en logaritmos naturales. Una tendencia de Hodrick–Prescott (λ = 400) de la misma serie separa la trayectoria de largo plazo del ruido de un año a otro; está completa para todos los municipios, mientras que el logaritmo sin filtrar falta donde un municipio no tenía luz medible. Las luces nocturnas siguen la electrificación y la actividad económica donde las estadísticas locales oficiales son escasas. Los valores se calcularon sobre los polígonos de DS4Bolivia del mapa municipal de 2015, por lo que se publican en ese mapa, map339, para sus 339 municipios, que conservan sus geo IDs en el mapa de 343 unidades de 2025. Seis de ellos (Colquechaca, Mizque, Porco, Tomave, San Ignacio y Santa Ana) han perdido desde entonces territorio a favor de cuatro nuevas unidades, que no tienen datos; sus valores describen su territorio de 2015.",
+   "geography": "Municipio (map339, mapa de 2015)",
+   "period": "2012–2020",
+   "frequency": "Anual",
+   "categories": [
+    "Economía"
+   ],
+   "tags": [
+    "luces nocturnas",
+    "VIIRS",
+    "teledetección",
+    "datos de panel"
+   ],
+   "imageAlt": "Mapa del logaritmo de las luces nocturnas per cápita en 2020 en los 339 municipios de Bolivia del mapa de 2015, en tres clases de cortes naturales: más altas en Santa Cruz, el Chaco y el altiplano sur, más bajas en el norte de La Paz, partes de Pando y grupos en los valles de Potosí y Chuquisaca",
+   "mapAlt": "Mapa del logaritmo de las luces nocturnas per cápita en 2020 en los 339 municipios de Bolivia del mapa de 2015, en tres clases de cortes naturales: más altas en Santa Cruz, el Chaco y el altiplano sur, más bajas en el norte de La Paz, partes de Pando y grupos en los valles de Potosí y Chuquisaca. Leyenda: Alto 14.5 a 17.9 (108 municipios), Medio 13.0 a 14.5 (143), Bajo 10.5 a 13.0 (77), sin datos 15.",
+   "scope": "339 municipios (mapa de 2015) · 2012–2020"
+  },
+  "municipalities339-pop": {
+   "title": "Población",
+   "summary": "Dos décadas de estimaciones de población en grilla y de densidad de población para 339 municipios: el denominador de los indicadores per cápita y de los promedios ponderados por población.",
+   "description": "Estimaciones anuales de población para los 339 municipios de Bolivia del mapa de 2015, de 2001 a 2020, calculadas sumando la población en grilla de 1 km de WorldPop sobre cada municipio, y la densidad de población (personas por km²) de cada municipio. La población se suma hacia arriba en la jerarquía, por lo que da directamente los totales provinciales, departamentales y nacionales, y es el peso de los promedios ponderados por población de tasas como la pobreza. Son estimaciones en grilla, no las proyecciones oficiales del INE; la población censal de 2012 y 2024, para las 343 unidades, está en el conjunto de datos sdg. Los valores se calcularon sobre los polígonos de DS4Bolivia del mapa municipal de 2015, por lo que se publican en ese mapa, map339, para sus 339 municipios, que conservan sus geo IDs en el mapa de 343 unidades de 2025. Seis de ellos (Colquechaca, Mizque, Porco, Tomave, San Ignacio y Santa Ana) han perdido desde entonces territorio a favor de cuatro nuevas unidades, que no tienen datos; sus valores describen su territorio de 2015.",
+   "geography": "Municipio (map339, mapa de 2015)",
+   "period": "2001–2020",
+   "frequency": "Anual",
+   "categories": [
+    "Social"
+   ],
+   "tags": [
+    "población",
+    "WorldPop",
+    "demografía",
+    "datos de panel"
+   ],
+   "imageAlt": "Mapa de la densidad de población en 2020 en los 339 municipios de Bolivia del mapa de 2015, en tres clases de cortes naturales en escala logarítmica: más densa en las áreas urbanas de La Paz–El Alto, Cochabamba, Santa Cruz, Sucre y Tarija, intermedia en el altiplano y los valles, más dispersa en las tierras bajas del norte y del este",
+   "mapAlt": "Mapa de la densidad de población en 2020 en los 339 municipios de Bolivia del mapa de 2015, en tres clases de cortes naturales en escala logarítmica: más densa en las áreas urbanas de La Paz–El Alto, Cochabamba, Santa Cruz, Sucre y Tarija, intermedia en el altiplano y los valles, más dispersa en las tierras bajas del norte y del este. Leyenda: Alto 42 a 2860 personas por km² (55 municipios), Medio 4 a 42 (199), Bajo 0 a 4 (79), sin datos 10.",
+   "scope": "339 municipios (mapa de 2015) · 2001–2020"
+  },
+  "municipalities339-emb": {
+   "title": "Embeddings satelitales",
+   "summary": "Cómo se ven 339 municipios desde el espacio, cada uno comprimido por un modelo de aprendizaje profundo en 64 números: variables para el aprendizaje automático.",
+   "description": "Sesenta y cuatro dimensiones de embeddings satelitales (A00–A63) para los 339 municipios de Bolivia del mapa de 2015 en 2017, promediadas a partir del conjunto anual de 10 m Google Satellite Embedding (AlphaEarth Foundations). El modelo resume imágenes de Sentinel-2, Landsat y otras fuentes en variables abstractas que capturan la cobertura del suelo, la textura, los caminos y las edificaciones. Se publican dos versiones: `emb`, la media ponderada por superficie sobre cada municipio, y `embpw`, ponderada por población, de modo que describe dónde vive la gente. Las dimensiones no son interpretables una por una; son insumos para modelos, por ejemplo para predecir la pobreza. Los valores se calcularon sobre los polígonos de DS4Bolivia del mapa municipal de 2015, por lo que se publican en ese mapa, map339, para sus 339 municipios, que conservan sus geo IDs en el mapa de 343 unidades de 2025. Seis de ellos (Colquechaca, Mizque, Porco, Tomave, San Ignacio y Santa Ana) han perdido desde entonces territorio a favor de cuatro nuevas unidades, que no tienen datos; sus valores describen su territorio de 2015.",
+   "geography": "Municipio (map339, mapa de 2015)",
+   "period": "2017",
+   "frequency": "Un año",
+   "categories": [
+    "Medio ambiente",
+    "Economía"
+   ],
+   "tags": [
+    "embeddings satelitales",
+    "AlphaEarth",
+    "aprendizaje automático",
+    "teledetección"
+   ],
+   "imageAlt": "Mapa de la dimensión A00 de los embeddings satelitales (ponderada por superficie) en 2017 en los 339 municipios de Bolivia del mapa de 2015, en tres clases de cortes naturales: baja en el altiplano y los valles occidentales, media en Beni y Pando, alta en Santa Cruz y el Chaco",
+   "mapAlt": "Mapa de la dimensión A00 de los embeddings satelitales (ponderada por superficie) en 2017 en los 339 municipios de Bolivia del mapa de 2015, en tres clases de cortes naturales: baja en el altiplano y los valles occidentales, media en Beni y Pando, alta en Santa Cruz y el Chaco. Leyenda: Alto 0.046 a 0.164 (49 municipios), Medio −0.055 a 0.046 (94), Bajo −0.165 a −0.055 (190), sin datos 10.",
+   "scope": "339 municipios (mapa de 2015) · 64 dimensiones · 2017"
+  },
+  "geo4bolivia-package": {
+   "title": "geo4bolivia: encontrar, cargar, mapear y analizar los datos subnacionales de Bolivia",
+   "summary": "El paquete de Python del observatorio y el punto de partida. Busque cualquier variable, cargue cualquier indicador como un panel etiquetado con nombres y límites, mapéelo y ejecute los análisis fundamentales con una sola llamada cada uno: dependencia espacial, convergencia, desigualdad, regresión y modelos espaciales, y MGWR.",
+   "description": "geo4bolivia es la forma prevista de usar los datos del observatorio. Encuentra variables en todos los conjuntos de datos y las explica (fuentes, licencias, años efectivos, cómo citarlas), carga cualquier indicador en una línea como un panel ordenado con nombres de unidades, unidades superiores y límites, y lo traslada entre municipios, provincias y departamentos con la regla propia de cada variable. Luego mapea los datos y ejecuta por sí mismo los análisis fundamentales, cada uno con una sola llamada: exploración, I de Moran y conglomerados LISA, convergencia β, σ y por clubes, transiciones y movilidad de rangos, desigualdad de Gini y Theil, regresión, modelos de panel y espaciales, y GWR multiescala. Cada análisis devuelve una figura interactiva, una tabla y una lectura del resultado en palabras, y sus propias tablas y rásteres pueden vincularse a las mismas unidades.\n\nEl paquete tiene su propio repositorio y su propio sitio de documentación, con una guía de inicio, un artículo para cada método desarrollado con los datos de Bolivia y una referencia con un ejemplo para cada función; esta página es una breve introducción. Para métodos especializados, geo.for_expdpy() y geo.for_geometrics() entregan cualquier panel, etiquetado, a los dos paquetes complementarios, expdpy y geometrics.",
+   "tags": [
+    "Python",
+    "insignia",
+    "ciencia de datos espaciales",
+    "multiescala",
+    "Colab"
+   ],
+   "imageAlt": "geo4bolivia: ciencia de datos espaciales para los datos de desarrollo subnacional de Bolivia. Junto al título, la rueda de los Objetivos de Desarrollo Sostenible y los Andes de noche vistos desde la órbita, un satélite que capta las luces de las ciudades y un panel de pequeños gráficos",
+   "installNote": "La primera línea basta para cargar datos, hacer mapas y los análisis principales. Los extras añaden las bibliotecas de algunos métodos; instale solo los que necesite, o todos.",
+   "features": [
+    {
+     "title": "Encontrar y cargar",
+     "text": "Qué existe y qué significa cada variable; paneles con nombres, unidades superiores y límites, comparados entre periodos y agregados a provincias y departamentos."
+    },
+    {
+     "title": "Explorar",
+     "text": "Una primera mirada a cualquier variable: resúmenes etiquetados, distribuciones, las unidades con valores más altos y más bajos, correlaciones, relaciones y tendencias."
+    },
+    {
+     "title": "Mapas y dependencia espacial",
+     "text": "Mapas interactivos, continuos o por clases, de varios años lado a lado o del cambio; pesos espaciales, I de Moran y conglomerados LISA."
+    },
+    {
+     "title": "Convergencia y transiciones",
+     "text": "Si las unidades que partieron más abajo se ponen al día, y quiénes se movieron: convergencia β, σ y por clubes, transiciones de Markov y de Markov espacial, y movilidad de rangos."
+    },
+    {
+     "title": "Desigualdad",
+     "text": "Gini y Theil en cada año con la curva de Lorenz, y desigualdad entre y dentro de departamentos o provincias."
+    },
+    {
+     "title": "Modelos y MGWR",
+     "text": "Mínimos cuadrados, estimadores de panel con prueba de Hausman, modelos espaciales con efectos directos y de derrame, y pendientes locales que cambian de un lugar a otro."
+    },
+    {
+     "title": "Construya los suyos",
+     "text": "Sus tablas y rásteres en las unidades del observatorio, guardados en su formato documentado."
+    },
+    {
+     "title": "Ir más allá",
+     "text": "Insumos etiquetados para los paquetes complementarios: expdpy para métodos de panel especializados y geometrics para métodos espaciales especializados."
+    }
+   ],
+   "links": [
+    {
+     "label": "Documentación"
+    },
+    {
+     "label": "Primeros pasos en Colab"
+    },
+    {
+     "label": "Artículos"
+    },
+    {
+     "label": "Referencia de funciones"
+    },
+    {
+     "label": "PyPI"
+    },
+    {
+     "label": "Código fuente"
+    }
+   ]
+  },
+  "expdpy-package": {
+   "title": "expdpy: explorar y modelar datos de panel",
+   "summary": "Un paquete complementario para métodos especializados de datos de panel, más allá de los análisis incorporados en geo4bolivia: la división de la variación entre y dentro de unidades, efectos aleatorios correlacionados, variables instrumentales, estudios de eventos e inferencia robusta, cada uno con una lectura en lenguaje sencillo. geo4bolivia le entrega paneles bolivianos en una línea.",
+   "description": "geo4bolivia ejecuta por sí mismo los análisis de panel fundamentales: tendencias, regresiones y modelos agrupados (pooled), between, de efectos fijos y de efectos aleatorios con prueba de Hausman. expdpy (una adaptación a Python de ExPanDaR) es su complemento para ir más allá con paneles. Sus funciones de exploración describen la estructura de un panel, descomponen la variación en componentes entre y dentro de unidades (xtsum) y grafican trayectorias, distribuciones, transiciones, valores faltantes y correlaciones. Sus funciones de análisis añaden efectos aleatorios correlacionados, pruebas conjuntas, regresiones al estilo de fixest con efectos fijos y errores estándar agrupados (clustered) o de Driscoll–Kraay, inferencia por wild bootstrap, variables instrumentales y estudios de eventos. Sus funciones de aprendizaje simulan cada concepto a partir de una verdad conocida. Cada resultado tiene una figura o tabla interactiva y un método interpret(). Los conjuntos de datos del observatorio son exactamente los paneles largos que expdpy espera: geo.for_expdpy() se los entrega, etiquetados y con el departamento de cada municipio, en una línea. El Atlas de los ODS ofrece dos periodos (~2012 y ~2024) para 343 unidades; las luces nocturnas ofrecen un panel de nueve años (2012–2020) para los 339 municipios del mapa de 2015.",
+   "tags": [
+    "Python",
+    "datos de panel",
+    "econometría",
+    "efectos fijos",
+    "ExPanDaR"
+   ],
+   "imageAlt": "Trayectorias de las luces nocturnas per cápita de 339 municipios bolivianos, 2012–2020, con las medias departamentales y la división de su variación entre y dentro de unidades",
+   "features": [
+    {
+     "title": "Explorar",
+     "text": "Estructura del panel, variación dentro y entre unidades, trayectorias, distribuciones y transiciones."
+    },
+    {
+     "title": "Modelos de panel",
+     "text": "Agrupado (pooled), between, efectos fijos, aleatorios y aleatorios correlacionados, lado a lado."
+    },
+    {
+     "title": "Regresiones e inferencia",
+     "text": "Efectos fijos, errores agrupados y de Driscoll–Kraay, e inferencia por wild bootstrap."
+    },
+    {
+     "title": "Diseños causales",
+     "text": "Variables instrumentales, en cortes transversales y paneles, y estudios de eventos de tratamientos escalonados."
+    },
+    {
+     "title": "Convergencia y Kuznets",
+     "text": "Convergencia β, σ y por clubes no espacial; ondas de desigualdad y desarrollo."
+    },
+    {
+     "title": "Aprender",
+     "text": "Entornos didácticos que simulan a partir de una verdad conocida, y explicaciones en lenguaje sencillo."
+    }
+   ],
+   "tutorial": [
+    {
+     "title": "Un panel etiquetado y su estructura",
+     "text": "geo.for_expdpy() devuelve el panel y su diccionario de datos; ex.set_labels() declara la unidad (geo_id) y el tiempo (year) y adjunta las etiquetas."
+    },
+    {
+     "title": "Variación entre y dentro de unidades, transiciones",
+     "text": "xtsum divide la variación de cada variable en diferencias entre municipios y cambios dentro de ellos; la matriz de transición muestra cómo se movieron las unidades entre quintiles de ~2012 a ~2024."
+    },
+    {
+     "title": "Un panel más largo: luces nocturnas, 2012–2020",
+     "text": "Nueve años de luces per cápita para 339 municipios: una línea por municipio y la media por departamento."
+    },
+    {
+     "title": "Agrupado, between, efectos fijos y aleatorios",
+     "text": "¿Se asocia el desarrollo sostenible con el crecimiento de la población? Combine el IDS con el logaritmo de la población censal y compare los cuatro estimadores; la prueba de Hausman elige entre efectos fijos y aleatorios. Con dos periodos y sin efectos de año, la pendiente de efectos fijos también absorbe el aumento común a todos los municipios, así que debe leerse con cuidado."
+    }
+   ],
+   "links": [
+    {
+     "label": "Documentación"
+    },
+    {
+     "label": "Una pregunta, tres paquetes en Colab"
+    },
+    {
+     "label": "PyPI"
+    },
+    {
+     "label": "Código fuente"
+    },
+    {
+     "label": "Aplicación Analyze sin código"
+    }
+   ]
+  },
+  "geometrics-package": {
+   "title": "geometrics: crecimiento regional, convergencia y desigualdad",
+   "summary": "Un paquete complementario para métodos espaciales especializados, más allá de los análisis incorporados en geo4bolivia: si los resultados de un modelo espacial resisten un cambio de matriz de pesos, y entornos didácticos que simulan cada concepto de crecimiento regional, convergencia y desigualdad a partir de una verdad conocida. geo4bolivia le entrega datos bolivianos en una línea.",
+   "description": "Las funciones de análisis propias de geo4bolivia (mapas, I de Moran y conglomerados LISA, convergencia β, σ y por clubes, transiciones de Markov, Gini y Theil, modelos espaciales y MGWR) provienen de geometrics, de modo que para lo fundamental basta con geo4bolivia. geometrics es su complemento para ir más allá con el espacio, y funciona con cualquier panel regional, no solo el de Bolivia. Reestima un modelo espacial con matrices de pesos alternativas, para comprobar que sus efectos de derrame no dependen de a quién se considera vecino; ajusta regresiones geográficamente ponderadas de un solo ancho de banda junto a las multiescala; y enseña cada concepto con entornos didácticos que lo simulan a partir de una verdad conocida y con explicaciones en lenguaje sencillo. Cada resultado trae una figura interactiva, una tabla y un método interpret() que lo explica en palabras. geo.for_geometrics() prepara para él cualquiera de los conjuntos de datos del observatorio, con límites y etiquetas. El tutorial siguiente recorre sus funciones principales con el Índice de Desarrollo Sostenible del Atlas de los ODS 2026: dónde se concentra el índice, si los municipios convergieron entre ~2012 y ~2024, y si las brechas se redujeron entre o dentro de los departamentos.",
+   "tags": [
+    "Python",
+    "econometría espacial",
+    "convergencia",
+    "desigualdad",
+    "PySAL"
+   ],
+   "imageAlt": "Mapa de conglomerados LISA del Índice de Desarrollo Sostenible en los 343 municipios de Bolivia hacia 2024, con conglomerados alto-alto alrededor de La Paz, los valles de Cochabamba y Chuquisaca y el Chaco, y su diagrama de dispersión de Moran (I de Moran = 0.47)",
+   "features": [
+    {
+     "title": "Explorar",
+     "text": "Mapas, pesos espaciales, I de Moran y conglomerados locales, a lo largo del tiempo."
+    },
+    {
+     "title": "Converger",
+     "text": "Convergencia β, σ y por clubes, incluidos modelos espaciales."
+    },
+    {
+     "title": "Modelar",
+     "text": "SAR, SEM, SLX y SDM con impactos, su robustez ante distintas matrices de pesos, y regresiones locales."
+    },
+    {
+     "title": "Desigualdad y dinámica",
+     "text": "Gini y Theil (entre y dentro de grupos), cadenas de Markov y de Markov espacial."
+    },
+    {
+     "title": "Aprender",
+     "text": "Simulaciones a partir de una verdad conocida y explicaciones en lenguaje sencillo sobre 30 temas."
+    }
+   ],
+   "tutorial": [
+    {
+     "title": "Insumos: un panel, límites y pesos espaciales",
+     "text": "geo.for_geometrics() devuelve los límites, el panel largo y su diccionario de datos; groups añade el departamento de cada municipio para las descomposiciones. Los pesos de tipo reina (queen) vinculan los municipios que comparten un límite (uno sin vecinos se une al más cercano)."
+    },
+    {
+     "title": "Dependencia espacial en cada periodo",
+     "text": "La I de Moran mide si los valores similares se agrupan; los mapas LISA muestran dónde. Compare los dos periodos para ver si la concentración se fortaleció."
+    },
+    {
+     "title": "Convergencia β, con y sin espacio",
+     "text": "Regrese el crecimiento entre los periodos sobre el nivel inicial. Un modelo de rezago espacial (model=\"sar\") separa el acercamiento propio de un municipio del de sus vecinos. La convergencia σ requiere tres o más periodos; con dos, compare la dispersión con analyze_inequality_over_time()."
+    },
+    {
+     "title": "Desigualdad entre y dentro de departamentos",
+     "text": "El índice de Theil divide la desigualdad en una parte entre departamentos y una parte dentro de ellos; Gini y Theil por periodo muestran si las brechas se redujeron."
+    }
+   ],
+   "links": [
+    {
+     "label": "Documentación"
+    },
+    {
+     "label": "Una pregunta, tres paquetes en Colab"
+    },
+    {
+     "label": "PyPI"
+    },
+    {
+     "label": "Código fuente"
+    }
+   ]
+  },
+  "geo4bolivia-quickstart": {
+   "title": "Encontrar, cargar y comprender los datos subnacionales de Bolivia con geo4bolivia",
+   "summary": "Un recorrido por el paquete geo4bolivia en un notebook de Colab: descubrir los conjuntos de datos y su documentación, cargar paneles con y sin el paquete, describir y mapear una variable, comparar ~2012 con ~2024, trasladar datos entre escalas, vincular una tabla propia, construir un indicador a partir de un ráster y dar un primer vistazo a los análisis incorporados.",
+   "description": "Este notebook de Colab (un cuaderno de Jupyter) presenta el paquete geo4bolivia paso a paso con los datos de los 343 municipios y autonomías indígenas de Bolivia. Busca en el catálogo, lee la documentación de un conjunto de datos, sus años de referencia efectivos y su cita, y carga los mismos archivos como URL directas y con el paquete, con nombres y departamentos. Describe la educación por periodo y por departamento y la mapea de forma interactiva. Compara los dos periodos del Índice de Desarrollo Sostenible: el índice subió en 342 de las 343 unidades, 10 puntos en promedio, y subió más donde partía más bajo (correlación −0.43). Agregada con pesos de población censal, la pobreza multidimensional nacional bajó de 0.133 a 0.033, y la de cada departamento cayó a entre el 18% y el 32% de su valor de 2012; las luces nocturnas cubren los 339 municipios del mapa de 2015 (map339), y la columna de cobertura muestra los pocos que no tienen un valor original en 2020. Luego el notebook vincula tablas por nombres de departamento en cualquier grafía y por códigos del INE, muestra cómo se informan los nombres compartidos y las erratas, construye un indicador de acceso a mercados a partir de un ráster con estadísticas zonales, distribuye la población del censo de 2024 en una grilla de 25 km y guarda el resultado en el formato del observatorio. Su última parte presenta los análisis incorporados del paquete, cada uno con una sola llamada, una figura interactiva y una lectura del resultado en palabras, y remite al sitio de documentación del paquete para lo demás.",
+   "tags": [
+    "geo4bolivia",
+    "inicio rápido",
+    "Python",
+    "Colab"
+   ],
+   "imageAlt": "Mapa de la pobreza multidimensional por departamento de Bolivia en 2024, ponderada por la población censal",
+   "links": [
+    {
+     "label": "Abrir en Colab"
+    },
+    {
+     "label": "Ver en GitHub"
+    },
+    {
+     "label": "Documentación del paquete"
+    }
+   ]
+  },
+  "mpi-eda": {
+   "title": "Análisis exploratorio de datos de la pobreza multidimensional",
+   "summary": "Cómo varía la pobreza multidimensional entre 343 municipios y 9 departamentos, cómo cambió entre los censos de 2012 y 2024, y cómo se relaciona con la población y las luces nocturnas.",
+   "description": "Este notebook de Colab explora el Índice de Pobreza Multidimensional de los censos de 2012 y 2024, del Atlas de los ODS en Bolivia 2026, en los 343 municipios y autonomías indígenas de Bolivia. La pobreza bajó en todas las unidades: la media municipal cayó de 0.234 a 0.063 y la media ponderada por población de 0.133 a 0.033. Chuquisaca y Potosí tienen los municipios más pobres en ambos periodos y Tarija los menos pobres, pero la pobreza varía mucho más dentro de los departamentos que entre ellos (los departamentos explican alrededor de una quinta parte de la varianza). Los lugares más pobres fueron los que más redujeron su pobreza en términos absolutos, y el ordenamiento se mantuvo (correlación 0.86). En las 339 unidades del mapa de 2015, que cuentan con datos satelitales, los municipios más iluminados son menos pobres (correlación −0.54 en 2012), y la relación es negativa en los nueve departamentos.",
+   "tags": [
+    "AED",
+    "pobreza",
+    "luces nocturnas",
+    "Python"
+   ],
+   "imageAlt": "Diagrama de dispersión de la pobreza multidimensional frente al logaritmo de las luces nocturnas per cápita para 339 municipios bolivianos en 2012, con una recta ajustada negativa (r = −0.54)",
+   "links": [
+    {
+     "label": "Abrir en Colab"
+    },
+    {
+     "label": "Ver en GitHub"
+    }
+   ]
+  },
+  "mpi-esda": {
+   "title": "Análisis exploratorio de datos espaciales de la pobreza",
+   "summary": "¿Es un municipio tan pobre como sus vecinos? I de Moran y conglomerados LISA de la pobreza multidimensional en 343 municipios, en 2012 y 2024.",
+   "description": "Este notebook de Colab mapea el Índice de Pobreza Multidimensional del Atlas de los ODS en Bolivia 2026 en 2012 y 2024 y mide su dependencia espacial con pesos de los seis vecinos más cercanos. La pobreza bajó un 73% en promedio, pero sigue fuertemente concentrada: la I de Moran es 0.45 en 2012 y 0.39 en 2024 (pseudo p = 0.001). Al nivel del 5%, los puntos calientes de pobreza bajaron de 43 a 27 y ahora se concentran donde confluyen Chuquisaca, Potosí y Cochabamba; el punto caliente de Pando de 2012 desapareció. Los conglomerados de baja pobreza (70, luego 71) se desplazaron hacia Santa Cruz y Tarija.",
+   "tags": [
+    "AEDE",
+    "autocorrelación espacial",
+    "LISA",
+    "geo4bolivia"
+   ],
+   "imageAlt": "Mapa de conglomerados LISA de la pobreza multidimensional en 2024: 27 conglomerados de alta pobreza donde confluyen Chuquisaca, Potosí y Cochabamba y 71 conglomerados de baja pobreza, sobre todo alrededor de Santa Cruz",
+   "links": [
+    {
+     "label": "Abrir en Colab"
+    },
+    {
+     "label": "Ver en GitHub"
+    }
+   ]
+  },
+  "mpi-esda-dependence": {
+   "title": "Distribución espacial y dependencia de la pobreza",
+   "summary": "Mapas de diagrama de caja y de cortes naturales de la pobreza multidimensional, con el rezago espacial, la I de Moran y los conglomerados LISA en 2012 y 2024.",
+   "description": "Este notebook de Colab clasifica los 343 municipios y autonomías indígenas de Bolivia según su pobreza multidimensional en 2012 y 2024 con cortes de diagrama de caja y de Fisher–Jenks: el índice mediano bajó de 0.227 a 0.053, y los valores atípicos altos del diagrama de caja subieron de 2 a 12, encabezados por TIOC-Raqaypampa y Poroma, que redujeron su pobreza mucho menos que la unidad mediana. La dependencia espacial sigue siendo fuerte con pesos de los seis vecinos más cercanos (la I de Moran, pendiente de la regresión del rezago espacial, es 0.45 y luego 0.39). Al nivel del 10%, LISA encuentra 52 puntos calientes de pobreza en 2012 y 36 en 2024, concentrados en Potosí, Chuquisaca y Cochabamba, y 83 y 85 conglomerados de baja pobreza, cada vez más en Santa Cruz.",
+   "tags": [
+    "AEDE",
+    "clasificación de mapas",
+    "I de Moran",
+    "geo4bolivia"
+   ],
+   "imageAlt": "Mapa de la pobreza multidimensional en 2024 en los 343 municipios de Bolivia clasificados con cortes de diagrama de caja, con 12 valores atípicos altos",
+   "links": [
+    {
+     "label": "Abrir en Colab"
+    },
+    {
+     "label": "Ver en GitHub"
+    }
+   ]
+  },
+  "mpi-esda-inequality": {
+   "title": "Desigualdad espacial de la pobreza y de las luces nocturnas",
+   "summary": "Gini, Theil entre y dentro de departamentos, y el Gini espacial de la pobreza multidimensional en 2012 y 2024, y de las luces nocturnas.",
+   "description": "Este notebook de Colab mide la desigualdad del Índice de Pobreza Multidimensional en los 343 municipios y autonomías indígenas de Bolivia en 2012 y 2024, y la del logaritmo de las luces nocturnas per cápita en 2012 en las 339 unidades del mapa de 2015. A medida que la pobreza bajó, su desigualdad relativa aumentó: el Gini pasó de 0.25 a 0.37 y el índice de Theil de 0.10 a 0.22, mientras la dispersión absoluta se redujo. Alrededor del 79% de la desigualdad de la pobreza se da dentro de los departamentos en ambos periodos (83% en el caso de las luces). Las pruebas del Gini espacial (p = 0.001) muestran que los municipios vecinos se parecen más entre sí que pares aleatorios, y una tabla departamental compara la pobreza simple y la ponderada por población censal (0.133 a nivel nacional en 2012 y 0.033 en 2024).",
+   "tags": [
+    "desigualdad",
+    "Theil",
+    "Gini",
+    "Gini espacial"
+   ],
+   "imageAlt": "Mapa por quintiles de la pobreza multidimensional en 2024 en los 343 municipios de Bolivia, con los límites de los nueve departamentos usados para descomponer la desigualdad",
+   "links": [
+    {
+     "label": "Abrir en Colab"
+    },
+    {
+     "label": "Ver en GitHub"
+    }
+   ]
+  },
+  "mpi-esda-heterogeneity": {
+   "title": "¿Dónde predicen las luces la pobreza? GWR multiescala",
+   "summary": "¿Se vincula la luz nocturna con la pobreza de la misma manera en todas partes? Una regresión nacional y una regresión geográficamente ponderada multiescala (MGWR) de la pobreza municipal sobre las luces per cápita, para 2012 y 2024.",
+   "description": "Este notebook de Colab regresa el índice de pobreza multidimensional del Atlas de los ODS en Bolivia 2026 sobre el logaritmo de las luces nocturnas per cápita para los 339 municipios con datos de luces (el mapa de 2015), primero en 2012 y luego con la pobreza de 2024 sobre las luces de 2020. Una sola pendiente nacional explica el 29% de la variación en 2012. Una regresión geográficamente ponderada multiescala (MGWR, con geo.mgwr de geo4bolivia), que permite que el intercepto y la pendiente varíen en el espacio, cada uno a su propia escala, con anchos de banda de 44 vecinos para el intercepto y 65 para la pendiente, eleva el R² a 0.65. Todas las pendientes locales son negativas, pero el vínculo es unas cuatro veces más fuerte en Cochabamba que en Beni. Para 2024 el vínculo es algo más débil (R² nacional de 0.25) y el ancho de banda de la pendiente se amplía a 101 vecinos.",
+   "tags": [
+    "MGWR",
+    "heterogeneidad espacial",
+    "luces nocturnas",
+    "geo4bolivia"
+   ],
+   "imageAlt": "Mapa de las pendientes locales significativas de una GWR multiescala de la pobreza sobre las luces nocturnas en 2012 en 339 municipios bolivianos (ancho de banda 65), más pronunciadas en Cochabamba, Chuquisaca y Potosí",
+   "links": [
+    {
+     "label": "Abrir en Colab"
+    },
+    {
+     "label": "Ver en GitHub"
+    }
+   ]
+  },
+  "mpi-eda-esda": {
+   "title": "La pobreza en Bolivia: un AED y AEDE ampliado",
+   "summary": "Análisis exploratorio y espacial de la pobreza multidimensional en 343 municipios, 2012 y 2024: correlatos, conglomerados, LISA bivariado con luces nocturnas, desigualdad y una GWR multiescala.",
+   "description": "Este notebook de Colab usa el Atlas de los ODS en Bolivia 2026 para explorar la pobreza multidimensional en 343 municipios y autonomías indígenas en torno a los censos de 2012 y 2024. El índice municipal bajó de un promedio de 0.234 a 0.063, en todas las unidades, pero el ordenamiento apenas cambió (correlación de rangos 0.86). La pobreza se mueve más estrechamente con la cobertura eléctrica y los teléfonos (Spearman de alrededor de −0.9) y está fuertemente concentrada (I de Moran de 0.45 en 2012 y 0.39 en 2024), con puntos calientes en los valles de Chuquisaca, Potosí y Cochabamba. Un LISA bivariado en las 339 unidades con luces (el mapa de 2015) muestra que los municipios pobres tienden a tener vecinos oscuros (I de Moran bivariada −0.27). La desigualdad relativa aumentó a medida que la pobreza bajó (Gini de 0.25 a 0.37), y una regresión geográficamente ponderada multiescala (MGWR) muestra que el vínculo entre luces y pobreza es negativo en todas partes, pero más fuerte en los valles del centro-sur.",
+   "tags": [
+    "AED",
+    "AEDE",
+    "LISA bivariado",
+    "infraestructura"
+   ],
+   "imageAlt": "Mapa LISA bivariado de 339 municipios bolivianos que relaciona la pobreza de cada uno en 2012 con las luces nocturnas de sus vecinos",
+   "links": [
+    {
+     "label": "Abrir en Colab"
+    },
+    {
+     "label": "Ver en GitHub"
+    }
+   ]
+  },
+  "three-packages": {
+   "title": "Una pregunta, tres paquetes: ¿convergieron los municipios de Bolivia?",
+   "summary": "Una pregunta, ¿convergió el Índice de Desarrollo Sostenible de los 343 municipios de Bolivia entre ~2012 y ~2024?, respondida solo con geo4bolivia: cargar, mapear, convergencia β, desigualdad y conglomerados espaciales. Luego uno o dos pasos especializados con cada paquete complementario: expdpy para paneles y geometrics para el espacio.",
+   "description": "Este notebook de Colab responde la pregunta solo con geo4bolivia y luego muestra hasta dónde llegan sus dos paquetes complementarios. Con geo4bolivia encuentra y carga el Índice de Desarrollo Sostenible del Atlas de los ODS 2026, mapea ambos periodos en clases comunes, prueba la convergencia β, compara la desigualdad en los dos periodos y localiza los conglomerados espaciales, cada paso con una sola llamada que termina con una lectura del resultado en lenguaje sencillo. Luego entrega el mismo panel a expdpy (geo.for_expdpy) para uno o dos pasos de panel especializados, como la división de la variación en diferencias entre municipios y cambios dentro de ellos, y a geometrics (geo.for_geometrics) para uno o dos pasos espaciales especializados, como comprobar que los resultados de un modelo espacial no dependen de la elección de la matriz de pesos.",
+   "tags": [
+    "geo4bolivia",
+    "expdpy",
+    "geometrics",
+    "convergencia",
+    "ODS"
+   ],
+   "imageAlt": "Tres paneles vinculados: una búsqueda en el catálogo con geo4bolivia, las trayectorias del Índice de Desarrollo Sostenible por departamento con expdpy, y un mapa de conglomerados LISA de los 343 municipios de Bolivia con geometrics",
+   "links": [
+    {
+     "label": "Abrir en Colab"
+    },
+    {
+     "label": "Ver en GitHub"
+    }
+   ]
+  },
+  "sdg-dynamics": {
+   "title": "Dinámica del desarrollo sostenible en Bolivia, 2012–2024",
+   "summary": "Cómo cambiaron el Índice de Desarrollo Sostenible y sus 15 objetivos en los 343 municipios y autonomías indígenas de Bolivia entre los censos de 2012 y 2024: avances, convergencia, movilidad de rangos y concentración espacial.",
+   "description": "Con el Atlas de los ODS en Bolivia 2026 cargado mediante geo4bolivia, este notebook de Colab compara el Índice de Desarrollo Sostenible (IDS), sus 15 índices de objetivos y la pobreza multidimensional hacia los censos de 2012 y 2024. El IDS subió en 342 de las 343 unidades, 10 puntos en promedio, impulsado por la infraestructura, la educación, el trabajo decente y la reducción de la pobreza, mientras que la acción por el clima retrocedió porque más familias fueron afectadas por eventos extremos y los incendios emitieron más CO₂. Con las funciones propias de geo4bolivia estima la convergencia β (las unidades que partieron más abajo ganaron más, con una vida media de unos 20 años) y compara la dispersión entre periodos: las brechas del IDS se redujeron, y la pobreza bajó más donde era más alta, aunque las brechas relativas de pobreza se ampliaron. También mide la movilidad de rangos (Spearman 0.84) y usa la I de Moran y los conglomerados LISA para mostrar que los avances se concentraron alrededor de El Alto, en los valles de Cochabamba y Chuquisaca y en el norte, y se rezagaron en el este de Santa Cruz.",
+   "tags": [
+    "ODS",
+    "convergencia",
+    "análisis espacial",
+    "geo4bolivia"
+   ],
+   "imageAlt": "Diagrama de dispersión del cambio del Índice de Desarrollo Sostenible entre ~2012 y ~2024 frente a su valor inicial para 343 municipios bolivianos, con una recta ajustada descendente (r = −0.43): las unidades que partieron más abajo ganaron más",
+   "links": [
+    {
+     "label": "Abrir en Colab"
+    },
+    {
+     "label": "Ver en GitHub"
+    }
+   ]
+  },
+  "embeddings-mpi-ml": {
+   "title": "Predecir la pobreza con embeddings satelitales",
+   "summary": "Modelos de aprendizaje automático predicen la pobreza multidimensional municipal de 2012 y 2024 a partir de embeddings satelitales de 2017 y luces nocturnas, con validación cruzada aleatoria y espacial.",
+   "description": "Este notebook de Colab entrena bosques aleatorios y XGBoost para predecir el Índice de Pobreza Multidimensional del Atlas de los ODS en Bolivia 2026 para los censos de 2012 y 2024 a partir de las 64 dimensiones de los embeddings satelitales de Google de 2017, y los compara con una línea base de luces nocturnas y población. Usa los 339 municipios del mapa de 2015 sobre los que se calcularon las variables. Con validación cruzada aleatoria de 5 particiones, los embeddings ponderados por población más las luces explican el 64% de la varianza de la pobreza de 2012 y el 52% de la de 2024, frente a un máximo de 38% con luces y población solamente. Cuando se deja fuera un departamento entero, el mejor R² cae a 0.32 y 0.20, y los errores se agrupan por departamento; los mapas de los residuos fuera de la partición muestran dónde fallan los modelos, por ejemplo en Pando en 2012.",
+   "tags": [
+    "aprendizaje automático",
+    "embeddings satelitales",
+    "pobreza",
+    "validación cruzada espacial"
+   ],
+   "imageAlt": "Diagrama de dispersión de la pobreza multidimensional predicha fuera de la partición frente a la observada en 2012 para 339 municipios, con XGBoost sobre embeddings satelitales, luces y población, validación cruzada aleatoria de 5 particiones, R² 0.62",
+   "links": [
+    {
+     "label": "Abrir en Colab"
+    },
+    {
+     "label": "Ver en GitHub"
+    }
+   ]
+  },
+  "geoexplorer": {
+   "title": "GeoExplorer v1.0: Bolivia desde el espacio",
+   "summary": "Deslice entre 2013 y 2019 para ver cómo cambiaron la población, las luces nocturnas, la cobertura del suelo y el PIB en los municipios de Bolivia.",
+   "description": "Una aplicación de Earth Engine, “Explorando el desarrollo regional en Bolivia: una mirada desde el espacio”. Elija una capa (densidad de población de WorldPop, luces nocturnas VIIRS, cobertura del suelo o PIB en grilla) y arrastre el deslizador para comparar 2013 con 2019 lado a lado. Haga clic en cualquier municipio para graficar su cambio. Ciudades como Santa Cruz de la Sierra muestran lo rápido que se han extendido las luces urbanas. Desarrollada para DS4Bolivia por Carlos Mendez (Universidad de Nagoya).",
+   "tags": [
+    "Earth Engine",
+    "luces nocturnas",
+    "población",
+    "mapa interactivo"
+   ],
+   "imageAlt": "Aplicación de Earth Engine que compara las luces nocturnas sobre Santa Cruz de la Sierra en 2013 y 2019 con un deslizador",
+   "links": [
+    {
+     "label": "Abrir la aplicación"
+    },
+    {
+     "label": "Código fuente"
+    }
+   ]
+  },
+  "sdg-atlas-bolivia": {
+   "title": "El Atlas subnacional de los ODS en Bolivia",
+   "summary": "El Atlas de los Objetivos de Desarrollo Sostenible en Bolivia mide cuánto ha avanzado cada municipio y autonomía indígena hacia los objetivos entre los censos de 2012 y 2024, con un índice para cada objetivo, un índice general y los indicadores que los componen.",
+   "description": "El Atlas de los ODS en Bolivia 2026, liderado por SDSN Bolivia, mide las brechas y tendencias del desarrollo sostenible en las entidades territoriales autónomas de Bolivia entre 2012 y 2024. Abarca los 343 municipios y autonomías indígenas (GAIOC) existentes en 2025, además de los departamentos y la región del Gran Chaco, con 81 indicadores de 15 Objetivos de Desarrollo Sostenible tomados principalmente de los Censos de Población y Vivienda de 2012 y 2024 y de registros oficiales de salud, educación, finanzas, energía y presupuestos públicos, complementados con datos satelitales sobre clima y territorio. Cada indicador se mide dos veces, hacia cada censo, y se reescala de 0 (peor situación) a 100 (meta cumplida); cada índice del objetivo es la media de sus indicadores y el Índice de Desarrollo Sostenible (IDS) la media de los 15 índices de objetivos, siguiendo el Índice ODS global de SDSN. El Atlas encuentra avances casi universales, con un IDS de Bolivia que sube de 57.4 a 66.0, y convergencia territorial: las entidades que partieron más rezagadas avanzaron más. Su edición anterior, el Atlas Municipal de los ODS 2020, cubría 339 municipios en un solo momento. El observatorio publica los datos municipales de 2026 como dieciséis conjuntos de datos: el IDS (sdg) y un conjunto de datos por objetivo (sdg01 a sdg17), cada uno en ambos periodos.",
+   "tags": [
+    "ODS",
+    "municipios",
+    "atlas",
+    "desarrollo sostenible"
+   ],
+   "imageAlt": "Los 343 municipios y autonomías indígenas de Bolivia sombreados según el Índice de Desarrollo Sostenible hacia 2024, del rosa (bajo) al turquesa (alto), sobre una ilustración del Salar de Uyuni de noche",
+   "team": "SDSN Bolivia (Universidad Privada Boliviana): Lykke E. Andersen, Fabiana Argandoña y el equipo técnico de SDSN Bolivia",
+   "status": "Atlas 2026 (2012–2024) publicado; sus datos municipales están en el observatorio",
+   "links": [
+    {
+     "label": "Visitar el Atlas"
+    }
+   ]
+  },
+  "regional-shocks-spillovers": {
+   "title": "Choques regionales y efectos de derrame",
+   "summary": "Métodos de control sintético para choques regionales cuyos efectos se filtran a regiones vecinas, con scspill, un paquete abierto de Python que estima tanto el efecto directo como los efectos de derrame.",
+   "description": "Cuando una política o un choque afecta a una región, sus efectos rara vez se detienen en el límite: las regiones vecinas comercian, migran e invierten a través de él. El método de control sintético estándar construye un contrafactual para la región tratada a partir de regiones “donantes” no tratadas, y está sesgado cuando esas donantes también resultan afectadas. Este proyecto desarrolla scspill, un paquete de Python para control sintético con efectos de derrame, que estima el efecto sobre la región tratada junto con un efecto de derrame sobre cada donante. Implementa el modelo bayesiano espacial autorregresivo de Sakaguchi y Tagawa, con una única intensidad de derrame estimada por Metropolis dentro de Gibbs, y el método de Cao y Dowd para una estructura de exposición conocida, con pruebas de hipótesis, gráficos y un motor de Monte Carlo. Los casos de estudio desarrollados incluyen la Proposición 99 de California y la secesión de Sudán del Sur en 2011.",
+   "tags": [
+    "control sintético",
+    "efectos de derrame",
+    "inferencia causal",
+    "Python"
+   ],
+   "imageAlt": "Ilustración de La Paz y El Alto de noche bajo el Illimani, con anillos de luz rosa que se extienden desde la ciudad por el Altiplano hasta las luces turquesa de los pueblos cercanos",
+   "team": "Carlos Mendez, Shosei Sakaguchi y Hayato Tagawa (laboratorio QuaRCS)",
+   "status": "En curso; scspill 0.3.0 publicado",
+   "links": [
+    {
+     "label": "Visitar el proyecto"
+    }
+   ]
+  },
+  "local-pollution-dynamics": {
+   "title": "Monitoreo de la dinámica espacio-temporal de la contaminación local",
+   "summary": "Observaciones satelitales de la contaminación del aire, seguidas en los municipios de Bolivia, para ver dónde se acumula la contaminación, cómo se propaga y cómo cambia en el tiempo.",
+   "description": "Este proyecto monitorea la contaminación local del aire en Bolivia con datos satelitales, siguiendo cómo cambia en el espacio y en el tiempo a nivel municipal: dónde se concentra, cómo se relaciona la contaminación de un lugar con la de sus vecinos y cómo cambian sus patrones con el tiempo. Sus datos y métodos se publicarán en el observatorio a medida que estén disponibles.",
+   "tags": [
+    "contaminación del aire",
+    "teledetección",
+    "dinámica espacio-temporal",
+    "medio ambiente"
+   ],
+   "imageAlt": "Ilustración de las tierras bajas alrededor de Santa Cruz de la Sierra al atardecer, con una bruma rosa sobre las luces de la ciudad y un satélite que la explora desde arriba",
+   "status": "En preparación"
+  },
+  "human-capital-paper": {
+   "title": "Restricciones al capital humano y las regiones de Bolivia",
+   "summary": "Dónde se concentran la desnutrición, las barreras lingüísticas, el abandono escolar y la desigualdad educativa en 339 municipios, y cómo dividen a Bolivia en siete u ocho regiones.",
+   "description": "Este estudio mapea cinco restricciones al capital humano en los 339 municipios de Bolivia: la desnutrición crónica infantil, la proporción de la población que no habla castellano, las tasas de abandono de la secundaria de varones y de mujeres, y la desigualdad en los años de educación. Las resume con componentes principales, identifica dónde se agrupan en el espacio los valores altos y bajos (puntos calientes y puntos fríos) y agrupa en regiones los municipios que son a la vez similares y contiguos. Usó el Atlas Municipal de los ODS 2020; los datos del Atlas 2026 del observatorio tienen equivalentes cercanos de los cinco indicadores, medidos hacia 2012 y hacia 2024, en sus conjuntos de datos por objetivo sdg02, sdg04 y sdg10.",
+   "tags": [
+    "capital humano",
+    "educación",
+    "concentración espacial",
+    "regionalización"
+   ],
+   "imageAlt": "Cinco mapas por quintiles de los 343 municipios de Bolivia hacia 2024, del Atlas de los ODS 2026: desnutrición crónica infantil, población que no habla castellano, abandono de la secundaria de varones y de mujeres, y desigualdad en los años de educación",
+   "subtype": "Artículo",
+   "links": [
+    {
+     "label": "Leer el artículo"
+    }
+   ],
+   "summarySections": [
+    {
+     "h": "Datos",
+     "p": "Cinco indicadores del Atlas Municipal de los ODS 2020 para 339 municipios: desnutrición crónica infantil, población que no habla castellano, abandono de la secundaria de varones y de mujeres, y desigualdad de los años de educación."
+    },
+    {
+     "h": "Método",
+     "p": "Los componentes principales resumen las cinco restricciones; las medidas de dependencia espacial identifican puntos calientes y puntos fríos; un análisis de regionalización agrupa los municipios que son similares en sus restricciones y cercanos en el espacio."
+    },
+    {
+     "h": "Resultados",
+     "p": "Las restricciones al capital humano están concentradas espacialmente, y Bolivia puede dividirse en siete u ocho regiones geográficas que comparten restricciones similares."
+    },
+    {
+     "h": "Amplíelo",
+     "p": "El artículo usó la edición 2020 del Atlas. La edición 2026 tiene equivalentes cercanos de sus cinco indicadores en dos periodos, ~2012 y ~2024, para 343 municipios: la desnutrición crónica en menores de 5 años (sdg2_2_dcn en sdg02), la población que no habla castellano (sdg10_2_esp en sdg10), las tasas de abandono de la secundaria de mujeres y varones (sdg4_1_asm y sdg4_1_ash en sdg04) y el coeficiente de Gini de los años de educación (sdg10_4_gin en sdg10). Permiten actualizar el análisis y preguntarse si las regiones que encontró persistieron. Las definiciones difieren de las de la edición 2020, por lo que los valores no son directamente comparables con los del artículo."
+    }
+   ]
+  }
+ }
+}

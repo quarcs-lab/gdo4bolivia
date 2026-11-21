@@ -6,6 +6,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import L from 'leaflet';
 import { MAP_VIEW } from './content.js';
+import { t, language, fetchMetadataTranslation } from './i18n.js';
 
 const SITE = __SITE_CONFIG__;   // project.yaml `site`, injected by the build
 const COLORS = { background: '#071417', no_data: '#5c6b6a', classes: ['#1f8a80', '#ec8f99', '#ffd9de'], ...(SITE.colors || {}) };
@@ -20,7 +21,7 @@ const boundaryCredit = (scale) => {
   const own = creditOf(scale);
   const outlines = creditOf('department');
   if (!own) return '';
-  return `Boundaries: ${own}${outlines && outlines !== own ? `; department outlines: ${outlines}` : ''}`;
+  return `${t('Boundaries:')} ${own}${outlines && outlines !== own ? `; ${t('department outlines:')} ${outlines}` : ''}`;
 };
 // Change maps: falls (most negative first) and rises (smallest first), up to three classes each
 const FALLS = ['#13605f', '#3f9c8f', '#9fd3c7'];
@@ -70,8 +71,8 @@ const ramp = (anchors, k) => Array.from({ length: k }, (_, i) => {
 const PALETTE = COLORS.ramp && COLORS.ramp.length === N_CLASSES ? COLORS.ramp : ramp(COLORS.classes, N_CLASSES);
 
 const fmt = (v) => {
-  if (v === null || v === undefined) return 'No data';
-  if (Number.isNaN(v)) return 'No data';
+  if (v === null || v === undefined) return t('No data');
+  if (Number.isNaN(v)) return t('No data');
   const a = Math.abs(v);
   if (a >= 1000) return Math.round(v).toLocaleString('en-US');
   if (a >= 100) return v.toFixed(1);
@@ -79,7 +80,7 @@ const fmt = (v) => {
   return String(Number(v.toPrecision(3)));
 };
 
-const signed = (v) => (v === null || v === undefined || Number.isNaN(v) ? 'No data' : `${v > 0 ? '+' : ''}${fmt(v)}`);
+const signed = (v) => (v === null || v === undefined || Number.isNaN(v) ? t('No data') : `${v > 0 ? '+' : ''}${fmt(v)}`);
 
 // Classes of a change split at zero: Fisher-Jenks within the falls and within the rises
 const changeClasses = (present) => {
@@ -96,17 +97,20 @@ const changeClasses = (present) => {
   };
 };
 
-const useMapData = (dataset) => {
+const useMapData = (dataset, lang) => {
   const [state, setState] = useState({ status: 'loading' });
   useEffect(() => {
     let live = true;
-    setState({ status: 'loading' });
+    setState((s) => (s.status === 'ready' && s.dataset === dataset ? s : { status: 'loading' }));
     getJSON(`assets/data/${dataset}.json`)
-      .then((data) => Promise.all([data, getJSON(`assets/data/${data.scale}.geojson`), getJSON('assets/data/department.geojson')]))
-      .then(([data, units, departments]) => { if (live) setState({ status: 'ready', data, units, departments }); })
+      .then((data) => Promise.all([data, getJSON(`assets/data/${data.scale}.geojson`), getJSON('assets/data/department.geojson'), fetchMetadataTranslation(dataset, lang)]))
+      .then(([data, units, departments, tr]) => {
+        const labelled = tr ? { ...data, variables: data.variables.map((v) => ({ ...v, title: tr.fields?.[v.name]?.title || v.title })) } : data;
+        if (live) setState({ status: 'ready', dataset, data: labelled, units, departments });
+      })
       .catch(() => { if (live) setState({ status: 'error' }); });
     return () => { live = false; };
-  }, [dataset]);
+  }, [dataset, lang]);
   return state;
 };
 
@@ -122,7 +126,8 @@ const Select = ({ id, label, value, onChange, options, disabled }) => (
 
 export default function IndicatorMap({ datasets, id = 'map' }) {
   const [dataset, setDataset] = useState(datasets[0]);
-  const state = useMapData(dataset);
+  const lang = language();
+  const state = useMapData(dataset, lang);
   const [choice, setChoice] = useState({ variable: null, year: null });
   const el = useRef(null);
   const leaflet = useRef(null);
@@ -134,12 +139,12 @@ export default function IndicatorMap({ datasets, id = 'map' }) {
     || data.variables.find((v) => v.name === data.default?.variable) || data.variables[0]);
   const years = variable ? Object.keys(variable.years).sort() : [];
   const first = years[0], last = years[years.length - 1];
-  const changeLabel = `Change ${first}→${last}`;
+  const changeLabel = t('Change {first}→{last}', { first, last });
   const year = choice.year === CHANGE && years.length > 1 ? CHANGE
     : years.includes(String(choice.year)) ? String(choice.year)
       : years.includes(String(data?.default?.year)) && variable?.name === data?.default?.variable ? String(data.default.year) : last;
   const isChange = year === CHANGE;
-  const yearText = isChange ? `between ${first} and ${last}` : year;
+  const yearText = isChange ? t('between {first} and {last}', { first, last }) : year;
 
   // Values by geo_id, classes and legend for the chosen variable and year (or change)
   const view = useMemo(() => {
@@ -201,7 +206,7 @@ export default function IndicatorMap({ datasets, id = 'map' }) {
           const { view: v, variable: va, yearText: y } = current.current;
           const name = String(f.properties.name).replace(/</g, '&lt;');
           const value = v?.change ? signed(v.values[f.properties.geo_id]) : fmt(v?.values[f.properties.geo_id]);
-          return `<strong>${name}</strong><br>${va ? `${v?.change ? 'Change in ' : ''}${va.title.replace(/</g, '&lt;')} (${y}): ${value}` : ''}`;
+          return `<strong>${name}</strong><br>${va ? `${v?.change ? t('Change in ') : ''}${va.title.replace(/</g, '&lt;')} (${y}): ${value}` : ''}`;
         }, { sticky: true, className: 'gdo-tooltip', direction: 'top', offset: [0, -8] });
         layer.on({ mouseover: () => layer.setStyle({ weight: 2, color: '#ffffff' }), mouseout: () => units.resetStyle(layer) });
       },
@@ -224,18 +229,18 @@ export default function IndicatorMap({ datasets, id = 'map' }) {
   return (
     <div>
       <div className={`grid grid-cols-1 gap-3 mb-4 ${datasets.length > 1 ? 'sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_8rem]' : 'sm:grid-cols-[minmax(0,1fr)_8rem]'}`}>
-        {datasets.length > 1 && <Select id={`${id}-dataset`} label="Dataset" value={dataset} onChange={(d) => { setDataset(d); setChoice({ variable: null, year: null }); }} options={datasets.map((d) => [d, d])} />}
-        <Select id={`${id}-variable`} label="Variable" value={variable?.name || ''} onChange={(v) => setChoice({ variable: v, year: null })}
+        {datasets.length > 1 && <Select id={`${id}-dataset`} label={t('Dataset')} value={dataset} onChange={(d) => { setDataset(d); setChoice({ variable: null, year: null }); }} options={datasets.map((d) => [d, d])} />}
+        <Select id={`${id}-variable`} label={t('Variable')} value={variable?.name || ''} onChange={(v) => setChoice({ variable: v, year: null })}
                 options={(data?.variables || []).map((v) => [v.name, `${v.title} (${v.name})`])} disabled={!data} />
-        <Select id={`${id}-year`} label="Year" value={year || ''} onChange={pick('year')}
+        <Select id={`${id}-year`} label={t('Year')} value={year || ''} onChange={pick('year')}
                 options={[...years.map((y) => [y, y]), ...(years.length > 1 ? [[CHANGE, changeLabel]] : [])]} disabled={years.length < 2} />
       </div>
       <div className="relative rounded-xl overflow-hidden border border-white/10 bg-lagoon-900">
-        <div ref={el} role="region" aria-label={variable ? `Interactive map of ${isChange ? 'the change in ' : ''}${variable.title} ${isChange ? yearText : `in ${year}`} by municipality` : 'Interactive map'}
+        <div ref={el} role="region" aria-label={variable ? (isChange ? t('Interactive map of the change in {v} {when} by municipality', { v: variable.title, when: yearText }) : t('Interactive map of {v} in {year} by municipality', { v: variable.title, year })) : t('Interactive map')}
              aria-describedby={`${id}-summary`} className="h-[420px] sm:h-[520px] w-full" />
         {state.status !== 'ready' && (
           <p className="absolute inset-0 flex items-center justify-center text-sm text-salt-400 p-6 text-center" role={state.status === 'error' ? 'alert' : 'status'}>
-            {state.status === 'error' ? 'The map could not be loaded.' : 'Loading the map…'}
+            {state.status === 'error' ? t('The map could not be loaded.') : t('Loading the map…')}
           </p>
         )}
       </div>
@@ -244,11 +249,11 @@ export default function IndicatorMap({ datasets, id = 'map' }) {
           <div>
             <p id={`${id}-summary`} className="text-salt-300 mb-3">
               {view.change
-                ? <>Change in {variable.title}{unit} {yearText}: {signed(view.min)} to {signed(view.max)} across {data.units.length - view.missing} municipalities; it rose in {view.rises} and fell in {view.falls}</>
-                : <>{variable.title}{unit}, {year}: {fmt(view.min)} to {fmt(view.max)} across {data.units.length - view.missing} municipalities</>}
-              {view.missing > 0 && `, ${view.missing} without data`}. Hover over or tap a municipality for its value.
+                ? t('Change in {v} {when}: {min} to {max} across {n} municipalities; it rose in {rises} and fell in {falls}', { v: `${variable.title}${unit}`, when: yearText, min: signed(view.min), max: signed(view.max), n: data.units.length - view.missing, rises: view.rises, falls: view.falls })
+                : t('{v}, {year}: {min} to {max} across {n} municipalities', { v: `${variable.title}${unit}`, year, min: fmt(view.min), max: fmt(view.max), n: data.units.length - view.missing })}
+              {view.missing > 0 && t(', {n} without data', { n: view.missing })}. {t('Hover over or tap a municipality for its value.')}
             </p>
-            <ul className="space-y-1.5" aria-label="Legend">
+            <ul className="space-y-1.5" aria-label={t('Legend')}>
               {view.breaks.map((b, i) => (
                 <li key={i} className="flex items-center gap-2 text-salt-300">
                   <span className="w-5 h-3.5 rounded-sm flex-shrink-0" style={{ background: view.colors[i] }} aria-hidden="true"></span>
@@ -257,14 +262,14 @@ export default function IndicatorMap({ datasets, id = 'map' }) {
               ))}
               {view.missing > 0 && (
                 <li className="flex items-center gap-2 text-salt-300">
-                  <span className="w-5 h-3.5 rounded-sm flex-shrink-0" style={{ background: COLORS.no_data }} aria-hidden="true"></span>No data <span className="text-salt-400">({view.missing})</span>
+                  <span className="w-5 h-3.5 rounded-sm flex-shrink-0" style={{ background: COLORS.no_data }} aria-hidden="true"></span>{t('No data')} <span className="text-salt-400">({view.missing})</span>
                 </li>
               )}
             </ul>
-            <p className="text-xs text-salt-400 mt-3">{view.change ? `Final minus initial value; Fisher–Jenks natural breaks within the falls (green) and within the rises (rose), so the classes split at zero. Whether a rise is progress depends on the variable.` : `Fisher–Jenks natural breaks${view.skewed ? ', computed on logs because the values are very skewed' : ''}.`} Holes are salt flats and lakes outside any municipality.</p>
+            <p className="text-xs text-salt-400 mt-3">{view.change ? t("Final minus initial value; Fisher–Jenks natural breaks within the falls (green) and within the rises (rose), so the classes split at zero. Whether a rise is progress depends on the variable.") : `${t('Fisher–Jenks natural breaks')}${view.skewed ? t(', computed on logs because the values are very skewed') : ''}.`} {t('Holes are salt flats and lakes outside any municipality.')}</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            {[['Highest', view.ranked.slice(0, 5)], ['Lowest', view.ranked.slice(-5).reverse()]].map(([label, list]) => (
+            {[[t('Highest'), view.ranked.slice(0, 5)], [t('Lowest'), view.ranked.slice(-5).reverse()]].map(([label, list]) => (
               <div key={label}>
                 <h3 className="text-xs font-bold uppercase tracking-widest text-salt-400 mb-2">{label}</h3>
                 <ol className="space-y-1 text-salt-300">

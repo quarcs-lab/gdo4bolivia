@@ -1,0 +1,45 @@
+{
+ "title": "ODS 10: Reducción de las desigualdades (Atlas de los ODS en Bolivia 2026)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID de GDO-Bolivia del municipio (BO-DD-PP-MM) en el mapa municipal de 343 unidades (SDSN Bolivia 2025: municipios y autonomías indígenas), numerado como en GADM 4.1 más cuatro unidades creadas desde entonces; map343; su límite está en geo/boundaries/map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); la numeración de departamentos y provincias sigue el orden de GADM y difiere de los códigos del INE."
+  },
+  "year": {
+   "title": "Periodo",
+   "description": "Periodo de los valores de la fila: 2012 contiene los valores iniciales del Atlas (hacia el censo de 2012) y 2024 sus valores finales (hacia el censo de 2024). Los años de referencia reales de cada variable se indican en su descripción y en geo:reference_years."
+  },
+  "mun_id": {
+   "title": "Código municipal del INE",
+   "description": "Código oficial del municipio del Instituto Nacional de Estadística (INE), DDPPMM (departamento, provincia, municipio), almacenado como entero sin el cero inicial (p. ej., 20101 = Nuestra Señora de La Paz), como en el Atlas. Las filas del Atlas se vinculan a geo_id mediante este código."
+  },
+  "index_sdg10": {
+   "title": "Índice de reducción de las desigualdades (0-100)",
+   "description": "Índice del ODS 10 (Reducción de las desigualdades) del Atlas de los ODS en Bolivia 2026, en una escala de 0 a 100 donde 100 significa que las metas del objetivo se cumplen y 0 la peor situación. Siguiendo el Índice ODS global de la SDSN, cada uno de sus 6 indicadores se reescala linealmente de 0 a 100 entre un valor peor y uno mejor (indicados en la descripción de cada indicador), con la dirección fijada de modo que un valor más alto sea siempre mejor y acotando los valores fuera de los límites; el índice es la media simple de los indicadores reescalados disponibles. Componentes: Población que no habla español (%); Paridad de pobreza multidimensional según condición étnico-lingüística (no indígena/indígena); Paridad de pobreza multidimensional según condición de migración (no migrante/migrante); Paridad de pobreza multidimensional para adultos mayores (jefe más joven/adulto mayor); Coeficiente de Gini de la pobreza multidimensional (0-1); Coeficiente de Gini de años de educación, 25-65 (0-1). Valor inicial (~2012) almacenado en 2012 y valor final (~2024) en 2024; sus componentes se refieren a distintos años en torno a cada censo. Atlas: “Índice ODS10”."
+  },
+  "sdg10_2_esp": {
+   "title": "Población que no habla español (%)",
+   "description": "Porcentaje de personas de 3 años o más que no hablan español, considerando el idioma aprendido en la niñez y el primer y segundo idioma que más usan. Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda del INE de 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 10 se reescala linealmente de 0 a 100 entre 48.1 (peor, 0) y 1 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 5 y grandes desafíos a partir de 30. Indicador del Atlas 10_02_01_01_esp, “Porcentaje de la población que no habla español” (Andersen & Argandoña 2026)."
+  },
+  "sdg10_2_pel": {
+   "title": "Paridad de pobreza multidimensional según condición étnico-lingüística (no indígena/indígena)",
+   "description": "IPM de los hogares con jefe no indígena dividido por el IPM de los hogares con jefe indígena (autoidentificado o que habla un idioma originario aprendido en la niñez); 1 = paridad. Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda del INE de 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 10 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 1 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 1 y grandes desafíos a partir de 0.5. Indicador del Atlas 10_02_01_02_pel, “Paridad de pobreza multidimensional según condición étnica-lingüística” (Andersen & Argandoña 2026)."
+  },
+  "sdg10_2_mre": {
+   "title": "Paridad de pobreza multidimensional según condición de migración (no migrante/migrante)",
+   "description": "IPM de los hogares con jefe no migrante dividido por el IPM de los hogares con jefe migrante (1 = paridad). Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda del INE de 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 10 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 1 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 1 y grandes desafíos a partir de 0.5. Indicador del Atlas 10_02_01_03_mre, “Paridad de pobreza multidimensional según condición de migración” (Andersen & Argandoña 2026)."
+  },
+  "sdg10_2_tpm": {
+   "title": "Paridad de pobreza multidimensional para adultos mayores (jefe más joven/adulto mayor)",
+   "description": "IPM de los hogares sin jefe adulto mayor dividido por el IPM de los hogares encabezados por un adulto mayor (1 = paridad). Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda del INE de 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 10 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 1 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 1 y grandes desafíos a partir de 0.5. Indicador del Atlas 10_02_01_04_tpm, “Paridad de pobreza multidimensional para adultos mayores” (Andersen & Argandoña 2026)."
+  },
+  "sdg10_2_gip": {
+   "title": "Coeficiente de Gini de la pobreza multidimensional (0-1)",
+   "description": "Coeficiente de Gini de los puntajes de pobreza multidimensional de los hogares (su número de privaciones) dentro del municipio. Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda del INE de 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 10 se reescala linealmente de 0 a 100 entre 1 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 0.05 y grandes desafíos a partir de 0.15. Indicador del Atlas 10_02_01_05_gip, “Coeficiente de Gini del índice de pobreza multidimensional” (Andersen & Argandoña 2026)."
+  },
+  "sdg10_4_gin": {
+   "title": "Coeficiente de Gini de años de educación, 25-65 (0-1)",
+   "description": "Coeficiente de Gini de los años de educación de las personas de 25 a 65 años dentro del municipio, Σ_i Σ_j |y_i − y_j| / (2 n² ȳ). Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda del INE de 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 10 se reescala linealmente de 0 a 100 entre 1 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 0.31 y grandes desafíos a partir de 0.47. Indicador del Atlas 10_04_02_06_gin, “Coeficiente de Gini de años de educación” (Andersen & Argandoña 2026)."
+  }
+ }
+}

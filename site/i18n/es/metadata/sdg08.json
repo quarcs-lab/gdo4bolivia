@@ -1,0 +1,49 @@
+{
+ "title": "ODS 8: Trabajo decente y crecimiento económico (Atlas de los ODS en Bolivia 2026)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID de municipio de GDO-Bolivia (BO-DD-PP-MM) del mapa municipal de 343 unidades (SDSN Bolivia 2025: municipios y autonomías indígenas), numerado como en GADM 4.1 más cuatro unidades creadas desde entonces; map343; su límite está en geo/boundaries/map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); los números de departamento y provincia siguen el orden de GADM y difieren de los códigos del INE."
+  },
+  "year": {
+   "title": "Periodo",
+   "description": "Periodo de los valores de la fila: 2012 contiene los valores iniciales del Atlas (hacia el censo de 2012) y 2024 sus valores finales (hacia el censo de 2024). Los años de referencia reales de cada variable se indican en su descripción y en geo:reference_years."
+  },
+  "mun_id": {
+   "title": "Código municipal del INE",
+   "description": "Código oficial de municipio del Instituto Nacional de Estadística (INE), DDPPMM (departamento, provincia, municipio), almacenado como entero sin el cero inicial (p. ej., 20101 = Nuestra Señora de La Paz), como en el Atlas. Las filas del Atlas se vinculan con geo_id mediante este código."
+  },
+  "index_sdg8": {
+   "title": "Índice de trabajo decente y crecimiento económico (0-100)",
+   "description": "Índice del ODS 8 (Trabajo decente y crecimiento económico) del Atlas de los ODS en Bolivia 2026, en una escala de 0 a 100 donde 100 significa que se cumplen las metas del objetivo y 0 la peor situación. Siguiendo el Índice ODS global de la SDSN, cada uno de sus 7 indicadores se reescala linealmente de 0 a 100 entre un valor peor y uno mejor (indicados en la descripción de cada indicador), con la dirección fijada para que un valor más alto sea siempre mejor y los valores fuera de los límites acotados; el índice es la media simple de los indicadores reescalados disponibles. Componentes: Tasa global de participación, mujeres de 14+ años (%); Tasa global de participación, hombres de 14+ años (%); Mujeres jóvenes que no estudian ni participan en el mercado laboral, 15-24 años (%); Hombres jóvenes que no estudian ni participan en el mercado laboral, 15-24 años (%); Empleo en actividades relacionadas con el turismo (%); Participación del turismo en el PIB (%); Puntos de atención financiera (por 100 000 habitantes). Valor inicial (~2012) almacenado en 2012 y valor final (~2024) en 2024; sus componentes se refieren a distintos años en torno a cada censo. Atlas: “Índice ODS8”."
+  },
+  "sdg8_5_tgm": {
+   "title": "Tasa global de participación, mujeres de 14+ años (%)",
+   "description": "Porcentaje de mujeres en edad de trabajar (14 años o más) que trabajan o buscan trabajo. Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 8 se reescala linealmente de 0 a 100 entre 36.1 (peor, 0) y 89.7 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 66.5 y grandes desafíos a partir de 43.7. Indicador del Atlas 08_05_02_01_tgm, “Tasa global de participación, mujeres (≥ 14 años) (%)” (Andersen & Argandoña 2026)."
+  },
+  "sdg8_5_tgh": {
+   "title": "Tasa global de participación, hombres de 14+ años (%)",
+   "description": "Porcentaje de hombres en edad de trabajar (14 años o más) que trabajan o buscan trabajo. Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 8 se reescala linealmente de 0 a 100 entre 68.6 (peor, 0) y 92.9 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 85.8 y grandes desafíos a partir de 74.5. Indicador del Atlas 08_05_02_02_tgh, “Tasa global de participación, hombres (≥ 14 años) (%)” (Andersen & Argandoña 2026)."
+  },
+  "sdg8_6_etm": {
+   "title": "Mujeres jóvenes que no estudian ni participan en el mercado laboral, 15-24 años (%)",
+   "description": "Porcentaje de mujeres de 15 a 24 años que no estudian ni participan en el mercado laboral. Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda 2012 y 2024 del INE. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 8 se reescala linealmente de 0 a 100 entre 45.9 (peor, 0) y 4.8 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 10 y grandes desafíos a partir de 15. Indicador del Atlas 08_06_01_03_etm, “Mujeres que no estudian, ni participan en el mercado laboral (15-24 años) (%)” (Andersen & Argandoña 2026)."
+  },
+  "sdg8_6_eth": {
+   "title": "Hombres jóvenes que no estudian ni participan en el mercado laboral, 15-24 años (%)",
+   "description": "Porcentaje de hombres de 15 a 24 años que no estudian ni participan en el mercado laboral. Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda 2012 y 2024 del INE. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 8 se reescala linealmente de 0 a 100 entre 38.6 (peor, 0) y 1.9 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 10 y grandes desafíos a partir de 15. Indicador del Atlas 08_06_01_04_eth, “Hombres que no estudian, ni participan en el mercado laboral (15-24 años) (%)” (Andersen & Argandoña 2026)."
+  },
+  "sdg8_9_pot": {
+   "title": "Empleo en actividades relacionadas con el turismo (%)",
+   "description": "Porcentaje de la población ocupada de 14 años o más que trabaja en actividades relacionadas con el turismo (Clasificación de Actividades Económicas de Bolivia CAEB-2022). Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 8 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 10 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 10 y grandes desafíos a partir de 2.5. Indicador del Atlas 08_09_02_05_pot, “Porcentaje de población ocupada en actividades económicas relacionadas con el turismo” (Andersen & Argandoña 2026)."
+  },
+  "sdg8_9_pbt": {
+   "title": "Participación del turismo en el PIB (%)",
+   "description": "Porcentaje del producto interno bruto del municipio que corresponde al turismo. Fuente: Análisis Real-Latinoamérica (AR-LAT) (2025), El sistema económico de los sistemas locales (preliminar), PIB municipal de 2016 y 2025. Valor inicial 2016 (almacenado en 2012) y valor final 2025 (almacenado en 2024). Sin dato para 4 de las 343 unidades en el periodo inicial y para 0 en el final. En el índice del ODS 8 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 10 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 10 y grandes desafíos a partir de 2.5. Indicador del Atlas 08_09_02_06_pbt, “Porcentaje del PIB que corresponde al Turismo” (Andersen & Argandoña 2026)."
+  },
+  "sdg8_10_dsb": {
+   "title": "Puntos de atención financiera (por 100 000 habitantes)",
+   "description": "Número de puntos de atención financiera (sucursales, agencias y otros puntos de atención bancarios) por cada 100 000 habitantes. Fuente: Autoridad de Supervisión del Sistema Financiero (ASFI). Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 8 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 88.7 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 18 y grandes desafíos a partir de 5. Indicador del Atlas 08_10_02_07_dsb, “Densidad de puntos de atención financiera (por 100 000 habitantes)” (Andersen & Argandoña 2026)."
+  }
+ }
+}

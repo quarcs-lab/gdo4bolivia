@@ -1,0 +1,25 @@
+{
+ "title": "Luces nocturnas per cápita",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID del municipio (BO-DD-PP-MM) en el mapa municipal de 2015, map339 (339 municipios; GeoBolivia vía geoBoundaries), numerado como en GADM 4.1; su límite está en geo/boundaries/map339. El mismo municipio tiene el mismo geo ID en map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); la numeración de departamentos y provincias sigue el orden de GADM y difiere de los códigos del INE."
+  },
+  "year": {
+   "title": "Año",
+   "description": "Año calendario de la observación (2012–2020). El compuesto de luces de 2012 abarca de abril de 2012 a marzo de 2013."
+  },
+  "asdf_id": {
+   "title": "ID del polígono de DS4Bolivia",
+   "description": "ID (asdf_id de AidData) del polígono ADM3 de geoBoundaries v4 sobre el que DS4Bolivia calculó los datos, emparejado uno a uno con el municipio por superposición de áreas."
+  },
+  "ln_NTLpc": {
+   "title": "Log de luces nocturnas per cápita",
+   "description": "Logaritmo natural de la radiancia nocturna por persona, ln(10⁸ × NTL / población). NTL es la suma sobre el municipio de la radiancia promedio de EOG Annual VIIRS Nighttime Lights V2 (con el fondo enmascarado, 15 segundos de arco, nW/cm²/sr), extraída con AidData GeoQuery; la población es la suma de WorldPop a 1 km del mismo año. Sin datos donde ningún píxel quedó iluminado tras el enmascaramiento (2–15 municipios por año)."
+  },
+  "ln_t400NTLpc": {
+   "title": "Log de luces nocturnas per cápita (tendencia)",
+   "description": "Tendencia de Hodrick–Prescott (λ = 400) del logaritmo de las luces nocturnas per cápita. El logaritmo de las luces, con los vacíos completados dentro de cada municipio por interpolación y extrapolación lineal (y una predicción de efectos fijos donde hace falta), y el logaritmo de la población se filtran cada uno con HP y se combinan como ln(10⁸ × NTL de tendencia / población de tendencia). Completo para todos los municipios y años, incluidos los años en que falta ln_NTLpc."
+  }
+ }
+}

@@ -1,0 +1,273 @@
+{
+ "title": "Embeddings satelitales 2017 (ponderados por área)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID del municipio (BO-DD-PP-MM) en el mapa municipal de 2015, map339 (339 municipios; GeoBolivia vía geoBoundaries), numerado como en GADM 4.1; sus límites están en geo/boundaries/map339. El mismo municipio tiene el mismo geo ID en map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); los números de departamento y de provincia siguen el orden de GADM y difieren de los códigos del INE."
+  },
+  "year": {
+   "title": "Año",
+   "description": "Año de los embeddings satelitales (2017)."
+  },
+  "asdf_id": {
+   "title": "ID del polígono de DS4Bolivia",
+   "description": "ID (asdf_id de AidData) del polígono ADM3 de geoBoundaries v4 sobre el que DS4Bolivia calculó los datos, emparejado uno a uno con el municipio por superposición de áreas."
+  },
+  "A00": {
+   "title": "Embedding A00 (ponderado por área)",
+   "description": "Dimensión 0 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A01": {
+   "title": "Embedding A01 (ponderado por área)",
+   "description": "Dimensión 1 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A02": {
+   "title": "Embedding A02 (ponderado por área)",
+   "description": "Dimensión 2 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A03": {
+   "title": "Embedding A03 (ponderado por área)",
+   "description": "Dimensión 3 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A04": {
+   "title": "Embedding A04 (ponderado por área)",
+   "description": "Dimensión 4 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A05": {
+   "title": "Embedding A05 (ponderado por área)",
+   "description": "Dimensión 5 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A06": {
+   "title": "Embedding A06 (ponderado por área)",
+   "description": "Dimensión 6 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A07": {
+   "title": "Embedding A07 (ponderado por área)",
+   "description": "Dimensión 7 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A08": {
+   "title": "Embedding A08 (ponderado por área)",
+   "description": "Dimensión 8 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A09": {
+   "title": "Embedding A09 (ponderado por área)",
+   "description": "Dimensión 9 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A10": {
+   "title": "Embedding A10 (ponderado por área)",
+   "description": "Dimensión 10 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A11": {
+   "title": "Embedding A11 (ponderado por área)",
+   "description": "Dimensión 11 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A12": {
+   "title": "Embedding A12 (ponderado por área)",
+   "description": "Dimensión 12 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A13": {
+   "title": "Embedding A13 (ponderado por área)",
+   "description": "Dimensión 13 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A14": {
+   "title": "Embedding A14 (ponderado por área)",
+   "description": "Dimensión 14 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A15": {
+   "title": "Embedding A15 (ponderado por área)",
+   "description": "Dimensión 15 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A16": {
+   "title": "Embedding A16 (ponderado por área)",
+   "description": "Dimensión 16 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A17": {
+   "title": "Embedding A17 (ponderado por área)",
+   "description": "Dimensión 17 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A18": {
+   "title": "Embedding A18 (ponderado por área)",
+   "description": "Dimensión 18 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A19": {
+   "title": "Embedding A19 (ponderado por área)",
+   "description": "Dimensión 19 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A20": {
+   "title": "Embedding A20 (ponderado por área)",
+   "description": "Dimensión 20 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A21": {
+   "title": "Embedding A21 (ponderado por área)",
+   "description": "Dimensión 21 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A22": {
+   "title": "Embedding A22 (ponderado por área)",
+   "description": "Dimensión 22 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A23": {
+   "title": "Embedding A23 (ponderado por área)",
+   "description": "Dimensión 23 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A24": {
+   "title": "Embedding A24 (ponderado por área)",
+   "description": "Dimensión 24 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A25": {
+   "title": "Embedding A25 (ponderado por área)",
+   "description": "Dimensión 25 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A26": {
+   "title": "Embedding A26 (ponderado por área)",
+   "description": "Dimensión 26 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A27": {
+   "title": "Embedding A27 (ponderado por área)",
+   "description": "Dimensión 27 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A28": {
+   "title": "Embedding A28 (ponderado por área)",
+   "description": "Dimensión 28 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A29": {
+   "title": "Embedding A29 (ponderado por área)",
+   "description": "Dimensión 29 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A30": {
+   "title": "Embedding A30 (ponderado por área)",
+   "description": "Dimensión 30 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A31": {
+   "title": "Embedding A31 (ponderado por área)",
+   "description": "Dimensión 31 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A32": {
+   "title": "Embedding A32 (ponderado por área)",
+   "description": "Dimensión 32 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A33": {
+   "title": "Embedding A33 (ponderado por área)",
+   "description": "Dimensión 33 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A34": {
+   "title": "Embedding A34 (ponderado por área)",
+   "description": "Dimensión 34 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A35": {
+   "title": "Embedding A35 (ponderado por área)",
+   "description": "Dimensión 35 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A36": {
+   "title": "Embedding A36 (ponderado por área)",
+   "description": "Dimensión 36 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A37": {
+   "title": "Embedding A37 (ponderado por área)",
+   "description": "Dimensión 37 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A38": {
+   "title": "Embedding A38 (ponderado por área)",
+   "description": "Dimensión 38 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A39": {
+   "title": "Embedding A39 (ponderado por área)",
+   "description": "Dimensión 39 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A40": {
+   "title": "Embedding A40 (ponderado por área)",
+   "description": "Dimensión 40 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A41": {
+   "title": "Embedding A41 (ponderado por área)",
+   "description": "Dimensión 41 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A42": {
+   "title": "Embedding A42 (ponderado por área)",
+   "description": "Dimensión 42 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A43": {
+   "title": "Embedding A43 (ponderado por área)",
+   "description": "Dimensión 43 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A44": {
+   "title": "Embedding A44 (ponderado por área)",
+   "description": "Dimensión 44 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A45": {
+   "title": "Embedding A45 (ponderado por área)",
+   "description": "Dimensión 45 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A46": {
+   "title": "Embedding A46 (ponderado por área)",
+   "description": "Dimensión 46 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A47": {
+   "title": "Embedding A47 (ponderado por área)",
+   "description": "Dimensión 47 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A48": {
+   "title": "Embedding A48 (ponderado por área)",
+   "description": "Dimensión 48 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A49": {
+   "title": "Embedding A49 (ponderado por área)",
+   "description": "Dimensión 49 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A50": {
+   "title": "Embedding A50 (ponderado por área)",
+   "description": "Dimensión 50 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A51": {
+   "title": "Embedding A51 (ponderado por área)",
+   "description": "Dimensión 51 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A52": {
+   "title": "Embedding A52 (ponderado por área)",
+   "description": "Dimensión 52 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A53": {
+   "title": "Embedding A53 (ponderado por área)",
+   "description": "Dimensión 53 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A54": {
+   "title": "Embedding A54 (ponderado por área)",
+   "description": "Dimensión 54 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A55": {
+   "title": "Embedding A55 (ponderado por área)",
+   "description": "Dimensión 55 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A56": {
+   "title": "Embedding A56 (ponderado por área)",
+   "description": "Dimensión 56 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A57": {
+   "title": "Embedding A57 (ponderado por área)",
+   "description": "Dimensión 57 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A58": {
+   "title": "Embedding A58 (ponderado por área)",
+   "description": "Dimensión 58 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A59": {
+   "title": "Embedding A59 (ponderado por área)",
+   "description": "Dimensión 59 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A60": {
+   "title": "Embedding A60 (ponderado por área)",
+   "description": "Dimensión 60 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A61": {
+   "title": "Embedding A61 (ponderado por área)",
+   "description": "Dimensión 61 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A62": {
+   "title": "Embedding A62 (ponderado por área)",
+   "description": "Dimensión 62 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  },
+  "A63": {
+   "title": "Embedding A63 (ponderado por área)",
+   "description": "Dimensión 63 de las 64 de Google Satellite Embedding V1 (AlphaEarth Foundations), embeddings anuales de 10 m para 2017, promediada sobre el municipio con el reductor de media de Earth Engine a 10 m, que pondera cada píxel por su área de superposición. Es un atributo abstracto sin unidad física: en conjunto, las 64 dimensiones resumen la apariencia multisensor de la superficie terrestre en el año (Sentinel-2, Landsat, radar y otras fuentes)."
+  }
+ }
+}

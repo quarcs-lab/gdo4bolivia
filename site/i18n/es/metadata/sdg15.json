@@ -1,0 +1,37 @@
+{
+ "title": "ODS 15: Vida de ecosistemas terrestres (Atlas de los ODS en Bolivia 2026)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID de GDO-Bolivia del municipio (BO-DD-PP-MM) en el mapa municipal de 343 unidades (SDSN Bolivia 2025: municipios y autonomías indígenas), numerado como en GADM 4.1 más cuatro unidades creadas desde entonces; map343; su límite está en geo/boundaries/map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); la numeración de departamentos y provincias sigue el orden de GADM y difiere de los códigos del INE."
+  },
+  "year": {
+   "title": "Periodo",
+   "description": "Periodo de los valores de la fila: 2012 contiene los valores iniciales del Atlas (hacia el censo de 2012) y 2024 sus valores finales (hacia el censo de 2024). Los años de referencia reales de cada variable se indican en su descripción y en geo:reference_years."
+  },
+  "mun_id": {
+   "title": "Código municipal del INE",
+   "description": "Código oficial del municipio del Instituto Nacional de Estadística (INE), DDPPMM (departamento, provincia, municipio), almacenado como entero sin el cero inicial (p. ej., 20101 = Nuestra Señora de La Paz), como en el Atlas. Las filas del Atlas se vinculan a geo_id mediante este código."
+  },
+  "index_sdg15": {
+   "title": "Índice de vida de ecosistemas terrestres (0-100)",
+   "description": "Índice del ODS 15 (Vida de ecosistemas terrestres) del Atlas de los ODS en Bolivia 2026, en una escala de 0 a 100 donde 100 significa que las metas del objetivo se cumplen y 0 la peor situación. Siguiendo el Índice ODS global de la SDSN, cada uno de sus 4 indicadores se reescala linealmente de 0 a 100 entre un valor peor y uno mejor (indicados en la descripción de cada indicador), con la dirección fijada de modo que un valor más alto sea siempre mejor y acotando los valores fuera de los límites; el índice es la media simple de los indicadores reescalados disponibles. Componentes: Superficie declarada área protegida (%); Tasa de pérdida de bosque (% anual); Pérdida de biodiversidad por deforestación (índice); Pérdida de biodiversidad por incendios (índice). Valor inicial (~2012) almacenado en 2012 y valor final (~2024) en 2024; sus componentes se refieren a distintos años en torno a cada censo. Atlas: “Índice ODS15”."
+  },
+  "sdg15_1_sap": {
+   "title": "Superficie declarada área protegida (%)",
+   "description": "Porcentaje de la superficie del municipio declarada legalmente como área protegida (nacional, departamental, municipal o indígena), mediante la superposición de los límites municipales y las áreas protegidas. Fuente: SDSN Bolivia a partir del Atlas de Áreas Protegidas Municipales 2022 (WCS, Andes Amazon Fund). Valor inicial 2012 (almacenado en 2012) y valor final 2025 (almacenado en 2024). En el índice del ODS 15 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 60 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 25 y grandes desafíos a partir de 5. Indicador del Atlas 15_01_02_01_sap, “Porcentaje de superficie declarada como área protegida” (Andersen & Argandoña 2026)."
+  },
+  "sdg15_2_tpb": {
+   "title": "Tasa de pérdida de bosque (% anual)",
+   "description": "Pérdida anual promedio de bosque (cambio de bosque a cualquier otra cobertura natural o antrópica) como porcentaje de la superficie de bosque del municipio al inicio del periodo. Solo para municipios con más de 1000 hectáreas de bosque. Fuente: mapas de cobertura del suelo de MapBiomas Bolivia, colección 3 (2025). Valor inicial promedio 2012–2014 (almacenado en 2012) y valor final promedio 2022–2024 (almacenado en 2024). Sin datos para 153 de las 343 unidades en cada periodo. En el índice del ODS 15 se reescala linealmente de 0 a 100 entre 7.3 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 0.05 y grandes desafíos a partir de 2. Indicador del Atlas 15_02_01_02_tpb, “Tasa promedio de pérdida de bosque (%)” (Andersen & Argandoña 2026)."
+  },
+  "sdg15_5_pbd": {
+   "title": "Pérdida de biodiversidad por deforestación (índice)",
+   "description": "Valor de riqueza de especies de las áreas deforestadas en el año como porcentaje del valor total de riqueza de especies del municipio (cobertura del suelo de MapBiomas sobre el mapa de riqueza de especies). Solo para municipios con más de 1000 hectáreas de bosque. Fuente: MapBiomas Bolivia colección 3 (2025) y el mapa de riqueza de especies de la Fundación Amigos de la Naturaleza (2004). Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). Sin datos para 153 de las 343 unidades en cada periodo. En el índice del ODS 15 se reescala linealmente de 0 a 100 entre 2 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 0 y grandes desafíos a partir de 0.87. Indicador del Atlas 15_05_02_03_pbd, “Índice de pérdida de biodiversidad por deforestación” (Andersen & Argandoña 2026)."
+  },
+  "sdg15_5_pbi": {
+   "title": "Pérdida de biodiversidad por incendios (índice)",
+   "description": "Valor de riqueza de especies de las áreas quemadas en el año como porcentaje del valor total de riqueza de especies del municipio (áreas quemadas de MODIS sobre el mapa de riqueza de especies). Fuente: áreas quemadas de MODIS y el mapa de riqueza de especies de la Fundación Amigos de la Naturaleza (2004). Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 15 se reescala linealmente de 0 a 100 entre 9.1 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 0 y grandes desafíos a partir de 7.27. Indicador del Atlas 15_05_02_04_pbi, “Índice de pérdida de biodiversidad por incendios” (Andersen & Argandoña 2026)."
+  }
+ }
+}

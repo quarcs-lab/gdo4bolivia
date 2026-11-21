@@ -1,0 +1,37 @@
+{
+ "title": "ODS 1: Fin de la pobreza (Atlas de los ODS en Bolivia 2026)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID de municipio de GDO-Bolivia (BO-DD-PP-MM) del mapa municipal de 343 unidades (SDSN Bolivia 2025: municipios y autonomías indígenas), numerado como en GADM 4.1 más cuatro unidades creadas desde entonces; map343; su límite está en geo/boundaries/map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); los números de departamento y provincia siguen el orden de GADM y difieren de los códigos del INE."
+  },
+  "year": {
+   "title": "Periodo",
+   "description": "Periodo de los valores de la fila: 2012 contiene los valores iniciales del Atlas (hacia el censo de 2012) y 2024 sus valores finales (hacia el censo de 2024). Los años de referencia reales de cada variable se indican en su descripción y en geo:reference_years."
+  },
+  "mun_id": {
+   "title": "Código municipal del INE",
+   "description": "Código oficial de municipio del Instituto Nacional de Estadística (INE), DDPPMM (departamento, provincia, municipio), almacenado como entero sin el cero inicial (p. ej., 20101 = Nuestra Señora de La Paz), como en el Atlas. Las filas del Atlas se vinculan con geo_id mediante este código."
+  },
+  "index_sdg1": {
+   "title": "Índice de fin de la pobreza (0-100)",
+   "description": "Índice del ODS 1 (Fin de la pobreza) del Atlas de los ODS en Bolivia 2026, en una escala de 0 a 100 donde 100 significa que se cumplen las metas del objetivo y 0 la peor situación. Siguiendo el Índice ODS global de la SDSN, cada uno de sus 4 indicadores se reescala linealmente de 0 a 100 entre un valor peor y uno mejor (indicados en la descripción de cada indicador), con la dirección fijada para que un valor más alto sea siempre mejor y los valores fuera de los límites acotados; el índice es la media simple de los indicadores reescalados disponibles. Componentes: Índice de pobreza multidimensional (0-1); Pobreza energética (% de viviendas); Necesidades básicas insatisfechas (% de la población); Acceso a los 3 servicios básicos (% de hogares). Valor inicial (~2012) almacenado en 2012 y valor final (~2024) en 2024; sus componentes se refieren a distintos años en torno a cada censo. Atlas: “Índice ODS1”."
+  },
+  "sdg1_2_mpi": {
+   "title": "Índice de pobreza multidimensional (0-1)",
+   "description": "Índice de pobreza multidimensional IPM = A × H, donde H es la proporción de hogares (en viviendas particulares) con privaciones en 3 o más de 9 indicadores y A la intensidad promedio (proporción de las 9 privaciones) entre ellos. La pobreza multidimensional sigue a Andersen & Branisa (2020): nueve privaciones en tres dimensiones (recursos: agua potable, electricidad, saneamiento; poder y voz: un miembro de 15 años o más analfabeto, un miembro de 6 años o más sin cédula de identidad, sin teléfono fijo ni celular; oportunidades y elección: un parto en los últimos cinco años no atendido por personal calificado, un embarazo adolescente en los últimos cinco años, un miembro de 6 a 19 años que no asiste a la escuela). Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda 2012 y 2024 del INE. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 1 se reescala linealmente de 0 a 100 entre 0.563 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 0.066 y grandes desafíos a partir de 0.23. Indicador del Atlas 01_02_02_01_mpi, “Índice de pobreza multidimensional” (Andersen & Argandoña 2026)."
+  },
+  "sdg1_4_eep": {
+   "title": "Pobreza energética (% de viviendas)",
+   "description": "Porcentaje de viviendas cuyo consumo anual de electricidad residencial está por debajo del umbral regional de pobreza energética: 252 kWh/año en el occidente (Chuquisaca, La Paz, Cochabamba, Oruro, Potosí, Tarija) y 516 kWh/año en el oriente (Santa Cruz, Beni, Pando); las viviendas sin medidor y los medidores con consumo cero también se cuentan como en pobreza energética. Fuente: la base de datos de medidores eléctricos residenciales del Ministerio de Hidrocarburos y Energías de 2016 y 2024, compilada por Andersen et al. (2023). Valor inicial 2016 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 1 se reescala linealmente de 0 a 100 entre 100 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 15 y grandes desafíos a partir de 50. Indicador del Atlas 01_04_01_02_eep, “Tasa de pobreza energética (% de viviendas)” (Andersen & Argandoña 2026)."
+  },
+  "sdg1_4_nbi": {
+   "title": "Necesidades básicas insatisfechas (% de la población)",
+   "description": "Porcentaje de la población en viviendas particulares que es pobre por necesidades básicas insatisfechas (NBI), la medida del INE de privación en vivienda (materiales y espacio), servicios básicos y energía, educación (años aprobados, alfabetismo, asistencia) y atención de salud. Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 1 se reescala linealmente de 0 a 100 entre 100 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 15 y grandes desafíos a partir de 50. Indicador del Atlas 01_04_01_03_nbi, “Porcentaje de la población con Necesidades Básicas Insatisfechas” (Andersen & Argandoña 2026)."
+  },
+  "sdg1_4_ssb": {
+   "title": "Acceso a los 3 servicios básicos (% de hogares)",
+   "description": "Porcentaje de viviendas particulares con personas presentes que cuentan con los tres servicios básicos: una fuente de agua mejorada, saneamiento mejorado y electricidad (criterios del INE, que difieren para áreas urbanas y rurales). Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda 2012 y 2024 del INE. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 1 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 85 y grandes desafíos a partir de 50. Indicador del Atlas 01_04_02_04_ssb, “Porcentaje de hogares con acceso a los 3 servicios básicos” (Andersen & Argandoña 2026)."
+  }
+ }
+}

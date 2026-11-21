@@ -1,0 +1,25 @@
+{
+ "title": "Población",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID del municipio (BO-DD-PP-MM) en el mapa municipal de 2015, map339 (339 municipios; GeoBolivia vía geoBoundaries), numerado como en GADM 4.1; su límite está en geo/boundaries/map339. El mismo municipio tiene el mismo geo ID en map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); la numeración de departamentos y provincias sigue el orden de GADM y difiere de los códigos del INE."
+  },
+  "year": {
+   "title": "Año",
+   "description": "Año calendario de la estimación (2001–2020)."
+  },
+  "asdf_id": {
+   "title": "ID del polígono de DS4Bolivia",
+   "description": "ID (asdf_id de AidData) del polígono ADM3 de geoBoundaries v4 sobre el que DS4Bolivia calculó los datos, emparejado uno a uno con el municipio por superposición de áreas."
+  },
+  "pop": {
+   "title": "Población",
+   "description": "Número estimado de personas que viven en el municipio: la suma sobre su polígono del mosaico global de población no restringido de WorldPop a 1 km (agregado a partir de estimaciones dasimétricas de bosques aleatorios a 100 m; sin ajuste a las cifras de la ONU), extraída con AidData GeoQuery. Son estimaciones en grilla, no las proyecciones oficiales del INE."
+  },
+  "pop_density": {
+   "title": "Densidad de población (personas por km²)",
+   "description": "Población (pop) dividida por la superficie del municipio en km², medida sobre su límite en el mapa de 2015 (geo/boundaries/map339) en la proyección de áreas iguales del proyecto (una proyección Albers ajustada a Bolivia). No se cuentan los salares y lagos que el mapa deja fuera de todo municipio (Uyuni, Coipasa, Poopó, Uru Uru)."
+  }
+ }
+}

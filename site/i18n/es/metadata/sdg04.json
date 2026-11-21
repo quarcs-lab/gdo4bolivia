@@ -1,0 +1,65 @@
+{
+ "title": "ODS 4: Educación de calidad (Atlas de los ODS en Bolivia 2026)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID de municipio de GDO-Bolivia (BO-DD-PP-MM) del mapa municipal de 343 unidades (SDSN Bolivia 2025: municipios y autonomías indígenas), numerado como en GADM 4.1 más cuatro unidades creadas desde entonces; map343; su límite está en geo/boundaries/map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); los números de departamento y provincia siguen el orden de GADM y difieren de los códigos del INE."
+  },
+  "year": {
+   "title": "Periodo",
+   "description": "Periodo de los valores de la fila: 2012 contiene los valores iniciales del Atlas (hacia el censo de 2012) y 2024 sus valores finales (hacia el censo de 2024). Los años de referencia reales de cada variable se indican en su descripción y en geo:reference_years."
+  },
+  "mun_id": {
+   "title": "Código municipal del INE",
+   "description": "Código oficial de municipio del Instituto Nacional de Estadística (INE), DDPPMM (departamento, provincia, municipio), almacenado como entero sin el cero inicial (p. ej., 20101 = Nuestra Señora de La Paz), como en el Atlas. Las filas del Atlas se vinculan con geo_id mediante este código."
+  },
+  "index_sdg4": {
+   "title": "Índice de educación de calidad (0-100)",
+   "description": "Índice del ODS 4 (Educación de calidad) del Atlas de los ODS en Bolivia 2026, en una escala de 0 a 100 donde 100 significa que se cumplen las metas del objetivo y 0 la peor situación. Siguiendo el Índice ODS global de la SDSN, cada uno de sus 11 indicadores se reescala linealmente de 0 a 100 entre un valor peor y uno mejor (indicados en la descripción de cada indicador), con la dirección fijada para que un valor más alto sea siempre mejor y los valores fuera de los límites acotados; el índice es la media simple de los indicadores reescalados disponibles. Componentes: Tasa de abandono en secundaria, mujeres (%); Tasa de abandono en secundaria, hombres (%); Asistencia a educación inicial, niñas de 4-5 años (%); Asistencia a educación inicial, niños de 4-5 años (%); Años de educación, mujeres de 25-35 años; Años de educación, hombres de 25-35 años; Educación superior, mujeres de 19+ años (%); Educación superior, hombres de 19+ años (%); Tasa de alfabetización, 15+ años (%); Profesores calificados, nivel inicial (%); Profesores calificados, nivel secundario (%). Valor inicial (~2012) almacenado en 2012 y valor final (~2024) en 2024; sus componentes se refieren a distintos años en torno a cada censo. Atlas: “Índice ODS4”."
+  },
+  "sdg4_1_asm": {
+   "title": "Tasa de abandono en secundaria, mujeres (%)",
+   "description": "Tasa anual de abandono de las mujeres en secundaria (1.º a 6.º de secundaria): abandonos divididos por la matrícula, promediados en los años del periodo. Fuente: el Sistema de Información Educativa (SIE) del Ministerio de Educación. Valor inicial promedio 2012–2014 (almacenado en 2012) y valor final promedio 2022–2023 (almacenado en 2024). Sin dato para 4 de las 343 unidades en cada periodo. En el índice del ODS 4 se reescala linealmente de 0 a 100 entre 26 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 3 y grandes desafíos a partir de 6. Indicador del Atlas 04_01_02_01_asm, “Tasa de abandono en secundaria, mujeres (%)” (Andersen & Argandoña 2026)."
+  },
+  "sdg4_1_ash": {
+   "title": "Tasa de abandono en secundaria, hombres (%)",
+   "description": "Tasa anual de abandono de los hombres en secundaria (1.º a 6.º de secundaria): abandonos divididos por la matrícula, promediados en los años del periodo. Fuente: el Sistema de Información Educativa (SIE) del Ministerio de Educación. Valor inicial promedio 2012–2014 (almacenado en 2012) y valor final promedio 2022–2024 (almacenado en 2024). Sin dato para 4 de las 343 unidades en el periodo inicial y para 5 en el final. En el índice del ODS 4 se reescala linealmente de 0 a 100 entre 26 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 3 y grandes desafíos a partir de 6. Indicador del Atlas 04_01_02_02_ash, “Tasa de abandono en secundaria, hombres (%)” (Andersen & Argandoña 2026)."
+  },
+  "sdg4_2_tam": {
+   "title": "Asistencia a educación inicial, niñas de 4-5 años (%)",
+   "description": "Porcentaje de niñas de 4 a 5 años que asisten a un establecimiento preescolar o de educación inicial. Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 4 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 90 y grandes desafíos a partir de 70. Indicador del Atlas 04_02_02_03_tam, “Porcentaje de niñas de 4 a 5 años que asisten a algún establecimiento preescolar” (Andersen & Argandoña 2026)."
+  },
+  "sdg4_2_tah": {
+   "title": "Asistencia a educación inicial, niños de 4-5 años (%)",
+   "description": "Porcentaje de niños de 4 a 5 años que asisten a un establecimiento preescolar o de educación inicial. Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 4 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 90 y grandes desafíos a partir de 70. Indicador del Atlas 04_02_02_04_tah, “Porcentaje de niños de 4 a 5 años que asisten a algún establecimiento preescolar” (Andersen & Argandoña 2026)."
+  },
+  "sdg4_3_aem": {
+   "title": "Años de educación, mujeres de 25-35 años",
+   "description": "Promedio de años de educación de las mujeres de 25 a 35 años. Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda 2012 y 2024 del INE. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 4 se reescala linealmente de 0 a 100 entre 4.8 (peor, 0) y 14.9 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 12 y grandes desafíos a partir de 6. Indicador del Atlas 04_03_02_05_aem, “Promedio de años de educación, mujeres (25 a 35 años)” (Andersen & Argandoña 2026)."
+  },
+  "sdg4_3_aeh": {
+   "title": "Años de educación, hombres de 25-35 años",
+   "description": "Promedio de años de educación de los hombres de 25 a 35 años. Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda 2012 y 2024 del INE. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 4 se reescala linealmente de 0 a 100 entre 4.8 (peor, 0) y 14.9 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 12 y grandes desafíos a partir de 6. Indicador del Atlas 04_03_02_06_aeh, “Promedio de años de educación, hombres (25 a 35 años)” (Andersen & Argandoña 2026)."
+  },
+  "sdg4_3_esm": {
+   "title": "Educación superior, mujeres de 19+ años (%)",
+   "description": "Porcentaje de mujeres de 19 años o más que alcanzaron la educación superior (terciaria). Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 4 se reescala linealmente de 0 a 100 entre 1.6 (peor, 0) y 49.8 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 20 y grandes desafíos a partir de 10. Indicador del Atlas 04_03_04_07_esm, “Porcentaje de mujeres con educación superior (≥ 19 años)” (Andersen & Argandoña 2026)."
+  },
+  "sdg4_3_esh": {
+   "title": "Educación superior, hombres de 19+ años (%)",
+   "description": "Porcentaje de hombres de 19 años o más que alcanzaron la educación superior (terciaria). Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 4 se reescala linealmente de 0 a 100 entre 1.6 (peor, 0) y 49.8 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 20 y grandes desafíos a partir de 10. Indicador del Atlas 04_03_04_08_esh, “Porcentaje de hombres con educación superior (≥ 19 años)” (Andersen & Argandoña 2026)."
+  },
+  "sdg4_6_alf": {
+   "title": "Tasa de alfabetización, 15+ años (%)",
+   "description": "Porcentaje de personas de 15 años o más que saben leer y escribir. Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 4 se reescala linealmente de 0 a 100 entre 75.6 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 95 y grandes desafíos a partir de 85. Indicador del Atlas 04_06_01_09_alf, “Tasa de alfabetización (>15 años) (%)” (Andersen & Argandoña 2026)."
+  },
+  "sdg4_10_pci": {
+   "title": "Profesores calificados, nivel inicial (%)",
+   "description": "Porcentaje de profesores del nivel inicial (preescolar) con formación específica para ese nivel, promediado en los años del periodo. Fuente: Ministerio de Educación. Valor inicial promedio 2012–2014 (almacenado en 2012) y valor final promedio 2022–2024 (almacenado en 2024). Sin dato para 67 de las 343 unidades en el periodo inicial y para 55 en el final. En el índice del ODS 4 se reescala linealmente de 0 a 100 entre 12 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 96.9 y grandes desafíos a partir de 42.3. Indicador del Atlas 04_10_01_10_pci, “Porcentaje de profesores calificados en el nivel inicial” (Andersen & Argandoña 2026)."
+  },
+  "sdg4_10_pcs": {
+   "title": "Profesores calificados, nivel secundario (%)",
+   "description": "Porcentaje de profesores del nivel secundario con formación específica para ese nivel, promediado en los años del periodo. Fuente: Ministerio de Educación. Valor inicial promedio 2012–2014 (almacenado en 2012) y valor final promedio 2022–2024 (almacenado en 2024). Sin dato para 7 de las 343 unidades en el periodo inicial y para 5 en el final. En el índice del ODS 4 se reescala linealmente de 0 a 100 entre 5.9 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 96.9 y grandes desafíos a partir de 42.3. Indicador del Atlas 04_10_01_11_pcs, “Porcentaje de profesores calificados en el nivel secundario” (Andersen & Argandoña 2026)."
+  }
+ }
+}

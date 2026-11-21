@@ -1,0 +1,49 @@
+{
+ "title": "ODS 2: Hambre cero (Atlas de los ODS en Bolivia 2026)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID de municipio de GDO-Bolivia (BO-DD-PP-MM) del mapa municipal de 343 unidades (SDSN Bolivia 2025: municipios y autonomías indígenas), numerado como en GADM 4.1 más cuatro unidades creadas desde entonces; map343; su límite está en geo/boundaries/map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); los números de departamento y provincia siguen el orden de GADM y difieren de los códigos del INE."
+  },
+  "year": {
+   "title": "Periodo",
+   "description": "Periodo de los valores de la fila: 2012 contiene los valores iniciales del Atlas (hacia el censo de 2012) y 2024 sus valores finales (hacia el censo de 2024). Los años de referencia reales de cada variable se indican en su descripción y en geo:reference_years."
+  },
+  "mun_id": {
+   "title": "Código municipal del INE",
+   "description": "Código oficial de municipio del Instituto Nacional de Estadística (INE), DDPPMM (departamento, provincia, municipio), almacenado como entero sin el cero inicial (p. ej., 20101 = Nuestra Señora de La Paz), como en el Atlas. Las filas del Atlas se vinculan con geo_id mediante este código."
+  },
+  "index_sdg2": {
+   "title": "Índice de hambre cero (0-100)",
+   "description": "Índice del ODS 2 (Hambre cero) del Atlas de los ODS en Bolivia 2026, en una escala de 0 a 100 donde 100 significa que se cumplen las metas del objetivo y 0 la peor situación. Siguiendo el Índice ODS global de la SDSN, cada uno de sus 7 indicadores se reescala linealmente de 0 a 100 entre un valor peor y uno mejor (indicados en la descripción de cada indicador), con la dirección fijada para que un valor más alto sea siempre mejor y los valores fuera de los límites acotados; el índice es la media simple de los indicadores reescalados disponibles. Componentes: Obesidad en mujeres de 15-49 años (%); Desnutrición crónica en menores de 5 años (%); Sobrepeso en menores de 5 años (%); Anemia en mujeres de 15-49 años (%); Producción agrícola (t por persona por año); Rendimiento agrícola (t por ha por año); Índice de diversificación agrícola (0-1). Valor inicial (~2012) almacenado en 2012 y valor final (~2024) en 2024; sus componentes se refieren a distintos años en torno a cada censo. Atlas: “Índice ODS2”."
+  },
+  "sdg2_2_smu": {
+   "title": "Obesidad en mujeres de 15-49 años (%)",
+   "description": "Porcentaje de mujeres de 15 a 49 años (no embarazadas y sin un parto en los 2 meses previos a la encuesta) con obesidad (índice de masa corporal ≥ 30). Estimado a partir de la Encuesta de Demografía y Salud (EDSA) 2008 y 2023 del INE: las prevalencias nacionales urbana y rural de la encuesta se combinan con la tasa de urbanización de cada municipio, P = P_rural + (P_urban − P_rural) × urbanización (0 = totalmente rural, 1 = totalmente urbano), de modo que los valores municipales difieren solo a través de la urbanización. Fuente: INE, EDSA 2008 y 2023 (cuadro 3.01.03.10). Valor inicial 2008 (almacenado en 2012) y valor final 2023 (almacenado en 2024). En el índice del ODS 2 se reescala linealmente de 0 a 100 entre 38.2 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 10 y grandes desafíos a partir de 25. Indicador del Atlas 02_02_02_01_smu, “Porcentaje de mujeres con obesidad (15-49 años)” (Andersen & Argandoña 2026)."
+  },
+  "sdg2_2_dcn": {
+   "title": "Desnutrición crónica en menores de 5 años (%)",
+   "description": "Porcentaje de niñas y niños menores de 5 años con desnutrición crónica (baja talla para la edad). Estimado a partir de la Encuesta de Demografía y Salud (EDSA) 2008 y 2023 del INE: las prevalencias nacionales urbana y rural de la encuesta se combinan con la tasa de urbanización de cada municipio, P = P_rural + (P_urban − P_rural) × urbanización (0 = totalmente rural, 1 = totalmente urbano), de modo que los valores municipales difieren solo a través de la urbanización. Fuente: INE, EDSA 2008 y 2023 (cuadro 3.01.03.03). Valor inicial 2008 (almacenado en 2012) y valor final 2023 (almacenado en 2024). En el índice del ODS 2 se reescala linealmente de 0 a 100 entre 50.2 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 7.5 y grandes desafíos a partir de 15. Indicador del Atlas 02_02_02_02_dcn, “Porcentaje de niñas y niños con desnutrición crónica (< 5 años)” (Andersen & Argandoña 2026)."
+  },
+  "sdg2_2_osn": {
+   "title": "Sobrepeso en menores de 5 años (%)",
+   "description": "Porcentaje de niñas y niños menores de 5 años con sobrepeso. Estimado a partir de la Encuesta de Demografía y Salud (EDSA) 2008 y 2023 del INE: las prevalencias nacionales urbana y rural de la encuesta se combinan con la tasa de urbanización de cada municipio, P = P_rural + (P_urban − P_rural) × urbanización (0 = totalmente rural, 1 = totalmente urbano), de modo que los valores municipales difieren solo a través de la urbanización. Fuente: INE, EDSA 2008 y 2023 (cuadro 3.01.03.03). Valor inicial 2008 (almacenado en 2012) y valor final 2023 (almacenado en 2024). En el índice del ODS 2 se reescala linealmente de 0 a 100 entre 11.8 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 3.5 y grandes desafíos a partir de 10. Indicador del Atlas 02_02_02_03_osn, “Porcentaje de niñas y niños con sobrepeso (< 5 años)” (Andersen & Argandoña 2026)."
+  },
+  "sdg2_2_pam": {
+   "title": "Anemia en mujeres de 15-49 años (%)",
+   "description": "Porcentaje de mujeres de 15 a 49 años con anemia de cualquier grado. Estimado a partir de la Encuesta de Demografía y Salud (EDSA) 2008 y 2023 del INE: las prevalencias nacionales urbana y rural de la encuesta se combinan con la tasa de urbanización de cada municipio, P = P_rural + (P_urban − P_rural) × urbanización (0 = totalmente rural, 1 = totalmente urbano), de modo que los valores municipales difieren solo a través de la urbanización. Fuente: INE, EDSA 2008 y 2023 (cuadro 3.01.03.06). Valor inicial 2008 (almacenado en 2012) y valor final 2023 (almacenado en 2024). En el índice del ODS 2 se reescala linealmente de 0 a 100 entre 70.4 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 18 y grandes desafíos a partir de 38. Indicador del Atlas 02_02_03_04_pam, “Porcentaje de mujeres con anemia (15-49 años)” (Andersen & Argandoña 2026)."
+  },
+  "sdg2_3_pac": {
+   "title": "Producción agrícola (t por persona por año)",
+   "description": "Producción agrícola por persona: las toneladas de todos los cultivos producidos en el municipio divididas por su población, promediadas en tres años. Solo para municipios con una tasa de urbanización inferior al 95%. Fuente: el Sistema Integrado de Información Productiva (SIIP, 2024), producción agrícola municipal. Valor inicial promedio 2013–2015 (almacenado en 2012) y valor final promedio 2022–2024 (almacenado en 2024). Sin dato para 19 de las 343 unidades en el periodo inicial y para 21 en el final. En el índice del ODS 2 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 6.3 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 3 y grandes desafíos a partir de 1.8. Indicador del Atlas 02_03_01_05_pac, “Producción agrícola (t/persona/año)” (Andersen & Argandoña 2026)."
+  },
+  "sdg2_3_rpa": {
+   "title": "Rendimiento agrícola (t por ha por año)",
+   "description": "Rendimiento agrícola: las toneladas de todos los cultivos producidos divididas por la superficie cultivada total en hectáreas, promediadas en tres años. Solo para municipios con una tasa de urbanización inferior al 95%. Fuente: el Sistema Integrado de Información Productiva (SIIP, 2024), producción agrícola municipal. Valor inicial promedio 2013–2015 (almacenado en 2012) y valor final promedio 2022–2024 (almacenado en 2024). Sin dato para 20 de las 343 unidades en cada periodo. En el índice del ODS 2 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 7 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 2.5 y grandes desafíos a partir de 1.5. Indicador del Atlas 02_03_01_06_rpa, “Rendimiento de la producción agrícola (t/ha/año)” (Andersen & Argandoña 2026)."
+  },
+  "sdg2_5_idp": {
+   "title": "Índice de diversificación agrícola (0-1)",
+   "description": "Diversificación de la producción agrícola: equidad de Shannon de las participaciones de los cultivos en la producción total (el índice de Shannon-Wiener −Σ p_i ln p_i dividido por ln S, con S el número de cultivos), promediada en tres años; 1 significa una producción repartida por igual entre muchos cultivos. Solo para municipios con una tasa de urbanización inferior al 95%. Fuente: el Sistema Integrado de Información Productiva (SIIP, 2024), producción agrícola municipal. Valor inicial promedio 2013–2015 (almacenado en 2012) y valor final promedio 2022–2024 (almacenado en 2024). Sin dato para 19 de las 343 unidades en el periodo inicial y para 21 en el final. En el índice del ODS 2 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 1 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 0.65 y grandes desafíos a partir de 0.2. Indicador del Atlas 02_05_01_07_idp, “Índice de diversificación productiva agrícola” (Andersen & Argandoña 2026)."
+  }
+ }
+}

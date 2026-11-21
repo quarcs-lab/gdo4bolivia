@@ -1,0 +1,37 @@
+{
+ "title": "ODS 16: Paz, justicia e instituciones sólidas (Atlas de los ODS en Bolivia 2026)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID de GDO-Bolivia del municipio (BO-DD-PP-MM) en el mapa municipal de 343 unidades (SDSN Bolivia 2025: municipios y autonomías indígenas), numerado como en GADM 4.1 más cuatro unidades creadas desde entonces; map343; su límite está en geo/boundaries/map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); la numeración de departamentos y provincias sigue el orden de GADM y difiere de los códigos del INE."
+  },
+  "year": {
+   "title": "Periodo",
+   "description": "Periodo de los valores de la fila: 2012 contiene los valores iniciales del Atlas (hacia el censo de 2012) y 2024 sus valores finales (hacia el censo de 2024). Los años de referencia reales de cada variable se indican en su descripción y en geo:reference_years."
+  },
+  "mun_id": {
+   "title": "Código municipal del INE",
+   "description": "Código oficial del municipio del Instituto Nacional de Estadística (INE), DDPPMM (departamento, provincia, municipio), almacenado como entero sin el cero inicial (p. ej., 20101 = Nuestra Señora de La Paz), como en el Atlas. Las filas del Atlas se vinculan a geo_id mediante este código."
+  },
+  "index_sdg16": {
+   "title": "Índice de paz, justicia e instituciones sólidas (0-100)",
+   "description": "Índice del ODS 16 (Paz, justicia e instituciones sólidas) del Atlas de los ODS en Bolivia 2026, en una escala de 0 a 100 donde 100 significa que las metas del objetivo se cumplen y 0 la peor situación. Siguiendo el Índice ODS global de la SDSN, cada uno de sus 4 indicadores se reescala linealmente de 0 a 100 entre un valor peor y uno mejor (indicados en la descripción de cada indicador), con la dirección fijada de modo que un valor más alto sea siempre mejor y acotando los valores fuera de los límites; el índice es la media simple de los indicadores reescalados disponibles. Componentes: Tasa de homicidios (por 100 000 habitantes); Ejecución presupuestaria (%); Conflictos sociales (eventos por año); Niñas y niños menores de 5 años inscritos en el registro civil (%). Valor inicial (~2012) almacenado en 2012 y valor final (~2024) en 2024; sus componentes se refieren a distintos años en torno a cada censo. Atlas: “Índice ODS16”."
+  },
+  "sdg16_1_thp": {
+   "title": "Tasa de homicidios (por 100 000 habitantes)",
+   "description": "Número anual promedio de delitos contra la vida denunciados (homicidios, asesinatos, infanticidios, feminicidios y parricidios) por cada 100 000 habitantes en tres años. Fuente: Observatorio Boliviano de Seguridad Ciudadana y Lucha contra las Drogas (OBSCD). Valor inicial promedio 2017–2019 (almacenado en 2012) y valor final promedio 2022–2024 (almacenado en 2024). En el índice del ODS 16 se reescala linealmente de 0 a 100 entre 9 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 1.5 y grandes desafíos a partir de 4. Indicador del Atlas 16_01_01_01_thp, “Tasa de homicidios registrados (por 100 000 habitantes)” (Andersen & Argandoña 2026)."
+  },
+  "sdg16_6_cep": {
+   "title": "Ejecución presupuestaria (%)",
+   "description": "Porcentaje del presupuesto programado del municipio que se ejecuta, promediado en tres años. Fuente: Ministerio de Economía y Finanzas Públicas (MEFP). Valor inicial promedio 2011–2013 (almacenado en 2012) y valor final promedio 2021–2023 (almacenado en 2024). En el índice del ODS 16 se reescala linealmente de 0 a 100 entre 17.7 (peor, 0) y 94.9 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 90 y grandes desafíos a partir de 60. Indicador del Atlas 16_06_01_02_cep, “Capacidad de ejecución del presupuesto programado (%)” (Andersen & Argandoña 2026)."
+  },
+  "sdg16_7_tcs": {
+   "title": "Conflictos sociales (eventos por año)",
+   "description": "Número anual promedio de eventos de conflicto social registrados en el municipio en tres años. Fuente: Armed Conflict Location and Event Data (ACLED), 2018-2024. Valor inicial promedio 2018–2020 (almacenado en 2012) y valor final promedio 2022–2024 (almacenado en 2024). En el índice del ODS 16 se reescala linealmente de 0 a 100 entre 16.3 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 0 y grandes desafíos a partir de 10. Indicador del Atlas 16_07_02_03_tcs, “Cantidad anual de conflictos sociales” (Andersen & Argandoña 2026)."
+  },
+  "sdg16_9_nic": {
+   "title": "Niñas y niños menores de 5 años inscritos en el registro civil (%)",
+   "description": "Porcentaje de niñas y niños menores de 5 años cuyo nacimiento está inscrito en el registro civil. Fuente: tabulados del INE de los Censos de Población y Vivienda de 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 16 se reescala linealmente de 0 a 100 entre 66.2 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 98 y grandes desafíos a partir de 75. Indicador del Atlas 16_09_01_04_nic, “Porcentaje de niñas y niños inscritos en registro civil” (Andersen & Argandoña 2026)."
+  }
+ }
+}

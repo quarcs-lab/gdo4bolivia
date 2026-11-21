@@ -1,0 +1,41 @@
+{
+ "title": "ODS 13: Acción por el clima (Atlas de los ODS en Bolivia 2026)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID de GDO-Bolivia del municipio (BO-DD-PP-MM) en el mapa municipal de 343 unidades (SDSN Bolivia 2025: municipios y autonomías indígenas), numerado como en GADM 4.1 más cuatro unidades creadas desde entonces; map343; su límite está en geo/boundaries/map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); la numeración de departamentos y provincias sigue el orden de GADM y difiere de los códigos del INE."
+  },
+  "year": {
+   "title": "Periodo",
+   "description": "Periodo de los valores de la fila: 2012 contiene los valores iniciales del Atlas (hacia el censo de 2012) y 2024 sus valores finales (hacia el censo de 2024). Los años de referencia reales de cada variable se indican en su descripción y en geo:reference_years."
+  },
+  "mun_id": {
+   "title": "Código municipal del INE",
+   "description": "Código oficial del municipio del Instituto Nacional de Estadística (INE), DDPPMM (departamento, provincia, municipio), almacenado como entero sin el cero inicial (p. ej., 20101 = Nuestra Señora de La Paz), como en el Atlas. Las filas del Atlas se vinculan a geo_id mediante este código."
+  },
+  "index_sdg13": {
+   "title": "Índice de acción por el clima (0-100)",
+   "description": "Índice del ODS 13 (Acción por el clima) del Atlas de los ODS en Bolivia 2026, en una escala de 0 a 100 donde 100 significa que las metas del objetivo se cumplen y 0 la peor situación. Siguiendo el Índice ODS global de la SDSN, cada uno de sus 5 indicadores se reescala linealmente de 0 a 100 entre un valor peor y uno mejor (indicados en la descripción de cada indicador), con la dirección fijada de modo que un valor más alto sea siempre mejor y acotando los valores fuera de los límites; el índice es la media simple de los indicadores reescalados disponibles. Componentes: Familias afectadas por eventos climáticos extremos (%); Índice de vulnerabilidad al cambio climático (0-3); Emisiones de CO2 por pérdida de bosque (t por persona al año); Emisiones de CO2 por transporte (t por persona al año); Emisiones de CO2 por incendios (t por persona al año). Valor inicial (~2012) almacenado en 2012 y valor final (~2024) en 2024; sus componentes se refieren a distintos años en torno a cada censo. Atlas: “Índice ODS13”."
+  },
+  "sdg13_1_fec": {
+   "title": "Familias afectadas por eventos climáticos extremos (%)",
+   "description": "Familias registradas como afectadas o damnificadas por eventos climáticos extremos, como porcentaje de todas las familias del municipio, promediadas en tres años. Fuente: SINAGER, Viceministerio de Defensa Civil (VIDECI). Valor inicial promedio 2011–2013 (almacenado en 2012) y valor final promedio 2021–2023 (almacenado en 2024). En el índice del ODS 13 se reescala linealmente de 0 a 100 entre 87.6 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 5 y grandes desafíos a partir de 40. Indicador del Atlas 13_01_01_01_fec, “Intensidad de afectación por eventos climáticos extremos (%)” (Andersen & Argandoña 2026)."
+  },
+  "sdg13_1_icc": {
+   "title": "Índice de vulnerabilidad al cambio climático (0-3)",
+   "description": "Índice compuesto de vulnerabilidad al cambio climático en tres dimensiones: exposición al clima actual (1995-2014) y futuro (2041-2060, escenarios SSP2-4.5 y SSP5-8.5), sensibilidad de los bienes y medios de vida, y capacidad adaptativa de las instituciones y el gobierno (método de Ledezma et al. 2015, Atlas de Cambio Climático en Bolivia; la ponderación de sus componentes aún no está documentada). Fuente: cálculo propio del Atlas a partir de los censos de 2012 y 2024, WorldClim, áreas protegidas (SDSN Bolivia 2025), riqueza de especies (Fundación Amigos de la Naturaleza 2004), cobertura del suelo de MapBiomas Bolivia, elevación del USGS, territorios indígenas del INRA, y mapas de amenaza de inundación y de tiempo de viaje. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 13 se reescala linealmente de 0 a 100 entre 3 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 0.9 y grandes desafíos a partir de 2.1. Indicador del Atlas 13_01_03_02_icc, “Índice de vulnerabilidad al cambio climático” (Andersen & Argandoña 2026)."
+  },
+  "sdg13_2_epb": {
+   "title": "Emisiones de CO2 por pérdida de bosque (t por persona al año)",
+   "description": "Dióxido de carbono emitido por la pérdida de bosque por persona: superficie de bosque perdida multiplicada por la biomasa de cada tipo de bosque y por un factor de emisión, dividida por la población y promediada en tres años. Solo para municipios con más de 1000 hectáreas de bosque. Fuente: SDSN Bolivia (2025), \"Assessing CO2 Emissions from Deforestation and Fires in Bolivia during 2010-2023\" (https://sdsnbolivia.org/emisiones-de-co2-por-deforestacion-e-incendios-en-bolivia/). Valor inicial promedio 2011–2013 (almacenado en 2012) y valor final promedio 2021–2023 (almacenado en 2024). Sin datos para 153 de las 343 unidades en cada periodo. En el índice del ODS 13 se reescala linealmente de 0 a 100 entre 44.9 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 2 y grandes desafíos a partir de 4. Indicador del Atlas 13_02_02_03_epb, “Emisiones de CO2 por pérdida de bosque (tCO2/persona)” (Andersen & Argandoña 2026)."
+  },
+  "sdg13_2_ect": {
+   "title": "Emisiones de CO2 por transporte (t por persona al año)",
+   "description": "Dióxido de carbono emitido por el transporte terrestre por persona: las emisiones del departamento por la gasolina, el diésel y el gas natural vendidos, asignadas a los municipios según su parque automotor registrado y divididas por la población. Fuente: parque automotor por municipio del INE y ventas departamentales de combustibles del Ministerio de Hidrocarburos y Energía. Valor inicial 2015 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 13 se reescala linealmente de 0 a 100 entre 5.9 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 2 y grandes desafíos a partir de 4. Indicador del Atlas 13_02_02_04_ect, “Emisiones de CO2 por transporte (tCO2/persona)” (Andersen & Argandoña 2026)."
+  },
+  "sdg13_2_eci": {
+   "title": "Emisiones de CO2 por incendios (t por persona al año)",
+   "description": "Dióxido de carbono emitido por la degradación de vegetación boscosa y no boscosa por incendios, por persona (estimaciones de la Global Fire Emissions Database para el área quemada del municipio, divididas por su población), promediado en tres años. Fuente: SDSN Bolivia (2025), \"Assessing CO2 Emissions from Deforestation and Fires in Bolivia during 2010-2023\" (https://sdsnbolivia.org/emisiones-de-co2-por-deforestacion-e-incendios-en-bolivia/). Valor inicial promedio 2011–2013 (almacenado en 2012) y valor final promedio 2020–2022 (almacenado en 2024). En el índice del ODS 13 se reescala linealmente de 0 a 100 entre 38.6 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 2 y grandes desafíos a partir de 4. Indicador del Atlas 13_02_02_05_eci, “Emisiones de CO2 por degradación por incendios (tCO2/persona)” (Andersen & Argandoña 2026)."
+  }
+ }
+}

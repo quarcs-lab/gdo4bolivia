@@ -1,0 +1,33 @@
+{
+ "title": "Índice de Desarrollo Sostenible, IDS (Atlas de los ODS en Bolivia 2026)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID de municipio de GDO-Bolivia (BO-DD-PP-MM) del mapa municipal de 343 unidades (SDSN Bolivia 2025: municipios y autonomías indígenas), numerado como en GADM 4.1 más cuatro unidades creadas desde entonces; map343; su límite está en geo/boundaries/map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); los números de departamento y provincia siguen el orden de GADM y difieren de los códigos del INE."
+  },
+  "year": {
+   "title": "Periodo",
+   "description": "Periodo de los valores de la fila: 2012 contiene los valores iniciales del Atlas (hacia el censo de 2012) y 2024 sus valores finales (hacia el censo de 2024). Los años de referencia reales de cada variable se indican en su descripción y en geo:reference_years."
+  },
+  "mun_id": {
+   "title": "Código municipal del INE",
+   "description": "Código oficial de municipio del Instituto Nacional de Estadística (INE), DDPPMM (departamento, provincia, municipio), almacenado como entero sin el cero inicial (p. ej., 20101 = Nuestra Señora de La Paz), como en el Atlas. Las filas del Atlas se vinculan con geo_id mediante este código."
+  },
+  "index_sdg": {
+   "title": "Índice de Desarrollo Sostenible, IDS (0-100)",
+   "description": "El Índice de Desarrollo Sostenible (IDS) del Atlas de los ODS en Bolivia 2026: la media simple de los 15 índices de objetivo (ODS 1-11, 13, 15, 16 y 17; el Atlas no tiene índice para el 12 ni el 14), cada uno la media de sus indicadores reescalados, en una escala de 0 a 100 donde 100 significa que se cumplen todas las metas. 81 indicadores en total. Valor inicial (~2012) almacenado en 2012 y valor final (~2024) en 2024. Atlas: “IDS 2012” e “IDS 2024”."
+  },
+  "rank_sdg": {
+   "title": "Ranking nacional del IDS (1 = mejor)",
+   "description": "Posición del IDS de la unidad entre los 343 municipios y autonomías indígenas en el periodo (1 = IDS más alto), tal como la publica el Atlas (“Ranking 2012”, “Ranking 2024”)."
+  },
+  "population": {
+   "title": "Población (censo)",
+   "description": "Población empadronada por el Censo de Población y Vivienda de 2012 (almacenada en 2012) y de 2024 (almacenada en 2024), de la tabla de atributos del mapa municipal de SDSN Bolivia; la cifra de 2024 coincide con la “Población 2024” del Atlas excepto en Huarina (8279 en el mapa, 8679 en el Atlas). Para las cuatro unidades creadas después de 2012, la cifra de 2012 es la población censal de su territorio actual."
+  },
+  "urbanization": {
+   "title": "Tasa de urbanización (% de la población)",
+   "description": "Porcentaje de la población que vive en áreas urbanas en 2024 (Atlas: “Tasa de urbanización, 2024”), redondeado a porcentajes enteros; solo para 2024."
+  }
+ }
+}

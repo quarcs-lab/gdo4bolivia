@@ -1,0 +1,45 @@
+{
+ "title": "ODS 5: Igualdad de género (Atlas de los ODS en Bolivia 2026)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID de municipio de GDO-Bolivia (BO-DD-PP-MM) del mapa municipal de 343 unidades (SDSN Bolivia 2025: municipios y autonomías indígenas), numerado como en GADM 4.1 más cuatro unidades creadas desde entonces; map343; su límite está en geo/boundaries/map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); los números de departamento y provincia siguen el orden de GADM y difieren de los códigos del INE."
+  },
+  "year": {
+   "title": "Periodo",
+   "description": "Periodo de los valores de la fila: 2012 contiene los valores iniciales del Atlas (hacia el censo de 2012) y 2024 sus valores finales (hacia el censo de 2024). Los años de referencia reales de cada variable se indican en su descripción y en geo:reference_years."
+  },
+  "mun_id": {
+   "title": "Código municipal del INE",
+   "description": "Código oficial de municipio del Instituto Nacional de Estadística (INE), DDPPMM (departamento, provincia, municipio), almacenado como entero sin el cero inicial (p. ej., 20101 = Nuestra Señora de La Paz), como en el Atlas. Las filas del Atlas se vinculan con geo_id mediante este código."
+  },
+  "index_sdg5": {
+   "title": "Índice de igualdad de género (0-100)",
+   "description": "Índice del ODS 5 (Igualdad de género) del Atlas de los ODS en Bolivia 2026, en una escala de 0 a 100 donde 100 significa que se cumplen las metas del objetivo y 0 la peor situación. Siguiendo el Índice ODS global de la SDSN, cada uno de sus 6 indicadores se reescala linealmente de 0 a 100 entre un valor peor y uno mejor (indicados en la descripción de cada indicador), con la dirección fijada para que un valor más alto sea siempre mejor y los valores fuera de los límites acotados; el índice es la media simple de los indicadores reescalados disponibles. Componentes: Paridad de género en abandono en secundaria (hombres/mujeres); Paridad de género en pobreza multidimensional (jefe hombre/jefa mujer); Paridad de género en años de educación, 25-35 años (mujeres/hombres); Paridad de género en la participación laboral (mujeres/hombres); Paridad de género en labores del hogar y de cuidado, 15-24 años (hombres/mujeres); Mujeres entre los concejales electos (%). Valor inicial (~2012) almacenado en 2012 y valor final (~2024) en 2024; sus componentes se refieren a distintos años en torno a cada censo. Atlas: “Índice ODS5”."
+  },
+  "sdg5_1_pga": {
+   "title": "Paridad de género en abandono en secundaria (hombres/mujeres)",
+   "description": "Índice de paridad de género del abandono escolar en secundaria: la tasa de abandono de los hombres dividida por la de las mujeres (1 = paridad). Fuente: el Sistema de Información Educativa (SIE) del Ministerio de Educación. Valor inicial promedio 2012–2014 (almacenado en 2012) y valor final promedio 2022–2024 (almacenado en 2024). Sin dato para 4 de las 343 unidades en el periodo inicial y para 10 en el final. En el índice del ODS 5 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 1 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 1 y grandes desafíos a partir de 0.5. Indicador del Atlas 05_01_01_01_pga, “Paridad de género en abandono escolar en secundaria” (Andersen & Argandoña 2026)."
+  },
+  "sdg5_1_pgm": {
+   "title": "Paridad de género en pobreza multidimensional (jefe hombre/jefa mujer)",
+   "description": "Paridad de género de la pobreza multidimensional: el IPM de los hogares con jefe hombre dividido por el IPM de los hogares con jefa mujer (1 = paridad). Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda 2012 y 2024 del INE. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 5 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 1 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 1 y grandes desafíos a partir de 0.5. Indicador del Atlas 05_01_01_02_pgm, “Paridad de género en el índice de pobreza multidimensional” (Andersen & Argandoña 2026)."
+  },
+  "sdg5_1_pge": {
+   "title": "Paridad de género en años de educación, 25-35 años (mujeres/hombres)",
+   "description": "Índice de paridad de género del promedio de años de educación de las personas de 25 a 35 años: el de las mujeres dividido por el de los hombres (1 = paridad). Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda 2012 y 2024 del INE. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 5 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 1 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 1 y grandes desafíos a partir de 0.5. Indicador del Atlas 05_01_01_03_pge, “Paridad de género en años de educación de jóvenes (25 a 35 años)” (Andersen & Argandoña 2026)."
+  },
+  "sdg5_1_pgp": {
+   "title": "Paridad de género en la participación laboral (mujeres/hombres)",
+   "description": "Paridad de género de la tasa global de participación de las personas de 14 años o más: la tasa de las mujeres dividida por la de los hombres (1 = paridad). Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda 2012 y 2024 del INE. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 5 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 1 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 0.8 y grandes desafíos a partir de 0.6. Indicador del Atlas 05_01_01_04_pgp, “Paridad de género en la tasa global de participación” (Andersen & Argandoña 2026)."
+  },
+  "sdg5_4_phc": {
+   "title": "Paridad de género en labores del hogar y de cuidado, 15-24 años (hombres/mujeres)",
+   "description": "Paridad de género en labores del hogar o de cuidado entre las personas de 15 a 24 años: la proporción de hombres que realizan labores del hogar o de cuidado dividida por la proporción de mujeres que las realizan (1 = paridad). Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda 2012 y 2024 del INE. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 5 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 1 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 1 y grandes desafíos a partir de 0.5. Indicador del Atlas 05_04_01_05_phc, “Paridad de género en labores del hogar o labores de cuidado” (Andersen & Argandoña 2026)."
+  },
+  "sdg5_5_acm": {
+   "title": "Mujeres entre los concejales electos (%)",
+   "description": "Porcentaje de los concejales municipales electos que son mujeres. Fuente: Atlas Electoral de Bolivia (Órgano Electoral Plurinacional), elecciones subnacionales de 2015 y 2021. Valor inicial 2015 (almacenado en 2012) y valor final 2021 (almacenado en 2024). Sin dato para 3 de las 343 unidades en el periodo inicial y para 7 en el final. En el índice del ODS 5 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 50 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 40 y grandes desafíos a partir de 20. Indicador del Atlas 05_05_01_06_acm, “Porcentaje de concejales electos que son mujeres” (Andersen & Argandoña 2026)."
+  }
+ }
+}

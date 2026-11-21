@@ -149,7 +149,15 @@ keyless basemap whose labels sit above the units, and writes two images:
 
 Add the `CONTENT_REGISTRY` entry in `site/src/content.js`; the fields and the snippet rules
 are in [references/page-entry.md](references/page-entry.md). The build writes the JSON-LD
-`Dataset` and the map data. Do not add download links or links to the data folders. Then preview:
+`Dataset` and the map data. Do not add download links or links to the data folders.
+
+The website is bilingual (English and Spanish): translate the page and the dictionary too.
+`node site/i18n/strings.mjs --extract <tmp dir>` writes the English source of what is translated;
+add the item's prose to `site/i18n/es/content.json` (`items.<id>`: title, scope, summary,
+description, alt texts, notice, tags, categories, the examples' titles and texts) and the dataset's
+labels and descriptions to `site/i18n/es/metadata/<dataset>.json`, never translating code,
+variable names, IDs, URLs or citations. `node site/i18n/strings.mjs` must report every
+translation complete. Then preview:
 
 ```bash
 npm ci --prefix site                # once
@@ -162,6 +170,7 @@ Check in the browser (claude-in-chrome):
 - the interactive map (every variable and year draws; the legend and highest/lowest lists make sense)
 - the search finds the page and its variables
 - the License text
+- the page in Spanish (the EN | ES switch, top right): title, text, variables, map labels
 - no console errors
 - no horizontal scroll at 390 px (measure inside a 390 px iframe if the window cannot be resized)
 - the card on the Indicators section

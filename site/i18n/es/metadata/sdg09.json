@@ -1,0 +1,37 @@
+{
+ "title": "ODS 9: Industria, innovación e infraestructura (Atlas de los ODS en Bolivia 2026)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID de municipio de GDO-Bolivia (BO-DD-PP-MM) del mapa municipal de 343 unidades (SDSN Bolivia 2025: municipios y autonomías indígenas), numerado como en GADM 4.1 más cuatro unidades creadas desde entonces; map343; su límite está en geo/boundaries/map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); los números de departamento y provincia siguen el orden de GADM y difieren de los códigos del INE."
+  },
+  "year": {
+   "title": "Periodo",
+   "description": "Periodo de los valores de la fila: 2012 contiene los valores iniciales del Atlas (hacia el censo de 2012) y 2024 sus valores finales (hacia el censo de 2024). Los años de referencia reales de cada variable se indican en su descripción y en geo:reference_years."
+  },
+  "mun_id": {
+   "title": "Código municipal del INE",
+   "description": "Código oficial de municipio del Instituto Nacional de Estadística (INE), DDPPMM (departamento, provincia, municipio), almacenado como entero sin el cero inicial (p. ej., 20101 = Nuestra Señora de La Paz), como en el Atlas. Las filas del Atlas se vinculan con geo_id mediante este código."
+  },
+  "index_sdg9": {
+   "title": "Índice de industria, innovación e infraestructura (0-100)",
+   "description": "Índice del ODS 9 (Industria, innovación e infraestructura) del Atlas de los ODS en Bolivia 2026, en una escala de 0 a 100 donde 100 significa que se cumplen las metas del objetivo y 0 la peor situación. Siguiendo el Índice ODS global de la SDSN, cada uno de sus 4 indicadores se reescala linealmente de 0 a 100 entre un valor peor y uno mejor (indicados en la descripción de cada indicador), con la dirección fijada para que un valor más alto sea siempre mejor y los valores fuera de los límites acotados; el índice es la media simple de los indicadores reescalados disponibles. Componentes: Vías fundamentales que atraviesan el municipio (número); Acceso a internet, fijo o móvil (% de hogares); Radio bases de telefonía móvil (por 1000 habitantes); Teléfono fijo o celular (% de hogares). Valor inicial (~2012) almacenado en 2012 y valor final (~2024) en 2024; sus componentes se refieren a distintos años en torno a cada censo. Atlas: “Índice ODS9”."
+  },
+  "sdg9_1_vpc": {
+   "title": "Vías fundamentales que atraviesan el municipio (número)",
+   "description": "Número de carreteras de la Red Vial Fundamental que pasan por el municipio. Fuente: Administradora Boliviana de Carreteras (ABC), red vial de 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 9 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 3 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 2 y grandes desafíos a partir de 0. Indicador del Atlas 09_01_01_01_vpc, “Número de vías fundamentales que atraviesan el municipio” (Andersen & Argandoña 2026)."
+  },
+  "sdg9_8_ci": {
+   "title": "Acceso a internet, fijo o móvil (% de hogares)",
+   "description": "Porcentaje de viviendas particulares con personas presentes que cuentan con internet fijo o móvil. Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 9 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 65 y grandes desafíos a partir de 20. Indicador del Atlas 09_08_01_02_ci, “Porcentaje de hogares con acceso a internet fijo o móvil” (Andersen & Argandoña 2026)."
+  },
+  "sdg9_8_drb": {
+   "title": "Radio bases de telefonía móvil (por 1000 habitantes)",
+   "description": "Número de radio bases (estaciones base) de telefonía móvil en el municipio por cada 1000 habitantes. Fuente: Autoridad de Regulación y Fiscalización de Telecomunicaciones y Transportes (ATT), 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 9 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 3 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 3 y grandes desafíos a partir de 0.05. Indicador del Atlas 09_08_01_03_drb, “Densidad de radio bases (por 1000 habitantes)” (Andersen & Argandoña 2026)."
+  },
+  "sdg9_8_tfc": {
+   "title": "Teléfono fijo o celular (% de hogares)",
+   "description": "Porcentaje de hogares particulares que tienen teléfono fijo o celular. Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 9 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 75 y grandes desafíos a partir de 40. Indicador del Atlas 09_08_01_04_tfc, “Porcentaje de hogares con cobertura de telefonía fija o celular” (Andersen & Argandoña 2026)."
+  }
+ }
+}

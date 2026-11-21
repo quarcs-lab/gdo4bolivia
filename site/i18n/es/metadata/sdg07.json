@@ -1,0 +1,37 @@
+{
+ "title": "ODS 7: Energía asequible y no contaminante (Atlas de los ODS en Bolivia 2026)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID de municipio de GDO-Bolivia (BO-DD-PP-MM) del mapa municipal de 343 unidades (SDSN Bolivia 2025: municipios y autonomías indígenas), numerado como en GADM 4.1 más cuatro unidades creadas desde entonces; map343; su límite está en geo/boundaries/map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); los números de departamento y provincia siguen el orden de GADM y difieren de los códigos del INE."
+  },
+  "year": {
+   "title": "Periodo",
+   "description": "Periodo de los valores de la fila: 2012 contiene los valores iniciales del Atlas (hacia el censo de 2012) y 2024 sus valores finales (hacia el censo de 2024). Los años de referencia reales de cada variable se indican en su descripción y en geo:reference_years."
+  },
+  "mun_id": {
+   "title": "Código municipal del INE",
+   "description": "Código oficial de municipio del Instituto Nacional de Estadística (INE), DDPPMM (departamento, provincia, municipio), almacenado como entero sin el cero inicial (p. ej., 20101 = Nuestra Señora de La Paz), como en el Atlas. Las filas del Atlas se vinculan con geo_id mediante este código."
+  },
+  "index_sdg7": {
+   "title": "Índice de energía asequible y no contaminante (0-100)",
+   "description": "Índice del ODS 7 (Energía asequible y no contaminante) del Atlas de los ODS en Bolivia 2026, en una escala de 0 a 100 donde 100 significa que se cumplen las metas del objetivo y 0 la peor situación. Siguiendo el Índice ODS global de la SDSN, cada uno de sus 4 indicadores se reescala linealmente de 0 a 100 entre un valor peor y uno mejor (indicados en la descripción de cada indicador), con la dirección fijada para que un valor más alto sea siempre mejor y los valores fuera de los límites acotados; el índice es la media simple de los indicadores reescalados disponibles. Componentes: Consumo de electricidad residencial (kWh por persona por año); Cobertura de energía eléctrica (% de la población); Medidores residenciales con consumo cero por 6+ meses (%); Energía limpia para cocinar (% de la población). Valor inicial (~2012) almacenado en 2012 y valor final (~2024) en 2024; sus componentes se refieren a distintos años en torno a cada censo. Atlas: “Índice ODS7”."
+  },
+  "sdg7_1_cep": {
+   "title": "Consumo de electricidad residencial (kWh por persona por año)",
+   "description": "Consumo de electricidad residencial por persona: consumo residencial total dividido por la población. Fuente: la base de datos de medidores eléctricos residenciales del Ministerio de Hidrocarburos y Energías de 2016 y 2024, compilada por Andersen et al. (2023). Valor inicial 2016 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 7 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 523 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 500 y grandes desafíos a partir de 50. Indicador del Atlas 07_01_01_01_cep, “Consumo de electricidad residencial (kWh/persona/año)” (Andersen & Argandoña 2026)."
+  },
+  "sdg7_1_cae": {
+   "title": "Cobertura de energía eléctrica (% de la población)",
+   "description": "Porcentaje de la población en viviendas particulares con personas presentes que cuenta con electricidad. Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 7 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 98 y grandes desafíos a partir de 80. Indicador del Atlas 07_01_01_02_cae, “Porcentaje de la población con cobertura de energía eléctrica” (Andersen & Argandoña 2026)."
+  },
+  "sdg7_1_mcc": {
+   "title": "Medidores residenciales con consumo cero por 6+ meses (%)",
+   "description": "Porcentaje de medidores eléctricos residenciales con consumo cero durante seis o más meses del año (viviendas conectadas a la red sin uso registrado). Fuente: la base de datos de medidores eléctricos residenciales del Ministerio de Hidrocarburos y Energías de 2016 y 2024, compilada por Andersen et al. (2023). Valor inicial 2016 (almacenado en 2012) y valor final 2024 (almacenado en 2024). Sin dato para 14 de las 343 unidades en el periodo inicial y para 18 en el final. En el índice del ODS 7 se reescala linealmente de 0 a 100 entre 69 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 4.5 y grandes desafíos a partir de 24.9. Indicador del Atlas 07_01_01_03_mcc, “Porcentaje de medidores eléctricos residenciales con consumo cero (6 meses o más)” (Andersen & Argandoña 2026)."
+  },
+  "sdg7_1_elc": {
+   "title": "Energía limpia para cocinar (% de la población)",
+   "description": "Porcentaje de la población en viviendas particulares con personas presentes que cocina con combustibles limpios. Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 7 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 85 y grandes desafíos a partir de 50. Indicador del Atlas 07_01_02_04_elc, “Porcentaje de la población con energía limpia para cocinar” (Andersen & Argandoña 2026)."
+  }
+ }
+}

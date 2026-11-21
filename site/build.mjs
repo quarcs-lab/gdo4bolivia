@@ -121,13 +121,37 @@ for (const f of readdirSync(join(SITE, 'data')).filter((name) => name.endsWith('
   cpSync(join(SITE, 'data', f), join(OUT, 'assets/data', f));
 }
 
+// --------------------------------------------------------------------------- translations
+// site/i18n/<lang>/ (see site/i18n/strings.mjs): the app bundles ui.json and content.json; each dataset's
+// translated labels and descriptions are served as assets/i18n/<lang>/<dataset>.json
+const { overlay } = await import(pathToFileURL(join(SITE, 'src/overlay.js')));
+const LANGS = existsSync(join(SITE, 'i18n')) ? readdirSync(join(SITE, 'i18n')).filter((l) => existsSync(join(SITE, 'i18n', l, 'content.json'))) : [];
+const TR = Object.fromEntries(LANGS.map((l) => {
+  const dir = join(SITE, 'i18n', l);
+  const meta = {};
+  for (const d of DATASETS) {
+    const f = join(dir, 'metadata', `${d}.json`);
+    if (existsSync(f)) { meta[d] = JSON.parse(readFileSync(f, 'utf8')); write(`assets/i18n/${l}/${d}.json`, JSON.stringify(meta[d])); }
+  }
+  return [l, { content: JSON.parse(readFileSync(join(dir, 'content.json'), 'utf8')), meta }];
+}));
+try { execFileSync('node', [join(SITE, 'i18n/strings.mjs')], { stdio: 'pipe' }); }
+catch (e) { console.warn(`Some translations are missing or stale (node site/i18n/strings.mjs):\n${String(e.stdout).trim()}`); }
+
 // --------------------------------------------------------------------------- search index
-write('assets/search.json', JSON.stringify(C.CONTENT_REGISTRY.map((item) => ({
-  href: itemPath(item), type: item.type, subtype: item.subtype || '', title: item.title, summary: plain(item.summary),
-  tags: item.tags || [],
-  text: oneLine(item.description),
-  variables: itemDatasets(item).flatMap((d) => variables(PKG[d]).map((f) => ({ name: f.name, title: f.title, dataset: d }))),
-}))));
+// One per language: assets/search.json (English) and assets/search.<lang>.json
+const searchIndex = (lang) => C.CONTENT_REGISTRY.map((en) => {
+  const tr = lang ? TR[lang] : null;
+  const item = tr ? overlay(en, tr.content.items?.[en.id]) : en;
+  return {
+    href: itemPath(item), type: item.type, subtype: item.subtype || '', title: item.title, summary: plain(item.summary),
+    tags: item.tags || [],
+    text: oneLine(item.description),
+    variables: itemDatasets(item).flatMap((d) => variables(PKG[d]).map((f) => ({ name: f.name, title: tr?.meta[d]?.fields?.[f.name]?.title || f.title, dataset: d }))),
+  };
+});
+write('assets/search.json', JSON.stringify(searchIndex(null)));
+for (const l of LANGS) write(`assets/search.${l}.json`, JSON.stringify(searchIndex(l)));
 
 // --------------------------------------------------------------------------- JavaScript and CSS
 const js = await esbuild.build({

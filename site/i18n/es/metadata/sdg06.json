@@ -1,0 +1,33 @@
+{
+ "title": "ODS 6: Agua limpia y saneamiento (Atlas de los ODS en Bolivia 2026)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID de municipio de GDO-Bolivia (BO-DD-PP-MM) del mapa municipal de 343 unidades (SDSN Bolivia 2025: municipios y autonomías indígenas), numerado como en GADM 4.1 más cuatro unidades creadas desde entonces; map343; su límite está en geo/boundaries/map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); los números de departamento y provincia siguen el orden de GADM y difieren de los códigos del INE."
+  },
+  "year": {
+   "title": "Periodo",
+   "description": "Periodo de los valores de la fila: 2012 contiene los valores iniciales del Atlas (hacia el censo de 2012) y 2024 sus valores finales (hacia el censo de 2024). Los años de referencia reales de cada variable se indican en su descripción y en geo:reference_years."
+  },
+  "mun_id": {
+   "title": "Código municipal del INE",
+   "description": "Código oficial de municipio del Instituto Nacional de Estadística (INE), DDPPMM (departamento, provincia, municipio), almacenado como entero sin el cero inicial (p. ej., 20101 = Nuestra Señora de La Paz), como en el Atlas. Las filas del Atlas se vinculan con geo_id mediante este código."
+  },
+  "index_sdg6": {
+   "title": "Índice de agua limpia y saneamiento (0-100)",
+   "description": "Índice del ODS 6 (Agua limpia y saneamiento) del Atlas de los ODS en Bolivia 2026, en una escala de 0 a 100 donde 100 significa que se cumplen las metas del objetivo y 0 la peor situación. Siguiendo el Índice ODS global de la SDSN, cada uno de sus 3 indicadores se reescala linealmente de 0 a 100 entre un valor peor y uno mejor (indicados en la descripción de cada indicador), con la dirección fijada para que un valor más alto sea siempre mejor y los valores fuera de los límites acotados; el índice es la media simple de los indicadores reescalados disponibles. Componentes: Cobertura de agua potable (% de la población); Cobertura de saneamiento (% de la población); Aguas residuales tratadas (%). Valor inicial (~2012) almacenado en 2012 y valor final (~2024) en 2024; sus componentes se refieren a distintos años en torno a cada censo. Atlas: “Índice ODS6”."
+  },
+  "sdg6_1_cap": {
+   "title": "Cobertura de agua potable (% de la población)",
+   "description": "Porcentaje de la población en viviendas particulares con personas presentes que cuenta con una fuente mejorada de agua potable (criterios del INE, que difieren para áreas urbanas y rurales). Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 6 se reescala linealmente de 0 a 100 entre 21.4 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 98 y grandes desafíos a partir de 80. Indicador del Atlas 06_01_01_01_cap, “Porcentaje de la población con cobertura de agua potable” (Andersen & Argandoña 2026)."
+  },
+  "sdg6_2_cas": {
+   "title": "Cobertura de saneamiento (% de la población)",
+   "description": "Porcentaje de la población en viviendas particulares con personas presentes que cuenta con saneamiento mejorado (criterios del INE, que difieren para áreas urbanas y rurales). Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 6 se reescala linealmente de 0 a 100 entre 2.7 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 95 y grandes desafíos a partir de 75. Indicador del Atlas 06_02_01_02_cas, “Porcentaje de la población con cobertura de saneamiento” (Andersen & Argandoña 2026)."
+  },
+  "sdg6_3_tar": {
+   "title": "Aguas residuales tratadas (%)",
+   "description": "Porcentaje de las aguas residuales generadas que se tratan en una planta de tratamiento: volumen tratado dividido por el 80% del agua potable facturada por las entidades prestadoras de servicios de agua potable y saneamiento del municipio (EPSA); 0 donde no hay planta. Fuente: Autoridad de Fiscalización y Control Social de Agua Potable y Saneamiento Básico (AAPS), indicadores de desempeño de las EPSA reguladas, 2013 y 2024. Valor inicial 2013 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 6 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 50 y grandes desafíos a partir de 15. Indicador del Atlas 06_03_01_03_tar, “Porcentaje de aguas servidas con tratamiento de aguas residuales” (Andersen & Argandoña 2026)."
+  }
+ }
+}

@@ -1,0 +1,49 @@
+{
+ "title": "ODS 3: Salud y bienestar (Atlas de los ODS en Bolivia 2026)",
+ "fields": {
+  "geo_id": {
+   "title": "ID del municipio",
+   "description": "Geo ID de municipio de GDO-Bolivia (BO-DD-PP-MM) del mapa municipal de 343 unidades (SDSN Bolivia 2025: municipios y autonomías indígenas), numerado como en GADM 4.1 más cuatro unidades creadas desde entonces; map343; su límite está en geo/boundaries/map343. Se anida por prefijo en los ID de departamento (BO-DD) y de provincia (BO-DD-PP); los números de departamento y provincia siguen el orden de GADM y difieren de los códigos del INE."
+  },
+  "year": {
+   "title": "Periodo",
+   "description": "Periodo de los valores de la fila: 2012 contiene los valores iniciales del Atlas (hacia el censo de 2012) y 2024 sus valores finales (hacia el censo de 2024). Los años de referencia reales de cada variable se indican en su descripción y en geo:reference_years."
+  },
+  "mun_id": {
+   "title": "Código municipal del INE",
+   "description": "Código oficial de municipio del Instituto Nacional de Estadística (INE), DDPPMM (departamento, provincia, municipio), almacenado como entero sin el cero inicial (p. ej., 20101 = Nuestra Señora de La Paz), como en el Atlas. Las filas del Atlas se vinculan con geo_id mediante este código."
+  },
+  "index_sdg3": {
+   "title": "Índice de salud y bienestar (0-100)",
+   "description": "Índice del ODS 3 (Salud y bienestar) del Atlas de los ODS en Bolivia 2026, en una escala de 0 a 100 donde 100 significa que se cumplen las metas del objetivo y 0 la peor situación. Siguiendo el Índice ODS global de la SDSN, cada uno de sus 7 indicadores se reescala linealmente de 0 a 100 entre un valor peor y uno mejor (indicados en la descripción de cada indicador), con la dirección fijada para que un valor más alto sea siempre mejor y los valores fuera de los límites acotados; el índice es la media simple de los indicadores reescalados disponibles. Componentes: Partos atendidos por personal de salud calificado (%); Mortalidad infantil (por 1000 nacidos vivos); Mortalidad en menores de 5 años (por 1000 nacidos vivos); Incidencia de VIH (por millón de habitantes); Incidencia de tuberculosis (por 100 000 habitantes); Índice de enfermedades transmitidas por vectores (0-1); Paridez media en adolescentes de 15-19 años (hijos por mujer). Valor inicial (~2012) almacenado en 2012 y valor final (~2024) en 2024; sus componentes se refieren a distintos años en torno a cada censo. Atlas: “Índice ODS3”."
+  },
+  "sdg3_1_cpp": {
+   "title": "Partos atendidos por personal de salud calificado (%)",
+   "description": "Porcentaje de mujeres de 15 a 49 años que tuvieron un parto en los últimos cinco años cuyo último parto fue atendido por un médico, una enfermera o una auxiliar de enfermería; para 2012, los partos en un establecimiento de salud se consideran atendidos por personal calificado. Fuente: cálculo propio del Atlas a partir de los Censos de Población y Vivienda 2012 y 2024 del INE. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 3 se reescala linealmente de 0 a 100 entre 0 (peor, 0) y 100 (mejor, 100); un valor mayor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 90 y grandes desafíos a partir de 70. Indicador del Atlas 03_01_02_01_cpp, “Porcentaje de partos atendidos por personal de salud calificado” (Andersen & Argandoña 2026)."
+  },
+  "sdg3_2_tmi": {
+   "title": "Mortalidad infantil (por 1000 nacidos vivos)",
+   "description": "Tasa de mortalidad infantil (defunciones antes de cumplir 1 año por cada 1000 nacidos vivos): la tasa departamental de la encuesta EDSA, distribuida entre sus municipios según la participación de cada municipio en las defunciones de menores de 1 año del departamento en relación con su participación en los menores de 1 año, en la sección de mortalidad del censo. Fuente: INE, EDSA 2008 y 2023, ponderada con la sección de mortalidad de los censos de 2012 y 2024. Valor inicial 2008 (almacenado en 2012) y valor final 2023 (almacenado en 2024). En el índice del ODS 3 se reescala linealmente de 0 a 100 entre 39.7 (peor, 0) y 1.1 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 12 y grandes desafíos a partir de 20. Indicador del Atlas 03_02_01_02_tmi, “Tasa de mortalidad infantil (<1 año, por 1000 nacidos vivos)” (Andersen & Argandoña 2026)."
+  },
+  "sdg3_2_tmn": {
+   "title": "Mortalidad en menores de 5 años (por 1000 nacidos vivos)",
+   "description": "Tasa de mortalidad en la niñez (defunciones antes de cumplir 5 años por cada 1000 nacidos vivos): la tasa departamental de la encuesta EDSA, distribuida entre sus municipios según la participación de cada municipio en las defunciones de menores de 5 años del departamento en relación con su participación en los menores de 1 año, en la sección de mortalidad del censo. Fuente: INE, EDSA 2008 y 2023, ponderada con la sección de mortalidad de los censos de 2012 y 2024. Valor inicial 2008 (almacenado en 2012) y valor final 2023 (almacenado en 2024). En el índice del ODS 3 se reescala linealmente de 0 a 100 entre 130.1 (peor, 0) y 2.6 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 25 y grandes desafíos a partir de 50. Indicador del Atlas 03_02_01_03_tmn, “Tasa de mortalidad en la niñez (<5 años, por 1000 nacidos vivos)” (Andersen & Argandoña 2026)."
+  },
+  "sdg3_3_vih": {
+   "title": "Incidencia de VIH (por millón de habitantes)",
+   "description": "Número promedio anual de casos de VIH notificados por cada 1 000 000 de habitantes en tres años. Fuente: notificaciones de casos del Ministerio de Salud y Deportes. Valor inicial promedio 2011–2013 (almacenado en 2012) y valor final promedio 2022–2024 (almacenado en 2024). En el índice del ODS 3 se reescala linealmente de 0 a 100 entre 721.5 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 15 y grandes desafíos a partir de 155. Indicador del Atlas 03_03_01_04_vih, “Incidencia de VIH (por 1 000 000 habitantes)” (Andersen & Argandoña 2026)."
+  },
+  "sdg3_3_tub": {
+   "title": "Incidencia de tuberculosis (por 100 000 habitantes)",
+   "description": "Número promedio anual de casos de tuberculosis notificados por cada 100 000 habitantes en tres años. Fuente: notificaciones de casos del Ministerio de Salud y Deportes. Valor inicial promedio 2011–2013 (almacenado en 2012) y valor final promedio 2022–2024 (almacenado en 2024). En el índice del ODS 3 se reescala linealmente de 0 a 100 entre 199.2 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 10 y grandes desafíos a partir de 75. Indicador del Atlas 03_03_02_05_tub, “Incidencia de tuberculosis (por 100 000 habitantes)” (Andersen & Argandoña 2026)."
+  },
+  "sdg3_3_vec": {
+   "title": "Índice de enfermedades transmitidas por vectores (0-1)",
+   "description": "Media de tres incidencias de enfermedades transmitidas por vectores normalizadas por mín-máx, cada una promediada en tres años: malaria (índice parasitario anual por 1000 personas), Chagas (% de viviendas infestadas por la vinchuca) y dengue (casos por 10 000 personas); 0 significa ninguna incidencia. Fuente: cálculo propio del Atlas a partir de notificaciones de casos del Ministerio de Salud y Deportes. Valor inicial promedio 2011–2013 (almacenado en 2012) y valor final promedio 2022–2024 (almacenado en 2024). En el índice del ODS 3 se reescala linealmente de 0 a 100 entre 0.68 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 0 y grandes desafíos a partir de 0.3. Indicador del Atlas 03_03_03_06_vec, “Índice de enfermedades transmitidas por vectores” (Andersen & Argandoña 2026)."
+  },
+  "sdg3_7_tfa": {
+   "title": "Paridez media en adolescentes de 15-19 años (hijos por mujer)",
+   "description": "Número promedio de hijos nacidos vivos por mujer de 15 a 19 años. Fuente: tabulados del INE de los Censos de Población y Vivienda 2012 y 2024. Valor inicial 2012 (almacenado en 2012) y valor final 2024 (almacenado en 2024). En el índice del ODS 3 se reescala linealmente de 0 a 100 entre 0.71 (peor, 0) y 0 (mejor, 100); un valor menor es mejor y los valores fuera de los límites se acotan; el Atlas considera la meta cumplida en 0.1 y grandes desafíos a partir de 0.5. Indicador del Atlas 03_07_02_07_tfa, “Paridez media en adolescentes (15 a 19 años)” (Andersen & Argandoña 2026)."
+  }
+ }
+}
