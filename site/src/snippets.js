@@ -1,6 +1,6 @@
 // Every code box of the website that runs in Colab has a notebook of its own with exactly its code,
 // so its Open in Colab button opens that code ready to run. Plain JavaScript (no JSX), generic: shared
-// by the app (the button's link) and site/build.mjs (which writes the notebooks into notebooks/snippets/).
+// by the app (the button's link) and site/notebooks.mjs (which writes the notebooks into notebooks/snippets/; site/build.mjs runs it).
 //
 // A notebook's path inside notebooks/ is snippets/<item id>/<slot>.ipynb, with these slots:
 //   python, pandas                     an indicator's code tabs (item.code)

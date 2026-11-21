@@ -46,39 +46,11 @@ const paragraphs = (s) => plain(s).split(/\n\s*\n/).filter(Boolean);
 const itemPath = (item) => `${item.section}/${item.id}/`;
 
 // --------------------------------------------------------------------------- code-box notebooks
-// Every code box gets a Colab notebook with exactly its code (site/src/snippets.js): written into
-// notebooks/snippets/ and committed, since Colab opens them from GitHub. --check-notebooks writes
-// nothing and fails if they are missing or out of date; --notebooks-only stops after this step.
-// On a push to main the Pages workflow regenerates and commits them itself.
+// Every code box gets a Colab notebook with exactly its code (site/notebooks.mjs, which needs no
+// npm packages). --check-notebooks writes nothing and fails if they are out of date.
 {
-  const S = await import(pathToFileURL(join(SITE, 'src/snippets.js')));
-  const dir = join(ROOT, 'notebooks', S.SNIPPETS_DIR);
-  const boxes = [
-    ...S.registrySnippets(C.CONTENT_REGISTRY).map((b) => ({ ...b, heading: b.item.title })),
-    ...Object.entries(C.SHARED_SNIPPETS || {}).map(([id, b]) => ({ ...b, path: S.sharedSnippetPath(id), heading: b.title })),
-  ];
-  const wanted = new Map(boxes.map((b) => [b.path, `${JSON.stringify(S.snippetNotebook({
-    code: b.code, title: b.title, heading: b.heading, pageUrl: `${SITE_URL}${b.page || ''}`, siteName: C.SITE_NAME,
-  }), null, 1)}\n`]));
-  const existing = [];
-  const walk = (d) => existsSync(d) && readdirSync(d, { withFileTypes: true }).forEach((e) => (e.isDirectory() ? walk(join(d, e.name)) : e.name.endsWith('.ipynb') && existing.push(join(d, e.name))));
-  walk(dir);
-  const rel = (f) => f.slice(join(ROOT, 'notebooks').length + 1).split('\\').join('/');
-  const stale = existing.filter((f) => !wanted.has(rel(f)));
-  const changed = [...wanted].filter(([p, text]) => !existsSync(join(ROOT, 'notebooks', p)) || readFileSync(join(ROOT, 'notebooks', p), 'utf8') !== text).map(([p]) => p);
-  if (argv.includes('--check-notebooks')) {
-    if (stale.length || changed.length) {
-      console.error(`notebooks/${S.SNIPPETS_DIR}/ is out of date (${changed.length} to write, ${stale.length} to remove): run "npm run --prefix site build" and commit it`);
-      [...changed, ...stale.map(rel)].slice(0, 20).forEach((p) => console.error(`  ${p}`));
-      process.exit(1);
-    }
-  } else {
-    stale.forEach((f) => rmSync(f));
-    for (const p of changed) { mkdirSync(dirname(join(ROOT, 'notebooks', p)), { recursive: true }); writeFileSync(join(ROOT, 'notebooks', p), wanted.get(p)); }
-    for (const d of readdirSync(dir)) if (statSync(join(dir, d)).isDirectory() && !readdirSync(join(dir, d)).length) rmSync(join(dir, d), { recursive: true });
-  }
-  console.log(`code-box notebooks: ${wanted.size} in notebooks/${S.SNIPPETS_DIR}/ (${changed.length} written, ${stale.length} removed)`);
-  if (argv.includes('--notebooks-only')) process.exit(0);
+  const { codeBoxNotebooks } = await import(pathToFileURL(join(SITE, 'notebooks.mjs')));
+  if (!codeBoxNotebooks({ check: argv.includes('--check-notebooks') })) process.exit(1);
 }
 
 rmSync(OUT, { recursive: true, force: true });

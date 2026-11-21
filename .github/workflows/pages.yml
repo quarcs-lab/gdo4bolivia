@@ -2,10 +2,12 @@ name: Website
 
 # Builds the website (site/build.mjs: esbuild, Tailwind, a pre-rendered page per route) and deploys
 # it to GitHub Pages on every push to main. Pull requests only build it, to catch errors.
-# On a push to main it first regenerates the Colab notebooks of the code boxes (notebooks/snippets/,
-# from site/src/content.js) and of the docs' Python blocks (notebooks/docs/, scripts/doc_notebooks.py)
-# and commits them back when they changed, so nobody has to run those steps by hand. A pull request
-# only checks them.
+# On a push to main a separate job regenerates the Colab notebooks of the code boxes
+# (notebooks/snippets/, site/notebooks.mjs) and of the docs' Python blocks (notebooks/docs/,
+# scripts/doc_notebooks.py) and commits them back when they changed, so nobody has to run those
+# steps by hand. It is the only job that can write to the repository: it installs nothing (both
+# scripts need only Node and Python's standard library), keeps no credentials in the checkout and
+# hands the token to the final push alone. A pull request only checks the notebooks.
 # Repository settings: Pages > Build and deployment > Source = GitHub Actions.
 
 on:
@@ -24,36 +26,53 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build the site
+  notebooks:
+    name: Regenerate the Colab notebooks
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write   # to commit the regenerated notebooks back to main
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Regenerate (no npm packages, no credentials)
+        run: |
+          python3 scripts/doc_notebooks.py
+          node site/notebooks.mjs
+      - name: Commit and push them if they changed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add -A notebooks README.md CONTRIBUTING_DATA.md docs
+          if git diff --cached --quiet; then echo "notebooks up to date"; exit 0; fi
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -m "Regenerate the Colab notebooks of the code boxes and docs"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main
+
+  build:
+    name: Build the site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: site/package-lock.json
-      - name: Install the build tools
-        run: npm ci --prefix site
       - name: Check the Colab notebooks (pull requests)
         if: github.event_name == 'pull_request'
         run: |
           python3 scripts/doc_notebooks.py --check
-          node site/build.mjs --notebooks-only --check-notebooks
-      - name: Regenerate the Colab notebooks and commit them if they changed (main)
-        if: github.event_name != 'pull_request'
-        run: |
-          python3 scripts/doc_notebooks.py
-          node site/build.mjs --notebooks-only
-          git add -A notebooks README.md CONTRIBUTING_DATA.md docs
-          if git diff --cached --quiet; then echo "notebooks up to date"; exit 0; fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Regenerate the Colab notebooks of the code boxes and docs"
-          git push origin HEAD:${{ github.ref_name }}
+          node site/notebooks.mjs --check
+      - name: Install the build tools
+        run: npm ci --prefix site
       - name: Build (every tracked file plus the compiled site, as Pages serves it)
         run: node site/build.mjs --full
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
