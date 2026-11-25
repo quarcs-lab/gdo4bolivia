@@ -72,6 +72,39 @@ if (FULL) {
 }
 writeFileSync(join(OUT, '.nojekyll'), '');
 
+// --------------------------------------------------------------------------- responsive images
+// Smaller copies of every WebP under images/ (but the hero's, hero-*, which the globe needs at full size),
+// so a card or band loads the width it is shown at: assets/img/<path>-<w>.webp. Registry items' pictures
+// also get a pre-blurred copy, the soft background of their page's header (<path>-blur.webp). The copies
+// are cached in site/.cache/img/ by the source's hash, so a rebuild only redoes changed pictures.
+const IMG_WIDTHS = [480, 800, 1200];
+const IMG_CACHE = join(SITE, '.cache/img');
+const imageVariants = {};
+{
+  mkdirSync(IMG_CACHE, { recursive: true });
+  const walk = (dir) => readdirSync(join(ROOT, dir), { withFileTypes: true }).flatMap((e) => (
+    e.isDirectory() ? walk(`${dir}/${e.name}`) : e.name.endsWith('.webp') && !e.name.startsWith('hero-') ? [`${dir}/${e.name}`] : []));
+  const sources = existsSync(join(ROOT, 'images')) ? walk('images') : [];
+  const blurred = new Set(C.CONTENT_REGISTRY.map((i) => i.image).filter(Boolean));
+  const cached = async (key, out, make) => {
+    const f = join(IMG_CACHE, key);
+    if (!existsSync(f)) await make().toFile(f);
+    mkdirSync(dirname(join(OUT, out)), { recursive: true });
+    cpSync(f, join(OUT, out));
+  };
+  await Promise.all(sources.map(async (src) => {
+    const buf = readFileSync(join(ROOT, src));
+    const key = hash(buf);
+    const { width, height } = await sharp(buf).metadata();
+    const stem = `assets/img/${src.replace(/^images\//, '').replace(/\.webp$/, '')}`;
+    const widths = IMG_WIDTHS.filter((w) => w < width);
+    for (const w of widths) await cached(`${key}-${w}.webp`, `${stem}-${w}.webp`, () => sharp(buf).resize({ width: w }).webp({ quality: 78 }));
+    const blur = blurred.has(src) && width > 800;
+    if (blur) await cached(`${key}-blur.webp`, `${stem}-blur.webp`, () => sharp(buf).resize({ width: 800 }).blur(1.2).webp({ quality: 70 }));
+    if (widths.length || blur) imageVariants[src] = { widths, width, height, blur };
+  }));
+}
+
 // --------------------------------------------------------------------------- metadata
 const DATASETS = readJSON('metadata/index.json').datasets;
 const PKG = Object.fromEntries(DATASETS.map((d) => [d, readJSON(`metadata/${d}.datapackage.json`)]));
@@ -174,6 +207,8 @@ const js = await esbuild.build({
     __UNIT_COUNTS__: JSON.stringify(units.reduce((n, u) => ({ ...n, [u.scale]: (n[u.scale] || 0) + 1, total: (n.total || 0) + 1 }), {})),
     // first and last year of every published resource (geo:period), e.g. [2001, 2024]
     __YEAR_SPAN__: JSON.stringify(yearSpan(Object.values(PKG).flatMap((p) => p.resources || []))),
+    // the smaller copies of each picture (see "responsive images"), e.g. {"images/bands/x.webp": {"widths": [480, 800, 1200], ...}}
+    __IMAGE_VARIANTS__: JSON.stringify(imageVariants),
   },
 });
 const appJs = `assets/${basename(Object.entries(js.metafile.outputs).find(([, o]) => o.entryPoint && o.entryPoint.endsWith('src/app.jsx'))[0])}`;
@@ -185,6 +220,10 @@ const { code: cssMin } = await esbuild.transform(css, { loader: 'css', minify: t
 const appCss = `assets/app-${hash(cssMin)}.css`;
 write(appCss, cssMin);
 cpSync(join(dirname(require.resolve('leaflet')), 'leaflet.css'), join(OUT, 'assets/leaflet.css'));
+// Inter, served with the site (the @font-face rules are in src/styles.css, the preload in template.html)
+mkdirSync(join(OUT, 'assets/fonts'), { recursive: true });
+const FONT_DIR = join(dirname(require.resolve('@fontsource-variable/inter/package.json')), 'files');
+for (const f of ['inter-latin-wght-normal.woff2', 'inter-latin-ext-wght-normal.woff2']) cpSync(join(FONT_DIR, f), join(OUT, 'assets/fonts', f));
 
 // --------------------------------------------------------------------------- preview images
 // A 1200 x 630 JPEG per item from its card, for link previews (WebP is not read everywhere)
@@ -293,6 +332,13 @@ const page = (p) => {
   };
   return html.replace(/\{\{(\w+)\}\}/g, (m, k) => (k in raw ? raw[k] : m));
 };
+// The widths a detail page's main image is shown at; keep equal to DETAIL_SIZES in site/src/app.jsx
+const DETAIL_SIZES = '(min-width: 1024px) 740px, 92vw';
+const imagePreload = (src) => {
+  const v = imageVariants[src];
+  const set = v?.widths.length ? [...v.widths.map((w) => `assets/img/${src.replace(/^images\//, '').replace(/\.webp$/, '')}-${w}.webp ${w}w`), `${src} ${v.width}w`].join(', ') : '';
+  return `<link rel="preload" as="image" href="${esc(src)}"${set ? ` imagesrcset="${esc(set)}" imagesizes="${esc(DETAIL_SIZES)}"` : ''} fetchpriority="high">`;
+};
 const indicatorItems = C.CONTENT_REGISTRY.filter((i) => i.type === 'indicator');
 write('index.html', page({
   title: C.DEFAULT_TITLE, ogTitle: C.SITE_NAME, description: C.SITE_DESCRIPTION, url: SITE_URL,
@@ -307,8 +353,9 @@ for (const item of C.CONTENT_REGISTRY) {
     url: SITE_URL + itemPath(item), ogType: item.type === 'insight' ? 'article' : 'website',
     image: ogImage[item.id] || 'images/og-image.jpg', imageAlt: item.imageAlt,
     jsonld: jsonLD([...orgGraph, itemLD(item), breadcrumb(item)]), fallback: itemFallback(item),
-    // The page's largest image (an indicator's map, else the item's picture) is found before the app runs
-    preload: (item.map || item.image) ? `<link rel="preload" as="image" href="${esc(item.map || item.image)}" fetchpriority="high">` : '',
+    // The page's largest image (an indicator's map, else the item's picture) is found before the app runs,
+    // in the copy the page will pick (srcset and sizes as in app.jsx)
+    preload: (item.map || item.image) ? imagePreload(item.map || item.image) : '',
   }));
 }
 // Retired pages send visitors and search engines to the page that replaced them: a page of this site

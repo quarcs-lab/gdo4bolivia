@@ -36,3 +36,6 @@ __pycache__/
 
 # The SDG Atlas 2026 as delivered (its workbook and shapefiles are copied to raw/)
 /SDG-atlas-20261110*/
+
+# Website build cache (site/build.mjs: the smaller copies of the images)
+/site/.cache/

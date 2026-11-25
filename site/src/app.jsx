@@ -19,6 +19,22 @@ const LanguageContext = React.createContext({ lang: 'en', change: () => {} });
 const UNIT_COUNTS = __UNIT_COUNTS__;
 // First and last year of the published data, from the metadata, e.g. [2001, 2024]
 const YEAR_SPAN = __YEAR_SPAN__;
+// Smaller copies of the pictures under images/, made by site/build.mjs: {src: {widths, width, height, blur}}
+const IMAGE_VARIANTS = __IMAGE_VARIANTS__;
+const imageStem = (src) => `assets/img/${src.replace(/^images\//, '').replace(/\.webp$/, '')}`;
+// The <img> attributes that let the browser pick the copy it needs: src, srcSet, sizes, width and height
+const responsive = (src, sizes) => {
+  const v = IMAGE_VARIANTS[src];
+  if (!v) return { src };
+  const srcSet = v.widths.length ? [...v.widths.map((w) => `${imageStem(src)}-${w}.webp ${w}w`), `${src} ${v.width}w`].join(', ') : undefined;
+  return { src, srcSet, sizes: srcSet ? sizes : undefined, width: v.width, height: v.height };
+};
+// The pre-blurred copy of a picture, for the soft header of its page (null when there is none)
+const blurredImage = (src) => (IMAGE_VARIANTS[src]?.blur ? `${imageStem(src)}-blur.webp` : null);
+// Widths an image is shown at, for the browser to choose a copy (keep DETAIL_SIZES equal to site/build.mjs)
+const CARD_SIZES = '(min-width: 1280px) 400px, (min-width: 1024px) 31vw, (min-width: 768px) 46vw, 92vw';
+const BAND_SIZES = '100vw';
+const DETAIL_SIZES = '(min-width: 1024px) 740px, 92vw';
 
 // ====================================================================
 // Icons (inline SVG, Lucide style)
@@ -89,7 +105,7 @@ const usePrefersReducedMotion = () => {
 };
 
 const useInView = (options = {}) => {
-  const { threshold = 0.1, once = true } = options;
+  const { threshold = 0.1, once = true, rootMargin = '0px' } = options;
   const ref = useRef(null);
   const [isInView, setIsInView] = useState(false);
   useEffect(() => {
@@ -102,10 +118,10 @@ const useInView = (options = {}) => {
       } else if (!once) {
         setIsInView(false);
       }
-    }, { threshold });
+    }, { threshold, rootMargin });
     observer.observe(element);
     return () => observer.disconnect();
-  }, [threshold, once]);
+  }, [threshold, once, rootMargin]);
   return [ref, isInView];
 };
 
@@ -202,43 +218,54 @@ const useRoute = () => {
 // ====================================================================
 const ReducedMotionContext = React.createContext(false);
 
-// Drift a background image slower than the page; static under reduced motion
+// Drift a background image slower than the page. Only on larger screens with a fine pointer (phones keep the
+// image still), only under normal motion, and only while the image is within a screen of the viewport
+const PARALLAX_QUERY = '(min-width: 768px) and (pointer: fine)';
 const useParallax = (factor = 0.08, scale = 1.25) => {
   const reduced = React.useContext(ReducedMotionContext);
   const ref = useRef(null);
   useEffect(() => {
     const el = ref.current;
-    if (reduced || !el) return undefined;
-    let frame = 0;
+    if (!el) return undefined;
+    const still = () => { el.style.transform = `scale(${scale})`; el.style.willChange = 'auto'; };
+    if (reduced || !window.matchMedia || !window.matchMedia(PARALLAX_QUERY).matches) { still(); return undefined; }
+    let frame = 0, listening = false;
     const update = () => {
       frame = 0;
       const box = el.parentElement.getBoundingClientRect();
-      if (box.bottom < 0 || box.top > window.innerHeight) return;
       const offset = (box.top + box.height / 2 - window.innerHeight / 2) * -factor;
       el.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0) scale(${scale})`;
     };
     const onScroll = () => { if (!frame) frame = requestAnimationFrame(update); };
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
+    const listen = (on) => {
+      if (on === listening) return;
+      listening = on;
+      el.style.willChange = on ? 'transform' : 'auto';
+      if (on) { update(); window.addEventListener('scroll', onScroll, { passive: true }); window.addEventListener('resize', onScroll); }
+      else { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); }
     };
+    let io = null;
+    if ('IntersectionObserver' in window) {
+      io = new IntersectionObserver(([entry]) => listen(entry.isIntersecting), { rootMargin: '50% 0px' });
+      io.observe(el.parentElement);
+    } else listen(true);
+    update();
+    return () => { cancelAnimationFrame(frame); if (io) io.disconnect(); listen(false); };
   }, [reduced, factor, scale]);
   return ref;
 };
 
+// Content eases in as it nears the screen: the animation starts a fifth of a screen before it arrives
 const AnimateIn = ({ children, delay = 0, className = '' }) => {
   const reduced = React.useContext(ReducedMotionContext);
-  const [ref, isInView] = useInView({ threshold: 0.1 });
+  const [ref, isInView] = useInView({ threshold: 0, rootMargin: '0px 0px 20% 0px' });
   if (reduced) return <div className={className}>{children}</div>;
+  const wait = Math.min(delay, 150);
   return (
     <div ref={ref} className={className} style={{
       opacity: isInView ? 1 : 0,
-      transform: isInView ? 'translateY(0)' : 'translateY(30px)',
-      transition: `opacity 0.6s ease-out ${delay}ms, transform 0.6s ease-out ${delay}ms`,
+      transform: isInView ? 'translateY(0)' : 'translateY(12px)',
+      transition: `opacity 0.35s ease-out ${wait}ms, transform 0.35s ease-out ${wait}ms`,
     }}>
       {children}
     </div>
@@ -371,7 +398,7 @@ const SatelliteHeader = ({ band, children }) => {
   return (
     <div className="relative overflow-hidden min-h-[440px] md:min-h-[540px] flex items-end">
       <div className="absolute inset-0" aria-hidden="true">
-        <img ref={imgRef} src={band.image} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover scale-125 saturate-[1.2] brightness-110 will-change-transform" />
+        <img ref={imgRef} {...responsive(band.image, BAND_SIZES)} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover scale-125 saturate-[1.2] brightness-110" />
         <div className="absolute inset-0 bg-lagoon-950/50 md:bg-lagoon-950/10"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-lagoon-950/95 via-lagoon-950/55 via-35% to-transparent to-65%"></div>
         <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-lagoon-950/90 to-transparent"></div>
@@ -412,7 +439,7 @@ const ColabButton = ({ notebook }) => (
 const CodeBlock = ({ code, language = 'python', title, colab = false }) => {
   const highlighted = useMemo(() => highlightCode(code, language), [code, language]);
   return (
-    <div className="rounded-xl overflow-hidden bg-white/[0.03] backdrop-blur-md shadow-2xl border border-white/10">
+    <div className="rounded-xl overflow-hidden bg-lagoon-900/80 shadow-2xl border border-white/10">
       <div className="flex justify-between items-center px-4 py-2 bg-white/5 border-b border-white/10">
         <div className="flex items-center gap-2 min-w-0">
           <div className="flex gap-1.5" aria-hidden="true">
@@ -478,7 +505,7 @@ const TypeBadge = ({ item, solid = false }) => {
   const s = TYPE_STYLE[item.type];
   const Icon = s.icon;
   return (
-    <span className={`inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full ${solid ? 'bg-lagoon-950/85 backdrop-blur-sm border border-white/10' : s.bg} ${s.text}`}>
+    <span className={`inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full ${solid ? 'bg-lagoon-950/90 border border-white/10' : s.bg} ${s.text}`}>
       <Icon size={12} /> {item.subtype || t(s.label)}
     </span>
   );
@@ -725,7 +752,7 @@ const Navigation = ({ isHome }) => {
   const solid = scrolled || isOpen;
   return (
     <header>
-      <nav aria-label={t('Main')} className={`fixed w-full z-50 transition-all duration-300 ${solid ? 'bg-lagoon-950/85 backdrop-blur-xl shadow-lg shadow-black/40 border-b border-white/5 py-2' : 'bg-transparent py-4'}`}>
+      <nav aria-label={t('Main')} className={`fixed w-full z-50 transition-all duration-300 ${solid ? 'bg-lagoon-950/90 backdrop-blur-md shadow-lg shadow-black/40 border-b border-white/5 py-2' : 'bg-transparent py-4'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-12">
             <Wordmark />
@@ -864,7 +891,7 @@ const useSatelliteGlobe = (containerRef, enabled, handlers) => {
   useEffect(() => {
     if (!enabled) return undefined;
     const el = containerRef.current;
-    let world = null, ro = null, moveTimer = 0, cancelled = false;
+    let world = null, ro = null, io = null, moveTimer = 0, cancelled = false;
     const reportMove = () => {
       moveTimer = 0;
       const { lat, lng } = world.pointOfView();
@@ -907,6 +934,16 @@ const useSatelliteGlobe = (containerRef, enabled, handlers) => {
         controls.addEventListener('change', () => { if (!moveTimer) moveTimer = setTimeout(reportMove, 150); });
         ro = new ResizeObserver(() => world.width(el.clientWidth).height(el.clientHeight));
         ro.observe(el);
+        // Draw only while the globe is on screen: scrolled past, it stops rendering and picks up where it was
+        if ('IntersectionObserver' in window) {
+          let visible = true;
+          io = new IntersectionObserver(([entry]) => {
+            if (cancelled || entry.isIntersecting === visible) return;
+            visible = entry.isIntersecting;
+            if (visible) world.resumeAnimation(); else world.pauseAnimation();
+          });
+          io.observe(el);
+        }
         worldRef.current = world;
       })
       .catch(() => { if (!cancelled) handlersRef.current.onError(); });
@@ -914,6 +951,7 @@ const useSatelliteGlobe = (containerRef, enabled, handlers) => {
       cancelled = true;
       clearTimeout(moveTimer);
       if (ro) ro.disconnect();
+      if (io) io.disconnect();
       if (world) { globeLayers.delete(world); world.pauseAnimation(); if (world._destructor) world._destructor(); }
       worldRef.current = null;
       if (el) el.innerHTML = '';
@@ -1105,7 +1143,7 @@ const Hero = () => {
         </div>
       </div>
 
-      <div className={`marquee relative z-10 overflow-hidden border-t border-white/10 bg-lagoon-950/70 backdrop-blur-sm py-3 ${motionPaused ? 'paused' : ''}`} aria-hidden="true">
+      <div className={`marquee relative z-10 overflow-hidden border-t border-white/10 bg-lagoon-950/85 py-3 ${motionPaused ? 'paused' : ''}`} aria-hidden="true">
         <div className="marquee-track flex">
           {[0, 1].map((copy) => (
             <div key={copy} className="flex shrink-0">
@@ -1162,7 +1200,7 @@ const About = () => {
               <AnimateIn key={p.title} delay={i * 100}>
                 <a href={p.href} className={`group block h-full bg-white/[0.03] rounded-xl border border-white/10 overflow-hidden transition-all duration-300 hover:-translate-y-0.5 ${p.border}`}>
                   <div className="relative aspect-[3/2] overflow-hidden bg-lagoon-900">
-                    <img src={p.image} alt="" loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+                    <img {...responsive(p.image, '(min-width: 1280px) 400px, (min-width: 768px) 31vw, 92vw')} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
                     <div className="absolute inset-0 bg-gradient-to-t from-lagoon-950 via-lagoon-950/20 to-transparent"></div>
                     <div className="absolute bottom-4 left-5 w-12 h-12 rounded-xl bg-lagoon-950/80 border border-white/10 flex items-center justify-center">
                       <Icon size={24} className={p.accent} />
@@ -1180,12 +1218,14 @@ const About = () => {
         </div>
 
         <AnimateIn>
-          <dl className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-16">
+          {/* Six across only where each box is wide enough for a year span such as 2001–2024; with an odd
+              number of stats, the last one fills the phone layout's second column */}
+          <dl className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-16">
             {stats.map((s) => (
-              <div key={s.label} className="rounded-xl bg-white/[0.03] border border-white/10 py-6 px-5 last:col-span-2 md:last:col-span-1">
+              <div key={s.label} className={`min-w-0 rounded-xl bg-white/[0.03] border border-white/10 py-6 px-4 sm:px-5 xl:px-4 ${stats.length % 2 ? 'last:col-span-2 md:last:col-span-1' : ''}`}>
                 <dt className="sr-only">{t(s.label)}</dt>
                 <dd>
-                  <span className="block text-3xl lg:text-4xl font-extrabold tracking-tight text-white whitespace-nowrap">{s.value}</span>
+                  <span className={`block font-extrabold tracking-tight tabular-nums text-white whitespace-nowrap ${String(s.value).length > 4 ? 'text-lg max-[359px]:text-base sm:text-3xl md:text-[1.75rem] lg:text-4xl xl:text-2xl' : 'text-3xl lg:text-4xl'} leading-9 lg:leading-10 xl:leading-10`}>{s.value}</span>
                   <span className="block h-px w-6 bg-brand-turquoise my-3" aria-hidden="true"></span>
                   <span className="block text-xs sm:text-sm text-salt-400">{t(s.label)}</span>
                 </dd>
@@ -1222,7 +1262,7 @@ const ItemCard = ({ item, showImage = true }) => {
     <article className={`group h-full bg-white/[0.03] rounded-xl border border-white/10 overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-0.5 ${s.glow} relative`}>
       {showImage && item.image && (
         <div className="relative aspect-[16/9] overflow-hidden bg-lagoon-900">
-          <img src={item.image} alt={item.imageAlt || ''} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+          <img {...responsive(item.image, CARD_SIZES)} alt={item.imageAlt || ''} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
           <div className="absolute inset-0 bg-gradient-to-t from-lagoon-950/80 to-transparent"></div>
           <div className="absolute top-3 left-3"><TypeBadge item={item} solid /></div>
           {item.pinned && <span className="absolute top-3 right-3 text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-brand-rose text-white">{t('Featured')}</span>}
@@ -1463,7 +1503,7 @@ const EventsSection = () => {
               <AnimateIn key={ev.id}>
                 <article className="group relative grid grid-cols-1 md:grid-cols-[300px_minmax(0,1fr)] gap-0 bg-white/[0.03] rounded-xl border border-white/10 overflow-hidden hover:border-emerald-400/40 transition-all">
                   <div className="bg-white aspect-square self-start overflow-hidden">
-                    <img src={ev.image} alt={ev.imageAlt} loading="lazy" className="w-full h-full object-cover" />
+                    <img {...responsive(ev.image, '(min-width: 768px) 300px, 92vw')} alt={ev.imageAlt} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                   </div>
                   <div className="p-6 md:p-8 flex flex-col">
                     <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -1625,10 +1665,10 @@ const Footer = () => {
   const band = SECTION_BANDS.footer;
   const imgRef = useParallax();
   return (
-  <footer className="bg-lagoon-950/60 backdrop-blur-sm border-t border-white/10">
+  <footer className="bg-lagoon-950/80 border-t border-white/10">
     <div className="relative overflow-hidden">
       <div className="absolute inset-0" aria-hidden="true">
-        <img ref={imgRef} src={band.image} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover scale-125 saturate-[1.2] brightness-110 will-change-transform" />
+        <img ref={imgRef} {...responsive(band.image, BAND_SIZES)} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover scale-125 saturate-[1.2] brightness-110" />
         <div className="absolute inset-0 bg-lagoon-950/30"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-lagoon-950/90 via-lagoon-950/50 to-transparent"></div>
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-lagoon-950 to-transparent"></div>
@@ -1691,7 +1731,9 @@ const DetailShell = ({ item, children, aside, lead }) => {
     <article className="pb-20">
       <header className="relative overflow-hidden min-h-[420px] md:min-h-[480px] flex items-end mb-12">
         <div className="absolute inset-0" aria-hidden="true">
-          {item.image && <img ref={imgRef} src={item.image} alt="" decoding="async" className="w-full h-full object-cover scale-[1.3] blur-[2px] will-change-transform" />}
+          {item.image && (blurredImage(item.image)
+            ? <img ref={imgRef} src={blurredImage(item.image)} alt="" decoding="async" className="w-full h-full object-cover scale-[1.3]" />
+            : <img ref={imgRef} src={item.image} alt="" decoding="async" className="w-full h-full object-cover scale-[1.3] blur-[2px]" />)}
           <div className="absolute inset-0 bg-lagoon-950/75"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-lagoon-950/90 via-lagoon-950/40 to-transparent"></div>
           <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-lagoon-950 to-transparent"></div>
@@ -1987,7 +2029,7 @@ const IndicatorDetail = ({ item }) => {
     <DetailShell item={item} lead={
       <figure>
         <a href={item.map || item.image} target="_blank" rel="noopener noreferrer" className="block rounded-xl overflow-hidden border border-white/10 bg-lagoon-900 hover:border-brand-turquoise/40 transition-colors">
-          <img src={item.map || item.image} alt={item.mapAlt || item.imageAlt} fetchpriority="high" width="1600" height="1000" className="w-full h-auto" />
+          <img width="1600" height="1000" {...responsive(item.map || item.image, DETAIL_SIZES)} alt={item.mapAlt || item.imageAlt} fetchpriority="high" className="w-full h-auto" />
           <span className="sr-only">{t('Open the full-size map (new tab)')}</span>
         </a>
         <figcaption className="text-xs text-salt-400 mt-2">{t('Select the map to open it at full size.')}</figcaption>
@@ -2093,7 +2135,7 @@ const PackageDetail = ({ item }) => {
       <RelatedList ids={item.related} />
     </>}>
       <figure className="rounded-xl overflow-hidden border border-white/10 bg-lagoon-900">
-        <img src={item.image} alt={item.imageAlt} className="w-full h-auto" />
+        <img {...responsive(item.image, DETAIL_SIZES)} alt={item.imageAlt} fetchpriority="high" className="w-full h-auto" />
       </figure>
       <Block title={t('About this package')} id="p-about">
         <div className="space-y-4">{item.description.split(/\n\s*\n/).map((para) => <p key={para} className="text-salt-300 leading-relaxed">{para}</p>)}</div>
@@ -2163,7 +2205,7 @@ const ToolDetail = ({ item }) => {
       <RelatedList ids={item.related} />
     </>}>
       <a href={primary.url} target="_blank" rel="noopener noreferrer" className="block rounded-xl overflow-hidden border border-white/10 bg-lagoon-900 group relative">
-        <img src={item.image} alt={item.imageAlt} className="w-full h-auto transition-transform duration-500 group-hover:scale-[1.02]" />
+        <img {...responsive(item.image, DETAIL_SIZES)} alt={item.imageAlt} fetchpriority="high" className="w-full h-auto transition-transform duration-500 group-hover:scale-[1.02]" />
         <span className="absolute bottom-4 right-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-lagoon-950/85 border border-white/15 text-sm font-semibold text-white">{primary.label} <ExternalLink size={14} /></span>
         <span className="sr-only"> {t('(opens in a new tab)')}</span>
       </a>
@@ -2185,7 +2227,7 @@ const ToolDetail = ({ item }) => {
 
 const ProjectDetail = ({ item }) => {
   const primary = (item.links || [])[0];
-  const image = <img src={item.image} alt={item.imageAlt} className="w-full h-auto transition-transform duration-500 group-hover:scale-[1.02]" />;
+  const image = <img {...responsive(item.image, DETAIL_SIZES)} alt={item.imageAlt} fetchpriority="high" className="w-full h-auto transition-transform duration-500 group-hover:scale-[1.02]" />;
   return (
     <DetailShell item={item} aside={<>
       <AsideCard title={t('Visit')}>
@@ -2286,7 +2328,7 @@ const EventDetail = ({ item }) => {
       <RelatedList ids={item.related} />
     </>}>
       <figure className="rounded-xl overflow-hidden border border-white/10 bg-lagoon-900 max-w-xl">
-        <img src={item.image} alt={item.imageAlt} className="w-full h-auto" />
+        <img {...responsive(item.image, DETAIL_SIZES)} alt={item.imageAlt} fetchpriority="high" className="w-full h-auto" />
       </figure>
       <Block title={t('Overview')} id="e-about"><p className="text-salt-300 leading-relaxed">{item.description}</p></Block>
       <div className="grid md:grid-cols-2 gap-8">
