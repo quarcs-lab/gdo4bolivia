@@ -1,4 +1,4 @@
-"""Municipal night-time lights per capita: raw/ntl -> data/map339/ntl."""
+"""Municipal night-time lights per capita: raw/ntl -> data/ntl/map339/ntl."""
 
 import pandas as pd
 

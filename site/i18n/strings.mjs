@@ -8,7 +8,7 @@
 //   metadata/<dataset>.json a dataset's title and its variables' labels and descriptions
 //   ui.json                 the interface's strings (app.jsx, map.jsx), keyed by their English text
 // Code, identifiers, URLs, citations and source titles are never translated.
-// Generic: the content comes from site/src/content.js and metadata/.
+// Generic: the content comes from site/src/content.js and data/<dataset>/datapackage.json.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -71,8 +71,8 @@ export const compare = (en, tr, path = '', out = []) => {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const C = await import(pathToFileURL(join(ROOT, 'site/src/content.js')));
-  const datasets = JSON.parse(readFileSync(join(ROOT, 'metadata/index.json'), 'utf8')).datasets;
-  const pkg = (d) => JSON.parse(readFileSync(join(ROOT, `metadata/${d}.datapackage.json`), 'utf8'));
+  const datasets = JSON.parse(readFileSync(join(ROOT, 'data/index.json'), 'utf8')).datasets;
+  const pkg = (d) => JSON.parse(readFileSync(join(ROOT, `data/${d}/datapackage.json`), 'utf8'));
   const i = process.argv.indexOf('--extract');
   if (i > 0) {
     const dir = resolve(process.argv[i + 1]);

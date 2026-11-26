@@ -1,6 +1,6 @@
 # Metadata the indicator page needs
 
-`metadata/<dataset>.datapackage.json` is a Frictionless Data Package with `geo:` extensions
+`data/<dataset>/datapackage.json` is a Frictionless Data Package with `geo:` extensions
 (the full list is in `docs/data-infrastructure.md`; the package's `metadata` and `validate` modules read and check them). The page
 reads the properties below at runtime; the validator enforces the starred ones.
 
@@ -10,10 +10,10 @@ reads the properties below at runtime; the validator enforces the starred ones.
 | --- | --- |
 | `name`*, `title`*, `description`* | Heading of the variable table when a page shows several datasets |
 | `licenses`* | License section: the license of the published files. Usually CC BY 4.0, or the source's license if that is stricter. Each entry has a `name`* (SPDX id or `LicenseRef-...`), `title` and `path` (URL) |
-| `sources`* | About (the `original` ones), License and References. See below |
+| `sources`* | About (the `original` ones), License, References and the citations: each `title` is the source's APA citation; the page, the README and `geo.cite()` list the `original` sources first, then the observatory (`citation` in `project.yaml`), then the others. See below |
 | `geo:map` | Headline map: `{"variable": "...", "year": 2020}`, optionally `"scale"`, `"classify": "log"` and, for datasets with an initial and a final period, `"panels": [first, last]` (the page map shows both side by side in pooled classes; the card shows `year`) |
 | `geo:updated` | "Last updated" in the License section (ISO date) |
-| `geo:citation`, `geo:notes`, `geo:notebooks` | Generated docs, `geo.info()` and `geo.cite()` |
+| `geo:notes`, `geo:notebooks` | Generated README, `geo.info()` |
 | `geo:weights` | Where a `weighted_mean:<field>` weight lives when it is not a field of this dataset, e.g. `{"population": "sdg"}`; `geo.aggregate()` loads it from there (checked by `validate`) |
 
 ## Resource

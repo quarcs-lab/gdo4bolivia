@@ -14,7 +14,7 @@ from pathlib import Path
 from . import emb, geo, ntl, pop, sdg
 
 build_geo = geo.build
-DATASETS = {"pop": pop.build, "ntl": ntl.build, **sdg.BUILDERS, "emb": emb.build, "embpw": emb.build_pw}
+DATASETS = {"pop": pop.build, "ntl": ntl.build, **sdg.BUILDERS, "emb": emb.build}
 
 
 def after_build(target: str) -> None:

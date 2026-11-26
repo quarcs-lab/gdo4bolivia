@@ -4,12 +4,12 @@
     uv run python scripts/doc_notebooks.py --check   # change nothing; exit 1 if anything is out of date
 
 Every ```python block of a tracked Markdown file (README.md, CONTRIBUTING_DATA.md, docs/*.md, the
-generated docs/datasets/*.md, ...) that is followed by an "Open in Colab" badge gets a notebook with
+generated data/<dataset>/README.md, ...) that is followed by an "Open in Colab" badge gets a notebook with
 exactly its code, notebooks/docs/<doc>/box-<n>.ipynb, and the badge is pointed at it, so it opens the
 code ready to run (as the website's code boxes do, site/src/snippets.js). Badges that link to any other
 notebook (notebooks/README.md) are left alone. The notebooks are committed: Colab opens them from GitHub.
 
-`geo4bolivia build` rewrites docs/datasets/*.md with badges to a blank notebook, then runs this script
+`geo4bolivia build` rewrites data/<dataset>/README.md with badges to a blank notebook, then runs this script
 (`after_build` in builders/__init__.py). The website's workflow (.github/workflows/pages.yml) runs it on
 every push to main and commits what changed; on a pull request it runs --check.
 
@@ -53,8 +53,12 @@ BLOCK = re.compile(
 
 
 def doc_name(path: str) -> str:
-    """notebooks/docs/<doc name>/: README.md -> readme, docs/datasets/sdg.md -> datasets/sdg."""
+    """notebooks/docs/<doc name>/: README.md -> readme, docs/data-infrastructure.md -> data-infrastructure,
+    data/sdg/README.md (a dataset's folder) -> datasets/sdg."""
     stem = path[:-3]
+    dataset = re.fullmatch(r"data/([^/]+)/README", stem)
+    if dataset:
+        return f"datasets/{dataset.group(1)}".lower()
     if stem.startswith("docs/"):
         stem = stem[5:]
     return stem.replace("_", "-").lower()
@@ -82,8 +86,10 @@ def ours(url: str) -> bool:
 
 def plan() -> tuple[dict[Path, str], dict[Path, str]]:
     """The wanted notebooks {path: text} and the rewritten docs {path: text}."""
-    files = subprocess.run(["git", "ls-files", "*.md"], cwd=ROOT, capture_output=True, text=True,
-                           check=True).stdout.split()
+    # tracked files and new ones not yet added (a build writes a new dataset's README before its commit)
+    files = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard", "*.md"], cwd=ROOT,
+                           capture_output=True, text=True, check=True).stdout.split()
+    files = sorted(set(f for f in files if (ROOT / f).is_file()))
     files = [f for f in files if not f.startswith(("notebooks/", "site/node_modules/"))]
     notebooks: dict[Path, str] = {}
     docs: dict[Path, str] = {}

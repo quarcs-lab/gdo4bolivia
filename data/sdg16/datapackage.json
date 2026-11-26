@@ -1,0 +1,205 @@
+{
+  "name": "sdg16",
+  "title": "SDG 16: Peace, justice and strong institutions (SDG Atlas of Bolivia 2026)",
+  "description": "The SDG 16 (Peace, justice and strong institutions) index of the Atlas de los ODS en Bolivia 2026 (SDSN Bolivia) and the 4 indicators behind it, for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), at two points in time: near the 2012 census and near the 2024 census, stored as 2012 and 2024 so that their change can be studied.",
+  "version": "2.0.0",
+  "licenses": [
+    {
+      "name": "CC-BY-4.0",
+      "title": "Creative Commons Attribution 4.0 International License",
+      "path": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  ],
+  "sources": [
+    {
+      "title": "Andersen, L. E., & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad Privada Boliviana, SDSN Bolivia.",
+      "path": "https://atlasods.sdsnbolivia.org/",
+      "geo:role": "original",
+      "geo:creator": "Lykke E. Andersen and Fabiana Argandoña (SDSN Bolivia, Universidad Privada Boliviana)",
+      "geo:homepage": "https://atlasods.sdsnbolivia.org/",
+      "geo:license": {
+        "name": "CC-BY-4.0",
+        "title": "Creative Commons Attribution 4.0 International License (licensed by SDSN Bolivia)",
+        "path": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "geo:attribution": "Please cite the Atlas and its data as: Andersen, L.E. & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad Privada Boliviana, SDSN Bolivia."
+    },
+    {
+      "title": "SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/",
+      "path": "https://sdsnbolivia.org/datos-espaciales/",
+      "geo:role": "intermediary",
+      "geo:creator": "SDSN Bolivia",
+      "geo:homepage": "https://sdsnbolivia.org/datos-espaciales/",
+      "geo:license": {
+        "name": "CC-BY-4.0",
+        "title": "Creative Commons Attribution 4.0 International License (licensed by SDSN Bolivia)",
+        "path": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "geo:attribution": "Boundaries: SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/"
+    }
+  ],
+  "geo:categories": [
+    "Institutions"
+  ],
+  "geo:notes": [
+    "Both periods are stored at nominal years: 2012 for the Atlas's initial values (~2012) and 2024 for its final values (~2024). Each indicator's actual reference years differ (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) and are given in its description and in `geo:reference_years`.",
+    "Load one variable in both periods, e.g. `geo.load(\"sdg16\", variables=\"index_sdg16\", names=True)`, and its change per unit with `geo.change(df, \"index_sdg16\")`.",
+    "The units are the 343 municipalities and indigenous autonomies (GAIOC) of 2025. Four of them were created after the 2012 census (TIOC-Raqaypampa, San Pedro de Macha, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico); the Atlas gives them values in both periods.",
+    "Aggregating to provinces, departments or Bolivia (`geo.aggregate`, `geo.combine`) averages the municipal values weighted by census population (`weighted_mean:population`; the 2012 census for ~2012 and the 2024 census for ~2024, loaded from the `sdg` dataset through `geo:weights`): e.g. `geo.aggregate(geo.load(\"sdg16\"), to=\"department\", dataset=\"sdg16\")`. These are population-weighted approximations, not the Atlas's own department figures."
+  ],
+  "geo:weights": {
+    "population": "sdg"
+  },
+  "resources": [
+    {
+      "name": "sdg16-map343",
+      "path": "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/sdg16/map343/sdg16.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "encoding": "utf-8",
+      "geo:scale": "map343",
+      "geo:period": [
+        2012,
+        2024
+      ],
+      "geo:years": [
+        2012,
+        2024
+      ],
+      "geo:units": 343,
+      "geo:path": "data/sdg16/map343/sdg16.csv",
+      "geo:parquet": "data/sdg16/map343/sdg16.parquet",
+      "geo:source_geometry": "Municipal statistics of the Atlas, linked by INE municipality code",
+      "schema": {
+        "fields": [
+          {
+            "name": "geo_id",
+            "title": "Municipality ID",
+            "type": "string",
+            "description": "GDO-Bolivia municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; map343; its boundary is in geo/boundaries/map343. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes.",
+            "geo:role": "id",
+            "constraints": {
+              "required": true,
+              "pattern": "^BO-\\d{2}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "year",
+            "title": "Period",
+            "type": "integer",
+            "description": "Period of the values in the row: 2012 holds the Atlas's initial values (near the 2012 census) and 2024 its final values (near the 2024 census). Each variable's actual reference years are given in its description and in geo:reference_years.",
+            "geo:role": "time",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "mun_id",
+            "title": "INE municipality code",
+            "type": "integer",
+            "description": "Official municipality code of the National Statistics Institute (INE), DDPPMM (department, province, municipality) stored as an integer without the leading zero (e.g. 20101 = Nuestra Señora de La Paz), as in the Atlas. The Atlas's rows are linked to geo_id through this code.",
+            "geo:role": "source_key",
+            "geo:units_column": "mun_id",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "index_sdg16",
+            "title": "Peace, justice and strong institutions index (0-100)",
+            "type": "number",
+            "description": "SDG 16 (Peace, justice and strong institutions) index of the Atlas de los ODS en Bolivia 2026, on a 0-100 scale where 100 means the goal's targets are met and 0 the worst situation. Following the global SDG Index of SDSN, each of its 4 indicators is rescaled linearly to 0-100 between a worst and a best value (given in each indicator's description), with the direction set so that higher is always better and values beyond the bounds capped; the index is the simple mean of the available rescaled indicators. Components: Homicide rate (per 100,000 people); Budget execution (%); Social conflicts (events per year); Children under 5 in the civil registry (%). Initial value (~2012) stored at 2012 and final value (~2024) at 2024; its components refer to different years around each census. Atlas: “Índice ODS16”.",
+            "geo:unit": "index (0-100)",
+            "geo:reference_years": {
+              "2012": "~2012",
+              "2024": "~2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 16
+          },
+          {
+            "name": "sdg16_1_thp",
+            "title": "Homicide rate (per 100,000 people)",
+            "type": "number",
+            "description": "Average annual number of reported crimes against life (homicides, murders, infanticides, femicides and parricides) per 100,000 inhabitants over three years. Source: Bolivian Observatory of Citizen Security and the Fight against Drugs (OBSCD). Initial value average 2017–2019 (stored at 2012) and final value average 2022–2024 (stored at 2024). In the SDG 16 index it is rescaled linearly to 0-100 between 9 (worst, 0) and 0 (best, 100), lower is better, values beyond the bounds capped; the Atlas counts the target as met at 1.5 and major challenges from 4 on. Atlas indicator 16_01_01_01_thp, “Tasa de homicidios registrados (por 100,000 habitantes)” (Andersen & Argandoña 2026).",
+            "geo:unit": "cases per 100,000 people",
+            "geo:reference_years": {
+              "2012": "average 2017–2019",
+              "2024": "average 2022–2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 16
+          },
+          {
+            "name": "sdg16_6_cep",
+            "title": "Budget execution (%)",
+            "type": "number",
+            "description": "Percentage of the municipality's programmed budget that is executed, averaged over three years. Source: the Ministry of Economy and Public Finance (MEFP). Initial value average 2011–2013 (stored at 2012) and final value average 2021–2023 (stored at 2024). In the SDG 16 index it is rescaled linearly to 0-100 between 17.7 (worst, 0) and 94.9 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 90 and major challenges from 60 on. Atlas indicator 16_06_01_02_cep, “Capacidad de ejecución del presupuesto programado (%)” (Andersen & Argandoña 2026).",
+            "geo:unit": "% of programmed budget",
+            "geo:reference_years": {
+              "2012": "average 2011–2013",
+              "2024": "average 2021–2023"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 16
+          },
+          {
+            "name": "sdg16_7_tcs",
+            "title": "Social conflicts (events per year)",
+            "type": "number",
+            "description": "Average annual number of social-conflict events recorded in the municipality over three years. Source: Armed Conflict Location and Event Data (ACLED), 2018-2024. Initial value average 2018–2020 (stored at 2012) and final value average 2022–2024 (stored at 2024). In the SDG 16 index it is rescaled linearly to 0-100 between 16.3 (worst, 0) and 0 (best, 100), lower is better, values beyond the bounds capped; the Atlas counts the target as met at 0 and major challenges from 10 on. Atlas indicator 16_07_02_03_tcs, “Cantidad anual de conflictos sociales” (Andersen & Argandoña 2026).",
+            "geo:unit": "events per year",
+            "geo:reference_years": {
+              "2012": "average 2018–2020",
+              "2024": "average 2022–2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 16
+          },
+          {
+            "name": "sdg16_9_nic",
+            "title": "Children under 5 in the civil registry (%)",
+            "type": "number",
+            "description": "Percentage of children under 5 whose birth is registered in the civil registry. Source: INE tabulations of the INE Population and Housing Censuses of 2012 and 2024. Initial value 2012 (stored at 2012) and final value 2024 (stored at 2024). In the SDG 16 index it is rescaled linearly to 0-100 between 66.2 (worst, 0) and 100 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 98 and major challenges from 75 on. Atlas indicator 16_09_01_04_nic, “Porcentaje de niñas y niños inscritos en registro civil” (Andersen & Argandoña 2026).",
+            "geo:unit": "% of children under 5",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 16
+          }
+        ],
+        "primaryKey": [
+          "geo_id",
+          "year"
+        ]
+      }
+    }
+  ],
+  "geo:updated": "2026-11-17",
+  "geo:map": {
+    "variable": "index_sdg16",
+    "year": 2024,
+    "panels": [
+      2012,
+      2024
+    ]
+  },
+  "geo:notebooks": [
+    {
+      "title": "Dynamics of sustainable development in Bolivia, 2012–2024",
+      "path": "../../notebooks/sdg_dynamics.ipynb"
+    },
+    {
+      "title": "Poverty in Bolivia: an extended EDA and ESDA",
+      "path": "../../notebooks/eda_esda.ipynb"
+    }
+  ]
+}

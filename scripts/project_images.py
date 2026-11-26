@@ -73,7 +73,7 @@ def map_layer(dataset: str, variable: str, height: int) -> Image.Image:
     from matplotlib.colors import LinearSegmentedColormap
 
     mun = gpd.read_file(ROOT / "site/data/map343.geojson").to_crs(4326)
-    df = pd.read_csv(ROOT / f"data/map343/{dataset}.csv")
+    df = pd.read_csv(ROOT / f"data/{dataset}/map343/{dataset}.csv")
     mun["v"] = mun["geo_id"].map(df.dropna(subset=[variable]).groupby("geo_id")[variable].last())
     mun["v"] = mun["v"].rank(pct=True)   # shade by percentile, so the colours spread over the ramp
     fig = plt.figure(figsize=(7, 9), dpi=100)

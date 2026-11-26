@@ -1,0 +1,197 @@
+{
+  "name": "pop",
+  "title": "Population",
+  "description": "Annual population estimates for Bolivia's 339 municipalities of the 2015 map, 2001–2020: gridded population counts summed over each municipality. They are the denominators for per-capita indicators such as night-time lights per capita.",
+  "version": "1.0.0",
+  "licenses": [
+    {
+      "name": "CC-BY-4.0",
+      "title": "Creative Commons Attribution 4.0 International License",
+      "path": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  ],
+  "sources": [
+    {
+      "title": "WorldPop & CIESIN (2018). Global High Resolution Population Denominators Project (1 km aggregated, 2000–2020). University of Southampton and Columbia University. Funded by the Bill and Melinda Gates Foundation (OPP1134076).",
+      "path": "https://doi.org/10.5258/SOTON/WP00647",
+      "geo:role": "original",
+      "geo:creator": "WorldPop (University of Southampton, University of Louisville, Université de Namur) and CIESIN, Columbia University",
+      "geo:homepage": "https://www.worldpop.org",
+      "geo:license": {
+        "name": "CC-BY-4.0",
+        "title": "Creative Commons Attribution 4.0 International License",
+        "path": "https://hub.worldpop.org/doi/10.5258/SOTON/WP00647"
+      }
+    },
+    {
+      "title": "Goodman, S., BenYishay, A., Lv, Z., & Runfola, D. (2019). GeoQuery: Integrating HPC systems and public web-based geospatial data tools. Computers & Geosciences, 122, 103–112.",
+      "path": "https://doi.org/10.1016/j.cageo.2018.10.009",
+      "geo:role": "intermediary",
+      "geo:creator": "AidData, William & Mary",
+      "geo:homepage": "https://geo.aiddata.org",
+      "geo:license": {
+        "name": "ODC-By-1.0",
+        "title": "Open Data Commons Attribution License 1.0",
+        "path": "https://opendatacommons.org/licenses/by/1-0/"
+      }
+    },
+    {
+      "title": "Runfola, D., Anderson, A., Baier, H., et al. (2020). geoBoundaries: A global database of political administrative boundaries. PLoS ONE, 15(4), e0231866.",
+      "path": "https://doi.org/10.1371/journal.pone.0231866",
+      "geo:role": "intermediary",
+      "geo:creator": "geoBoundaries, William & Mary geoLab",
+      "geo:homepage": "https://www.geoboundaries.org",
+      "geo:license": {
+        "name": "CC-BY-4.0",
+        "title": "Creative Commons Attribution 4.0 International License",
+        "path": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "geo:attribution": "Boundaries: geoBoundaries (www.geoboundaries.org), from GeoBolivia's municipal map of 2015 (public domain)."
+    },
+    {
+      "title": "Mendez, C., Gonzales, E., Leoni, P., Andersen, L., & Peralta, H. (2026). DS4Bolivia: A Data Science Repository to Study GeoSpatial Development in Bolivia [Data set]. GitHub.",
+      "path": "https://github.com/quarcs-lab/ds4bolivia",
+      "geo:role": "intermediary",
+      "geo:creator": "Carlos Mendez, Erick Gonzales, Pedro Leoni, Lykke Andersen and Hernán Peralta",
+      "geo:license": {
+        "name": "MIT",
+        "title": "MIT License",
+        "path": "https://github.com/quarcs-lab/ds4bolivia/blob/master/LICENSE"
+      }
+    }
+  ],
+  "geo:categories": [
+    "Social"
+  ],
+  "geo:notes": [
+    "The values belong to DS4Bolivia's polygons of the 2015 map, so they are published on that map, map339 (339 municipalities; boundaries in geo/boundaries/map339). Its municipalities keep their geo IDs in the 343-unit map of 2025 (map343), except that six of them (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) have since lost territory to four new units (San Pedro de Macha, TIOC-Raqaypampa, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico), which have no values here. geo/crosswalks/map339__map343.csv gives the area shares to move the values onto map343 (e.g. with geo.overlay).",
+    "The counts were computed by DS4Bolivia on its own municipal polygons, geoBoundaries v4 polygons the 2015 map published as map339 (geo/boundaries/map339), which differs slightly from the SDSN Bolivia 2025 map (map343); `asdf_id` keeps the DS4Bolivia polygon ID.",
+    "DS4Bolivia's population README does not name the gridded product; its Earth Engine workflow (apps/geoexplorer1v100bolivia.js, code/aggregate-satellite-embedings-to-adm-pop-weighted1.js) uses WorldPop 100 m, which covers 2000–2020.",
+    "These are gridded estimates, not the official INE projections. The `sdg` dataset carries the census population of 2012 and 2024 (`population`), which differs."
+  ],
+  "geo:notebooks": [
+    {
+      "title": "Find, load and understand Bolivia's subnational data with geo4bolivia",
+      "path": "../../notebooks/geo4bolivia_quickstart.ipynb"
+    },
+    {
+      "title": "Spatial inequality of poverty and night-time lights",
+      "path": "../../notebooks/esda_inequality.ipynb"
+    },
+    {
+      "title": "Predicting poverty from satellite embeddings",
+      "path": "../../notebooks/embeddings_mpi_ml.ipynb"
+    }
+  ],
+  "resources": [
+    {
+      "name": "pop-map339",
+      "path": "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/pop/map339/pop.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "encoding": "utf-8",
+      "geo:scale": "map339",
+      "geo:period": [
+        2001,
+        2020
+      ],
+      "geo:years": [
+        2001,
+        2002,
+        2003,
+        2004,
+        2005,
+        2006,
+        2007,
+        2008,
+        2009,
+        2010,
+        2011,
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020
+      ],
+      "geo:units": 339,
+      "geo:path": "data/pop/map339/pop.csv",
+      "geo:parquet": "data/pop/map339/pop.parquet",
+      "geo:source_geometry": "DS4Bolivia polygons (bolivia339geoqueryFull, keyed by asdf_id), matched one-to-one to the 2015 map's municipalities by area overlap; all 339, published as map339",
+      "schema": {
+        "primaryKey": [
+          "geo_id",
+          "year"
+        ],
+        "fields": [
+          {
+            "name": "geo_id",
+            "title": "Municipality ID",
+            "type": "string",
+            "description": "Municipality geo ID (BO-DD-PP-MM) of the 2015 municipality map, map339 (339 municipalities; GeoBolivia via geoBoundaries), numbered as in GADM 4.1; its boundary is in geo/boundaries/map339. The same municipality has the same geo ID in map343. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes.",
+            "geo:role": "id",
+            "constraints": {
+              "required": true,
+              "pattern": "^BO-\\d{2}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "year",
+            "title": "Year",
+            "type": "integer",
+            "description": "Calendar year of the estimate (2001–2020).",
+            "geo:role": "time",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "asdf_id",
+            "title": "DS4Bolivia polygon ID",
+            "type": "integer",
+            "description": "ID (AidData asdf_id) of the geoBoundaries v4 ADM3 polygon on which DS4Bolivia computed the data, matched one-to-one to the municipality by area overlap.",
+            "geo:role": "source_key",
+            "geo:units_column": "asdf_id",
+            "geo:source": "DS4Bolivia",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "pop",
+            "title": "Population",
+            "type": "number",
+            "description": "Estimated number of people living in the municipality: the sum over its polygon of the WorldPop unconstrained global population mosaic at 1 km (aggregated from 100 m random-forest dasymetric estimates; not UN-adjusted), extracted with AidData GeoQuery. Gridded estimates, not INE's official projections.",
+            "geo:unit": "people",
+            "geo:aggregation": "sum",
+            "geo:source": "WorldPop via DS4Bolivia",
+            "constraints": {
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pop_density",
+            "title": "Population density (people per km²)",
+            "type": "number",
+            "description": "Population (pop) divided by the municipality's area in km², measured on its boundary in the 2015 map (geo/boundaries/map339) in the project's equal-area projection (an Albers projection fitted to Bolivia). The salt flats and lakes that the map leaves outside every municipality (Uyuni, Coipasa, Poopó, Uru Uru) are not counted.",
+            "geo:unit": "people per km²",
+            "geo:aggregation": "none",
+            "geo:source": "WorldPop via DS4Bolivia; areas from the 2015 map (GeoBolivia via geoBoundaries)",
+            "constraints": {
+              "minimum": 0
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "geo:updated": "2026-11-17",
+  "geo:map": {
+    "variable": "pop_density",
+    "year": 2020,
+    "classify": "log"
+  }
+}

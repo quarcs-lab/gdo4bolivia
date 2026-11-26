@@ -30,7 +30,7 @@ Its indicators build on the [Atlas de los ODS en Bolivia 2026](https://atlasods.
 
 | | This repository: [quarcs-lab/gdo4bolivia](https://github.com/quarcs-lab/gdo4bolivia) | The package: [quarcs-lab/geo4bolivia](https://github.com/quarcs-lab/geo4bolivia) |
 | --- | --- | --- |
-| Holds | The data (`data/`, `geo/`, `metadata/`), the originals and the builders that regenerate them (`raw/`, `builders/`), the notebooks and the website | The Python package `geo4bolivia`, its tests and its documentation |
+| Holds | The data (`data/`, one folder per dataset, and `geo/`), the originals and the builders that regenerate them (`raw/`, `builders/`), the notebooks and the website | The Python package `geo4bolivia`, its tests and its documentation |
 | Website | [quarcs-lab.github.io/gdo4bolivia](https://quarcs-lab.github.io/gdo4bolivia/): indicators, tools, projects and insights | [quarcs-lab.github.io/geo4bolivia](https://quarcs-lab.github.io/geo4bolivia/): [get started](https://quarcs-lab.github.io/geo4bolivia/get-started.html), [articles](https://quarcs-lab.github.io/geo4bolivia/articles/) and the [function reference](https://quarcs-lab.github.io/geo4bolivia/reference/) |
 | Use it | Every file is a plain URL; nothing to install | `pip install geo4bolivia` ([PyPI](https://pypi.org/project/geo4bolivia/)) |
 
@@ -72,22 +72,23 @@ res.fig                                            # the interactive cluster map
 
 ## 📊 GeoDevelopment Indicators
 
-All data share one spatial backbone. Every unit at every scale has a **geo ID** that nests by prefix (numbered as in GADM 4.1): municipality `BO-04-17-04` (Nuestra Señora de La Paz) lies in province `BO-04-17` (Murillo), which lies in department `BO-04` (La Paz), which lies in Bolivia `BO`. INE codes, DS4Bolivia's `asdf_id` and GADM codes are kept as columns of [`geo/units.csv`](geo/units.csv). The municipalities are the 343 municipalities and indigenous autonomies (GAIOC) of SDSN Bolivia's municipal map of 2025 (`map343`), the units of the SDG Atlas 2026; provinces, departments and the country are their exact unions. The 339 municipalities of the 2015 map (`map339`) keep the same geo IDs. Each dataset is a panel with one row per unit (`geo_id`) and year, published as CSV and Parquet.
+All data share one spatial backbone. Every unit at every scale has a **geo ID** that nests by prefix (numbered as in GADM 4.1): municipality `BO-04-17-04` (Nuestra Señora de La Paz) lies in province `BO-04-17` (Murillo), which lies in department `BO-04` (La Paz), which lies in Bolivia `BO`. INE codes, DS4Bolivia's `asdf_id` and GADM codes are kept as columns of [`geo/units.csv`](geo/units.csv). The municipalities are the 343 municipalities and indigenous autonomies (GAIOC) of SDSN Bolivia's municipal map of 2025 (`map343`), the units of the SDG Atlas 2026; provinces, departments and the country are their exact unions. The 339 municipalities of the 2015 map (`map339`) keep the same geo IDs. Each dataset is a panel with one row per unit (`geo_id`) and year, published as CSV and Parquet in a folder of its own, `data/<dataset>/`, with its documentation and metadata.
 
 | Dataset | Title | Scale | Period | Files |
 | --- | --- | --- | --- | --- |
-| [`sdg`](docs/datasets/sdg.md) | SDG Atlas 2026: the Sustainable Development Index (IDS) and its ranking, with census population | 343 municipalities (map343) | ~2012, ~2024 | [`data/map343/`](data/map343/) |
-| [`sdg01`](docs/datasets/sdg01.md) … [`sdg17`](docs/datasets/sdg17.md) | SDG Atlas 2026, one dataset per goal: the goal index and its 81 indicators in all | 343 municipalities (map343) | ~2012, ~2024 | [`data/map343/`](data/map343/) |
-| [`pop`](docs/datasets/pop.md) | Population (gridded estimates) | 339 municipalities (map339, 2015 map) | 2001–2020 | [`data/map339/`](data/map339/) |
-| [`ntl`](docs/datasets/ntl.md) | Night-time lights per capita (log) and its long-run trend | 339 municipalities (map339, 2015 map) | 2012–2020 | [`data/map339/`](data/map339/) |
-| [`emb`](docs/datasets/emb.md) | Satellite embeddings, 64 dimensions, area-weighted | 339 municipalities (map339, 2015 map) | 2017 | [`data/map339/`](data/map339/) |
-| [`embpw`](docs/datasets/embpw.md) | Satellite embeddings, 64 dimensions, population-weighted | 339 municipalities (map339, 2015 map) | 2017 | [`data/map339/`](data/map339/) |
+| [`sdg`](data/sdg/) | SDG Atlas 2026: the Sustainable Development Index (IDS) and its ranking, with census population | 343 municipalities (map343) | ~2012, ~2024 | [`data/sdg/`](data/sdg/) |
+| [`sdg01`](data/sdg01/) … [`sdg17`](data/sdg17/) | SDG Atlas 2026, one dataset per goal: the goal index and its 81 indicators in all | 343 municipalities (map343) | ~2012, ~2024 | [`data/sdg01/`](data/sdg01/) … |
+| [`pop`](data/pop/) | Population (gridded estimates) | 339 municipalities (map339, 2015 map) | 2001–2020 | [`data/pop/`](data/pop/) |
+| [`ntl`](data/ntl/) | Night-time lights per capita (log) and its long-run trend | 339 municipalities (map339, 2015 map) | 2012–2020 | [`data/ntl/`](data/ntl/) |
+| [`emb`](data/emb/) | Satellite embeddings, 64 dimensions, area-weighted (`A00`–`A63`) and population-weighted (`A00_pw`–`A63_pw`) | 339 municipalities (map339, 2015 map) | 2017 | [`data/emb/`](data/emb/) |
 | [`geo`](geo/) | Units, names, codes, boundaries and crosswalks for every scale and map | 805 units | — | [`geo/`](geo/) |
 
-Each dataset has three descriptions:
-- a [Frictionless datapackage](metadata/)
-- a generated page in [`docs/datasets/`](docs/datasets/), with its variable dictionary, coverage, sources and citation
-- its rows in [`definitions_gdo-bolivia.csv`](definitions_gdo-bolivia.csv), which lists every variable of every dataset
+Each dataset's folder, `data/<dataset>/`, holds:
+- `README.md`, generated: its variable dictionary, coverage, files, sources, license and how to cite it (GitHub shows it when you open the folder)
+- `datapackage.json`, its [Frictionless](https://datapackage.org/) metadata, the source of truth
+- one subfolder per map with the panel, e.g. `data/sdg01/map343/sdg01.csv` and `.parquet`
+
+Every variable of every dataset is also listed in [`definitions_gdo-bolivia.csv`](definitions_gdo-bolivia.csv).
 
 The SDG Atlas 2026 measures each indicator twice, near the 2012 census and near the 2024 census; the panels store the two periods as 2012 and 2024, and each variable's actual reference years are in its metadata. New municipalities keep being created in Bolivia, so the municipal maps are named by their number of units: `map343` is SDSN Bolivia's map of 2025 (the units of the SDG Atlas 2026) and `map339` GeoBolivia's map of 2015. The 339 municipalities of 2015 kept their geo IDs (numbered as in GADM 4.1) in map343, and the four units created since were numbered after them. Population, night-time lights and satellite embeddings were computed on the 2015 polygons, so they are published on map339, for all 339 municipalities. Each dataset records its map, and the package's spatial functions use it (`map=` names it when a table you built mixes them) ([how maps change](CONTRIBUTING_DATA.md#add-a-municipal-map)).
 
@@ -122,7 +123,7 @@ import geopandas as gpd
 import plotly.express as px
 
 BASE = "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/"
-df = pd.read_csv(BASE + "data/map343/sdg.csv")   # geo_id, year, variables
+df = pd.read_csv(BASE + "data/sdg/map343/sdg.csv")   # geo_id, year, variables
 units = pd.read_csv(BASE + "geo/units.csv")             # names, parents, codes
 units = units[units["scale"] == "map343"]               # one map: one row per unit
 gdf = gpd.read_file(BASE + "geo/boundaries/map343.geojson")   # polygons
@@ -258,11 +259,11 @@ gdo4bolivia/
 ├── robots.txt, site.webmanifest
 ├── project.yaml                  # Project identity: name, package, repository, country codes, map settings
 ├── raw/                          # Original inputs, never edited (see raw/README.md)
-├── builders/                     # geo.py + one builder per dataset: raw/ -> geo/, data/, docs/datasets/
+├── builders/                     # geo.py + one builder per dataset: raw/ -> geo/, data/
 ├── geo/                          # Spatial backbone: scales.yaml, units, boundaries/, crosswalks/
-├── data/<scale>/                 # Published panels: <dataset>.csv + .parquet (generated)
-├── metadata/                     # One Frictionless datapackage per dataset (source of truth)
-├── docs/                         # data-infrastructure.md (the guide) + datasets/ (generated)
+├── data/<dataset>/               # One folder per dataset: datapackage.json (the metadata, source of truth),
+│                                 #   README.md and <map>/<dataset>.csv + .parquet (generated); index.json
+├── docs/                         # data-infrastructure.md (the guide)
 ├── definitions_gdo-bolivia.csv   # All variables of all datasets (generated)
 ├── tests/                        # test_data.py (validation, builders) + test_project.py (Bolivia facts)
 ├── notebooks/                    # Colab notebooks (.ipynb) paired with MyST markdown (.md)
@@ -283,7 +284,7 @@ The Python package is not in this repository: its code, tests and documentation 
 
 ```bash
 uv sync                          # environment: the geo4bolivia package (every extra) + the notebooks' libraries
-uv run geo4bolivia build         # regenerate geo/, data/, docs/ from raw/ with builders/
+uv run geo4bolivia build         # regenerate geo/ and data/ from raw/ with builders/
 uv run geo4bolivia validate      # check IDs, schemas, nesting and file consistency
 uv run pytest                    # the data validate, every dataset has a builder, Bolivia facts
 uv run jupyter lab notebooks/    # open the notebooks
@@ -333,10 +334,10 @@ The site's sources are in `site/`: a React app (`site/src/app.jsx`) whose items 
 
 To cite the Python package, see [its README](https://github.com/quarcs-lab/geo4bolivia#cite).
 
-Please also cite the original source of each dataset you use. The citations are listed on each dataset's page in [`docs/datasets/`](docs/datasets/).
+When you use a dataset, cite its original sources first, then the observatory, which processes and maintains the data, then its other sources. Each dataset's README (`data/<dataset>/`) and page on the website list them in that order, and `geo.cite("<dataset>")` prints them.
 
 ---
 
 **Disclaimer.** The indicators, tools, projects and insights are the responsibility of the individual researchers and do not necessarily represent the views of their affiliated institutions or related organizations. Maps are for geo-statistical use only. They have a referential, informational character and do not represent an official definition of Bolivia's territorial boundaries.
 
-**License.** Code: [MIT](LICENSE). Data: [CC BY 4.0](LICENSE-DATA), except where an original source requires otherwise. The boundaries (`geo/boundaries/`) are SDSN Bolivia's municipal map of 2025, used and shared with SDSN Bolivia's permission (cite “SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/”). Each dataset's sources, their licenses and the credits they ask for are listed in its metadata, its page in `docs/datasets/` and its page on the website. The indicator maps use Esri's World Dark Gray Canvas basemap (Esri, HERE, Garmin, © OpenStreetMap contributors). Section illustrations come from the geo4cambodia template (generated with OpenAI image generation via Codex); satellite imagery in the hero and the section backgrounds is Sentinel-2 cloudless 2016 by EOX IT Services GmbH (CC BY 4.0), except the Laguna Verde background from Sentinel-2 cloudless 2024 (CC BY-NC-SA 4.0), and NASA Blue Marble (public domain).
+**License.** Code: [MIT](LICENSE). Data: [CC BY 4.0](LICENSE-DATA), except where an original source requires otherwise. The boundaries (`geo/boundaries/`) are SDSN Bolivia's municipal map of 2025 and the SDG data come from SDSN Bolivia's Atlas de los ODS en Bolivia 2026, both licensed by SDSN Bolivia under CC BY 4.0 (cite “SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/” and the Atlas). Each dataset's sources, their licenses and the credits they ask for are listed in its metadata and README (`data/<dataset>/`) and on its page on the website; cite its original sources first, then the observatory, then the other sources (`geo.cite("<dataset>")`). The indicator maps use Esri's World Dark Gray Canvas basemap (Esri, HERE, Garmin, © OpenStreetMap contributors). Section illustrations come from the geo4cambodia template (generated with OpenAI image generation via Codex); satellite imagery in the hero and the section backgrounds is Sentinel-2 cloudless 2016 by EOX IT Services GmbH (CC BY 4.0), except the Laguna Verde background from Sentinel-2 cloudless 2024 (CC BY-NC-SA 4.0), and NASA Blue Marble (public domain).

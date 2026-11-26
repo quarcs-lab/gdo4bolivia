@@ -20,12 +20,14 @@ The page is drawn by `IndicatorDetail` in `site/src/app.jsx` and has, in order: 
 the headline map, **About the dataset** (description, notice, original source with its
 citation), **Explore the map** (interactive: any variable and year, from the published data),
 **Variables** (name, label, description of every column), **Use it in your code**
-(package and plain-URL tabs), **License**, **Cite this dataset**, **References**, plus an
-*At a glance* sidebar. `site/build.mjs` pre-renders it at `indicators/<id>/` with its own
+(package and plain-URL tabs), **License**, **Cite this dataset** (APA: the original sources, then the
+observatory, then the other sources), **References**, plus an *At a glance* sidebar with a link to the
+dataset's folder on GitHub (`data/<dataset>/`). `site/build.mjs` pre-renders it at `indicators/<id>/` with its own
 preview image and JSON-LD, and adds it to the sitemap and the search.
 Variables, original source, license, citations and references are read at runtime from
-`metadata/<dataset>.datapackage.json`, so the metadata is the single source of truth.
-There is no download section, and the page links to no data files.
+`data/<dataset>/datapackage.json`, so the metadata is the single source of truth.
+There is no download section; the page links to the dataset's folder on GitHub, and the landing page's
+"Database architecture" table links every dataset there too.
 
 ## Hard rules
 
@@ -66,7 +68,7 @@ missing. Ask everything in a single round, with `AskUserQuestion` where options 
 Follow `CONTRIBUTING_DATA.md`:
 
 1. `raw/<dataset>/`
-2. `metadata/<dataset>.datapackage.json` and `metadata/index.json`
+2. `data/<dataset>/datapackage.json` and `data/index.json` (the files go in `data/<dataset>/<scale>/`)
 3. a builder, `builders/<dataset>.py`, started from the package's template and registered in
    `DATASETS` in `builders/__init__.py`:
 
@@ -119,7 +121,7 @@ uv run <pkg> validate <dataset>
 uv run pytest
 ```
 
-`pytest` also checks that every dataset in `metadata/index.json` has a builder. The validator checks:
+`pytest` also checks that every dataset in `data/index.json` has a builder. The validator checks:
 - every field has a `title` and a `description`
 - every license has a `name`
 - `geo:map` names a variable that has data in its year

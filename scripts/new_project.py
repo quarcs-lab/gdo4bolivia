@@ -167,8 +167,9 @@ def main(argv=None) -> int:
     (dest / "geo").mkdir(parents=True, exist_ok=True)
     (dest / "geo/scales.yaml").write_text("".join(scales))
     (dest / "metadata").mkdir(exist_ok=True)
-    (dest / "metadata/index.json").write_text('{\n  "datasets": []\n}\n')
-    for folder in ("raw/boundaries", "data", "docs/datasets", "notebooks"):
+    (dest / "data").mkdir(parents=True, exist_ok=True)
+    (dest / "data/index.json").write_text('{\n  "datasets": []\n}\n')   # one folder per dataset: data/<dataset>/
+    for folder in ("raw/boundaries", "notebooks"):
         (dest / folder).mkdir(parents=True, exist_ok=True)
 
     # 3. pyproject: same dependencies and settings, new identity

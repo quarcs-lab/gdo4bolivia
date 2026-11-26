@@ -1,0 +1,205 @@
+{
+  "name": "sdg",
+  "title": "Sustainable Development Index, IDS (SDG Atlas of Bolivia 2026)",
+  "description": "The Sustainable Development Index (IDS) of the Atlas de los ODS en Bolivia 2026 (SDSN Bolivia), which summarises 81 indicators of 15 Sustainable Development Goals, and its national ranking, for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), near the 2012 census and near the 2024 census (stored as 2012 and 2024), with the census population of both years and the 2024 urbanization rate as context.",
+  "version": "1.0.0",
+  "licenses": [
+    {
+      "name": "CC-BY-4.0",
+      "title": "Creative Commons Attribution 4.0 International License",
+      "path": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  ],
+  "sources": [
+    {
+      "title": "Andersen, L. E., & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad Privada Boliviana, SDSN Bolivia.",
+      "path": "https://atlasods.sdsnbolivia.org/",
+      "geo:role": "original",
+      "geo:creator": "Lykke E. Andersen and Fabiana Argandoña (SDSN Bolivia, Universidad Privada Boliviana)",
+      "geo:homepage": "https://atlasods.sdsnbolivia.org/",
+      "geo:license": {
+        "name": "CC-BY-4.0",
+        "title": "Creative Commons Attribution 4.0 International License (licensed by SDSN Bolivia)",
+        "path": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "geo:attribution": "Please cite the Atlas and its data as: Andersen, L.E. & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad Privada Boliviana, SDSN Bolivia."
+    },
+    {
+      "title": "SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Shapefile], with the population of the 2012 and 2024 Population and Housing Censuses (INE). https://sdsnbolivia.org/datos-espaciales/",
+      "path": "https://sdsnbolivia.org/datos-espaciales/",
+      "geo:role": "original",
+      "geo:creator": "SDSN Bolivia, from the Ministerio de Planificación del Desarrollo, the Instituto Nacional de Estadística and the Viceministerio de Autonomías",
+      "geo:license": {
+        "name": "CC-BY-4.0",
+        "title": "Creative Commons Attribution 4.0 International License (licensed by SDSN Bolivia)",
+        "path": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "geo:attribution": "SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/"
+    }
+  ],
+  "geo:categories": [
+    "Social",
+    "Economy",
+    "Environment",
+    "Institutions"
+  ],
+  "geo:notes": [
+    "Both periods are stored at nominal years: 2012 for the Atlas's initial values (~2012) and 2024 for its final values (~2024). Each indicator's actual reference years differ (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) and are given in its description and in `geo:reference_years`.",
+    "Load one variable in both periods, e.g. `geo.load(\"sdg\", variables=\"index_sdg\", names=True)`, and its change per unit with `geo.change(df, \"index_sdg\")`.",
+    "The units are the 343 municipalities and indigenous autonomies (GAIOC) of 2025. Four of them were created after the 2012 census (TIOC-Raqaypampa, San Pedro de Macha, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico); the Atlas gives them values in both periods.",
+    "`population` sums; the IDS and `urbanization` aggregate as census-population-weighted means (`geo.aggregate(geo.load(\"sdg\"), to=\"department\", dataset=\"sdg\")`), approximations rather than the Atlas's own department figures; the ranking is not additive (`none`).",
+    "The goal indices and the 81 indicators are in the goal datasets `sdg01` ... `sdg17` (no 12 or 14)."
+  ],
+  "geo:weights": {
+    "population": "sdg"
+  },
+  "resources": [
+    {
+      "name": "sdg-map343",
+      "path": "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/sdg/map343/sdg.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "encoding": "utf-8",
+      "geo:scale": "map343",
+      "geo:period": [
+        2012,
+        2024
+      ],
+      "geo:years": [
+        2012,
+        2024
+      ],
+      "geo:units": 343,
+      "geo:path": "data/sdg/map343/sdg.csv",
+      "geo:parquet": "data/sdg/map343/sdg.parquet",
+      "geo:source_geometry": "Municipal statistics of the Atlas, linked by INE municipality code",
+      "schema": {
+        "fields": [
+          {
+            "name": "geo_id",
+            "title": "Municipality ID",
+            "type": "string",
+            "description": "GDO-Bolivia municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; map343; its boundary is in geo/boundaries/map343. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes.",
+            "geo:role": "id",
+            "constraints": {
+              "required": true,
+              "pattern": "^BO-\\d{2}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "year",
+            "title": "Period",
+            "type": "integer",
+            "description": "Period of the values in the row: 2012 holds the Atlas's initial values (near the 2012 census) and 2024 its final values (near the 2024 census). Each variable's actual reference years are given in its description and in geo:reference_years.",
+            "geo:role": "time",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "mun_id",
+            "title": "INE municipality code",
+            "type": "integer",
+            "description": "Official municipality code of the National Statistics Institute (INE), DDPPMM (department, province, municipality) stored as an integer without the leading zero (e.g. 20101 = Nuestra Señora de La Paz), as in the Atlas. The Atlas's rows are linked to geo_id through this code.",
+            "geo:role": "source_key",
+            "geo:units_column": "mun_id",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "index_sdg",
+            "title": "Sustainable Development Index, IDS (0-100)",
+            "type": "number",
+            "description": "The Sustainable Development Index (IDS, Índice de Desarrollo Sostenible) of the Atlas de los ODS en Bolivia 2026: the simple mean of the 15 goal indices (SDG 1-11, 13, 15, 16 and 17; the Atlas has none for 12 or 14), each the mean of its rescaled indicators, on a 0-100 scale where 100 means every target is met. 81 indicators in all. Initial value (~2012) stored at 2012 and final value (~2024) at 2024. Atlas: “IDS 2012” and “IDS 2024”.",
+            "geo:unit": "index (0-100)",
+            "geo:reference_years": {
+              "2012": "~2012",
+              "2024": "~2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026"
+          },
+          {
+            "name": "rank_sdg",
+            "title": "IDS national ranking (1 = best)",
+            "type": "integer",
+            "description": "Rank of the unit's IDS among the 343 municipalities and indigenous autonomies in the period (1 = highest IDS), as published in the Atlas (“Ranking 2012”, “Ranking 2024”).",
+            "geo:unit": "rank",
+            "geo:reference_years": {
+              "2012": "~2012",
+              "2024": "~2024"
+            },
+            "geo:aggregation": "none",
+            "geo:source": "Atlas de los ODS en Bolivia 2026"
+          },
+          {
+            "name": "population",
+            "title": "Population (census)",
+            "type": "integer",
+            "description": "Population counted by the Population and Housing Census of 2012 (stored at 2012) and 2024 (stored at 2024), from the attribute table of SDSN Bolivia's municipal map; the 2024 figure equals the Atlas's “Población 2024” except for Huarina (8,279 on the map, 8,679 in the Atlas). For the four units created after 2012 the 2012 figure is the census population of their present territory.",
+            "geo:unit": "people",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2024"
+            },
+            "geo:aggregation": "sum",
+            "geo:source": "INE censuses via SDSN Bolivia (2025)"
+          },
+          {
+            "name": "urbanization",
+            "title": "Urbanization rate (% of population)",
+            "type": "number",
+            "description": "Percentage of the population living in urban areas in 2024 (Atlas: “Tasa de urbanización, 2024”), rounded to whole percentages; only for 2024.",
+            "geo:unit": "% of population",
+            "geo:reference_years": {
+              "2024": "2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026"
+          }
+        ],
+        "primaryKey": [
+          "geo_id",
+          "year"
+        ]
+      }
+    }
+  ],
+  "geo:updated": "2026-11-17",
+  "geo:map": {
+    "variable": "index_sdg",
+    "year": 2024,
+    "panels": [
+      2012,
+      2024
+    ]
+  },
+  "geo:notebooks": [
+    {
+      "title": "One question, three packages: did Bolivia's municipalities converge?",
+      "path": "../../notebooks/three_packages.ipynb"
+    },
+    {
+      "title": "Find, load and understand Bolivia's subnational data with geo4bolivia",
+      "path": "../../notebooks/geo4bolivia_quickstart.ipynb"
+    },
+    {
+      "title": "Dynamics of sustainable development in Bolivia, 2012–2024",
+      "path": "../../notebooks/sdg_dynamics.ipynb"
+    },
+    {
+      "title": "Exploratory data analysis of multidimensional poverty",
+      "path": "../../notebooks/eda.ipynb"
+    },
+    {
+      "title": "Spatial inequality of poverty and night-time lights",
+      "path": "../../notebooks/esda_inequality.ipynb"
+    },
+    {
+      "title": "Poverty in Bolivia: an extended EDA and ESDA",
+      "path": "../../notebooks/eda_esda.ipynb"
+    }
+  ]
+}

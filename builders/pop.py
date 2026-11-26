@@ -1,4 +1,4 @@
-"""Municipal population: raw/pop -> data/map339/pop."""
+"""Municipal population: raw/pop -> data/pop/map339/pop."""
 
 import pandas as pd
 

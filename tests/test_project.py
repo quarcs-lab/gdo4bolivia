@@ -122,7 +122,7 @@ def test_polygon_data_are_on_the_2015_map():
     lk = pd.read_csv(store.repo_root() / "raw/lookups/municipalities343.csv")
     changed = set(lk.loc[lk["changed"], "geo_id"])
     assert len(changed) == 10 and "BO-07-04-01" in changed and "BO-02-12-04" in changed   # Colquechaca, Raqaypampa
-    for dataset in ("pop", "ntl", "emb", "embpw"):
+    for dataset in ("pop", "ntl", "emb"):
         df = geo.load(dataset)
         assert df.attrs["geo:scale"] == "map339" and set(df["geo_id"]) == set(geo.units("map339")["geo_id"])
         assert len(set(df["geo_id"]) & changed) == 6           # the six that lost territory, as they were in 2015
@@ -270,8 +270,26 @@ def test_sdg_change_and_reference_years():
     assert "sdg1_2_mpi" in geo.search("multidimensional poverty")["variable"].tolist()
 
 
-@pytest.mark.parametrize("dataset", ["emb", "embpw"])
-def test_embeddings(dataset):
-    df = geo.load(dataset)
+def test_embeddings_in_both_weightings():
+    df = geo.load("emb")
     assert len(df) == 339 and set(df["year"]) == {2017}
-    assert len(geo.metadata.variables(dataset)) == 64 and df.filter(regex=r"^A\d{2}$").notna().all().all()
+    area, population = df.filter(regex=r"^A\d{2}$"), df.filter(regex=r"^A\d{2}_pw$")
+    assert area.shape[1] == population.shape[1] == 64 and len(geo.metadata.variables("emb")) == 128
+    assert area.notna().all().all() and population.notna().all().all()
+    assert not (area.to_numpy() == population.to_numpy()).all()        # two weightings, not one copied
+
+
+def test_citations_put_the_original_source_first_then_the_observatory():
+    atlas = geo.cite("sdg01").split("\n\n")
+    assert atlas[0].startswith("Andersen, L. E., & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026")
+    assert atlas[1].startswith("Mendez, C. (2026). GeoDevelopment Observatory of Bolivia")
+    assert atlas[2].startswith("SDSN Bolivia (2025). Límites Municipales Bolivia 2025")
+    lights = geo.cite("ntl").split("\n\n")
+    assert lights[0].startswith("Elvidge") and lights[1].startswith("WorldPop") and "Observatory" in lights[2]
+
+
+def test_sdsn_sources_are_cc_by():
+    for dataset in ["sdg", *(d for d in geo.metadata.dataset_ids() if d.startswith("sdg") and d != "sdg")]:
+        for s in geo.metadata.package(dataset)["sources"]:
+            if "SDSN" in s.get("geo:creator", "") or "SDSN" in s["title"]:
+                assert s["geo:license"]["name"] == "CC-BY-4.0", (dataset, s["title"][:40])

@@ -684,9 +684,9 @@ def notebook_cards(geo, plt) -> None:
     from xgboost import XGBRegressor
     df = (gdf[["geo_id", "sdg1_2_mpi", "ln_t400NTLpc"]]
           .merge(geo.load("pop", years=2012)[["geo_id", "pop"]], on="geo_id"))
-    embpw = geo.load("embpw", years=2017).set_index("geo_id")
-    dims = [f"A{i:02d}" for i in range(64)]
-    X = np.column_stack([embpw.loc[df["geo_id"], dims].to_numpy(), df["ln_t400NTLpc"], np.log(df["pop"])])
+    emb = geo.load("emb", years=2017).set_index("geo_id")
+    dims = [f"A{i:02d}_pw" for i in range(64)]   # the population-weighted dimensions
+    X = np.column_stack([emb.loc[df["geo_id"], dims].to_numpy(), df["ln_t400NTLpc"], np.log(df["pop"])])
     yv = df["sdg1_2_mpi"].to_numpy()
     model = XGBRegressor(n_estimators=400, learning_rate=0.03, max_depth=4, min_child_weight=3, subsample=0.8,
                          colsample_bytree=0.8, reg_lambda=1.0, random_state=42, n_jobs=4, verbosity=0)
@@ -698,7 +698,7 @@ def notebook_cards(geo, plt) -> None:
     ax.set(xlim=lim, ylim=lim)
     ax.set_xlabel(f"Observed MPI (2012), {len(yv)} municipalities", fontsize=16); ax.set_ylabel("Out-of-fold predicted MPI", fontsize=16)
     card_text(fig, "Poverty seen from space", f"XGBoost on 64 satellite embedding\ndimensions plus lights and population\n\nRandom 5-fold CV: R² = {r2_score(yv, pred):.2f}",
-              'geo.load("embpw")', x=0.64)
+              'geo.load("emb")', x=0.64)
     save_fig(fig, tools / "embeddings-mpi-ml.webp")
 
     # sdg_dynamics: convergence of the Sustainable Development Index, ~2012 to ~2024

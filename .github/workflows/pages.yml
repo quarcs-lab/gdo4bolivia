@@ -47,7 +47,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git add -A notebooks README.md CONTRIBUTING_DATA.md docs
+          git add -A notebooks README.md CONTRIBUTING_DATA.md docs data/README.md data/*/README.md
           if git diff --cached --quiet; then echo "notebooks up to date"; exit 0; fi
           git -c user.name="github-actions[bot]" \
               -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \

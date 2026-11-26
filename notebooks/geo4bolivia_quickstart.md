@@ -108,7 +108,7 @@ print(geo.cite("sdg03"))
 
 Every published file is a plain URL, so pandas, geopandas, R, Stata or Excel can read it directly:
 
-- **`data/<scale>/<dataset>.csv`**: the indicators, as a panel with one row per unit (`geo_id`) and year; the municipal scales are named after their map: `map343` (SDSN Bolivia 2025, the SDG Atlas) and `map339` (2015, population, lights and embeddings)
+- **`data/<dataset>/<scale>/<dataset>.csv`**: the indicators, one folder per dataset (with its `README.md` and `datapackage.json`), as a panel with one row per unit (`geo_id`) and year; the municipal scales are named after their map: `map343` (SDSN Bolivia 2025, the SDG Atlas) and `map339` (2015, population, lights and embeddings)
 - **`geo/units.csv`**: names, parent units and the codes other sources use (INE, DS4Bolivia, GADM)
 - **`geo/boundaries/<scale>.geojson`**: polygons, keyed by the same `geo_id`
 
@@ -121,7 +121,7 @@ local = next((p for p in here if (p / "geo" / "units.csv").is_file()), None)
 if local is not None:
     BASE = local.as_posix() + "/"
 
-sdg01 = pd.read_csv(BASE + "data/map343/sdg01.csv")             # 343 units x 2 periods
+sdg01 = pd.read_csv(BASE + "data/sdg01/map343/sdg01.csv")       # 343 units x 2 periods
 units = pd.read_csv(BASE + "geo/units.csv", dtype={"ine_code": str})    # every scale and map
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 print(sdg01.shape, units.shape, municipalities.shape)

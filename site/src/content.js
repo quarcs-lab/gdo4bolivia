@@ -158,7 +158,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg.csv")  # geo_id, year, index_sdg, ...
+df = pd.read_csv(BASE + "data/sdg/map343/sdg.csv")  # geo_id, year, index_sdg, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 ids = df.loc[df["year"] == 2024, ["geo_id", "index_sdg", "rank_sdg"]]
@@ -272,7 +272,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg01.csv")  # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/sdg01/map343/sdg01.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg1"]]
@@ -407,7 +407,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg02.csv")  # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/sdg02/map343/sdg02.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg2"]]
@@ -530,7 +530,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg03.csv")  # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/sdg03/map343/sdg03.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg3"]]
@@ -653,7 +653,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg04.csv")  # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/sdg04/map343/sdg04.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg4"]]
@@ -780,7 +780,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg05.csv")  # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/sdg05/map343/sdg05.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg5"]]
@@ -903,7 +903,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg06.csv")  # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/sdg06/map343/sdg06.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg6"]]
@@ -1024,7 +1024,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg07.csv")  # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/sdg07/map343/sdg07.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg7"]]
@@ -1145,7 +1145,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg08.csv")  # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/sdg08/map343/sdg08.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg8"]]
@@ -1268,7 +1268,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg09.csv")  # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/sdg09/map343/sdg09.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg9"]]
@@ -1389,7 +1389,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg10.csv")  # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/sdg10/map343/sdg10.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg10"]]
@@ -1512,7 +1512,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg11.csv")  # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/sdg11/map343/sdg11.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg11"]]
@@ -1635,7 +1635,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg13.csv")  # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/sdg13/map343/sdg13.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg13"]]
@@ -1756,7 +1756,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg15.csv")  # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/sdg15/map343/sdg15.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg15"]]
@@ -1877,7 +1877,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg16.csv")  # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/sdg16/map343/sdg16.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg16"]]
@@ -1998,7 +1998,7 @@ import plotly.express as px
 
 # No geo4bolivia needed: every file is a plain URL
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg17.csv")  # geo_id, year, mun_id, ...
+df = pd.read_csv(BASE + "data/sdg17/map343/sdg17.csv")  # geo_id, year, mun_id, ...
 municipalities = gpd.read_file(BASE + "geo/boundaries/map343.geojson")
 
 index = df.loc[df["year"] == 2024, ["geo_id", "index_sdg17"]]
@@ -2108,7 +2108,7 @@ title="Night-time lights by department")`,
 import plotly.express as px
 
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map339/ntl.csv")
+df = pd.read_csv(BASE + "data/ntl/map339/ntl.csv")
 units = pd.read_csv(BASE + "geo/units.csv")   # every scale and map
 units = units[units["scale"].isin(["map339", "department"])]
 df = df.merge(units[["geo_id", "department_id"]], on="geo_id")
@@ -2149,7 +2149,7 @@ labels={"pop": "Population"}, title="Population by department, 2001-2020")`,
 import plotly.express as px
 
 BASE = "${RAW_URL}"
-pop = pd.read_csv(BASE + "data/map339/pop.csv")
+pop = pd.read_csv(BASE + "data/pop/map339/pop.csv")
 units = pd.read_csv(BASE + "geo/units.csv")   # every scale and map
 units = units[units["scale"].isin(["map339", "department"])]
 pop = pop.merge(units[["geo_id", "department_id"]], on="geo_id")
@@ -2164,22 +2164,22 @@ labels={"pop": "Population"}, title="Population by department, 2001-2020")`,
   {
     id: 'municipalities339-emb', type: 'indicator', section: 'indicators',
     title: 'Satellite embeddings',
-    scope: '339 municipalities (2015 map) · 64 dimensions · 2017',
+    scope: '339 municipalities (2015 map) · 64 dimensions × 2 weightings · 2017',
     summary: 'What 339 municipalities look like from space, each compressed by a deep-learning model into 64 numbers: features for machine learning.',
-    description: 'Sixty-four satellite embedding dimensions (A00–A63) for Bolivia’s 339 municipalities of the 2015 map in 2017, averaged from the annual 10 m Google Satellite Embedding dataset (AlphaEarth Foundations). The model summarises Sentinel-2, Landsat and other imagery into abstract features that capture land cover, texture, roads and buildings. Two versions are published: `emb`, the area-weighted mean over each municipality, and `embpw`, weighted by population so that it describes where people live. The dimensions are not interpretable one by one; they are inputs to models, for example to predict poverty. The values were computed on DS4Bolivia’s polygons of the 2015 municipal map, so they are published on that map, map339, for all its 339 municipalities, which keep their geo IDs in the 343-unit map of 2025. Six of them (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) have since lost territory to four new units, which have no data; their values describe their 2015 territory.',
+    description: 'Sixty-four satellite embedding dimensions (A00–A63) for Bolivia’s 339 municipalities of the 2015 map in 2017, averaged from the annual 10 m Google Satellite Embedding dataset (AlphaEarth Foundations). The model summarises Sentinel-2, Landsat and other imagery into abstract features that capture land cover, texture, roads and buildings. Two versions sit side by side in the dataset `emb`: A00–A63, the area-weighted mean over each municipality, and A00_pw–A63_pw, weighted by population so that they describe where people live. The dimensions are not interpretable one by one; they are inputs to models, for example to predict poverty. The values were computed on DS4Bolivia’s polygons of the 2015 municipal map, so they are published on that map, map339, for all its 339 municipalities, which keep their geo IDs in the 343-unit map of 2025. Six of them (Colquechaca, Mizque, Porco, Tomave, San Ignacio and Santa Ana) have since lost territory to four new units, which have no data; their values describe their 2015 territory.',
     geography: 'Municipality (map339, 2015 map)', units: 339, period: '2017', frequency: 'One year', key: 'geo_id', idExample: 'BO-04-17-04',
     categories: ['Environment', 'Economy'], tags: ['satellite embeddings', 'AlphaEarth', 'machine learning', 'remote sensing'],
     image: 'images/indicators/emb.webp',
     imageAlt: 'Map of satellite embedding dimension A00 (area-weighted) in 2017 across Bolivia’s 339 municipalities of the 2015 map in three natural-break classes: low across the altiplano and western valleys, middle across Beni and Pando, high across Santa Cruz and the Chaco',
     map: 'images/indicators/emb-map.webp',
     mapAlt: 'Map of satellite embedding dimension A00 (area-weighted) in 2017 across Bolivia’s 339 municipalities of the 2015 map in three natural-break classes: low across the altiplano and western valleys, middle across Beni and Pando, high across Santa Cruz and the Chaco. Legend: High 0.046 to 0.164 (49 municipalities), Middle −0.055 to 0.046 (94), Low −0.165 to −0.055 (190), no data 10.',
-    date: '2026-10-28', pinned: false, dataset: 'emb', datasets: ['emb', 'embpw'],
+    date: '2026-10-28', pinned: false, dataset: 'emb',
     code: {
       python: `${PYTHON_SETUP}
 from sklearn.decomposition import PCA
 
-emb = geo.load("embpw")                           # or "emb", area-weighted
-X = emb.filter(regex=r"^A\\d{2}$")                # 64 dimensions
+emb = geo.load("emb")              # A00-A63 by area, A00_pw-A63_pw by population
+X = emb.filter(regex=r"^A\\d{2}_pw$")             # the 64 population-weighted ones
 emb["pc1"] = PCA(1).fit_transform(X)[:, 0]
 
 # How the first component relates to multidimensional poverty (2012)
@@ -2193,9 +2193,9 @@ px.scatter(df, x="pc1", y="sdg1_2_mpi", hover_name="name", trendline="ols",
 import plotly.express as px
 
 BASE = "${RAW_URL}"
-emb = pd.read_csv(BASE + "data/map339/embpw.csv")   # geo_id, year, asdf_id, A00-A63
+emb = pd.read_csv(BASE + "data/emb/map339/emb.csv")   # A00-A63, A00_pw-A63_pw
 
-# Distribution of each of the 64 dimensions across municipalities
+# Distribution of each of the 64 area-weighted dimensions across municipalities
 px.box(emb.filter(regex=r"^A\\d{2}$"),
        labels={"variable": "Dimension", "value": "Value"},
        title="Satellite embeddings, 2017")`,
@@ -2239,7 +2239,7 @@ import plotly.express as px
 
 # The same files without the package: plain URLs
 BASE = "${RAW_URL}"
-df = pd.read_csv(BASE + "data/map343/sdg01.csv")
+df = pd.read_csv(BASE + "data/sdg01/map343/sdg01.csv")
 units = pd.read_csv(BASE + "geo/units.csv")      # names, parents, INE codes
 units = units[units["scale"].isin(["map343", "department"])]   # sdg01's map
 df = df.merge(units[["geo_id", "name", "department_id"]], on="geo_id")

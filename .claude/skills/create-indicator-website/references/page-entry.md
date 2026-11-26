@@ -18,7 +18,7 @@ Variables, sources, license and references come from the metadata; do not repeat
   map: 'images/indicators/ntl-map.webp',                     // the page's map
   mapAlt: '<imageAlt>. Legend: High a to b (n units), Middle ..., Low ..., no data k.',
   date: '2026-10-29', pinned: false,
-  dataset: 'ntl',                                            // or datasets: ['emb', 'embpw']
+  dataset: 'ntl',                                            // or datasets: ['a', 'b'] for one page of several
   notice: 'Optional warning shown under the description.',
   code: { python: `...`, pandas: `...` },
   examples: [                                                // optional: short recipes under the code tabs
@@ -68,7 +68,9 @@ download links: the page no longer uses them.
 - [ ] The page shows, in order: map, About (with the original source), Explore the map,
       Variables (every column), code, License, Cite this dataset, References, and the
       At-a-glance sidebar.
-- [ ] No download links, and no links to `data/`, `geo/` or the GitHub folders.
+- [ ] No download section; the sidebar's "Dataset on GitHub" opens `data/<dataset>/`, and the landing page's
+      "Database architecture" row for the dataset opens it too.
+- [ ] Cite this dataset lists the original sources first, then the observatory, then the other sources.
 - [ ] The metadata loads (no "could not be loaded" notice) and the console has no errors.
 - [ ] No horizontal scroll at 390 px width.
 - [ ] The card image appears in the Indicators section, and the Database architecture

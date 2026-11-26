@@ -1,6 +1,6 @@
 # raw: original inputs
 
-The untouched originals behind every published file. Never edit them: `uv run $package build` regenerates `geo/`, `data/` and `docs/datasets/` from them, and any correction belongs in a builder in `src/$package/build/`.
+The untouched originals behind every published file. Never edit them: `uv run $package build` regenerates `geo/` and `data/` from them, and any correction belongs in a builder in `src/$package/build/`.
 
 | Path | Source | Used by |
 | --- | --- | --- |

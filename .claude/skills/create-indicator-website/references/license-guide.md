@@ -27,7 +27,7 @@ whether they have permission.
 | CC BY-SA, ODbL | No (share-alike) | Publish the dataset under the source's license instead; tell the user |
 | CC BY-NC, CC BY-NC-SA, "non-commercial use" | No | The source's terms prevail; tell the user, and ask before publishing |
 | "No redistribution without permission" (e.g. GADM) | No | Do not publish the files without written permission; tell the user |
-| No license stated | Unclear | Ask the user. With documented permission, record it in `geo:license.title` (e.g. the SDG Atlas 2026: `name` `LicenseRef-SDSN-Bolivia-permission`, `title` "No open license stated (© Universidad Privada Boliviana); used and shared with the permission of SDSN Bolivia") |
+| No license stated | Unclear | Ask the user. With documented permission, record it in `geo:license.title` (e.g. `name` `LicenseRef-<Source>-permission`, `title` "No open license stated (© Publisher); used and shared with the permission of ..."). If the source later grants an open license (as SDSN Bolivia did, CC BY 4.0, for the SDG Atlas 2026 and its 2025 municipal map), record that license instead |
 | Software licenses (MIT, Apache) on data | Usually yes | They permit reuse with notice; the copyright holder can relicense |
 
 Remember the **intermediaries**. Tools such as AidData GeoQuery (ODC-BY 1.0) and the
@@ -47,7 +47,7 @@ The page composes it from the metadata, so all that's needed is accurate fields:
   ("Required credit").
 - **Boundary note:** a fixed sentence in `site/src/app.jsx` (`BOUNDARY_NOTE`) on the license of
   every boundary (maps, `geometry=True`, `geo/boundaries/`): in Bolivia, SDSN Bolivia's municipal
-  map of 2025, used with SDSN Bolivia's permission (`project.yaml` `site.boundary_credit` is the
+  map of 2025, licensed by SDSN Bolivia under CC BY 4.0 (`project.yaml` `site.boundary_credit` is the
   credit printed on maps); check the license of each country's boundary file when porting.
 
 Show the user the table of verdicts before writing, and say plainly when something blocks

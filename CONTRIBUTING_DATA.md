@@ -1,6 +1,6 @@
 # Adding data
 
-Every dataset is a **panel**: one row per spatial unit (`geo_id`) and `year`, with one column per variable. Datasets live by spatial scale in `data/<scale>/<dataset>.csv` (+ `.parquet`), are described by a Frictionless datapackage in `metadata/`, and are regenerated from untouched originals in `raw/` by `uv run geo4bolivia build`, which runs the builders in [`builders/`](builders/). How the pieces fit together is explained in [`docs/data-infrastructure.md`](docs/data-infrastructure.md).
+Every dataset is a **panel**: one row per spatial unit (`geo_id`) and `year`, with one column per variable. Each dataset has a folder of its own, `data/<dataset>/`: its Frictionless datapackage (`datapackage.json`, the metadata), a generated `README.md`, and one subfolder per map or scale with the panel (`data/<dataset>/<scale>/<dataset>.csv` and `.parquet`). Datasets are regenerated from untouched originals in `raw/` by `uv run geo4bolivia build`, which runs the builders in [`builders/`](builders/). How the pieces fit together is explained in [`docs/data-infrastructure.md`](docs/data-infrastructure.md).
 
 The `geo4bolivia` command and the helpers the builders use come from the Python package, which lives in its own repository ([quarcs-lab/geo4bolivia](https://github.com/quarcs-lab/geo4bolivia)) and is installed here by `uv sync`. Adding data changes this repository only: the originals, the metadata and a builder.
 
@@ -9,24 +9,24 @@ The `geo4bolivia` command and the helpers the builders use come from the Python 
 ## Add a dataset at an existing scale
 
 1. **Put the originals in `raw/<dataset>/`** and list them in `raw/README.md`. Never edit them. If something must be fixed, fix it in the builder, so the fix is documented and reproducible.
-2. **Describe it in `metadata/<dataset>.datapackage.json`.** Copy an existing package (e.g. `metadata/pop.datapackage.json`), or the one `geo.save()` writes, and edit:
-   - `name`, `title`, `description`, `geo:categories`, `geo:citation`, `geo:notes`, `geo:updated`
+2. **Describe it in `data/<dataset>/datapackage.json`.** Copy an existing package (e.g. `data/pop/datapackage.json`), or the one `geo.save()` writes, and edit:
+   - `name`, `title`, `description`, `geo:categories`, `geo:notes`, `geo:updated`
    - `licenses`: the license of the published files. CC BY 4.0 (`LICENSE-DATA`), unless a source requires otherwise
-   - `sources`: one entry per source with its full citation (`title`, `path`) and `geo:role` (`original` or `intermediary`). Add `geo:creator`, `geo:homepage`, `geo:license` (`{name, title, path}`, the source's own license) and `geo:attribution` (the credit sentence it asks for)
+   - `sources`: one entry per source with its full citation in APA (`title`, `path`) and `geo:role` (`original` or `intermediary`). The dataset's citations list the `original` sources first, then the observatory (`citation` in `project.yaml`), then the others, the boundaries included. Add `geo:creator`, `geo:homepage`, `geo:license` (`{name, title, path}`, the source's own license) and `geo:attribution` (the credit sentence it asks for)
    - `geo:map`: the headline map of the website, `{"variable": ..., "year": ...}` (add `"classify": "log"` for very skewed variables)
    - one resource per scale with:
      - `path`: the public URL, `https://raw.githubusercontent.com/<repository>/main/<geo:path>`
      - `geo:scale` and `geo:period` (`[first, last]` year)
-     - `geo:path` and `geo:parquet`
+     - `geo:path` and `geo:parquet`: `data/<dataset>/<scale>/<dataset>.csv` and `.parquet`
    - `schema.fields`, in output column order:
      - `geo_id`, with role `id` and the scale's ID pattern
      - `year`, with role `time`
      - optionally the original key, with role `source_key` and `geo:units_column` naming the matching column of `geo/units.csv`
      - every field, keys included, with a `title` (a readable label for plots) and a `description` that says how it was built (definition, unit, source, year)
      - the variables, also with `geo:unit`, `geo:source` and `geo:aggregation`
-     - for values stored at nominal years (e.g. an atlas's initial and final periods), `geo:reference_years` with the actual years behind each stored year (see `metadata/sdg01.datapackage.json`)
+     - for values stored at nominal years (e.g. an atlas's initial and final periods), `geo:reference_years` with the actual years behind each stored year (see `data/sdg01/datapackage.json`)
 
-   Then add the dataset id to `metadata/index.json`.
+   Then add the dataset id to `data/index.json`.
 3. **Write a builder.** Copy the package's template, `geo4bolivia.build._template` ([source](https://github.com/quarcs-lab/geo4bolivia/blob/main/src/geo4bolivia/build/_template.py)), to `builders/<dataset>.py`:
    ```bash
    cp "$(uv run python -c 'import geo4bolivia.build._template as t; print(t.__file__)')" builders/<dataset>.py
@@ -43,7 +43,7 @@ The `geo4bolivia` command and the helpers the builders use come from the Python 
    uv run geo4bolivia validate <dataset>
    uv run pytest
    ```
-   `publish()` writes the columns in schema order with schema types. `write_docs()` generates `docs/datasets/<dataset>.md`. `validate` reports any mismatch between the data, the metadata and `geo/`, and `pytest` fails when a dataset listed in `metadata/index.json` has no builder.
+   `publish()` writes the columns in schema order with schema types. `write_docs()` generates `data/<dataset>/README.md`. `validate` reports any mismatch between the data, the metadata and `geo/`, and `pytest` fails when a dataset listed in `data/index.json` has no builder.
 
    Then look at the result the two ways users will load it. With the package (inside this repository it reads the local files, so it shows what you just built), here for `pop`:
    ```python
@@ -61,7 +61,7 @@ The `geo4bolivia` command and the helpers the builders use come from the Python 
    import plotly.express as px
 
    BASE = "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/"
-   df = pd.read_csv(BASE + "data/map339/pop.csv")
+   df = pd.read_csv(BASE + "data/pop/map339/pop.csv")
    px.histogram(df[df.year == 2020], x="pop_density", title="Population density, 2020")
    ```
    [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/contributing-data/box-2.ipynb)
@@ -96,7 +96,7 @@ Scales are registered in [`geo/scales.yaml`](geo/scales.yaml). `grid10k` is alre
 
 ### Add a municipal map
 
-Bolivia keeps creating municipalities and indigenous autonomies, so every municipal map is a scale of its own, named by its number of units: `map343` (SDSN Bolivia's map of 2025, the units of the SDG Atlas 2026) and `map339` (GeoBolivia's map of 2015, on whose polygons DS4Bolivia computed `pop`, `ntl`, `emb` and `embpw`). Data stay on the map they were computed on, and the package's spatial functions draw and find neighbours on that map (`map=` names it for a table that does not record it).
+Bolivia keeps creating municipalities and indigenous autonomies, so every municipal map is a scale of its own, named by its number of units: `map343` (SDSN Bolivia's map of 2025, the units of the SDG Atlas 2026) and `map339` (GeoBolivia's map of 2015, on whose polygons DS4Bolivia computed `pop`, `ntl` and `emb`). Data stay on the map they were computed on, and the package's spatial functions draw and find neighbours on that map (`map=` names it for a table that does not record it).
 
 A new map keeps every published ID meaningful when its new units are carved out of existing ones: the units that exist on both maps keep their geo IDs, and the new ones are numbered after the last municipality of their province (a new province where INE created one). The maps then share IDs, as map339 and map343 do:
 

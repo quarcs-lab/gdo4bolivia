@@ -70,10 +70,10 @@ SEED = 42
 
 ## 1. Load the targets and the features
 
-Everything is keyed by `geo_id`. The poverty index is stored at two nominal years, 2012 and 2024, the years of the two censuses. `wide=` gives one row per municipality with one column per year, and `groups=` adds the name of each municipality and of its department. The two embedding datasets have the same column names (`A00`–`A63`), so we load them separately rather than with `geo.combine` (which would prefix them `emb_` and `embpw_`):
+Everything is keyed by `geo_id`. The poverty index is stored at two nominal years, 2012 and 2024, the years of the two censuses. `wide=` gives one row per municipality with one column per year, and `groups=` adds the name of each municipality and of its department. The dataset `emb` holds the embeddings in two weightings:
 
-- **`emb`**: each dimension averaged over the municipality's area
-- **`embpw`**: each dimension averaged with population weights, so it describes the places where people live
+- **`A00`–`A63`**: each dimension averaged over the municipality's area
+- **`A00_pw`–`A63_pw`**: each dimension averaged with population weights, so it describes the places where people live
 
 ```{code-cell} ipython3
 TARGETS = [2012, 2024]
@@ -83,7 +83,6 @@ mpi = geo.load("sdg01", variables="sdg1_2_mpi", wide="sdg1_2_mpi", groups=["depa
 ntl = geo.load("ntl", variables="ln_t400NTLpc", wide="ln_t400NTLpc")
 pop = geo.load("pop", variables="pop", wide="pop")
 emb = geo.load("emb", years=2017).set_index("geo_id")
-embpw = geo.load("embpw", years=2017).set_index("geo_id")
 
 print("Units with MPI:", mpi["geo_id"].nunique(), "| with embeddings:", emb.index.nunique(),
       "| with lights:", ntl["geo_id"].nunique())
@@ -94,8 +93,8 @@ for t in TARGETS:
     df[f"ln_pop{LIGHTS_YEAR[t]}"] = np.log(df[f"pop{LIGHTS_YEAR[t]}"])
 
 DIMS = [f"A{i:02d}" for i in range(64)]
-X_emb = emb.loc[df["geo_id"], DIMS].to_numpy()
-X_embpw = embpw.loc[df["geo_id"], DIMS].to_numpy()
+X_emb = emb.loc[df["geo_id"], DIMS].to_numpy()                          # area-weighted
+X_embpw = emb.loc[df["geo_id"], [f"{d}_pw" for d in DIMS]].to_numpy()  # population-weighted
 y = {t: df[f"sdg1_2_mpi{t}"].to_numpy() for t in TARGETS}
 groups = df["department"].to_numpy()
 

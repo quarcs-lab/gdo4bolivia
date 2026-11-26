@@ -1321,6 +1321,30 @@ const PackageWorkflow = ({ current, compact = false }) => (
   </ol>
 );
 
+// A dataset's folder on GitHub (data/<dataset>/: README, datapackage.json, one subfolder per map)
+const datasetFolderUrl = (item) => `${REPO_URL}/tree/main/data/${item.dataset || item.datasets[0]}`;
+
+// A row of the database table that opens a folder on GitHub: one link (the dataset's name), stretched
+// over the whole row, so the row is one target for the mouse and one stop for the keyboard
+const FolderRow = ({ href, name, title, scale, period, id, files }) => (
+  <tr className="relative group hover:bg-teal-400/[0.06] focus-within:bg-teal-400/[0.06] transition-colors cursor-pointer">
+    <td className="px-4 py-4 md:px-6">
+      <a href={href} target="_blank" rel="noopener noreferrer"
+         className="inline-flex items-center gap-1.5 font-mono text-xs text-brand-turquoise group-hover:underline focus:outline-none focus-visible:underline after:absolute after:inset-0 after:content-[''] focus-visible:after:ring-2 focus-visible:after:ring-inset focus-visible:after:ring-brand-turquoise">
+        <Github size={13} className="flex-shrink-0" />{name}
+        <span className="sr-only"> {t('folder on GitHub (opens in a new tab)')}</span>
+      </a>
+      <div className="text-salt-300 mt-1">{title}</div>
+    </td>
+    <td className="px-4 py-4 md:px-6 text-salt-300 whitespace-nowrap">{scale}</td>
+    <td className="px-4 py-4 md:px-6 text-salt-300 whitespace-nowrap">{period}</td>
+    <td className="px-4 py-4 md:px-6"><code className="font-mono text-brand-turquoise bg-teal-400/10 px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap">{id}</code></td>
+    <td className="px-4 py-4 md:px-6 text-salt-400 whitespace-nowrap">
+      <span className="inline-flex items-center gap-2">{files}<ExternalLink size={13} className="text-salt-500 group-hover:text-brand-turquoise transition-colors" /></span>
+    </td>
+  </tr>
+);
+
 // Indicators and tools share one section: the cards are filtered by type, the database and code examples follow
 const TOOL_TYPES = ['package', 'notebook', 'app'];
 const IndicatorsSection = () => {
@@ -1384,10 +1408,11 @@ const IndicatorsSection = () => {
             <span className="font-mono text-sm text-brand-turquoise">01</span>
             {t('Database architecture')}
           </h3>
+          <p className="text-salt-400 max-w-3xl -mt-3 mb-5">{t('Every dataset has a folder of its own on GitHub: its documentation (README), its metadata (datapackage.json) and its files, CSV and Parquet, one subfolder per map. Click a row to open it.')}</p>
           <div className="rounded-xl overflow-hidden border border-white/10 bg-white/[0.03] mb-16">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <caption className="sr-only">{t('Datasets, spatial scale, coverage, unit ID and files')}</caption>
+                <caption className="sr-only">{t('Datasets, spatial scale, coverage, unit ID and files; each row links to the dataset’s folder on GitHub')}</caption>
                 <thead className="bg-white/5 text-salt-300 text-xs uppercase tracking-wider">
                   <tr>
                     <th scope="col" className="px-4 py-3 md:px-6">{t('Dataset')}</th>
@@ -1399,27 +1424,13 @@ const IndicatorsSection = () => {
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {items.map((it) => (
-                    <tr key={it.id} className="hover:bg-teal-400/[0.04] transition-colors">
-                      <td className="px-4 py-4 md:px-6">
-                        <a href={itemHref(it)} className="font-mono text-xs text-brand-turquoise hover:underline">{(it.datasets || [it.dataset]).join(' · ')}</a>
-                        <div className="text-salt-300 mt-1">{it.title}</div>
-                      </td>
-                      <td className="px-4 py-4 md:px-6 text-salt-300 whitespace-nowrap">{it.units} · {it.geography}</td>
-                      <td className="px-4 py-4 md:px-6 text-salt-300 whitespace-nowrap">{it.period}</td>
-                      <td className="px-4 py-4 md:px-6"><code className="font-mono text-brand-turquoise bg-teal-400/10 px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap">{it.idExample}</code></td>
-                      <td className="px-4 py-4 md:px-6 text-salt-400 whitespace-nowrap">CSV · Parquet</td>
-                    </tr>
+                    <FolderRow key={it.id} href={datasetFolderUrl(it)} name={(it.datasets || [it.dataset]).join(' · ')} title={it.title}
+                               scale={`${it.units} · ${it.geography}`} period={it.period} id={it.idExample}
+                               files="README · datapackage.json · CSV · Parquet" />
                   ))}
-                  <tr className="hover:bg-teal-400/[0.04] transition-colors">
-                    <td className="px-4 py-4 md:px-6">
-                      <span className="font-mono text-xs text-brand-turquoise">geo</span>
-                      <div className="text-salt-300 mt-1">{t('Units, boundaries and crosswalks')}</div>
-                    </td>
-                    <td className="px-4 py-4 md:px-6 text-salt-300 whitespace-nowrap">{t('All scales · {n} units', { n: UNIT_COUNTS.total })}</td>
-                    <td className="px-4 py-4 md:px-6 text-salt-300">—</td>
-                    <td className="px-4 py-4 md:px-6"><code className="font-mono text-brand-turquoise bg-teal-400/10 px-2 py-0.5 rounded text-xs font-bold">BO</code></td>
-                    <td className="px-4 py-4 md:px-6 text-salt-400 whitespace-nowrap">CSV · Parquet · GeoJSON</td>
-                  </tr>
+                  <FolderRow href={`${REPO_URL}/tree/main/geo`} name="geo" title={t('Units, boundaries and crosswalks')}
+                             scale={t('All scales · {n} units', { n: UNIT_COUNTS.total })} period="—" id="BO"
+                             files="CSV · Parquet · GeoJSON" />
                 </tbody>
               </table>
             </div>
@@ -1705,11 +1716,11 @@ const Footer = () => {
       <div className="border-t border-white/10 pt-8 space-y-3 text-xs text-salt-400 leading-relaxed">
         {language() === 'es' ? <>
         <p><strong className="text-salt-400">Aviso.</strong> Los indicadores, herramientas, proyectos y hallazgos son responsabilidad de cada investigador y no representan necesariamente las opiniones de sus instituciones de afiliación ni de organizaciones relacionadas. Los mapas de este sitio son solo para uso geoestadístico y tienen carácter referencial e informativo. Representan indicadores espacialmente y no constituyen una definición oficial de los límites territoriales de Bolivia.</p>
-        <p><strong className="text-salt-400">Créditos.</strong> Las ilustraciones de las secciones y las tarjetas se generan a partir de los datos del observatorio (scripts/site_images.py); las tarjetas de los proyectos son ilustraciones de lugares de Bolivia dibujadas con ChatGPT, y cualquier mapa en ellas se dibuja a partir de los límites oficiales (scripts/project_images.py); los mapas de los indicadores (scripts/indicator_map.py) se dibujan sobre el mapa base World Dark Gray Canvas de Esri (Esri, HERE, Garmin, © colaboradores de OpenStreetMap y la comunidad de usuarios SIG). El globo de la portada usa <a href={"https://s2maps.eu"} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">Sentinel-2 cloudless<span className="sr-only"> {t('(opens in a new tab)')}</span></a> de EOX IT Services GmbH (contiene datos modificados de Copernicus Sentinel 2016), con licencia CC BY 4.0, sobre Blue Marble Next Generation de la NASA (dominio público), y se dibuja con globe.gl; los fondos de las secciones y del pie de página son recortes de Sentinel-2 cloudless de Bolivia de la misma fuente, salvo Laguna Verde, del mosaico de 2024 (contiene datos modificados de Copernicus Sentinel 2024, CC BY-NC-SA 4.0). El emblema sombrea los nueve departamentos según la pobreza multidimensional (Atlas de los ODS 2020) dentro de la órbita de un satélite (scripts/site_images.py). Las capturas de las aplicaciones, las figuras y las fotos pertenecen a sus autores. El código se publica bajo la <a href={`${REPO_URL}/blob/main/LICENSE`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">licencia MIT<span className="sr-only"> {t('(opens in a new tab)')}</span></a> y los datos bajo <a href={`${REPO_URL}/blob/main/LICENSE-DATA`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">CC BY 4.0<span className="sr-only"> {t('(opens in a new tab)')}</span></a>, salvo cuando una fuente exige otra cosa; los límites son el mapa municipal de 2025 de SDSN Bolivia (Límites Municipales Bolivia 2025, usado con permiso de SDSN Bolivia); la página de cada conjunto de datos acredita las fuentes originales y sus licencias.</p>
+        <p><strong className="text-salt-400">Créditos.</strong> Las ilustraciones de las secciones y las tarjetas se generan a partir de los datos del observatorio (scripts/site_images.py); las tarjetas de los proyectos son ilustraciones de lugares de Bolivia dibujadas con ChatGPT, y cualquier mapa en ellas se dibuja a partir de los límites oficiales (scripts/project_images.py); los mapas de los indicadores (scripts/indicator_map.py) se dibujan sobre el mapa base World Dark Gray Canvas de Esri (Esri, HERE, Garmin, © colaboradores de OpenStreetMap y la comunidad de usuarios SIG). El globo de la portada usa <a href={"https://s2maps.eu"} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">Sentinel-2 cloudless<span className="sr-only"> {t('(opens in a new tab)')}</span></a> de EOX IT Services GmbH (contiene datos modificados de Copernicus Sentinel 2016), con licencia CC BY 4.0, sobre Blue Marble Next Generation de la NASA (dominio público), y se dibuja con globe.gl; los fondos de las secciones y del pie de página son recortes de Sentinel-2 cloudless de Bolivia de la misma fuente, salvo Laguna Verde, del mosaico de 2024 (contiene datos modificados de Copernicus Sentinel 2024, CC BY-NC-SA 4.0). El emblema sombrea los nueve departamentos según la pobreza multidimensional (Atlas de los ODS 2020) dentro de la órbita de un satélite (scripts/site_images.py). Las capturas de las aplicaciones, las figuras y las fotos pertenecen a sus autores. El código se publica bajo la <a href={`${REPO_URL}/blob/main/LICENSE`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">licencia MIT<span className="sr-only"> {t('(opens in a new tab)')}</span></a> y los datos bajo <a href={`${REPO_URL}/blob/main/LICENSE-DATA`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">CC BY 4.0<span className="sr-only"> {t('(opens in a new tab)')}</span></a>, salvo cuando una fuente exige otra cosa; los límites son el mapa municipal de 2025 de SDSN Bolivia (Límites Municipales Bolivia 2025, con licencia CC BY 4.0 de SDSN Bolivia); la página de cada conjunto de datos acredita las fuentes originales y sus licencias.</p>
         <p>¿Encontró un error? <a href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">Abra un issue<span className="sr-only"> {t('(opens in a new tab)')}</span></a> o inicie un hilo en <a href={`${REPO_URL}/discussions`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">GitHub Discussions<span className="sr-only"> {t('(opens in a new tab)')}</span></a>.</p>
         </> : <>
         <p><strong className="text-salt-400">Disclaimer.</strong> The indicators, tools, projects and insights are the responsibility of the individual researchers and do not necessarily represent the views of their affiliated institutions or related organizations. Maps on this website are for geo-statistical use only and have a referential, informational character. They represent indicators spatially and do not constitute an official definition of Bolivia’s territorial boundaries.</p>
-        <p><strong className="text-salt-400">Credits.</strong> The section illustrations and cards are rendered from the observatory’s data (scripts/site_images.py); the project cards are illustrations of Bolivian places drawn with ChatGPT, and any map on them is drawn from the official boundaries (scripts/project_images.py); the indicator maps (scripts/indicator_map.py) are drawn over Esri’s World Dark Gray Canvas basemap (Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS user community). The hero globe uses <a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">Sentinel-2 cloudless<span className="sr-only"> {t('(opens in a new tab)')}</span></a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2016), licensed under CC BY 4.0, over NASA's Blue Marble Next Generation (public domain), and is rendered with globe.gl; the section and footer backgrounds are Sentinel-2 cloudless crops of Bolivia from the same source, except Laguna Verde, from the 2024 mosaic (contains modified Copernicus Sentinel data 2024, CC BY-NC-SA 4.0). The emblem shades the nine departments by multidimensional poverty (SDG Atlas 2020) inside a satellite’s orbit (scripts/site_images.py). App screenshots, figures, and photos belong to their respective authors. Code is released under the <a href={`${REPO_URL}/blob/main/LICENSE`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">MIT License<span className="sr-only"> {t('(opens in a new tab)')}</span></a> and data under <a href={`${REPO_URL}/blob/main/LICENSE-DATA`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">CC BY 4.0<span className="sr-only"> {t('(opens in a new tab)')}</span></a>, except where a source requires otherwise; the boundaries are SDSN Bolivia’s municipal map of 2025 (Límites Municipales Bolivia 2025, used with SDSN Bolivia’s permission); each dataset page credits the original sources and their licenses.</p>
+        <p><strong className="text-salt-400">Credits.</strong> The section illustrations and cards are rendered from the observatory’s data (scripts/site_images.py); the project cards are illustrations of Bolivian places drawn with ChatGPT, and any map on them is drawn from the official boundaries (scripts/project_images.py); the indicator maps (scripts/indicator_map.py) are drawn over Esri’s World Dark Gray Canvas basemap (Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS user community). The hero globe uses <a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">Sentinel-2 cloudless<span className="sr-only"> {t('(opens in a new tab)')}</span></a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2016), licensed under CC BY 4.0, over NASA's Blue Marble Next Generation (public domain), and is rendered with globe.gl; the section and footer backgrounds are Sentinel-2 cloudless crops of Bolivia from the same source, except Laguna Verde, from the 2024 mosaic (contains modified Copernicus Sentinel data 2024, CC BY-NC-SA 4.0). The emblem shades the nine departments by multidimensional poverty (SDG Atlas 2020) inside a satellite’s orbit (scripts/site_images.py). App screenshots, figures, and photos belong to their respective authors. Code is released under the <a href={`${REPO_URL}/blob/main/LICENSE`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">MIT License<span className="sr-only"> {t('(opens in a new tab)')}</span></a> and data under <a href={`${REPO_URL}/blob/main/LICENSE-DATA`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">CC BY 4.0<span className="sr-only"> {t('(opens in a new tab)')}</span></a>, except where a source requires otherwise; the boundaries are SDSN Bolivia’s municipal map of 2025 (Límites Municipales Bolivia 2025, licensed by SDSN Bolivia under CC BY 4.0); each dataset page credits the original sources and their licenses.</p>
         <p>Found an error? <a href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">Open an issue<span className="sr-only"> {t('(opens in a new tab)')}</span></a> or start a thread in <a href={`${REPO_URL}/discussions`} target="_blank" rel="noopener noreferrer" className="underline hover:text-salt-300">GitHub Discussions<span className="sr-only"> {t('(opens in a new tab)')}</span></a>.</p>
         </>}
       </div>
@@ -1819,11 +1830,11 @@ const RelatedList = ({ ids }) => {
 };
 
 // Indicator pages read the variable dictionary, sources and licenses from the
-// dataset's metadata (metadata/<dataset>.datapackage.json), the single source of truth.
+// dataset's metadata (data/<dataset>/datapackage.json), the single source of truth.
 const PACKAGES = {};
 const fetchPackage = (id) => {
   if (!PACKAGES[id]) {
-    PACKAGES[id] = fetch(`metadata/${id}.datapackage.json`).then((r) => {
+    PACKAGES[id] = fetch(`data/${id}/datapackage.json`).then((r) => {
       if (!r.ok) throw new Error(`${r.status}`);
       return r.json();
     }).catch((err) => { delete PACKAGES[id]; throw err; });
@@ -1854,11 +1865,10 @@ const uniqueSources = (packages, role) => {
     return true;
   });
 };
-// Boundary files are not covered by the observatory's data license (LICENSE-DATA)
 // The license of the boundaries a dataset is drawn on, by its map (geo:scale)
 const BOUNDARY_NOTES = {
-  map343: 'The unit boundaries (the maps on this page, geometry=True and geo/boundaries/map343) are SDSN Bolivia’s municipal map of 2025 (map343: 343 municipalities and indigenous autonomies), used and shared with SDSN Bolivia’s permission; please credit “SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/”. The geo IDs follow GADM 4.1’s numbering.',
-  map339: 'The unit boundaries (the maps on this page, geometry=True and geo/boundaries/map339) are GeoBolivia’s municipal map of 2015 (map339: 339 municipalities), as published by geoBoundaries (gbOpen, public domain; Runfola et al. 2020) and used by DS4Bolivia; its municipalities keep their geo IDs in SDSN Bolivia’s map of 2025 (map343), whose union gives the department outlines, used with SDSN Bolivia’s permission. The geo IDs follow GADM 4.1’s numbering.',
+  map343: 'The unit boundaries (the maps on this page, geometry=True and geo/boundaries/map343) are SDSN Bolivia’s municipal map of 2025 (map343: 343 municipalities and indigenous autonomies), licensed by SDSN Bolivia under CC BY 4.0; please credit “SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/”. The geo IDs follow GADM 4.1’s numbering.',
+  map339: 'The unit boundaries (the maps on this page, geometry=True and geo/boundaries/map339) are GeoBolivia’s municipal map of 2015 (map339: 339 municipalities), as published by geoBoundaries (gbOpen, public domain; Runfola et al. 2020) and used by DS4Bolivia; its municipalities keep their geo IDs in SDSN Bolivia’s map of 2025 (map343), whose union gives the department outlines (CC BY 4.0, SDSN Bolivia). The geo IDs follow GADM 4.1’s numbering.',
 };
 const boundaryNote = (packages) => t(BOUNDARY_NOTES[packages[0]?.resources?.[0]?.['geo:scale']] || BOUNDARY_NOTES.map343);
 
@@ -1872,7 +1882,7 @@ const ExternalA = ({ href, children, className = '' }) => (
 const MetadataStatus = ({ state, ids }) => state.status === 'loading'
   ? <p className="text-sm text-salt-400" role="status">{t('Loading the metadata…')}</p>
   : <p className="text-sm text-amber-100/90 bg-amber-950/30 border border-amber-900/40 rounded-xl p-4" role="alert">
-      {t('The metadata could not be loaded. It is in')} {ids.map((id, i) => <React.Fragment key={id}>{i > 0 && ', '}<code className="text-xs">metadata/{id}.datapackage.json</code></React.Fragment>)}.
+      {t('The metadata could not be loaded. It is in')} {ids.map((id, i) => <React.Fragment key={id}>{i > 0 && ', '}<code className="text-xs">data/{id}/datapackage.json</code></React.Fragment>)}.
     </p>;
 
 const SourceCard = ({ source }) => (
@@ -1968,55 +1978,42 @@ const WhenNear = ({ children, placeholder }) => {
   return <div ref={ref}>{near ? children : placeholder}</div>;
 };
 
-// The observatory's citation of a dataset; the year is that of its last update
-const datasetCitation = (item, packages) => {
-  const year = (packages.map((p) => p['geo:updated']).filter(Boolean).sort().pop() || item.date).slice(0, 4);
-  const url = SITE_URL + itemHref(item);
-  const ids = packages.map((p) => p.name);
-  const title = ENGLISH_BY_ID[item.id].title;   // citations keep the dataset's English title
-  const key = `${SHORT_NAME.toLowerCase().replace(/[^a-z0-9]/g, '')}_${ids.join('_')}_${year}`;
-  return {
-    apa: `${CITE_AUTHORS.apa} (${year}). ${title} [Data set]. ${CONTENT.SITE_NAME}. ${url}`,
-    bib: `@misc{${key},
-  author       = {${CITE_AUTHORS.bibtex}},
-  title        = {{${title}}},
-  year         = {${year}},
-  howpublished = {\\url{${url}}},
-  note         = {Dataset ${ids.join(', ')}, ${CONTENT.SITE_NAME}}
-}`,
-  };
+// How to cite a dataset, as geo.cite() and the dataset's README do: its original sources first, then the
+// observatory, which processes and maintains the data, then the other sources (boundaries, intermediaries)
+const datasetCitations = (packages) => {
+  const all = uniqueSources(packages);
+  const entries = [
+    ...all.filter((s) => s['geo:role'] === 'original').map((s) => ({ who: s['geo:creator'] || t('Original source'), text: s.title, kind: 'original' })),
+    { who: L().SITE_NAME, text: CITATION_APA, kind: 'observatory' },
+    ...all.filter((s) => s['geo:role'] !== 'original').map((s) => ({ who: s['geo:creator'] || t('Source'), text: s.title, kind: 'other' })),
+  ];
+  return entries.filter((e, i) => entries.findIndex((f) => f.text === e.text) === i);
 };
 
-const CiteDataset = ({ item, packages }) => {
-  const { apa, bib } = datasetCitation(item, packages);
-  const sources = [...uniqueSources(packages, 'original'), ...uniqueSources(packages).filter((s) => s['geo:role'] !== 'original')];
+const CITE_ROLE = { original: 'Original source', observatory: 'Processes and maintains the data', other: 'Other source' };
+
+const CiteDataset = ({ packages }) => {
+  const entries = datasetCitations(packages);
   return (
     <div className="space-y-5">
-      <p className="text-salt-300 leading-relaxed">{t("If you use these data, please cite the dataset and its original sources.")}</p>
-      <div className="rounded-xl bg-white/[0.03] border border-white/10 p-5">
-        <div className="flex justify-between items-center gap-4 mb-2">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-salt-400">{t('This dataset (APA)')}</h3>
-          <CopyButton text={apa} />
-        </div>
-        <p className="text-sm text-salt-200 leading-relaxed break-words">{apa}</p>
+      <div className="flex flex-wrap justify-between items-start gap-4">
+        <p className="text-salt-300 leading-relaxed max-w-2xl">{t('If you use these data, please cite, in this order, the original source, the GeoDevelopment Observatory, which processes and maintains them, and the other sources.')}</p>
+        <CopyButton text={entries.map((e) => e.text).join('\n\n')} label={t('Copy all')} />
       </div>
-      <CodeBlock title="BibTeX" language="bibtex" code={bib} />
-      <div>
-        <h3 className="text-lg font-semibold text-white mb-3">{t('Original sources')}</h3>
-        <ul className="space-y-3">
-          {sources.map((s) => {
-            const text = s['geo:attribution'] || s.title;
-            return (
-              <li key={s.title} className="rounded-xl bg-white/[0.03] border border-white/10 p-4 flex justify-between items-start gap-4">
-                <p className="text-sm text-salt-300 leading-relaxed min-w-0 break-words">
-                  <span className="block text-salt-100 font-semibold mb-1">{s['geo:creator'] || t('Source')}</span>{text}
-                </p>
-                <CopyButton text={text} />
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+      <ol className="space-y-3">
+        {entries.map((e, i) => (
+          <li key={e.text} className={`rounded-xl border p-4 flex justify-between items-start gap-4 ${e.kind === 'observatory' ? 'bg-teal-400/[0.05] border-brand-turquoise/25' : 'bg-white/[0.03] border-white/10'}`}>
+            <div className="flex gap-3 min-w-0">
+              <span className="font-mono text-sm text-brand-turquoise font-bold mt-0.5" aria-hidden="true">{i + 1}</span>
+              <p className="text-sm text-salt-300 leading-relaxed min-w-0 break-words">
+                <span className="block text-salt-100 font-semibold mb-1">{e.who} <span className="text-xs font-normal text-salt-400">· {t(CITE_ROLE[e.kind])}</span></span>
+                {e.text}
+              </p>
+            </div>
+            <CopyButton text={e.text} />
+          </li>
+        ))}
+      </ol>
     </div>
   );
 };
@@ -2046,6 +2043,14 @@ const IndicatorDetail = ({ item }) => {
           <dt className="text-salt-400">{t('Categories')}</dt><dd className="text-salt-200">{item.categories.join(', ')}</dd>
           {ready && <><dt className="text-salt-400">{t('License')}</dt><dd className="text-salt-200">{meta.packages[0].licenses[0].name.replace(/-/g, ' ')}</dd></>}
         </dl>
+        {ids.map((id) => (
+          <a key={id} href={`${REPO_URL}/tree/main/data/${id}`} target="_blank" rel="noopener noreferrer"
+             className="mt-5 flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg border border-white/15 text-salt-100 text-sm font-semibold hover:border-brand-turquoise/50 hover:text-white transition-colors">
+            <Github size={16} /> {t('Dataset on GitHub')} <code className="text-xs text-brand-turquoise">data/{id}/</code>
+            <span className="sr-only"> {t('(opens in a new tab)')}</span>
+          </a>
+        ))}
+        <p className="text-xs text-salt-400 mt-2">{t('Its documentation, metadata and files, CSV and Parquet.')}</p>
       </AsideCard>
     </>}>
       <Block title={t('About the dataset')} id="d-about">
@@ -2080,7 +2085,7 @@ const IndicatorDetail = ({ item }) => {
         {ready ? <LicenseBlock packages={meta.packages} /> : <MetadataStatus state={meta} ids={ids} />}
       </Block>
       <Block title={t('Cite this dataset')} id="d-cite">
-        {ready ? <CiteDataset item={item} packages={meta.packages} /> : <MetadataStatus state={meta} ids={ids} />}
+        {ready ? <CiteDataset packages={meta.packages} /> : <MetadataStatus state={meta} ids={ids} />}
       </Block>
       <Block title={t('References')} id="d-refs">
         {ready ? (

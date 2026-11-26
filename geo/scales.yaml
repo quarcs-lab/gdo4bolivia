@@ -6,7 +6,7 @@
 #
 # Municipal maps are named by their number of units: `map343` is SDSN Bolivia's map of
 # December 2025 (343 municipalities and indigenous autonomies of the Atlas de los ODS 2026,
-# used with SDSN Bolivia's permission), and `map339` the map of 2015 (339 municipalities,
+# licensed by SDSN Bolivia under CC BY 4.0), and `map339` the map of 2015 (339 municipalities,
 # GeoBolivia via geoBoundaries, public domain), on whose polygons DS4Bolivia computed pop,
 # ntl and the embeddings. The 339 municipalities kept their geo IDs in map343 and the four
 # units created since were numbered after them, so the two maps share IDs: a dataset's

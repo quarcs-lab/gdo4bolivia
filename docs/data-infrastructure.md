@@ -25,11 +25,11 @@ This guide explains the **indicators database** behind the observatory: how spat
 ```mermaid
 flowchart LR
     raw["raw/<br/>original files<br/>(never edited)"] --> build["geo4bolivia build<br/>(runs builders/)"]
-    meta["metadata/<br/>datapackage.json<br/>(hand-written)"] --> build
+    meta["data/&lt;dataset&gt;/<br/>datapackage.json<br/>(hand-written)"] --> build
     scales["geo/scales.yaml<br/>(hand-written)"] --> build
     build --> geo["geo/<br/>units, boundaries,<br/>crosswalks"]
-    build --> data["data/&lt;scale&gt;/<br/>panels: CSV + Parquet"]
-    build --> docs["docs/datasets/<br/>catalog CSV"]
+    build --> data["data/&lt;dataset&gt;/&lt;scale&gt;/<br/>panels: CSV + Parquet"]
+    build --> docs["data/&lt;dataset&gt;/README.md<br/>catalog CSV"]
     geo --> use["Use"]
     data --> use
     use --> url["Plain URLs<br/>(pandas, geopandas)"]
@@ -40,20 +40,20 @@ flowchart LR
 Four rules hold everything together:
 
 1. **Every spatial unit has one geo ID** (`geo_id`), at every scale. IDs nest by prefix: municipality `BO-04-17-04` (La Paz) lies in province `BO-04-17` (Murillo), which lies in department `BO-04` (La Paz), which lies in `BO`.
-2. **Every dataset is a long panel**: one row per unit (`geo_id`) and `year`, one column per variable, stored in `data/<scale>/<dataset>.csv` and `.parquet`.
-3. **Metadata is the source of truth.** A Frictionless datapackage per dataset describes every variable (description, unit, source, aggregation rule). Documentation is generated from it.
-4. **Nothing published is edited by hand.** Original inputs stay untouched in `raw/`; `geo4bolivia build` runs the builders in `builders/`, which regenerate `geo/`, `data/` and `docs/datasets/`, and `geo4bolivia validate` checks them. Both commands come from the package.
+2. **Every dataset is a long panel**: one row per unit (`geo_id`) and `year`, one column per variable, stored in its own folder as `data/<dataset>/<scale>/<dataset>.csv` and `.parquet`.
+3. **Metadata is the source of truth.** A Frictionless datapackage per dataset (`data/<dataset>/datapackage.json`) describes every variable (description, unit, source, aggregation rule). Documentation is generated from it.
+4. **Nothing published is edited by hand.** Original inputs stay untouched in `raw/`; `geo4bolivia build` runs the builders in `builders/`, which regenerate `geo/` and `data/` (each dataset's files and README), and `geo4bolivia validate` checks them. Both commands come from the package.
 
 | Folder or file | What it holds | Edited by hand? |
 | --- | --- | --- |
 | `project.yaml` | Project identity: name, package, GitHub repository, country code, equal-area projection | yes |
 | `geo/scales.yaml` | The registry of spatial scales and their ID patterns | yes |
 | `raw/` | Original inputs (data, boundaries, lookup tables) | added, never edited |
-| `metadata/<dataset>.datapackage.json`, `metadata/index.json` | Dataset descriptions and the list of datasets | yes |
+| `data/<dataset>/datapackage.json`, `data/index.json` | Dataset descriptions and the list of datasets | yes |
 | `builders/` | One builder per dataset, the geography builder, and their registry (`__init__.py`); they use the package's helpers (`geo4bolivia.build`) | yes |
 | `geo/units.*`, `geo/boundaries/`, `geo/crosswalks/` | The geography layer | generated |
-| `data/<scale>/<dataset>.*` | Published panels | generated |
-| `docs/datasets/*.md`, `data/README.md`, the catalog CSV | Documentation | generated |
+| `data/<dataset>/<scale>/<dataset>.*` | Published panels | generated |
+| `data/<dataset>/README.md`, `data/README.md`, the catalog CSV | Documentation | generated |
 
 ---
 
@@ -93,9 +93,9 @@ municipality:
 | `map339` | 339 | `BO-NN-NN-NN` | `BO-04-17-04` (the same municipality, on the 2015 map) | province → department → country (by ID) |
 | `grid10k` | planned | `BO-G10K-rNNNcNNN` | `BO-G10K-r012c034` | (overlay) |
 
-Administrative numbers follow the GADM order; the boundaries are SDSN Bolivia's municipal map of 2025 (343 municipalities and indigenous autonomies, used with SDSN Bolivia's permission), attached to the IDs by INE code (`scripts/match_municipalities343.py`, `builders/geo.py`, and the package's `geo4bolivia.build.geoboundaries`); the four units created after GADM's map are numbered after the last municipality of their province. The map leaves salt flats and lakes outside every unit, so they are holes at every scale and `area_km2` excludes them. Codes from other sources are **kept as columns**, never used as keys: Bolivia's INE codes order the departments differently (La Paz is `BO-04` here and `02` in INE), so `ine_code` is a column of `geo/units.csv`, next to DS4Bolivia's `asdf_id` and the INE `mun_id`.
+Administrative numbers follow the GADM order; the boundaries are SDSN Bolivia's municipal map of 2025 (343 municipalities and indigenous autonomies, licensed by SDSN Bolivia under CC BY 4.0), attached to the IDs by INE code (`scripts/match_municipalities343.py`, `builders/geo.py`, and the package's `geo4bolivia.build.geoboundaries`); the four units created after GADM's map are numbered after the last municipality of their province. The map leaves salt flats and lakes outside every unit, so they are holes at every scale and `area_km2` excludes them. Codes from other sources are **kept as columns**, never used as keys: Bolivia's INE codes order the departments differently (La Paz is `BO-04` here and `02` in INE), so `ine_code` is a column of `geo/units.csv`, next to DS4Bolivia's `asdf_id` and the INE `mun_id`.
 
-**Municipal maps, named by their number of units.** New municipalities are created over time, so each municipal map is a scale of its own named `map<units>`. `map343` is SDSN Bolivia's map of 2025 (the SDG Atlas 2026); `map339` is GeoBolivia's map of 2015 (339 municipalities, as geoBoundaries publishes it, public domain), on whose polygons DS4Bolivia computed `pop`, `ntl`, `emb` and `embpw`, which are therefore published on it. The 339 municipalities kept their IDs in map343 and the 4 new units got new ones, so an ID never changes meaning, and the two maps **share geo IDs**: six municipalities (Colquechaca, Mizque, Porco, Tomave, San Ignacio, Santa Ana) have one ID and two outlines. That is why each dataset records its map (`geo:scale` in its metadata, and `df.attrs["geo:scale"]` on what `geo.load()` returns) and every spatial function of the package takes `map=` for a table that does not say. map339's units nest in map343's provinces by ID (`nesting: ids` in `scales.yaml`); `geo/crosswalks/map339__map343.csv` gives the share of each 2015 unit's area in each 2025 unit, to move data between the maps (`geo.overlay()`). See [`CONTRIBUTING_DATA.md`](../CONTRIBUTING_DATA.md).
+**Municipal maps, named by their number of units.** New municipalities are created over time, so each municipal map is a scale of its own named `map<units>`. `map343` is SDSN Bolivia's map of 2025 (the SDG Atlas 2026); `map339` is GeoBolivia's map of 2015 (339 municipalities, as geoBoundaries publishes it, public domain), on whose polygons DS4Bolivia computed `pop`, `ntl` and `emb`, which are therefore published on it. The 339 municipalities kept their IDs in map343 and the 4 new units got new ones, so an ID never changes meaning, and the two maps **share geo IDs**: six municipalities (Colquechaca, Mizque, Porco, Tomave, San Ignacio, Santa Ana) have one ID and two outlines. That is why each dataset records its map (`geo:scale` in its metadata, and `df.attrs["geo:scale"]` on what `geo.load()` returns) and every spatial function of the package takes `map=` for a table that does not say. map339's units nest in map343's provinces by ID (`nesting: ids` in `scales.yaml`); `geo/crosswalks/map339__map343.csv` gives the share of each 2015 unit's area in each 2025 unit, to move data between the maps (`geo.overlay()`). See [`CONTRIBUTING_DATA.md`](../CONTRIBUTING_DATA.md).
 
 ---
 
@@ -115,14 +115,18 @@ The `<scale>_id` columns make any join across scales a one-liner: every municipa
 
 ### Datasets
 
-A **dataset** is a set of variables from one source, published at one or more scales:
+A **dataset** is a set of variables from one source, published at one or more scales, in a folder of its own:
 
 ```
-data/map339/ntl.csv        geo_id, year, asdf_id, ln_NTLpc, ln_t400NTLpc
-data/map339/ntl.parquet    the same table, typed and compressed
-metadata/ntl.datapackage.json
-docs/datasets/ntl.md             generated: dictionary, coverage, sources, citation
+data/ntl/
+├── README.md              generated: dictionary, coverage, files, sources, license, citations
+├── datapackage.json       the metadata (hand-written; the build adds the coverage fields)
+└── map339/
+    ├── ntl.csv            geo_id, year, asdf_id, ln_NTLpc, ln_t400NTLpc
+    └── ntl.parquet        the same table, typed and compressed
 ```
+
+On GitHub, opening a dataset's folder shows its README. The observatory's website links each dataset to its folder (the table "Database architecture").
 
 Each table is a **long panel**: one row per unit and year, sorted by `geo_id` and `year`. Optional `source_key` columns (here `asdf_id`) keep the original identifier next to `geo_id` for traceability. Wide tables (one column per year) are produced on demand, never stored.
 
@@ -132,29 +136,28 @@ Each table is a **long panel**: one row per unit and year, sorted by `geo_id` an
 | `sdg01` … `sdg17` | map343 (343) | 2012, 2024 | SDG Atlas 2026, one dataset per goal: the goal index and its indicators (81 in all) |
 | `pop` | map339 (339) | 2001–2020 | gridded population |
 | `ntl` | map339 (339) | 2012–2020 | log night-time lights per capita and its HP trend |
-| `emb` | map339 (339) | 2017 | 64 satellite embedding dimensions, area-weighted |
-| `embpw` | map339 (339) | 2017 | the same, population-weighted |
+| `emb` | map339 (339) | 2017 | 64 satellite embedding dimensions, area-weighted (`A00`–`A63`) and population-weighted (`A00_pw`–`A63_pw`) |
 
 Sources measured at a few points in time fit the same shape. The SDG Atlas 2026 measures each indicator twice, near the 2012 census and near the 2024 census, from sources of different years (e.g. poverty from the 2012 and 2024 censuses, child malnutrition from the 2008 and 2023 health surveys, crop production as averages of 2013–15 and 2022–24). Its datasets store the two periods at the nominal years 2012 and 2024, so every variable can be compared between them, and each field's `geo:reference_years` gives the actual years behind each stored year.
 
 ### Metadata
 
-`metadata/<dataset>.datapackage.json` is a [Frictionless Data Package](https://datapackage.org/) with one resource per scale. Project-specific information lives in `geo:` properties:
+`data/<dataset>/datapackage.json` is a [Frictionless Data Package](https://datapackage.org/) with one resource per scale. Project-specific information lives in `geo:` properties:
 
 | Level | Property | Meaning |
 | --- | --- | --- |
 | package | `name`, `title`, `description`, `licenses`, `sources` | standard Frictionless fields; `licenses` is the license of the published files (CC BY 4.0 unless a source requires otherwise) |
-| package | `geo:categories`, `geo:citation`, `geo:notes`, `geo:notebooks` | shown on the dataset page |
+| package | `geo:categories`, `geo:notes`, `geo:notebooks` | shown on the dataset page |
 | package | `geo:map` | the website's headline map: `{"variable", "year"}`, optionally `"scale"`, `"classify": "log"` and `"panels": [first, last]` (the page map shows each year side by side) (checked by `validate`) |
 | package | `geo:updated` | date of the last update, shown in the page's License section |
 | package | `geo:weights` | where a `weighted_mean:<field>` weight lives when it is not a field of the dataset, e.g. `{"population": "sdg"}`: `aggregate()` and `combine()` load it from there (checked by `validate`) |
-| source | `title`, `path` | full citation and its DOI or URL |
+| source | `title`, `path` | full citation (APA) and its DOI or URL; the dataset's citations list the original sources, then the observatory (`citation` in `project.yaml`), then the others |
 | source | `geo:role`, `geo:creator`, `geo:homepage` | `original` (produced the data) or `intermediary` (a tool, repository or boundary set it passed through); who made it; the data's home page |
 | source | `geo:license`, `geo:attribution` | the source's own license (`{name, title, path}`) and the credit sentence it asks for |
 | resource | `path` | public URL of the CSV (checked by `validate`) |
 | resource | `geo:scale`, `geo:period` | the scale and `[first, last]` year |
 | resource | `geo:years`, `geo:units` | every year with rows (e.g. `[2012, 2024]`) and the number of units with rows; written by the build from the data (checked by `validate`) and shown by `geo.datasets()` |
-| resource | `geo:path`, `geo:parquet` | file paths inside the repository |
+| resource | `geo:path`, `geo:parquet` | file paths inside the repository, `data/<dataset>/<scale>/<dataset>.csv` and `.parquet` (checked by `validate`) |
 | resource | `geo:source_geometry` | polygons the values were computed on, if different from `geo/boundaries` |
 | field | `type`, `constraints` | standard Table Schema (`pattern`, `minimum`, `maximum`, `required`) |
 | field | `title`, `description` | the label for plots and how the variable was built; required for every field (checked by `validate`) |
@@ -163,7 +166,7 @@ Sources measured at a few points in time fit the same shape. The SDG Atlas 2026 
 | field | `geo:aggregation` | how the variable moves to coarser scales (below) |
 | field | `geo:reference_years` | for panels stored at nominal years: the actual reference years behind each stored year, e.g. `{"2012": "2008", "2024": "2023"}` (checked by `validate`) |
 
-`metadata/index.json` lists the dataset ids, so remote users can discover them.
+`data/index.json` lists the dataset ids, so remote users can discover them.
 
 ### Aggregation rules
 
@@ -195,7 +198,7 @@ import plotly.express as px
 
 BASE = "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/"
 
-df = pd.read_csv(BASE + "data/map339/ntl.csv")                   # panel: geo_id, year, variables
+df = pd.read_csv(BASE + "data/ntl/map339/ntl.csv")               # panel: geo_id, year, variables
 units = pd.read_csv(BASE + "geo/units.csv")                             # names, parents, source keys
 units = units[units["scale"] == "map339"]                               # one row per unit of ntl's map
 df = df.merge(units[["geo_id", "name", "department_id"]], on="geo_id")
@@ -246,7 +249,7 @@ Inside a clone of this repository the package reads the local files (or set `GEO
 | | Without the package | With the package |
 | --- | --- | --- |
 | Install (Colab) | nothing | `!pip install -q geo4bolivia` |
-| What a variable is | read `metadata/*.datapackage.json` or `docs/datasets/` | `geo.search()`, `geo.info()`, `geo.dictionary()`, `geo.reference_years()`, `geo.cite()` |
+| What a variable is | read `data/<dataset>/README.md` or `datapackage.json` | `geo.search()`, `geo.info()`, `geo.dictionary()`, `geo.reference_years()`, `geo.cite()` |
 | Names, boundaries | merge `geo/units.csv`, `geo/boundaries/*.geojson` yourself | `names=True`, `groups=[...]`, `geometry=True`, `geo.units()` |
 | Summaries, change, maps | by hand | `geo.describe()`, `geo.change()`, `geo.labels()`, `geo.map()` (one year, several, or the change) |
 | Filters, wide format | by hand | `years=`, `variables=`, `wide=` |
@@ -326,7 +329,7 @@ panel = geo.combine(["sdg"], scale="map343", extra=[my_municipal_table])
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/data-infrastructure/box-5.ipynb)
 
-Variables without an aggregation rule are dropped with a warning when they would need aggregating; columns with the same name get the dataset id as prefix (e.g. `emb_A00`, `embpw_A00`).
+Variables without an aggregation rule are dropped with a warning when they would need aggregating; columns with the same name get the dataset id as prefix (e.g. `ntl_pop`, `pop_pop`).
 
 ### Recipe 4: move data across scales
 
@@ -375,7 +378,7 @@ geo.save(dep[["geo_id", "year", "ln_NTLpc"]], "ntl_department", scale="departmen
          variables={"ln_NTLpc": {"description": "Log of night-time lights per capita", "unit": "log(radiance per person)",
                                  "aggregation": "none", "source": "Derived from ntl and pop"}},
          sources=["GeoDevelopment Observatory of Bolivia"])
-# my_data/data/department/ntl_department.csv, .parquet and my_data/metadata/ntl_department.datapackage.json
+# my_data/data/ntl_department/: department/ntl_department.csv and .parquet, datapackage.json, README.md
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/data-infrastructure/box-7.ipynb)

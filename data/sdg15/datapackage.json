@@ -1,0 +1,205 @@
+{
+  "name": "sdg15",
+  "title": "SDG 15: Life on land (SDG Atlas of Bolivia 2026)",
+  "description": "The SDG 15 (Life on land) index of the Atlas de los ODS en Bolivia 2026 (SDSN Bolivia) and the 4 indicators behind it, for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), at two points in time: near the 2012 census and near the 2024 census, stored as 2012 and 2024 so that their change can be studied.",
+  "version": "2.0.0",
+  "licenses": [
+    {
+      "name": "CC-BY-4.0",
+      "title": "Creative Commons Attribution 4.0 International License",
+      "path": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  ],
+  "sources": [
+    {
+      "title": "Andersen, L. E., & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad Privada Boliviana, SDSN Bolivia.",
+      "path": "https://atlasods.sdsnbolivia.org/",
+      "geo:role": "original",
+      "geo:creator": "Lykke E. Andersen and Fabiana Argandoña (SDSN Bolivia, Universidad Privada Boliviana)",
+      "geo:homepage": "https://atlasods.sdsnbolivia.org/",
+      "geo:license": {
+        "name": "CC-BY-4.0",
+        "title": "Creative Commons Attribution 4.0 International License (licensed by SDSN Bolivia)",
+        "path": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "geo:attribution": "Please cite the Atlas and its data as: Andersen, L.E. & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad Privada Boliviana, SDSN Bolivia."
+    },
+    {
+      "title": "SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/",
+      "path": "https://sdsnbolivia.org/datos-espaciales/",
+      "geo:role": "intermediary",
+      "geo:creator": "SDSN Bolivia",
+      "geo:homepage": "https://sdsnbolivia.org/datos-espaciales/",
+      "geo:license": {
+        "name": "CC-BY-4.0",
+        "title": "Creative Commons Attribution 4.0 International License (licensed by SDSN Bolivia)",
+        "path": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "geo:attribution": "Boundaries: SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/"
+    }
+  ],
+  "geo:categories": [
+    "Environment"
+  ],
+  "geo:notes": [
+    "Both periods are stored at nominal years: 2012 for the Atlas's initial values (~2012) and 2024 for its final values (~2024). Each indicator's actual reference years differ (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) and are given in its description and in `geo:reference_years`.",
+    "Load one variable in both periods, e.g. `geo.load(\"sdg15\", variables=\"index_sdg15\", names=True)`, and its change per unit with `geo.change(df, \"index_sdg15\")`.",
+    "The units are the 343 municipalities and indigenous autonomies (GAIOC) of 2025. Four of them were created after the 2012 census (TIOC-Raqaypampa, San Pedro de Macha, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico); the Atlas gives them values in both periods.",
+    "Aggregating to provinces, departments or Bolivia (`geo.aggregate`, `geo.combine`) averages the municipal values weighted by census population (`weighted_mean:population`; the 2012 census for ~2012 and the 2024 census for ~2024, loaded from the `sdg` dataset through `geo:weights`): e.g. `geo.aggregate(geo.load(\"sdg15\"), to=\"department\", dataset=\"sdg15\")`. These are population-weighted approximations, not the Atlas's own department figures."
+  ],
+  "geo:weights": {
+    "population": "sdg"
+  },
+  "resources": [
+    {
+      "name": "sdg15-map343",
+      "path": "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/sdg15/map343/sdg15.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "encoding": "utf-8",
+      "geo:scale": "map343",
+      "geo:period": [
+        2012,
+        2024
+      ],
+      "geo:years": [
+        2012,
+        2024
+      ],
+      "geo:units": 343,
+      "geo:path": "data/sdg15/map343/sdg15.csv",
+      "geo:parquet": "data/sdg15/map343/sdg15.parquet",
+      "geo:source_geometry": "Municipal statistics of the Atlas, linked by INE municipality code",
+      "schema": {
+        "fields": [
+          {
+            "name": "geo_id",
+            "title": "Municipality ID",
+            "type": "string",
+            "description": "GDO-Bolivia municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; map343; its boundary is in geo/boundaries/map343. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes.",
+            "geo:role": "id",
+            "constraints": {
+              "required": true,
+              "pattern": "^BO-\\d{2}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "year",
+            "title": "Period",
+            "type": "integer",
+            "description": "Period of the values in the row: 2012 holds the Atlas's initial values (near the 2012 census) and 2024 its final values (near the 2024 census). Each variable's actual reference years are given in its description and in geo:reference_years.",
+            "geo:role": "time",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "mun_id",
+            "title": "INE municipality code",
+            "type": "integer",
+            "description": "Official municipality code of the National Statistics Institute (INE), DDPPMM (department, province, municipality) stored as an integer without the leading zero (e.g. 20101 = Nuestra Señora de La Paz), as in the Atlas. The Atlas's rows are linked to geo_id through this code.",
+            "geo:role": "source_key",
+            "geo:units_column": "mun_id",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "index_sdg15",
+            "title": "Life on land index (0-100)",
+            "type": "number",
+            "description": "SDG 15 (Life on land) index of the Atlas de los ODS en Bolivia 2026, on a 0-100 scale where 100 means the goal's targets are met and 0 the worst situation. Following the global SDG Index of SDSN, each of its 4 indicators is rescaled linearly to 0-100 between a worst and a best value (given in each indicator's description), with the direction set so that higher is always better and values beyond the bounds capped; the index is the simple mean of the available rescaled indicators. Components: Area declared protected (%); Forest loss rate (% per year); Biodiversity loss from deforestation (index); Biodiversity loss from fires (index). Initial value (~2012) stored at 2012 and final value (~2024) at 2024; its components refer to different years around each census. Atlas: “Índice ODS15”.",
+            "geo:unit": "index (0-100)",
+            "geo:reference_years": {
+              "2012": "~2012",
+              "2024": "~2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 15
+          },
+          {
+            "name": "sdg15_1_sap",
+            "title": "Area declared protected (%)",
+            "type": "number",
+            "description": "Percentage of the municipality's area legally declared a protected area (national, departmental, municipal or indigenous), by overlaying municipal boundaries and protected areas. Source: SDSN Bolivia from the Atlas of Municipal Protected Areas 2022 (WCS, Andes Amazon Fund). Initial value 2012 (stored at 2012) and final value 2025 (stored at 2024). In the SDG 15 index it is rescaled linearly to 0-100 between 0 (worst, 0) and 60 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 25 and major challenges from 5 on. Atlas indicator 15_01_02_01_sap, “Porcentaje de superficie declarada como área protegida” (Andersen & Argandoña 2026).",
+            "geo:unit": "% of municipal area",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2025"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 15
+          },
+          {
+            "name": "sdg15_2_tpb",
+            "title": "Forest loss rate (% per year)",
+            "type": "number",
+            "description": "Average annual loss of forest (change from forest to any other natural or human cover) as a percentage of the municipality's forest area at the start of the period. Only for municipalities with more than 1,000 hectares of forest. Source: MapBiomas Bolivia land-cover maps, collection 3 (2025). Initial value average 2012–2014 (stored at 2012) and final value average 2022–2024 (stored at 2024). Missing for 153 of the 343 units in each period. In the SDG 15 index it is rescaled linearly to 0-100 between 7.3 (worst, 0) and 0 (best, 100), lower is better, values beyond the bounds capped; the Atlas counts the target as met at 0.05 and major challenges from 2 on. Atlas indicator 15_02_01_02_tpb, “Tasa promedio de pérdida de bosque (%)” (Andersen & Argandoña 2026).",
+            "geo:unit": "% of forest area per year",
+            "geo:reference_years": {
+              "2012": "average 2012–2014",
+              "2024": "average 2022–2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 15
+          },
+          {
+            "name": "sdg15_5_pbd",
+            "title": "Biodiversity loss from deforestation (index)",
+            "type": "number",
+            "description": "Species-richness value of the areas deforested in the year as a percentage of the municipality's total species-richness value (MapBiomas land cover over the species-richness map). Only for municipalities with more than 1,000 hectares of forest. Source: MapBiomas Bolivia collection 3 (2025) and the species-richness map of Fundación Amigos de la Naturaleza (2004). Initial value 2012 (stored at 2012) and final value 2024 (stored at 2024). Missing for 153 of the 343 units in each period. In the SDG 15 index it is rescaled linearly to 0-100 between 2 (worst, 0) and 0 (best, 100), lower is better, values beyond the bounds capped; the Atlas counts the target as met at 0 and major challenges from 0.87 on. Atlas indicator 15_05_02_03_pbd, “Índice de pérdida de biodiversidad por deforestación” (Andersen & Argandoña 2026).",
+            "geo:unit": "index (% of species-richness value)",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 15
+          },
+          {
+            "name": "sdg15_5_pbi",
+            "title": "Biodiversity loss from fires (index)",
+            "type": "number",
+            "description": "Species-richness value of the areas burned in the year as a percentage of the municipality's total species-richness value (MODIS burned areas over the species-richness map). Source: MODIS burned areas and the species-richness map of Fundación Amigos de la Naturaleza (2004). Initial value 2012 (stored at 2012) and final value 2024 (stored at 2024). In the SDG 15 index it is rescaled linearly to 0-100 between 9.1 (worst, 0) and 0 (best, 100), lower is better, values beyond the bounds capped; the Atlas counts the target as met at 0 and major challenges from 7.27 on. Atlas indicator 15_05_02_04_pbi, “Índice de pérdida de biodiversidad por incendios” (Andersen & Argandoña 2026).",
+            "geo:unit": "index (% of species-richness value)",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 15
+          }
+        ],
+        "primaryKey": [
+          "geo_id",
+          "year"
+        ]
+      }
+    }
+  ],
+  "geo:updated": "2026-11-17",
+  "geo:map": {
+    "variable": "index_sdg15",
+    "year": 2024,
+    "panels": [
+      2012,
+      2024
+    ]
+  },
+  "geo:notebooks": [
+    {
+      "title": "Dynamics of sustainable development in Bolivia, 2012–2024",
+      "path": "../../notebooks/sdg_dynamics.ipynb"
+    },
+    {
+      "title": "Poverty in Bolivia: an extended EDA and ESDA",
+      "path": "../../notebooks/eda_esda.ipynb"
+    }
+  ]
+}

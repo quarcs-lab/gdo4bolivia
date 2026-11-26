@@ -1,0 +1,233 @@
+{
+  "name": "sdg05",
+  "title": "SDG 5: Gender equality (SDG Atlas of Bolivia 2026)",
+  "description": "The SDG 5 (Gender equality) index of the Atlas de los ODS en Bolivia 2026 (SDSN Bolivia) and the 6 indicators behind it, for Bolivia's 343 municipalities and indigenous autonomies (GAIOC), at two points in time: near the 2012 census and near the 2024 census, stored as 2012 and 2024 so that their change can be studied.",
+  "version": "2.0.0",
+  "licenses": [
+    {
+      "name": "CC-BY-4.0",
+      "title": "Creative Commons Attribution 4.0 International License",
+      "path": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  ],
+  "sources": [
+    {
+      "title": "Andersen, L. E., & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad Privada Boliviana, SDSN Bolivia.",
+      "path": "https://atlasods.sdsnbolivia.org/",
+      "geo:role": "original",
+      "geo:creator": "Lykke E. Andersen and Fabiana Argandoña (SDSN Bolivia, Universidad Privada Boliviana)",
+      "geo:homepage": "https://atlasods.sdsnbolivia.org/",
+      "geo:license": {
+        "name": "CC-BY-4.0",
+        "title": "Creative Commons Attribution 4.0 International License (licensed by SDSN Bolivia)",
+        "path": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "geo:attribution": "Please cite the Atlas and its data as: Andersen, L.E. & Argandoña, F. (2026). Atlas de los ODS en Bolivia 2026: Brechas y tendencias del desarrollo sostenible en las Entidades Territoriales Autónomas, 2012–2024. La Paz: Universidad Privada Boliviana, SDSN Bolivia."
+    },
+    {
+      "title": "SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/",
+      "path": "https://sdsnbolivia.org/datos-espaciales/",
+      "geo:role": "intermediary",
+      "geo:creator": "SDSN Bolivia",
+      "geo:homepage": "https://sdsnbolivia.org/datos-espaciales/",
+      "geo:license": {
+        "name": "CC-BY-4.0",
+        "title": "Creative Commons Attribution 4.0 International License (licensed by SDSN Bolivia)",
+        "path": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "geo:attribution": "Boundaries: SDSN Bolivia (2025). Límites Municipales Bolivia 2025 [Archivo shapefile]. https://sdsnbolivia.org/datos-espaciales/"
+    }
+  ],
+  "geo:categories": [
+    "Social"
+  ],
+  "geo:notes": [
+    "Both periods are stored at nominal years: 2012 for the Atlas's initial values (~2012) and 2024 for its final values (~2024). Each indicator's actual reference years differ (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) and are given in its description and in `geo:reference_years`.",
+    "Load one variable in both periods, e.g. `geo.load(\"sdg05\", variables=\"index_sdg5\", names=True)`, and its change per unit with `geo.change(df, \"index_sdg5\")`.",
+    "The units are the 343 municipalities and indigenous autonomies (GAIOC) of 2025. Four of them were created after the 2012 census (TIOC-Raqaypampa, San Pedro de Macha, TIOC-Jatun Ayllu Yura and TIOC-Territorio Indígena Multiétnico); the Atlas gives them values in both periods.",
+    "Aggregating to provinces, departments or Bolivia (`geo.aggregate`, `geo.combine`) averages the municipal values weighted by census population (`weighted_mean:population`; the 2012 census for ~2012 and the 2024 census for ~2024, loaded from the `sdg` dataset through `geo:weights`): e.g. `geo.aggregate(geo.load(\"sdg05\"), to=\"department\", dataset=\"sdg05\")`. These are population-weighted approximations, not the Atlas's own department figures."
+  ],
+  "geo:weights": {
+    "population": "sdg"
+  },
+  "resources": [
+    {
+      "name": "sdg05-map343",
+      "path": "https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/sdg05/map343/sdg05.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "encoding": "utf-8",
+      "geo:scale": "map343",
+      "geo:period": [
+        2012,
+        2024
+      ],
+      "geo:years": [
+        2012,
+        2024
+      ],
+      "geo:units": 343,
+      "geo:path": "data/sdg05/map343/sdg05.csv",
+      "geo:parquet": "data/sdg05/map343/sdg05.parquet",
+      "geo:source_geometry": "Municipal statistics of the Atlas, linked by INE municipality code",
+      "schema": {
+        "fields": [
+          {
+            "name": "geo_id",
+            "title": "Municipality ID",
+            "type": "string",
+            "description": "GDO-Bolivia municipality geo ID (BO-DD-PP-MM) of the 343-unit municipality map (SDSN Bolivia 2025: municipalities and indigenous autonomies), numbered as in GADM 4.1 plus four units created since; map343; its boundary is in geo/boundaries/map343. It nests by prefix into the department (BO-DD) and province (BO-DD-PP) IDs; department and province numbers follow GADM order and differ from INE codes.",
+            "geo:role": "id",
+            "constraints": {
+              "required": true,
+              "pattern": "^BO-\\d{2}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "year",
+            "title": "Period",
+            "type": "integer",
+            "description": "Period of the values in the row: 2012 holds the Atlas's initial values (near the 2012 census) and 2024 its final values (near the 2024 census). Each variable's actual reference years are given in its description and in geo:reference_years.",
+            "geo:role": "time",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "mun_id",
+            "title": "INE municipality code",
+            "type": "integer",
+            "description": "Official municipality code of the National Statistics Institute (INE), DDPPMM (department, province, municipality) stored as an integer without the leading zero (e.g. 20101 = Nuestra Señora de La Paz), as in the Atlas. The Atlas's rows are linked to geo_id through this code.",
+            "geo:role": "source_key",
+            "geo:units_column": "mun_id",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "index_sdg5",
+            "title": "Gender equality index (0-100)",
+            "type": "number",
+            "description": "SDG 5 (Gender equality) index of the Atlas de los ODS en Bolivia 2026, on a 0-100 scale where 100 means the goal's targets are met and 0 the worst situation. Following the global SDG Index of SDSN, each of its 6 indicators is rescaled linearly to 0-100 between a worst and a best value (given in each indicator's description), with the direction set so that higher is always better and values beyond the bounds capped; the index is the simple mean of the available rescaled indicators. Components: Gender parity in secondary dropout (boys/girls); Gender parity in multidimensional poverty (male/female head); Gender parity in years of education, 25-35 (women/men); Gender parity in labour-force participation (women/men); Gender parity in domestic and care work, 15-24 (men/women); Women among elected councillors (%). Initial value (~2012) stored at 2012 and final value (~2024) at 2024; its components refer to different years around each census. Atlas: “Índice ODS5”.",
+            "geo:unit": "index (0-100)",
+            "geo:reference_years": {
+              "2012": "~2012",
+              "2024": "~2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 5
+          },
+          {
+            "name": "sdg5_1_pga",
+            "title": "Gender parity in secondary dropout (boys/girls)",
+            "type": "number",
+            "description": "Gender parity index of secondary-school dropout: the boys' dropout rate divided by the girls' (1 = parity). Source: the Ministry of Education's Education Statistics and Indicators System (SIE). Initial value average 2012–2014 (stored at 2012) and final value average 2022–2024 (stored at 2024). Missing for 4 of the 343 units in the initial period and 10 in the final one. In the SDG 5 index it is rescaled linearly to 0-100 between 0 (worst, 0) and 1 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 1 and major challenges from 0.5 on. Atlas indicator 05_01_01_01_pga, “Paridad de género en abandono escolar en secundaria” (Andersen & Argandoña 2026).",
+            "geo:unit": "ratio",
+            "geo:reference_years": {
+              "2012": "average 2012–2014",
+              "2024": "average 2022–2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 5
+          },
+          {
+            "name": "sdg5_1_pgm",
+            "title": "Gender parity in multidimensional poverty (male/female head)",
+            "type": "number",
+            "description": "Gender parity of multidimensional poverty: the MPI of households headed by a man divided by the MPI of households headed by a woman (1 = parity). Source: own calculation of the Atlas from the INE Population and Housing Censuses of 2012 and 2024. Initial value 2012 (stored at 2012) and final value 2024 (stored at 2024). In the SDG 5 index it is rescaled linearly to 0-100 between 0 (worst, 0) and 1 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 1 and major challenges from 0.5 on. Atlas indicator 05_01_01_02_pgm, “Paridad de género en el índice de pobreza multidimensional” (Andersen & Argandoña 2026).",
+            "geo:unit": "ratio",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 5
+          },
+          {
+            "name": "sdg5_1_pge",
+            "title": "Gender parity in years of education, 25-35 (women/men)",
+            "type": "number",
+            "description": "Gender parity index of the average years of education of people aged 25-35: women's divided by men's (1 = parity). Source: own calculation of the Atlas from the INE Population and Housing Censuses of 2012 and 2024. Initial value 2012 (stored at 2012) and final value 2024 (stored at 2024). In the SDG 5 index it is rescaled linearly to 0-100 between 0 (worst, 0) and 1 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 1 and major challenges from 0.5 on. Atlas indicator 05_01_01_03_pge, “Paridad de género en años de educación de jóvenes (25 a 35 años)” (Andersen & Argandoña 2026).",
+            "geo:unit": "ratio",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 5
+          },
+          {
+            "name": "sdg5_1_pgp",
+            "title": "Gender parity in labour-force participation (women/men)",
+            "type": "number",
+            "description": "Gender parity of the labour-force participation rate of people aged 14 or more: women's rate divided by men's (1 = parity). Source: own calculation of the Atlas from the INE Population and Housing Censuses of 2012 and 2024. Initial value 2012 (stored at 2012) and final value 2024 (stored at 2024). In the SDG 5 index it is rescaled linearly to 0-100 between 0 (worst, 0) and 1 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 0.8 and major challenges from 0.6 on. Atlas indicator 05_01_01_04_pgp, “Paridad de género en la tasa global de participación” (Andersen & Argandoña 2026).",
+            "geo:unit": "ratio",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 5
+          },
+          {
+            "name": "sdg5_4_phc",
+            "title": "Gender parity in domestic and care work, 15-24 (men/women)",
+            "type": "number",
+            "description": "Gender parity in domestic or care work among people aged 15-24: the share of men who do domestic or care work divided by the share of women who do (1 = parity). Source: own calculation of the Atlas from the INE Population and Housing Censuses of 2012 and 2024. Initial value 2012 (stored at 2012) and final value 2024 (stored at 2024). In the SDG 5 index it is rescaled linearly to 0-100 between 0 (worst, 0) and 1 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 1 and major challenges from 0.5 on. Atlas indicator 05_04_01_05_phc, “Paridad de género en labores del hogar o labores de cuidado” (Andersen & Argandoña 2026).",
+            "geo:unit": "ratio",
+            "geo:reference_years": {
+              "2012": "2012",
+              "2024": "2024"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 5
+          },
+          {
+            "name": "sdg5_5_acm",
+            "title": "Women among elected councillors (%)",
+            "type": "number",
+            "description": "Percentage of the municipal councillors elected who are women. Source: Electoral Atlas of Bolivia (Órgano Electoral Plurinacional), subnational elections of 2015 and 2021. Initial value 2015 (stored at 2012) and final value 2021 (stored at 2024). Missing for 3 of the 343 units in the initial period and 7 in the final one. In the SDG 5 index it is rescaled linearly to 0-100 between 0 (worst, 0) and 50 (best, 100), higher is better, values beyond the bounds capped; the Atlas counts the target as met at 40 and major challenges from 20 on. Atlas indicator 05_05_01_06_acm, “Porcentaje de concejales electos que son mujeres” (Andersen & Argandoña 2026).",
+            "geo:unit": "% of councillors",
+            "geo:reference_years": {
+              "2012": "2015",
+              "2024": "2021"
+            },
+            "geo:aggregation": "weighted_mean:population",
+            "geo:source": "Atlas de los ODS en Bolivia 2026",
+            "geo:sdg": 5
+          }
+        ],
+        "primaryKey": [
+          "geo_id",
+          "year"
+        ]
+      }
+    }
+  ],
+  "geo:updated": "2026-11-17",
+  "geo:map": {
+    "variable": "index_sdg5",
+    "year": 2024,
+    "panels": [
+      2012,
+      2024
+    ]
+  },
+  "geo:notebooks": [
+    {
+      "title": "Dynamics of sustainable development in Bolivia, 2012–2024",
+      "path": "../../notebooks/sdg_dynamics.ipynb"
+    },
+    {
+      "title": "Poverty in Bolivia: an extended EDA and ESDA",
+      "path": "../../notebooks/eda_esda.ipynb"
+    }
+  ]
+}

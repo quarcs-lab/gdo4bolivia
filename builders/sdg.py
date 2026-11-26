@@ -1,4 +1,4 @@
-"""SDG Atlas 2026: raw/sdg -> data/map343/sdg (the IDS) and sdg01 ... sdg17 (one per goal).
+"""SDG Atlas 2026: raw/sdg -> data/sdg/map343/sdg (the IDS) and data/sdg01 ... sdg17 (one per goal).
 
 The Atlas de los ODS en Bolivia 2026 (Andersen & Argandoña, SDSN Bolivia) measures 81
 indicators of 15 goals (none for SDG 12 or 14) for the 343 municipalities and indigenous

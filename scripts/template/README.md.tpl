@@ -25,7 +25,7 @@ df = geo.load("<dataset>", geometry=True)
 
 # Without it: every file is a plain URL
 import pandas as pd
-df = pd.read_csv("https://raw.githubusercontent.com/$repository/main/data/<scale>/<dataset>.csv")
+df = pd.read_csv("https://raw.githubusercontent.com/$repository/main/data/<dataset>/<scale>/<dataset>.csv")
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/notebooks/empty.ipynb)
@@ -35,8 +35,8 @@ df = pd.read_csv("https://raw.githubusercontent.com/$repository/main/data/<scale
 ```
 project.yaml            # project identity: name, package, repository, country codes
 geo/                    # scales.yaml, units, boundaries/, crosswalks/
-data/<scale>/           # published panels (generated)
-metadata/               # one Frictionless datapackage per dataset
+data/<dataset>/         # one folder per dataset: datapackage.json (its metadata), README.md and
+                        # <scale>/<dataset>.csv + .parquet (generated); data/index.json lists them
 docs/                   # guides and generated dataset pages
 raw/                    # original inputs, never edited
 src/$package/           # Python package: load, link, zonal, aggregate, overlay, build, validate

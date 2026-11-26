@@ -66,8 +66,13 @@ if (FULL) {
     cpSync(join(ROOT, f), join(OUT, f));
   }
 } else {
-  for (const p of ['images', 'metadata', 'robots.txt', 'site.webmanifest']) {
+  for (const p of ['images', 'robots.txt', 'site.webmanifest']) {
     if (existsSync(join(ROOT, p))) cpSync(join(ROOT, p), join(OUT, p), { recursive: true });
+  }
+  // the indicator pages read each dataset's metadata, data/<dataset>/datapackage.json
+  for (const d of readJSON('data/index.json').datasets) {
+    mkdirSync(join(OUT, 'data', d), { recursive: true });
+    cpSync(join(ROOT, 'data', d, 'datapackage.json'), join(OUT, 'data', d, 'datapackage.json'));
   }
 }
 writeFileSync(join(OUT, '.nojekyll'), '');
@@ -106,8 +111,9 @@ const imageVariants = {};
 }
 
 // --------------------------------------------------------------------------- metadata
-const DATASETS = readJSON('metadata/index.json').datasets;
-const PKG = Object.fromEntries(DATASETS.map((d) => [d, readJSON(`metadata/${d}.datapackage.json`)]));
+// one folder per dataset: data/<dataset>/datapackage.json, listed in data/index.json
+const DATASETS = readJSON('data/index.json').datasets;
+const PKG = Object.fromEntries(DATASETS.map((d) => [d, readJSON(`data/${d}/datapackage.json`)]));
 const yearSpan = (resources) => {
   const years = resources.flatMap((r) => r['geo:period'] || []).map(Number).filter(Number.isFinite);
   return years.length ? [Math.min(...years), Math.max(...years)] : null;
