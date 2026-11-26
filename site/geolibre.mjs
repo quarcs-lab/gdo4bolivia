@@ -137,11 +137,12 @@ export function geolibreProject({ item, pkg, geojson, siteUrl, siteName }) {
         vectorStyleColorRamp: RAMP, vectorStyleClassificationScheme: SCHEME,
         vectorStyleStops: graduatedStops(values), vectorStyleExpression: '',
       },
+      // the click popup shows in GeoLibre's Identify mode; the hover tooltip shows the name and value at once
       popup: {
-        click: true, hover: false, titleField: 'name', showFeatureId: false,
+        click: true, hover: true, titleField: 'name', showFeatureId: false,
         fields: [
           { field: 'department', label: 'Department' },
-          { field: column, label: `${label}, ${view.year}`, kind: 'number', format: { decimals: 2 } },
+          { field: column, label: `${label}, ${view.year}`, kind: 'number', format: { decimals: 2 }, hover: true },
           { field: 'geo_id', label: 'geo_id' },
         ],
       },
@@ -154,6 +155,8 @@ export function geolibreProject({ item, pkg, geojson, siteUrl, siteName }) {
       },
     }],
     selectedLayerId: layerId,
+    // the map's legend panel, open (GeoLibre draws it from the layer's classes)
+    legend: { title: `${label}, ${view.year}`, groupByLayer: false, order: [], overrides: {}, panelVisible: true, panelPosition: 'bottom-right' },
   };
 }
 
