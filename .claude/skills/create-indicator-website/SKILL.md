@@ -26,9 +26,10 @@ dataset's folder on GitHub (`data/<dataset>/`). `site/build.mjs` pre-renders it 
 preview image and JSON-LD, and adds it to the sitemap and the search.
 Variables, original source, license, citations and references are read at runtime from
 `data/<dataset>/datapackage.json`, so the metadata is the single source of truth.
-The sidebar links to the dataset's folder on GitHub and has download buttons for the panel (CSV, Stata) and
-the wide files (GeoPackage, GeoJSON); the landing page's "Database architecture" table has a row per dataset
-that opens its page, with the same downloads and a GitHub chip for its folder.
+The sidebar, the indicator's card and its row of the landing page's "Database architecture" table (which opens
+its page) show the same ways into the data, in this order: Open in GeoLibre, Open in AI Notebook (a Colab
+notebook with every code box of the page and the entry's `aiPrompts` for Gemini), the wide files (GeoPackage,
+GeoJSON), the panel (CSV, Stata) and the dataset's folder on GitHub.
 
 ## Hard rules
 

@@ -7,7 +7,7 @@ import {
   SITE_URL, REPO_URL, PACKAGE_DOCS_URL, RAW_URL, COLAB_URL, COLAB_EMPTY, SHORT_NAME, CITE_AUTHORS,
   CONTENT_REGISTRY, REDIRECTS, PEOPLE, CONTACTS, CITATION_APA, CITATION_BIB, THREE_PACKAGES_EXAMPLE,
 } from './content.js';
-import { snippetPath, sharedSnippetPath } from './snippets.js';
+import { snippetPath, sharedSnippetPath, pagePath } from './snippets.js';
 import { GEOLIBRE_APP, projectPath } from '../geolibre.mjs';
 import { LANGUAGES, detectLanguage, loadLanguage, setLanguage, language, t, localized, fetchMetadataTranslation, translatePackage } from './i18n.js';
 
@@ -1278,18 +1278,14 @@ const ItemCard = ({ item, showImage = true }) => {
         <div className="flex flex-wrap gap-1.5 mb-4">
           {item.tags.slice(0, 4).map((t) => <Tag key={t} type={item.type}>{t}</Tag>)}
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className={`inline-flex items-center gap-1 text-sm font-semibold ${s.text}`}>
-            {t('View details')} <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-          </span>
-          {item.geolibre && item.dataset && (
-            <a href={geolibreUrl(item.dataset)} target="_blank" rel="noopener noreferrer"
-               className="relative z-10 inline-flex items-center gap-1 text-xs font-semibold text-salt-200 bg-white/5 border border-white/15 rounded-full px-2.5 py-1 hover:border-brand-turquoise/60 hover:text-white transition-colors">
-              {t('Open in GeoLibre')} <ExternalLink size={11} />
-              <span className="sr-only"> {t('(opens in a new tab)')}</span>
-            </a>
-          )}
-        </div>
+        <span className={`inline-flex items-center gap-1 text-sm font-semibold ${s.text}`}>
+          {t('View details')} <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+        </span>
+        {item.type === 'indicator' && (item.dataset || item.datasets) && (
+          <div className="flex flex-wrap gap-1.5 mt-3">
+            {datasetLinks(item).map((l) => <DataChip key={l.label} link={l} />)}
+          </div>
+        )}
       </div>
     </article>
   );
@@ -1331,8 +1327,6 @@ const PackageWorkflow = ({ current, compact = false }) => (
   </ol>
 );
 
-// A dataset's folder on GitHub (data/<dataset>/: README, datapackage.json, one subfolder per map)
-const datasetFolderUrl = (item) => `${REPO_URL}/tree/main/data/${item.dataset || item.datasets[0]}`;
 // A dataset's wide files (one row per unit, a column per variable and year, with boundaries). The
 // download buttons point at the site's own copy (relative to <base>; the deploy serves every tracked
 // file), so the browser saves them instead of showing them; code reads them from RAW_URL
@@ -1348,12 +1342,39 @@ const panelFileUrl = (dataset, scale, ext) => `data/${dataset}/${scale}/${datase
 // The project and the data are read from the live site (SITE_URL), whatever <base> this build has
 const geolibreUrl = (dataset, { embed = false } = {}) =>
   `${GEOLIBRE_APP}?url=${encodeURIComponent(SITE_URL + projectPath(dataset, language()))}&welcome=0${embed ? '&layout=viewer' : ''}`;
+// "Open in AI Notebook" (indicator pages): a Colab notebook with every code box of the page and questions to
+// ask Colab's AI, Gemini (notebooks/pages/<id>.ipynb, written by site/notebooks.mjs; English on both sites)
+const aiNotebookUrl = (item) => COLAB_URL + pagePath(item.id);
+const COLAB_ICON = 'https://colab.research.google.com/img/colab_favicon_256px.png';
+const ColabIcon = ({ size = 14 }) => <img src={COLAB_ICON} alt="" width={size} height={size} className="flex-shrink-0" />;
+
+// The ways into an indicator's data, in the order every place shows them (its card, its row of the database
+// table, its page): open it in GeoLibre and in the AI Notebook, the geospatial files (wide, with boundaries),
+// the non-spatial files (the panel), then its folder on GitHub. Each is { label, url, download, what, Icon }
+const datasetLinks = (item, dataset = item.dataset || item.datasets[0]) => [
+  ...(item.geolibre ? [{ label: 'GeoLibre', url: geolibreUrl(dataset), Icon: MapIcon }] : []),
+  ...(item.aiPrompts ? [{ label: t('AI Notebook'), url: aiNotebookUrl(item), Icon: ColabIcon }] : []),
+  ...(item.scale ? [
+    ...WIDE_FORMATS.map(([ext, label]) => ({ label, url: wideFileUrl(dataset, item.scale, ext), download: true, what: t('(wide, with boundaries)') })),
+    ...PANEL_FORMATS.map(([ext, label]) => ({ label, url: panelFileUrl(dataset, item.scale, ext), download: true, what: t('(panel: one row per unit and year)') })),
+  ] : []),
+  { label: 'GitHub', url: `${REPO_URL}/tree/main/data/${dataset}`, Icon: Github },
+];
+
+// One of datasetLinks as a small chip, above a stretched link (relative z-10) so it is its own target
+const DataChip = ({ link: { label, url, download, what, Icon }, size = 'sm' }) => (
+  <a href={url} {...(download ? { download: true } : { target: '_blank', rel: 'noopener noreferrer' })}
+     className={`relative z-10 inline-flex items-center gap-1 font-semibold border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-turquoise ${size === 'xs' ? 'text-[11px] rounded px-1.5 py-0.5' : 'text-xs rounded-full px-2.5 py-1'} ${download ? 'text-sand-200 bg-sand-400/10 border-sand-400/25 hover:border-sand-400/60 hover:text-white' : 'text-salt-200 bg-white/5 border-white/15 hover:border-brand-turquoise/60 hover:text-white'}`}>
+    {download ? <Download size={11} /> : Icon && <Icon size={11} />}{label}{!download && <ExternalLink size={10} />}
+    <span className="sr-only"> {download ? what : t('(opens in a new tab)')}</span>
+  </a>
+);
 
 // A row of the database table: one link (the dataset's name), stretched over the whole row, so the row is
 // one target for the mouse and one stop for the keyboard. An indicator's row opens its page; `external`
-// rows (the geo folder) open GitHub in a new tab. The chips of the Files column sit above the stretched
-// link (relative z-10), each its own target: downloads ([label, url, what]) and links ([label, url, icon])
-const FolderRow = ({ href, external = false, name, title, scale, period, id, files, downloads = [], links = [] }) => (
+// rows (the geo folder) open GitHub in a new tab. The chips of the Files column (datasetLinks) sit above the
+// stretched link (relative z-10), each its own target
+const FolderRow = ({ href, external = false, name, title, scale, period, id, files, links = [] }) => (
   <tr className="relative group hover:bg-teal-400/[0.06] focus-within:bg-teal-400/[0.06] transition-colors cursor-pointer">
     <td className="px-4 py-4 md:px-6">
       <a href={href} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
@@ -1368,18 +1389,9 @@ const FolderRow = ({ href, external = false, name, title, scale, period, id, fil
     <td className="px-4 py-4 md:px-6"><code className="font-mono text-brand-turquoise bg-teal-400/10 px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap">{id}</code></td>
     <td className="px-4 py-4 md:px-6 text-salt-400">
       {files && <span className="inline-flex items-center gap-2 whitespace-nowrap">{files}{external && <ExternalLink size={13} className="text-salt-500 group-hover:text-brand-turquoise transition-colors" />}</span>}
-      {(downloads.length > 0 || links.length > 0) && (
-        <span className={`relative z-10 flex flex-wrap gap-1.5 ${files ? 'mt-2' : ''} max-w-[19rem]`}>
-          {downloads.map(([label, url, what]) => (
-            <a key={label} href={url} download className="inline-flex items-center gap-1 text-[11px] font-semibold text-sand-200 bg-sand-400/10 border border-sand-400/25 rounded px-1.5 py-0.5 hover:border-sand-400/60 hover:text-white transition-colors">
-              <Download size={11} />{label}<span className="sr-only"> {what}</span>
-            </a>
-          ))}
-          {links.map(([label, url, Icon]) => (
-            <a key={label} href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] font-semibold text-salt-200 bg-white/5 border border-white/15 rounded px-1.5 py-0.5 hover:border-brand-turquoise/60 hover:text-white transition-colors">
-              {Icon && <Icon size={11} />}{label}<ExternalLink size={10} /><span className="sr-only"> {t('(opens in a new tab)')}</span>
-            </a>
-          ))}
+      {links.length > 0 && (
+        <span className={`flex flex-wrap gap-1.5 ${files ? 'mt-2' : ''} max-w-[20rem]`}>
+          {links.map((l) => <DataChip key={l.label} link={l} size="xs" />)}
         </span>
       )}
     </td>
@@ -1449,7 +1461,7 @@ const IndicatorsSection = () => {
             <span className="font-mono text-sm text-brand-turquoise">01</span>
             {t('Database architecture')}
           </h3>
-          <p className="text-salt-400 max-w-3xl -mt-3 mb-5">{t('Click a row to open the indicator: its maps, variables, code, license and how to cite it. CSV and Stata download the panel, one row per municipality and year; the Stata file has labels and notes and is ready for xtset. GeoPackage and GeoJSON download the data wide, ready to map: one row per municipality, a column per variable and year, with boundaries. GitHub opens the dataset’s folder: its documentation, metadata and every file.')}</p>
+          <p className="text-salt-400 max-w-3xl -mt-3 mb-5">{t('Click a row to open the indicator: its maps, variables, code, license and how to cite it. GeoLibre opens its map in an open-source GIS in the browser; AI Notebook opens a Colab notebook with all the code of its page and questions to ask Colab’s AI. GeoPackage and GeoJSON download the data wide, ready to map: one row per municipality, a column per variable and year, with boundaries. CSV and Stata download the panel, one row per municipality and year; the Stata file has labels and notes and is ready for xtset. GitHub opens the dataset’s folder: its documentation, metadata and every file.')}</p>
           <div className="rounded-xl overflow-hidden border border-white/10 bg-white/[0.03] mb-16">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
@@ -1467,11 +1479,7 @@ const IndicatorsSection = () => {
                   {items.map((it) => (
                     <FolderRow key={it.id} href={itemHref(it)} name={(it.datasets || [it.dataset]).join(' · ')} title={it.title}
                                scale={`${it.units} · ${it.geography}`} period={it.period} id={it.idExample}
-                               downloads={[
-                                 ...PANEL_FORMATS.map(([ext, label]) => [label, panelFileUrl(it.dataset, it.scale, ext), t('(panel: one row per unit and year)')]),
-                                 ...WIDE_FORMATS.map(([ext, label]) => [label, wideFileUrl(it.dataset, it.scale, ext), t('(wide, with boundaries)')]),
-                               ]}
-                               links={[['GitHub', datasetFolderUrl(it), Github], ...(it.geolibre ? [['GeoLibre', geolibreUrl(it.dataset)]] : [])]} />
+                               links={datasetLinks(it)} />
                   ))}
                   <FolderRow href={`${REPO_URL}/tree/main/geo`} external name="geo" title={t('Units, boundaries and crosswalks')}
                              scale={t('All scales · {n} units', { n: UNIT_COUNTS.total })} period="—" id="BO"
@@ -2115,26 +2123,24 @@ const IndicatorDetail = ({ item }) => {
           <dt className="text-salt-400">{t('Categories')}</dt><dd className="text-salt-200">{item.categories.join(', ')}</dd>
           {ready && <><dt className="text-salt-400">{t('License')}</dt><dd className="text-salt-200">{meta.packages[0].licenses[0].name.replace(/-/g, ' ')}</dd></>}
         </dl>
-        {ids.map((id) => (
-          <a key={id} href={`${REPO_URL}/tree/main/data/${id}`} target="_blank" rel="noopener noreferrer"
-             className="mt-5 flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg border border-white/15 text-salt-100 text-sm font-semibold hover:border-brand-turquoise/50 hover:text-white transition-colors">
-            <Github size={16} /> {t('Dataset on GitHub')} <code className="text-xs text-brand-turquoise">data/{id}/</code>
-            <span className="sr-only"> {t('(opens in a new tab)')}</span>
-          </a>
+{item.geolibre && ids.map((id) => (
+          <div key={`geolibre-${id}`} className="mt-5">
+            <a href={geolibreUrl(id)} target="_blank" rel="noopener noreferrer"
+               className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-brand-rose text-white text-sm font-semibold hover:bg-[#b8344c] transition-colors">
+              <MapIcon size={16} /> {t('Open in GeoLibre')} <ExternalLink size={13} />
+              <span className="sr-only"> {t('(opens in a new tab)')}</span>
+            </a>
+            <p className="text-xs text-salt-400 mt-2">{t('GeoLibre, an open-source GIS in the browser, opens the map with every variable and year, ready to restyle, filter, query and export.')}</p>
+          </div>
         ))}
-        <p className="text-xs text-salt-400 mt-2">{t('Its documentation, metadata and files, CSV and Parquet.')}</p>
-        {item.scale && (
+        {item.aiPrompts && (
           <div className="mt-4">
-            <p className="text-xs font-semibold text-salt-200 mb-2">{t('Download the panel (one row per municipality and year)')}</p>
-            <div className="grid grid-cols-2 gap-2">
-              {ids.flatMap((id) => PANEL_FORMATS.map(([ext, label]) => (
-                <a key={`${id}-${ext}`} href={panelFileUrl(id, item.scale, ext)} download
-                   className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-sand-400/10 border border-sand-400/30 text-sand-200 text-sm font-semibold hover:border-sand-400/60 hover:text-white transition-colors">
-                  <Download size={14} /> {label}
-                </a>
-              )))}
-            </div>
-            <p className="text-xs text-salt-400 mt-2">{t('The Stata file (Stata 14 or later) has the names of the places, a label for every variable and notes on how it was built, and opens declared as a panel (xtset unit_id year).')}</p>
+            <a href={aiNotebookUrl(item)} target="_blank" rel="noopener noreferrer"
+               className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-brand-rose text-white text-sm font-semibold hover:bg-[#b8344c] transition-colors">
+              <ColabIcon size={16} /> {t('Open in AI Notebook')} <ExternalLink size={13} />
+              <span className="sr-only"> {t('(opens in a new tab)')}</span>
+            </a>
+            <p className="text-xs text-salt-400 mt-2">{t('A Colab notebook with every code box of this page and questions to ask Colab’s AI (Gemini) about the data.')}</p>
           </div>
         )}
         {item.scale && (
@@ -2151,16 +2157,28 @@ const IndicatorDetail = ({ item }) => {
             <p className="text-xs text-salt-400 mt-2">{t('One row per municipality and a column per variable and year (e.g. {col}), with boundaries. The GeoPackage also describes every column (table variables); the GeoJSON has lighter boundaries for web maps.', { col: `${(meta.packages[0]?.['geo:map']?.variable) || 'variable'}_${(meta.packages[0]?.['geo:map']?.year) || 'year'}` })}</p>
           </div>
         )}
-        {item.geolibre && ids.map((id) => (
-          <div key={`geolibre-${id}`} className="mt-4">
-            <a href={geolibreUrl(id)} target="_blank" rel="noopener noreferrer"
-               className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-brand-rose text-white text-sm font-semibold hover:bg-[#b8344c] transition-colors">
-              <MapIcon size={16} /> {t('Open in GeoLibre')} <ExternalLink size={13} />
-              <span className="sr-only"> {t('(opens in a new tab)')}</span>
-            </a>
-            <p className="text-xs text-salt-400 mt-2">{t('GeoLibre, an open-source GIS in the browser, opens the map with every variable and year, ready to restyle, filter, query and export.')}</p>
+        {item.scale && (
+          <div className="mt-4">
+            <p className="text-xs font-semibold text-salt-200 mb-2">{t('Download the panel (one row per municipality and year)')}</p>
+            <div className="grid grid-cols-2 gap-2">
+              {ids.flatMap((id) => PANEL_FORMATS.map(([ext, label]) => (
+                <a key={`${id}-${ext}`} href={panelFileUrl(id, item.scale, ext)} download
+                   className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-sand-400/10 border border-sand-400/30 text-sand-200 text-sm font-semibold hover:border-sand-400/60 hover:text-white transition-colors">
+                  <Download size={14} /> {label}
+                </a>
+              )))}
+            </div>
+            <p className="text-xs text-salt-400 mt-2">{t('The Stata file (Stata 14 or later) has the names of the places, a label for every variable and notes on how it was built, and opens declared as a panel (xtset unit_id year).')}</p>
           </div>
+        )}
+        {ids.map((id) => (
+          <a key={id} href={`${REPO_URL}/tree/main/data/${id}`} target="_blank" rel="noopener noreferrer"
+             className="mt-4 flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg border border-white/15 text-salt-100 text-sm font-semibold hover:border-brand-turquoise/50 hover:text-white transition-colors">
+            <Github size={16} /> {t('Dataset on GitHub')} <code className="text-xs text-brand-turquoise">data/{id}/</code>
+            <span className="sr-only"> {t('(opens in a new tab)')}</span>
+          </a>
         ))}
+        <p className="text-xs text-salt-400 mt-2">{t('Its documentation, metadata and files, CSV and Parquet.')}</p>
       </AsideCard>
     </>}>
       <Block title={t('About the dataset')} id="d-about">

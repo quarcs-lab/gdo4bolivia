@@ -20,6 +20,7 @@ Variables, sources, license and references come from the metadata; do not repeat
   date: '2026-10-29', pinned: false,
   dataset: 'ntl', scale: 'map339',                           // or datasets: ['a', 'b'] for one page of several
   geolibre: true,                                            // "Open in GeoLibre" (geo:map's variable); or { variable, year }
+  aiPrompts: [ /* 4-6 questions to ask Colab's Gemini, naming the dataset's variables */ ],   // "Open in AI Notebook"
   notice: 'Optional warning shown under the description.',
   code: { python: `...`, pandas: `...`, ...wideTabs('ntl', 'map339', 'ln_NTLpc_2020', '<label>', '<label>, 2020') },
   examples: [                                                // optional: short recipes under the code tabs
@@ -78,6 +79,9 @@ download links: the page no longer uses them.
       `geolibre` tabs); after the push, "Open in GeoLibre" opens the map styled on `geo:map`'s variable (first and
       last year side by side when it has several), in English and in Spanish, and the page's GeoLibre switch
       shows it embedded.
+- [ ] `aiPrompts`: 4-6 questions for Colab's Gemini written for this indicator (its variables, years, caveats);
+      `node site/notebooks.mjs` writes `notebooks/pages/<id>.ipynb`, and "Open in AI Notebook" (sidebar, card and
+      table chips) opens it in Colab: Setup, then every code box of the page, runs cell by cell.
 - [ ] The metadata loads (no "could not be loaded" notice) and the console has no errors.
 - [ ] No horizontal scroll at 390 px width.
 - [ ] The card image appears in the Indicators section, and the Database architecture

@@ -160,6 +160,14 @@ export const CONTENT_REGISTRY = [
   // ---------------------------------------------------------------- Indicators
   {
     id: 'municipalities343-sdg', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Using geo4bolivia, load the Sustainable Development Index (index_sdg) from the dataset sdg and list the 10 municipalities that gained most between ~2012 and ~2024, with their department.",
+      "Did the municipalities that started furthest behind catch up? Run geo.beta_convergence(\"sdg\", \"index_sdg\"), plot the result and explain the coefficient in plain words.",
+      "Make a scatter plot of urbanization against index_sdg in 2024, coloured by department, and tell me whether more urban municipalities score higher.",
+      "Compute the population-weighted mean of index_sdg by department in both periods (geo.aggregate with dataset=\"sdg\") and rank the departments.",
+      "Is the IDS spatially clustered? Run geo.moran and geo.lisa on index_sdg in 2024 and describe where the high-high and low-low clusters are.",
+    ],
     title: "Sustainable Development Index (IDS)",
     scope: "343 municipalities · 81 indicators of 15 SDGs in one index · ~2012 and ~2024",
     summary: "The Sustainable Development Index (IDS) of the SDG Atlas of Bolivia 2026, which summarises 81 indicators of 15 goals, and its national ranking, for every municipality near 2012 and near 2024.",
@@ -276,6 +284,14 @@ px.bar(out.nlargest(12, "points"), x="points", y="name",
   },
   {
     id: 'municipalities343-sdg01', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Map the change of multidimensional poverty (sdg1_2_mpi) between ~2012 and ~2024 and tell me which departments improved most.",
+      "Which 10 municipalities had the highest multidimensional poverty (sdg1_2_mpi) in 2024, and how did each change since ~2012?",
+      "Plot unsatisfied basic needs (sdg1_4_nbi) against access to the three basic services (sdg1_4_ssb) in 2024 and describe the relationship.",
+      "Is poverty spatially clustered? Run geo.moran and geo.lisa on sdg1_2_mpi in 2024 and explain the clusters on a map.",
+      "Energy poverty (sdg1_4_eep) is measured in 2016 and 2024, not 2012. Check its reference years with geo.reference_years(\"sdg01\") and compare its distribution in both periods by department.",
+    ],
     title: "SDG 1: No poverty",
     scope: "343 municipalities · 4 indicators and the SDG 1 index · ~2012 and ~2024",
     summary: "The SDG 1 (No poverty) index of the SDG Atlas of Bolivia 2026 and its 4 indicators, multidimensional poverty, unsatisfied basic needs, energy poverty and access to the three basic services, for every municipality near 2012 and near 2024.",
@@ -412,6 +428,14 @@ px.scatter(df, x="ln_t400NTLpc", y="sdg1_2_mpi", hover_name="name",
   },
   {
     id: 'municipalities343-sdg02', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Map chronic malnutrition in children under 5 (sdg2_2_dcn) in 2024 and list the 10 municipalities where it is highest.",
+      "How did the Zero hunger index (index_sdg2) change between ~2012 and ~2024? Show the change on a map and summarise it by department.",
+      "Plot chronic malnutrition (sdg2_2_dcn) against overweight in children under 5 (sdg2_2_osn) in 2024: do the two burdens coexist in the same municipalities?",
+      "Compare agricultural yield (sdg2_3_rpa) and the agricultural diversification index (sdg2_5_idp) across departments with box plots for 2024.",
+      "The health indicators of SDG 2 come from surveys with their own reference years. List each variable's actual years with geo.reference_years(\"sdg02\") and explain what that means for comparisons.",
+    ],
     title: "SDG 2: Zero hunger",
     scope: "343 municipalities · 7 indicators and the SDG 2 index · ~2012 and ~2024",
     summary: "The SDG 2 (Zero hunger) index of the SDG Atlas of Bolivia 2026 and its 7 indicators, stunting and overweight in children, obesity and anaemia in women, and agricultural production, yield and diversification, for every municipality near 2012 and near 2024.",
@@ -536,6 +560,14 @@ px.scatter(dep.sort_values("index_sdg2"), x="index_sdg2", y="department",
   },
   {
     id: 'municipalities343-sdg03', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Map infant mortality (sdg3_2_tmi) in 2024 and list the 10 municipalities with the highest rates.",
+      "How much did under-5 mortality (sdg3_2_tmn) fall between the two periods? Show the change per municipality and the median by department.",
+      "Plot births attended by skilled health personnel (sdg3_1_cpp) against infant mortality (sdg3_2_tmi) in 2024 and describe the relationship.",
+      "Where is tuberculosis incidence (sdg3_3_tub) highest? Map it for 2024 and check whether it clusters spatially with geo.moran.",
+      "Infant mortality's actual years are 2008 and 2023, not 2012 and 2024. Use geo.reference_years(\"sdg03\") to list every variable's years and explain how to describe the change correctly.",
+    ],
     title: "SDG 3: Good health and well-being",
     scope: "343 municipalities · 7 indicators and the SDG 3 index · ~2012 and ~2024",
     summary: "The SDG 3 (Good health and well-being) index of the SDG Atlas of Bolivia 2026 and its 7 indicators, skilled birth attendance, infant and under-5 mortality, HIV, tuberculosis and vector-borne diseases, and adolescent fertility, for every municipality near 2012 and near 2024.",
@@ -660,6 +692,14 @@ px.scatter(dep.sort_values("index_sdg3"), x="index_sdg3", y="department",
   },
   {
     id: 'municipalities343-sdg04', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Compare secondary-school dropout of girls (sdg4_1_asm) and boys (sdg4_1_ash) in 2024: where is the gap largest, and in whose favour?",
+      "Map the change of the Quality education index (index_sdg4) between ~2012 and ~2024 and summarise it by department.",
+      "Plot years of education of women 25-35 (sdg4_3_aem) against men (sdg4_3_aeh) in both periods, with the 45-degree line.",
+      "Which municipalities have the lowest literacy rate (sdg4_6_alf) in 2024, and in which departments are they?",
+      "Is the share of qualified secondary teachers (sdg4_10_pcs) related to higher education among women (sdg4_3_esm)? Run geo.regression and interpret it.",
+    ],
     title: "SDG 4: Quality education",
     scope: "343 municipalities · 11 indicators and the SDG 4 index · ~2012 and ~2024",
     summary: "The SDG 4 (Quality education) index of the SDG Atlas of Bolivia 2026 and its 11 indicators, secondary-school dropout, pre-school attendance, years of education and higher education of women and men, literacy and qualified teachers, for every municipality near 2012 and near 2024.",
@@ -788,6 +828,14 @@ px.scatter(dep.sort_values("index_sdg4"), x="index_sdg4", y="department",
   },
   {
     id: 'municipalities343-sdg05', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Map women among elected councillors (sdg5_5_acm) in both periods and tell me how many municipalities reached parity.",
+      "Gender parity in labour-force participation (sdg5_1_pgp) is women/men: list the 10 municipalities furthest from parity in 2024.",
+      "How did the Gender equality index (index_sdg5) change between ~2012 and ~2024? Show its distribution by department in both periods.",
+      "Plot gender parity in years of education (sdg5_1_pge) against parity in domestic and care work (sdg5_4_phc) in 2024 and describe what you see.",
+      "Are the municipalities with high gender parity in education also those with high parity in labour participation? Compute the correlations of the sdg5 variables with geo.correlation(\"sdg05\").",
+    ],
     title: "SDG 5: Gender equality",
     scope: "343 municipalities · 6 indicators and the SDG 5 index · ~2012 and ~2024",
     summary: "The SDG 5 (Gender equality) index of the SDG Atlas of Bolivia 2026 and its 6 indicators, gender parity in school dropout, poverty, education, labour participation and care work, and women among elected councillors, for every municipality near 2012 and near 2024.",
@@ -912,6 +960,14 @@ px.scatter(dep.sort_values("index_sdg5"), x="index_sdg5", y="department",
   },
   {
     id: 'municipalities343-sdg06', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Map drinking-water coverage (sdg6_1_cap) in 2024 and list the municipalities still below 50%.",
+      "How much did sanitation coverage (sdg6_2_cas) improve between the two periods? Show the change on a map and by department.",
+      "Plot drinking-water coverage (sdg6_1_cap) against sanitation coverage (sdg6_2_cas) in 2024: which municipalities have water but lack sanitation?",
+      "Where is wastewater treated (sdg6_3_tar) at all? Count the municipalities with any treatment in each period, by department.",
+      "Is the Clean water and sanitation index (index_sdg6) spatially clustered? Run geo.moran and geo.lisa for 2024 and describe the clusters.",
+    ],
     title: "SDG 6: Clean water and sanitation",
     scope: "343 municipalities · 3 indicators and the SDG 6 index · ~2012 and ~2024",
     summary: "The SDG 6 (Clean water and sanitation) index of the SDG Atlas of Bolivia 2026 and its 3 indicators, drinking water, sanitation and wastewater treatment, for every municipality near 2012 and near 2024.",
@@ -1034,6 +1090,14 @@ px.scatter(dep.sort_values("index_sdg6"), x="index_sdg6", y="department",
   },
   {
     id: 'municipalities343-sdg07', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Map electricity coverage (sdg7_1_cae) in both periods and list the municipalities that are still below 80% in 2024.",
+      "Plot residential electricity consumption (sdg7_1_cep) against clean cooking energy (sdg7_1_elc) in 2024, on a log scale where it helps.",
+      "Which departments gained most clean cooking energy (sdg7_1_elc) between ~2012 and ~2024? Use a population-weighted mean (geo.aggregate with dataset=\"sdg07\").",
+      "What does residential meters with zero consumption for 6+ months (sdg7_1_mcc) tell us? Map it for 2024 and look for patterns.",
+      "Show the change of the Affordable and clean energy index (index_sdg7) per municipality and test whether it converged with geo.beta_convergence.",
+    ],
     title: "SDG 7: Affordable and clean energy",
     scope: "343 municipalities · 4 indicators and the SDG 7 index · ~2012 and ~2024",
     summary: "The SDG 7 (Affordable and clean energy) index of the SDG Atlas of Bolivia 2026 and its 4 indicators, electricity coverage and use, idle electricity meters and clean cooking energy, for every municipality near 2012 and near 2024.",
@@ -1156,6 +1220,14 @@ px.scatter(dep.sort_values("index_sdg7"), x="index_sdg7", y="department",
   },
   {
     id: 'municipalities343-sdg08', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Compare the labour-force participation of women (sdg8_5_tgm) and men (sdg8_5_tgh) in 2024: map the gap between them.",
+      "Young people not in education or the labour force: plot young women (sdg8_6_etm) against young men (sdg8_6_eth) in both periods.",
+      "Where are financial access points (sdg8_10_dsb) most and least available? Map them for 2024 and list the municipalities with none.",
+      "Which municipalities depend most on tourism? Rank them by employment in tourism-related activities (sdg8_9_pot) and the tourism share of GDP (sdg8_9_pbt).",
+      "How did the Decent work and economic growth index (index_sdg8) change between ~2012 and ~2024? Show the change by department.",
+    ],
     title: "SDG 8: Decent work and economic growth",
     scope: "343 municipalities · 7 indicators and the SDG 8 index · ~2012 and ~2024",
     summary: "The SDG 8 (Decent work and economic growth) index of the SDG Atlas of Bolivia 2026 and its 7 indicators, labour participation and youth outside education and work, by sex, tourism employment and GDP, and financial access points, for every municipality near 2012 and near 2024.",
@@ -1280,6 +1352,14 @@ px.scatter(dep.sort_values("index_sdg8"), x="index_sdg8", y="department",
   },
   {
     id: 'municipalities343-sdg09', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Map internet access (sdg9_8_ci) in both periods and tell me how many municipalities passed 50% of households.",
+      "Plot mobile base stations per 1,000 people (sdg9_8_drb) against internet access (sdg9_8_ci) in 2024 and describe the relationship.",
+      "Do municipalities crossed by trunk roads (sdg9_1_vpc) score higher on the Industry, innovation and infrastructure index (index_sdg9)? Compare the groups.",
+      "Which 10 municipalities improved most in telephone access (sdg9_8_tfc) between ~2012 and ~2024?",
+      "Is internet access spatially clustered? Run geo.moran and geo.lisa on sdg9_8_ci for 2024 and describe the clusters.",
+    ],
     title: "SDG 9: Industry, innovation and infrastructure",
     scope: "343 municipalities · 4 indicators and the SDG 9 index · ~2012 and ~2024",
     summary: "The SDG 9 (Industry, innovation and infrastructure) index of the SDG Atlas of Bolivia 2026 and its 4 indicators, trunk roads, internet access, telephones and mobile base stations, for every municipality near 2012 and near 2024.",
@@ -1402,6 +1482,14 @@ px.scatter(dep.sort_values("index_sdg9"), x="index_sdg9", y="department",
   },
   {
     id: 'municipalities343-sdg10', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Map the population that does not speak Spanish (sdg10_2_esp) in 2024 and describe where it is concentrated.",
+      "The Gini coefficient of years of education (sdg10_4_gin) measures inequality within each municipality: which municipalities are most unequal in 2024, and did it fall since ~2012?",
+      "Plot the parity of multidimensional poverty by ethnicity and language (sdg10_2_pel) against the share that does not speak Spanish (sdg10_2_esp).",
+      "How did the Reduced inequalities index (index_sdg10) change between the two periods? Show the change by department.",
+      "Compute the correlations of all sdg10 variables in 2024 with geo.correlation(\"sdg10\") and explain the strongest ones.",
+    ],
     title: "SDG 10: Reduced inequalities",
     scope: "343 municipalities · 6 indicators and the SDG 10 index · ~2012 and ~2024",
     summary: "The SDG 10 (Reduced inequalities) index of the SDG Atlas of Bolivia 2026 and its 6 indicators, people who do not speak Spanish, poverty gaps by ethnicity, migration and age, and the Gini coefficients of poverty and education, for every municipality near 2012 and near 2024.",
@@ -1526,6 +1614,14 @@ px.scatter(dep.sort_values("index_sdg10"), x="index_sdg10", y="department",
   },
   {
     id: 'municipalities343-sdg11', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Map overcrowded households (sdg11_1_thm) in 2024 and list the 10 municipalities with the highest share.",
+      "How much did adequate housing (sdg11_1_ava) improve between ~2012 and ~2024? Show the change by department.",
+      "Plot solid-waste collection (sdg11_6_srr) against public spending on solid waste (sdg11_6_ipr) in 2024, with a log scale for spending.",
+      "Where is PM2.5 concentration (sdg11_6_ica) highest? Map it for 2024 and check whether it clusters spatially with geo.moran.",
+      "Which municipalities have public transport (sdg11_2_atc) at all? Compare the Sustainable cities index (index_sdg11) of those with and without it.",
+    ],
     title: "SDG 11: Sustainable cities and communities",
     scope: "343 municipalities · 7 indicators and the SDG 11 index · ~2012 and ~2024",
     summary: "The SDG 11 (Sustainable cities and communities) index of the SDG Atlas of Bolivia 2026 and its 7 indicators, overcrowding, toilets, adequate housing, public transport, solid-waste spending and collection, and PM2.5 pollution, for every municipality near 2012 and near 2024.",
@@ -1650,6 +1746,14 @@ px.scatter(dep.sort_values("index_sdg11"), x="index_sdg11", y="department",
   },
   {
     id: 'municipalities343-sdg13', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Map the climate-change vulnerability index (sdg13_1_icc) and list the most vulnerable municipalities in 2024.",
+      "Where do CO2 emissions from forest loss (sdg13_2_epb) and from fires (sdg13_2_eci) come from? Map both for 2024, on a log scale.",
+      "Plot families affected by extreme climate events (sdg13_1_fec) in both periods and tell me where they increased most.",
+      "How did the Climate action index (index_sdg13) change between ~2012 and ~2024? Show the change on a map and by department.",
+      "Several SDG 13 variables are averages over several years. Use geo.reference_years(\"sdg13\") to list each variable's actual years.",
+    ],
     title: "SDG 13: Climate action",
     scope: "343 municipalities · 5 indicators and the SDG 13 index · ~2012 and ~2024",
     summary: "The SDG 13 (Climate action) index of the SDG Atlas of Bolivia 2026 and its 5 indicators, families hit by extreme climate events, climate-change vulnerability and CO2 emissions from forest loss, transport and fires, for every municipality near 2012 and near 2024.",
@@ -1772,6 +1876,14 @@ px.scatter(dep.sort_values("index_sdg13"), x="index_sdg13", y="department",
   },
   {
     id: 'municipalities343-sdg15', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Map the forest loss rate (sdg15_2_tpb) in 2024 and list the 10 municipalities losing forest fastest.",
+      "Compare biodiversity loss from deforestation (sdg15_5_pbd) and from fires (sdg15_5_pbi) by department in both periods.",
+      "Do municipalities with more area declared protected (sdg15_1_sap) lose less forest (sdg15_2_tpb)? Plot them and run geo.regression.",
+      "How did the Life on land index (index_sdg15) change between ~2012 and ~2024? Show the change on a map.",
+      "Is deforestation spatially clustered? Run geo.moran and geo.lisa on sdg15_2_tpb for 2024 and describe where the hot spots are.",
+    ],
     title: "SDG 15: Life on land",
     scope: "343 municipalities · 4 indicators and the SDG 15 index · ~2012 and ~2024",
     summary: "The SDG 15 (Life on land) index of the SDG Atlas of Bolivia 2026 and its 4 indicators, protected areas, forest loss and biodiversity loss from deforestation and fires, for every municipality near 2012 and near 2024.",
@@ -1894,6 +2006,14 @@ px.scatter(dep.sort_values("index_sdg15"), x="index_sdg15", y="department",
   },
   {
     id: 'municipalities343-sdg16', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Map the homicide rate (sdg16_1_thp) in 2024 and list the municipalities with the highest rates, with their population.",
+      "How did children under 5 in the civil registry (sdg16_9_nic) change between ~2012 and ~2024? Show the change by department.",
+      "Plot budget execution (sdg16_6_cep) in both periods: which municipalities execute least of their budget?",
+      "Where are social conflicts (sdg16_7_tcs) most frequent? Map them for 2024 and relate them to population with a scatter plot.",
+      "Show the distribution of the Peace, justice and strong institutions index (index_sdg16) by department in both periods with box plots.",
+    ],
     title: "SDG 16: Peace, justice and strong institutions",
     scope: "343 municipalities · 4 indicators and the SDG 16 index · ~2012 and ~2024",
     summary: "The SDG 16 (Peace, justice and strong institutions) index of the SDG Atlas of Bolivia 2026 and its 4 indicators, homicides, municipal budget execution, social conflicts and birth registration, for every municipality near 2012 and near 2024.",
@@ -2016,6 +2136,14 @@ px.scatter(dep.sort_values("index_sdg16"), x="index_sdg16", y="department",
   },
   {
     id: 'municipalities343-sdg17', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Map municipal revenue from local sources (sdg17_1_iil) in 2024 and list the municipalities most and least reliant on their own revenue.",
+      "Plot public investment per person (sdg17_18_ipc) in both periods, on a log scale, and tell me which departments invest most.",
+      "Do municipalities with more local revenue (sdg17_1_iil) invest more per person (sdg17_18_ipc)? Plot them and run geo.regression.",
+      "How did the Partnerships for the goals index (index_sdg17) change between ~2012 and ~2024? Show the change on a map.",
+      "Compare index_sdg17 with the overall Sustainable Development Index (index_sdg, dataset sdg) in 2024: are they related?",
+    ],
     title: "SDG 17: Partnerships for the goals",
     scope: "343 municipalities · 2 indicators and the SDG 17 index · ~2012 and ~2024",
     summary: "The SDG 17 (Partnerships for the goals) index of the SDG Atlas of Bolivia 2026 and its 2 indicators, municipal revenue from local sources and public investment per person, for every municipality near 2012 and near 2024.",
@@ -2136,6 +2264,14 @@ px.scatter(dep.sort_values("index_sdg17"), x="index_sdg17", y="department",
   },
   {
     id: 'municipalities339-ntl', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Plot log night-time lights per capita (ln_NTLpc) by department from 2012 to 2020 with geo.trend(\"ntl\", \"ln_NTLpc\", by=\"department\") and describe the trends.",
+      "Map the change of the trend (ln_t400NTLpc) between 2012 and 2020 and list the 10 municipalities that grew most.",
+      "Did night-time lights per capita form convergence clubs? Run geo.convergence_clubs(\"ntl\", \"ln_NTLpc\"), map the clubs and explain them.",
+      "Are lights spatially clustered? Run geo.moran and geo.lisa on ln_NTLpc in 2020 and describe the clusters on a map.",
+      "Merge ntl with pop (both on map339) and plot ln_NTLpc against population density in 2020 (geo.combine).",
+    ],
     title: 'Night-time lights per capita',
     scope: '339 municipalities (2015 map) · 2012–2020',
     summary: 'Nine years of VIIRS night-time lights per person for 339 municipalities, with a long-run trend: a satellite proxy for local economic activity.',
@@ -2180,6 +2316,14 @@ title="Night-time lights by department")`,
   },
   {
     id: 'municipalities339-pop', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Plot the 10 fastest-growing municipalities by population, 2001-2020.",
+      "Map the population growth rate between 2001 and 2020 per municipality and summarise it by department.",
+      "What share of Bolivia's population lives in the 10 largest municipalities, and how did it change from 2001 to 2020?",
+      "Map log population density (ln_pop_density) in 2020 and check whether it clusters spatially with geo.moran.",
+      "Did population concentrate or spread out? Run geo.sigma_convergence(\"pop\", \"pop\") and explain the result.",
+    ],
     title: 'Population',
     scope: '339 municipalities (2015 map) · 2001–2020',
     summary: 'Two decades of gridded population estimates and population density for 339 municipalities: the denominator for per-capita indicators and population-weighted averages.',
@@ -2222,6 +2366,14 @@ labels={"pop": "Population"}, title="Population by department, 2001-2020")`,
   },
   {
     id: 'municipalities339-emb', type: 'indicator', section: 'indicators',
+    // "Open in AI Notebook": questions its Colab notebook suggests asking Gemini (English, like the notebook)
+    aiPrompts: [
+      "Explain what the 64 satellite embedding dimensions (A00-A63) are and plot the distribution of a few of them.",
+      "Reduce the area-weighted embeddings (A00-A63) to two principal components and map each component across the municipalities.",
+      "Cluster the municipalities with k-means on the population-weighted embeddings (A00_pw-A63_pw) and map the clusters.",
+      "Merge the embeddings with multidimensional poverty (sdg1_2_mpi, dataset sdg01, ~2012) and find the dimensions most correlated with poverty.",
+      "Predict multidimensional poverty from the embeddings with a cross-validated model (scikit-learn) and report how well it does.",
+    ],
     title: 'Satellite embeddings',
     scope: '339 municipalities (2015 map) · 64 dimensions × 2 weightings · 2017',
     summary: 'What 339 municipalities look like from space, each compressed by a deep-learning model into 64 numbers: features for machine learning.',
