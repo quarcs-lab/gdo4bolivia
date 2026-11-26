@@ -194,7 +194,7 @@ All code below assumes **Google Colab**: each block starts with the line that in
 
 ### A. Without the package
 
-Every file is a plain URL: `https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/<path>`. Use `main` for the latest data, or a release tag (e.g. `v0.9.0`) for a frozen version. pandas, geopandas and plotly are preinstalled in Colab, so nothing needs installing:
+Every file is a plain URL: `https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/<path>`. Use `main` for the latest data, or a release tag (e.g. `v0.9.1`) for a frozen version. pandas, geopandas and plotly are preinstalled in Colab, so nothing needs installing:
 
 ```python
 import pandas as pd
@@ -242,7 +242,7 @@ xw = geo.crosswalk("map343", "department")
 sdg = geo.load("sdg", groups=["department"])     # the Sustainable Development Index
 geo.describe(sdg)                                # summary per year, with labels
 geo.change(sdg, "index_sdg")                     # first-to-last change and ranks
-geo.load("ntl", ref="v0.9.0")                    # a frozen release of the data
+geo.load("ntl", ref="v0.9.1")                    # a frozen release of the data
 geo.map(sdg, "index_sdg", year=[2012, 2024],
         scheme="fisher_jenks")                   # interactive map, both periods
 ```
@@ -502,7 +502,7 @@ The package is documented on its own site, <https://quarcs-lab.github.io/geo4bol
 What the functions share:
 - **Data functions return tables** (pandas, or geopandas with `geometry=True`). **Analysis functions return a result object** with `.fig` (Plotly), `.df`, `.gt` (where a table helps), the numbers by name (`res.moran_i`), `.notes` and `.interpret()`; `map` returns the figure itself.
 - **The first argument of an analysis** is a dataset id (`"sdg"`) or a panel with `geo_id` (and `year`), followed by the variable(s). `year=` picks one year (default: the last with data), `first=` and `last=` two of them, `by=` a grouping column or a coarser scale.
-- **Every function that reads data takes `ref=`**, a git tag or commit of this repository (`ref="v0.9.0"`).
+- **Every function that reads data takes `ref=`**, a git tag or commit of this repository (`ref="v0.9.1"`).
 - **Extras** add the libraries of a few methods: `!pip install -q "geo4bolivia[dynamics]"`, `[mgwr]`, `[panel]`, `[raster]`, or `[all]`. A function that needs one says how to install it.
 - Every function has a docstring: `help(geo.link)`.
 

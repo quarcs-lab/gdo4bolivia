@@ -1,13 +1,13 @@
 [project]
 name = "gdo4bolivia"
-version = "0.9.0"
+version = "0.9.1"
 description = "GeoDevelopment Observatory of Bolivia: the data, their builders, the notebooks and the website"
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{name = "Carlos Mendez"}]
 # The observatory's Python package lives in its own repository (quarcs-lab/geo4bolivia).
 # It reads the files of this repository and provides the build and validate commands.
-dependencies = ["geo4bolivia[all]>=0.9.0"]
+dependencies = ["geo4bolivia[all]>=0.9.1"]
 
 [project.urls]
 Homepage = "https://quarcs-lab.github.io/gdo4bolivia/"
