@@ -185,6 +185,15 @@
             "constraints": {
               "minimum": 0
             }
+          },
+          {
+            "name": "ln_pop_density",
+            "title": "Log population density",
+            "type": "number",
+            "description": "Natural logarithm of the population density (pop_density, people per km²): ln(pop / area in km²), with the population from WorldPop's 1 km mosaic and the area of the municipality's boundary in the 2015 map (geo/boundaries/map339), measured in the project's equal-area projection. Densities run from about 0.1 to 2,850 people per km², so maps and models usually use the log; a difference of 1 is a density 2.7 times higher.",
+            "geo:unit": "ln(people per km²)",
+            "geo:aggregation": "none",
+            "geo:source": "WorldPop via DS4Bolivia; areas from the 2015 map (GeoBolivia via geoBoundaries)"
           }
         ]
       }

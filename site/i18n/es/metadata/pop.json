@@ -20,6 +20,10 @@
   "pop_density": {
    "title": "Densidad de población (personas por km²)",
    "description": "Población (pop) dividida por la superficie del municipio en km², medida sobre su límite en el mapa de 2015 (geo/boundaries/map339) en la proyección de áreas iguales del proyecto (una proyección Albers ajustada a Bolivia). No se cuentan los salares y lagos que el mapa deja fuera de todo municipio (Uyuni, Coipasa, Poopó, Uru Uru)."
+  },
+  "ln_pop_density": {
+   "title": "Logaritmo de la densidad de población",
+   "description": "Logaritmo natural de la densidad de población (pop_density, personas por km²): ln(pop / superficie en km²), con la población del mosaico de 1 km de WorldPop y la superficie del límite del municipio en el mapa de 2015 (geo/boundaries/map339), medida en la proyección de áreas iguales del proyecto. Las densidades van de unas 0.1 a 2 850 personas por km², por lo que los mapas y modelos suelen usar el logaritmo; una diferencia de 1 es una densidad 2.7 veces mayor."
   }
  }
 }
