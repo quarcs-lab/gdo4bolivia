@@ -85,8 +85,16 @@ from geolibre import Map
 BASE = "${RAW_URL}"
 m = Map(center=[-64.5, -16.5], zoom=4.5, height="600px")
 m.add_choropleth(BASE + "data/${dataset}/${scale}/${dataset}_wide.geojson",
-                 column="${column}", name="${name}")
+                 column="${column}", name="${name}",
+                 strokeColor="#ffffff", strokeWidth=0.3)
 m`;
+
+// The tabs that read the wide files: the GeoPackage (gpkg) and GeoLibre (geolibre), on the same column
+// unless GeoLibre maps another ([column, name]; the column of the entry's GeoLibre project)
+const wideTabs = (dataset, scale, column, label, title, geolibre = [column, title]) => ({
+  gpkg: wideCode(dataset, scale, column, label, title),
+  geolibre: geolibreCode(dataset, scale, ...geolibre),
+});
 
 // ====================================================================
 // The three Python packages: geo4bolivia for the fundamentals, two companions for specialised methods
@@ -162,7 +170,7 @@ export const CONTENT_REGISTRY = [
     imageAlt: "Map of the Sustainable Development Index, IDS (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 60.5 – 77.3 (151); Middle 51.7 – 60.5 (173); Low 37.2 – 51.7 (19). Highest: Nuestra Señora de La Paz, Tarija and Sucre.",
     mapAlt: "Two maps of the Sustainable Development Index, IDS (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 60.5 – 77.3 (21 units near 2012, 151 near 2024); Middle 51.7 – 60.5 (93 units near 2012, 173 near 2024); Low 37.2 – 51.7 (229 units near 2012, 19 near 2024). Highest near 2024: Nuestra Señora de La Paz, Tarija and Sucre.",
     map: 'images/indicators/sdg-map.webp',
-    date: '2026-11-17', pinned: true, dataset: 'sdg', scale: 'map343',
+    date: '2026-11-17', pinned: true, dataset: 'sdg', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -200,7 +208,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg": "Sustainable Development Index (0-100)"},
           title="Sustainable Development Index (IDS), ~2024")`,
-      gpkg: wideCode('sdg', 'map343', 'index_sdg_2024', 'Sustainable Development Index, IDS (0-100)', 'Sustainable Development Index, IDS (0-100), ~2024'),
+      ...wideTabs('sdg', 'map343', 'index_sdg_2024', 'Sustainable Development Index, IDS (0-100)', 'Sustainable Development Index, IDS (0-100), ~2024'),
     },
     examples: [
       {
@@ -315,8 +323,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg1": "No poverty index (0-100)"},
           title="SDG 1: No poverty index, ~2024")`,
-      gpkg: wideCode('sdg01', 'map343', 'index_sdg1_2024', 'No poverty index (0-100)', 'No poverty index (0-100), ~2024'),
-      geolibre: geolibreCode('sdg01', 'map343', 'index_sdg1_2024', 'No poverty index (0-100), ~2024'),
+      ...wideTabs('sdg01', 'map343', 'index_sdg1_2024', 'No poverty index (0-100)', 'No poverty index (0-100), ~2024'),
     },
     examples: [
       {
@@ -415,7 +422,7 @@ px.scatter(df, x="ln_t400NTLpc", y="sdg1_2_mpi", hover_name="name",
     imageAlt: "Map of the Zero hunger index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 43.4 – 56.8 (74); Middle 35.6 – 43.4 (190); Low 20.8 – 35.6 (79). Highest: Alto Beni, Santa Rosa and Puerto Villarroel.",
     mapAlt: "Two maps of the Zero hunger index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 43.4 – 56.8 (113 units near 2012, 74 near 2024); Middle 35.6 – 43.4 (113 units near 2012, 190 near 2024); Low 20.8 – 35.6 (117 units near 2012, 79 near 2024). Highest near 2024: Alto Beni, Santa Rosa and Puerto Villarroel.",
     map: 'images/indicators/sdg02-map.webp',
-    date: '2026-11-17', pinned: false, dataset: 'sdg02', scale: 'map343',
+    date: '2026-11-17', pinned: false, dataset: 'sdg02', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -452,7 +459,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg2": "Zero hunger index (0-100)"},
           title="SDG 2: Zero hunger index, ~2024")`,
-      gpkg: wideCode('sdg02', 'map343', 'index_sdg2_2024', 'Zero hunger index (0-100)', 'Zero hunger index (0-100), ~2024'),
+      ...wideTabs('sdg02', 'map343', 'index_sdg2_2024', 'Zero hunger index (0-100)', 'Zero hunger index (0-100), ~2024'),
     },
     examples: [
       {
@@ -539,7 +546,7 @@ px.scatter(dep.sort_values("index_sdg2"), x="index_sdg2", y="department",
     imageAlt: "Map of the Good health and well-being index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 78.3 – 98.9 (207); Middle 64.6 – 78.3 (111); Low 43.6 – 64.6 (25). Highest: Villa Gualberto Villarroel, Carangas and Postrervalle.",
     mapAlt: "Two maps of the Good health and well-being index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 78.3 – 98.9 (53 units near 2012, 207 near 2024); Middle 64.6 – 78.3 (128 units near 2012, 111 near 2024); Low 43.6 – 64.6 (162 units near 2012, 25 near 2024). Highest near 2024: Villa Gualberto Villarroel, Carangas and Postrervalle.",
     map: 'images/indicators/sdg03-map.webp',
-    date: '2026-11-17', pinned: false, dataset: 'sdg03', scale: 'map343',
+    date: '2026-11-17', pinned: false, dataset: 'sdg03', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -576,7 +583,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg3": "Good health and well-being index (0-100)"},
           title="SDG 3: Good health and well-being index, ~2024")`,
-      gpkg: wideCode('sdg03', 'map343', 'index_sdg3_2024', 'Good health and well-being index (0-100)', 'Good health and well-being index (0-100), ~2024'),
+      ...wideTabs('sdg03', 'map343', 'index_sdg3_2024', 'Good health and well-being index (0-100)', 'Good health and well-being index (0-100), ~2024'),
     },
     examples: [
       {
@@ -663,7 +670,7 @@ px.scatter(dep.sort_values("index_sdg3"), x="index_sdg3", y="department",
     imageAlt: "Map of the Quality education index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 62.4 – 94.7 (274); Middle 45.5 – 62.4 (67); Low 18.6 – 45.5 (2). Highest: Nuestra Señora de La Paz, Colcapirhua and Oruro.",
     mapAlt: "Two maps of the Quality education index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 62.4 – 94.7 (25 units near 2012, 274 near 2024); Middle 45.5 – 62.4 (182 units near 2012, 67 near 2024); Low 18.6 – 45.5 (136 units near 2012, 2 near 2024). Highest near 2024: Nuestra Señora de La Paz, Colcapirhua and Oruro.",
     map: 'images/indicators/sdg04-map.webp',
-    date: '2026-11-17', pinned: false, dataset: 'sdg04', scale: 'map343',
+    date: '2026-11-17', pinned: false, dataset: 'sdg04', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -700,7 +707,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg4": "Quality education index (0-100)"},
           title="SDG 4: Quality education index, ~2024")`,
-      gpkg: wideCode('sdg04', 'map343', 'index_sdg4_2024', 'Quality education index (0-100)', 'Quality education index (0-100), ~2024'),
+      ...wideTabs('sdg04', 'map343', 'index_sdg4_2024', 'Quality education index (0-100)', 'Quality education index (0-100), ~2024'),
     },
     examples: [
       {
@@ -791,7 +798,7 @@ px.scatter(dep.sort_values("index_sdg4"), x="index_sdg4", y="department",
     imageAlt: "Map of the Gender equality index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 80.3 – 95.0 (223); Middle 73.0 – 80.3 (103); Low 56.6 – 73.0 (17). Highest: Papel Pampa, Tacachi and El Choro.",
     mapAlt: "Two maps of the Gender equality index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 80.3 – 95.0 (9 units near 2012, 223 near 2024); Middle 73.0 – 80.3 (174 units near 2012, 103 near 2024); Low 56.6 – 73.0 (160 units near 2012, 17 near 2024). Highest near 2024: Papel Pampa, Tacachi and El Choro.",
     map: 'images/indicators/sdg05-map.webp',
-    date: '2026-11-17', pinned: false, dataset: 'sdg05', scale: 'map343',
+    date: '2026-11-17', pinned: false, dataset: 'sdg05', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -828,7 +835,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg5": "Gender equality index (0-100)"},
           title="SDG 5: Gender equality index, ~2024")`,
-      gpkg: wideCode('sdg05', 'map343', 'index_sdg5_2024', 'Gender equality index (0-100)', 'Gender equality index (0-100), ~2024'),
+      ...wideTabs('sdg05', 'map343', 'index_sdg5_2024', 'Gender equality index (0-100)', 'Gender equality index (0-100), ~2024'),
     },
     examples: [
       {
@@ -915,7 +922,7 @@ px.scatter(dep.sort_values("index_sdg5"), x="index_sdg5", y="department",
     imageAlt: "Map of the Clean water and sanitation index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 45.8 – 86.9 (110); Middle 26.9 – 45.8 (206); Low 0.0 – 26.9 (27). Highest: Yacuiba, Porongo and Vallegrande.",
     mapAlt: "Two maps of the Clean water and sanitation index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 45.8 – 86.9 (17 units near 2012, 110 near 2024); Middle 26.9 – 45.8 (136 units near 2012, 206 near 2024); Low 0.0 – 26.9 (190 units near 2012, 27 near 2024). Highest near 2024: Yacuiba, Porongo and Vallegrande.",
     map: 'images/indicators/sdg06-map.webp',
-    date: '2026-11-17', pinned: false, dataset: 'sdg06', scale: 'map343',
+    date: '2026-11-17', pinned: false, dataset: 'sdg06', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -952,7 +959,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg6": "Clean water and sanitation index (0-100)"},
           title="SDG 6: Clean water and sanitation index, ~2024")`,
-      gpkg: wideCode('sdg06', 'map343', 'index_sdg6_2024', 'Clean water and sanitation index (0-100)', 'Clean water and sanitation index (0-100), ~2024'),
+      ...wideTabs('sdg06', 'map343', 'index_sdg6_2024', 'Clean water and sanitation index (0-100)', 'Clean water and sanitation index (0-100), ~2024'),
     },
     examples: [
       {
@@ -1037,7 +1044,7 @@ px.scatter(dep.sort_values("index_sdg6"), x="index_sdg6", y="department",
     imageAlt: "Map of the Affordable and clean energy index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 70.8 – 98.5 (99); Middle 50.3 – 70.8 (158); Low 9.4 – 50.3 (86). Highest: Trinidad, Cobija and Santa Cruz de la Sierra.",
     mapAlt: "Two maps of the Affordable and clean energy index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 70.8 – 98.5 (59 units near 2012, 99 near 2024); Middle 50.3 – 70.8 (124 units near 2012, 158 near 2024); Low 9.4 – 50.3 (160 units near 2012, 86 near 2024). Highest near 2024: Trinidad, Cobija and Santa Cruz de la Sierra.",
     map: 'images/indicators/sdg07-map.webp',
-    date: '2026-11-17', pinned: false, dataset: 'sdg07', scale: 'map343',
+    date: '2026-11-17', pinned: false, dataset: 'sdg07', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -1074,7 +1081,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg7": "Affordable and clean energy index (0-100)"},
           title="SDG 7: Affordable and clean energy index, ~2024")`,
-      gpkg: wideCode('sdg07', 'map343', 'index_sdg7_2024', 'Affordable and clean energy index (0-100)', 'Affordable and clean energy index (0-100), ~2024'),
+      ...wideTabs('sdg07', 'map343', 'index_sdg7_2024', 'Affordable and clean energy index (0-100)', 'Affordable and clean energy index (0-100), ~2024'),
     },
     examples: [
       {
@@ -1159,7 +1166,7 @@ px.scatter(dep.sort_values("index_sdg7"), x="index_sdg7", y="department",
     imageAlt: "Map of the Decent work and economic growth index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 55.4 – 82.0 (132); Middle 39.7 – 55.4 (190); Low 7.8 – 39.7 (21). Highest: Copacabana, Samaipata and Puerto Menor de Rurrenabaque.",
     mapAlt: "Two maps of the Decent work and economic growth index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 55.4 – 82.0 (5 units near 2012, 132 near 2024); Middle 39.7 – 55.4 (93 units near 2012, 190 near 2024); Low 7.8 – 39.7 (245 units near 2012, 21 near 2024). Highest near 2024: Copacabana, Samaipata and Puerto Menor de Rurrenabaque.",
     map: 'images/indicators/sdg08-map.webp',
-    date: '2026-11-17', pinned: false, dataset: 'sdg08', scale: 'map343',
+    date: '2026-11-17', pinned: false, dataset: 'sdg08', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -1196,7 +1203,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg8": "Decent work and economic growth index (0-100)"},
           title="SDG 8: Decent work and economic growth index, ~2024")`,
-      gpkg: wideCode('sdg08', 'map343', 'index_sdg8_2024', 'Decent work and economic growth index (0-100)', 'Decent work and economic growth index (0-100), ~2024'),
+      ...wideTabs('sdg08', 'map343', 'index_sdg8_2024', 'Decent work and economic growth index (0-100)', 'Decent work and economic growth index (0-100), ~2024'),
     },
     examples: [
       {
@@ -1283,7 +1290,7 @@ px.scatter(dep.sort_values("index_sdg8"), x="index_sdg8", y="department",
     imageAlt: "Map of the Industry, innovation and infrastructure index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 48.4 – 78.8 (217); Middle 27.3 – 48.4 (126); Low 1.3 – 27.3 (0). Highest: Nuestra Señora de La Paz, Padcaya and Curahuara de Carangas.",
     mapAlt: "Two maps of the Industry, innovation and infrastructure index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 48.4 – 78.8 (5 units near 2012, 217 near 2024); Middle 27.3 – 48.4 (92 units near 2012, 126 near 2024); Low 1.3 – 27.3 (246 units near 2012, 0 near 2024). Highest near 2024: Nuestra Señora de La Paz, Padcaya and Curahuara de Carangas.",
     map: 'images/indicators/sdg09-map.webp',
-    date: '2026-11-17', pinned: false, dataset: 'sdg09', scale: 'map343',
+    date: '2026-11-17', pinned: false, dataset: 'sdg09', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -1320,7 +1327,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg9": "Index (0-100)"},
           title="SDG 9 index, ~2024")`,
-      gpkg: wideCode('sdg09', 'map343', 'index_sdg9_2024', 'Industry, innovation and infrastructure index (0-100)', 'Industry, innovation and infrastructure index (0-100), ~2024'),
+      ...wideTabs('sdg09', 'map343', 'index_sdg9_2024', 'Industry, innovation and infrastructure index (0-100)', 'Industry, innovation and infrastructure index (0-100), ~2024'),
     },
     examples: [
       {
@@ -1405,7 +1412,7 @@ px.scatter(dep.sort_values("index_sdg9"), x="index_sdg9", y="department",
     imageAlt: "Map of the Reduced inequalities index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 82.6 – 95.2 (135); Middle 73.7 – 82.6 (166); Low 59.6 – 73.7 (42). Highest: Yunguyo del Litoral, Cobija and Riberalta.",
     mapAlt: "Two maps of the Reduced inequalities index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 82.6 – 95.2 (143 units near 2012, 135 near 2024); Middle 73.7 – 82.6 (116 units near 2012, 166 near 2024); Low 59.6 – 73.7 (84 units near 2012, 42 near 2024). Highest near 2024: Yunguyo del Litoral, Cobija and Riberalta.",
     map: 'images/indicators/sdg10-map.webp',
-    date: '2026-11-17', pinned: false, dataset: 'sdg10', scale: 'map343',
+    date: '2026-11-17', pinned: false, dataset: 'sdg10', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -1442,7 +1449,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg10": "Reduced inequalities index (0-100)"},
           title="SDG 10: Reduced inequalities index, ~2024")`,
-      gpkg: wideCode('sdg10', 'map343', 'index_sdg10_2024', 'Reduced inequalities index (0-100)', 'Reduced inequalities index (0-100), ~2024'),
+      ...wideTabs('sdg10', 'map343', 'index_sdg10_2024', 'Reduced inequalities index (0-100)', 'Reduced inequalities index (0-100), ~2024'),
     },
     examples: [
       {
@@ -1529,7 +1536,7 @@ px.scatter(dep.sort_values("index_sdg10"), x="index_sdg10", y="department",
     imageAlt: "Map of the Sustainable cities and communities index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 48.9 – 88.1 (60); Middle 30.7 – 48.9 (192); Low 7.6 – 30.7 (91). Highest: Nuestra Señora de La Paz, El Alto and Tarija.",
     mapAlt: "Two maps of the Sustainable cities and communities index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 48.9 – 88.1 (16 units near 2012, 60 near 2024); Middle 30.7 – 48.9 (83 units near 2012, 192 near 2024); Low 7.6 – 30.7 (244 units near 2012, 91 near 2024). Highest near 2024: Nuestra Señora de La Paz, El Alto and Tarija.",
     map: 'images/indicators/sdg11-map.webp',
-    date: '2026-11-17', pinned: false, dataset: 'sdg11', scale: 'map343',
+    date: '2026-11-17', pinned: false, dataset: 'sdg11', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -1566,7 +1573,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg11": "Index (0-100)"},
           title="SDG 11: Sustainable cities and communities index, ~2024")`,
-      gpkg: wideCode('sdg11', 'map343', 'index_sdg11_2024', 'Sustainable cities and communities index (0-100)', 'Sustainable cities and communities index (0-100), ~2024'),
+      ...wideTabs('sdg11', 'map343', 'index_sdg11_2024', 'Sustainable cities and communities index (0-100)', 'Sustainable cities and communities index (0-100), ~2024'),
     },
     examples: [
       {
@@ -1653,7 +1660,7 @@ px.scatter(dep.sort_values("index_sdg11"), x="index_sdg11", y="department",
     imageAlt: "Map of the Climate action index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 78.6 – 100.0 (118); Middle 61.2 – 78.6 (149); Low 27.4 – 61.2 (76). Highest: El Alto, Villazón and Sipesipe.",
     mapAlt: "Two maps of the Climate action index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 78.6 – 100.0 (243 units near 2012, 118 near 2024); Middle 61.2 – 78.6 (60 units near 2012, 149 near 2024); Low 27.4 – 61.2 (40 units near 2012, 76 near 2024). Highest near 2024: El Alto, Villazón and Sipesipe.",
     map: 'images/indicators/sdg13-map.webp',
-    date: '2026-11-17', pinned: false, dataset: 'sdg13', scale: 'map343',
+    date: '2026-11-17', pinned: false, dataset: 'sdg13', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -1690,7 +1697,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg13": "Climate action index (0-100)"},
           title="SDG 13: Climate action index, ~2024")`,
-      gpkg: wideCode('sdg13', 'map343', 'index_sdg13_2024', 'Climate action index (0-100)', 'Climate action index (0-100), ~2024'),
+      ...wideTabs('sdg13', 'map343', 'index_sdg13_2024', 'Climate action index (0-100)', 'Climate action index (0-100), ~2024'),
     },
     examples: [
       {
@@ -1775,7 +1782,7 @@ px.scatter(dep.sort_values("index_sdg13"), x="index_sdg13", y="department",
     imageAlt: "Map of the Life on land index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 81.0 – 100.0 (56); Middle 60.1 – 81.0 (95); Low 9.0 – 60.1 (192). Highest: Eucaliptus, Santos Mercado and Nueva Esperanza.",
     mapAlt: "Two maps of the Life on land index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 81.0 – 100.0 (50 units near 2012, 56 near 2024); Middle 60.1 – 81.0 (111 units near 2012, 95 near 2024); Low 9.0 – 60.1 (182 units near 2012, 192 near 2024). Highest near 2024: Eucaliptus, Santos Mercado and Nueva Esperanza.",
     map: 'images/indicators/sdg15-map.webp',
-    date: '2026-11-17', pinned: false, dataset: 'sdg15', scale: 'map343',
+    date: '2026-11-17', pinned: false, dataset: 'sdg15', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -1812,7 +1819,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg15": "Life on land index (0-100)"},
           title="SDG 15: Life on land index, ~2024")`,
-      gpkg: wideCode('sdg15', 'map343', 'index_sdg15_2024', 'Life on land index (0-100)', 'Life on land index (0-100), ~2024'),
+      ...wideTabs('sdg15', 'map343', 'index_sdg15_2024', 'Life on land index (0-100)', 'Life on land index (0-100), ~2024'),
     },
     examples: [
       {
@@ -1897,7 +1904,7 @@ px.scatter(dep.sort_values("index_sdg15"), x="index_sdg15", y="department",
     imageAlt: "Map of the Peace, justice and strong institutions index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 82.1 – 96.3 (211); Middle 66.9 – 82.1 (72); Low 32.9 – 66.9 (60). Highest: San Pedro, Tomina and Porvenir.",
     mapAlt: "Two maps of the Peace, justice and strong institutions index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 82.1 – 96.3 (79 units near 2012, 211 near 2024); Middle 66.9 – 82.1 (190 units near 2012, 72 near 2024); Low 32.9 – 66.9 (74 units near 2012, 60 near 2024). Highest near 2024: San Pedro, Tomina and Porvenir.",
     map: 'images/indicators/sdg16-map.webp',
-    date: '2026-11-17', pinned: false, dataset: 'sdg16', scale: 'map343',
+    date: '2026-11-17', pinned: false, dataset: 'sdg16', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -1934,7 +1941,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg16": "Index (0-100)"},
           title="SDG 16 index, ~2024")`,
-      gpkg: wideCode('sdg16', 'map343', 'index_sdg16_2024', 'Peace, justice and strong institutions index (0-100)', 'Peace, justice and strong institutions index (0-100), ~2024'),
+      ...wideTabs('sdg16', 'map343', 'index_sdg16_2024', 'Peace, justice and strong institutions index (0-100)', 'Peace, justice and strong institutions index (0-100), ~2024'),
     },
     examples: [
       {
@@ -2019,7 +2026,7 @@ px.scatter(dep.sort_values("index_sdg16"), x="index_sdg16", y="department",
     imageAlt: "Map of the Partnerships for the goals index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 46.1 – 100.0 (83); Middle 24.5 – 46.1 (125); Low 0.0 – 24.5 (135). Highest: Carangas, La Rivera and Coipasa.",
     mapAlt: "Two maps of the Partnerships for the goals index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 46.1 – 100.0 (51 units near 2012, 83 near 2024); Middle 24.5 – 46.1 (124 units near 2012, 125 near 2024); Low 0.0 – 24.5 (168 units near 2012, 135 near 2024). Highest near 2024: Carangas, La Rivera and Coipasa.",
     map: 'images/indicators/sdg17-map.webp',
-    date: '2026-11-17', pinned: false, dataset: 'sdg17', scale: 'map343',
+    date: '2026-11-17', pinned: false, dataset: 'sdg17', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -2056,7 +2063,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           center={"lat": -16.3, "lon": -64}, zoom=4,
           labels={"index_sdg17": "Partnerships for the goals index (0-100)"},
           title="SDG 17: Partnerships for the goals index, ~2024")`,
-      gpkg: wideCode('sdg17', 'map343', 'index_sdg17_2024', 'Partnerships for the goals index (0-100)', 'Partnerships for the goals index (0-100), ~2024'),
+      ...wideTabs('sdg17', 'map343', 'index_sdg17_2024', 'Partnerships for the goals index (0-100)', 'Partnerships for the goals index (0-100), ~2024'),
     },
     examples: [
       {
@@ -2139,7 +2146,7 @@ px.scatter(dep.sort_values("index_sdg17"), x="index_sdg17", y="department",
     imageAlt: 'Map of log night-time lights per capita in 2020 across Bolivia’s 339 municipalities of the 2015 map in three natural-break classes: highest across Santa Cruz, the Chaco and the southern altiplano, lowest in northern La Paz, parts of Pando and clusters in the Potosí and Chuquisaca valleys',
     map: 'images/indicators/ntl-map.webp',
     mapAlt: 'Map of log night-time lights per capita in 2020 across Bolivia’s 339 municipalities of the 2015 map in three natural-break classes: highest across Santa Cruz, the Chaco and the southern altiplano, lowest in northern La Paz, parts of Pando and clusters in the Potosí and Chuquisaca valleys. Legend: High 14.5 to 17.9 (108 municipalities), Middle 13.0 to 14.5 (143), Low 10.5 to 13.0 (77), no data 15.',
-    date: '2026-10-28', pinned: false, dataset: 'ntl', scale: 'map339',
+    date: '2026-10-28', pinned: false, dataset: 'ntl', scale: 'map339', geolibre: true,
     code: {
       python: `${PYTHON_SETUP}
 
@@ -2168,7 +2175,7 @@ trend["department"] = trend["department_id"].map(units.set_index("geo_id")["name
 px.line(trend, x="year", y="ln_t400NTLpc", color="department",
 labels={"ln_t400NTLpc": "Log lights per capita (trend)"},
 title="Night-time lights by department")`,
-      gpkg: wideCode('ntl', 'map339', 'ln_NTLpc_2020', 'Log night-time lights per capita', 'Log night-time lights per capita, 2020'),
+      ...wideTabs('ntl', 'map339', 'ln_NTLpc_2020', 'Log night-time lights per capita', 'Log night-time lights per capita, 2020'),
     },
   },
   {
@@ -2183,7 +2190,7 @@ title="Night-time lights by department")`,
     imageAlt: 'Map of population density in 2020 across Bolivia’s 339 municipalities of the 2015 map in three natural-break classes on a log scale: densest in the La Paz–El Alto, Cochabamba, Santa Cruz, Sucre and Tarija urban areas, intermediate across the altiplano and valleys, sparsest in the northern and eastern lowlands',
     map: 'images/indicators/pop-map.webp',
     mapAlt: 'Map of population density in 2020 across Bolivia’s 339 municipalities of the 2015 map in three natural-break classes on a log scale: densest in the La Paz–El Alto, Cochabamba, Santa Cruz, Sucre and Tarija urban areas, intermediate across the altiplano and valleys, sparsest in the northern and eastern lowlands. Legend: High 42 to 2,860 people per km² (55 municipalities), Middle 4 to 42 (199), Low 0 to 4 (79), no data 10.',
-    date: '2026-10-28', pinned: false, dataset: 'pop', scale: 'map339',
+    date: '2026-10-28', pinned: false, dataset: 'pop', scale: 'map339', geolibre: { variable: 'ln_pop_density' },
     code: {
       python: `${PYTHON_SETUP}
 
@@ -2209,7 +2216,8 @@ dep = pop.groupby(["year", "department_id"], as_index=False)["pop"].sum()
 dep["department"] = dep["department_id"].map(units.set_index("geo_id")["name"])
 px.line(dep, x="year", y="pop", color="department",
 labels={"pop": "Population"}, title="Population by department, 2001-2020")`,
-      gpkg: wideCode('pop', 'map339', 'pop_density_2020', 'Population density (people per km²)', 'Population density (people per km²), 2020'),
+      ...wideTabs('pop', 'map339', 'pop_density_2020', 'Population density (people per km²)', 'Population density (people per km²), 2020',
+                  ['ln_pop_density_2020', 'Log population density, 2020']),
     },
   },
   {
@@ -2224,7 +2232,7 @@ labels={"pop": "Population"}, title="Population by department, 2001-2020")`,
     imageAlt: 'Map of satellite embedding dimension A00 (area-weighted) in 2017 across Bolivia’s 339 municipalities of the 2015 map in three natural-break classes: low across the altiplano and western valleys, middle across Beni and Pando, high across Santa Cruz and the Chaco',
     map: 'images/indicators/emb-map.webp',
     mapAlt: 'Map of satellite embedding dimension A00 (area-weighted) in 2017 across Bolivia’s 339 municipalities of the 2015 map in three natural-break classes: low across the altiplano and western valleys, middle across Beni and Pando, high across Santa Cruz and the Chaco. Legend: High 0.046 to 0.164 (49 municipalities), Middle −0.055 to 0.046 (94), Low −0.165 to −0.055 (190), no data 10.',
-    date: '2026-10-28', pinned: false, dataset: 'emb', scale: 'map339',
+    date: '2026-10-28', pinned: false, dataset: 'emb', scale: 'map339', geolibre: true,
     code: {
       python: `${PYTHON_SETUP}
 from sklearn.decomposition import PCA
@@ -2250,7 +2258,7 @@ emb = pd.read_csv(BASE + "data/emb/map339/emb.csv")   # A00-A63, A00_pw-A63_pw
 px.box(emb.filter(regex=r"^A\\d{2}$"),
        labels={"variable": "Dimension", "value": "Value"},
        title="Satellite embeddings, 2017")`,
-      gpkg: wideCode('emb', 'map339', 'A00_2017', 'Embedding A00 (area-weighted)', 'Embedding A00 (area-weighted), 2017'),
+      ...wideTabs('emb', 'map339', 'A00_2017', 'Embedding A00 (area-weighted)', 'Embedding A00 (area-weighted), 2017'),
     },
   },
 

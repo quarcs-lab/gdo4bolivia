@@ -1338,11 +1338,12 @@ const datasetFolderUrl = (item) => `${REPO_URL}/tree/main/data/${item.dataset ||
 // file), so the browser saves them instead of showing them; code reads them from RAW_URL
 const WIDE_FORMATS = [['gpkg', 'GeoPackage'], ['geojson', 'GeoJSON']];
 const wideFileUrl = (dataset, scale, ext) => `data/${dataset}/${scale}/${dataset}_wide.${ext}`;
-// "Open in GeoLibre" (indicators with `geolibre: true`): GeoLibre, the open-source GIS in the browser,
-// opens the project file site/geolibre.mjs writes (the wide GeoJSON, styled on the headline variable).
+// "Open in GeoLibre" (indicators with `geolibre`): GeoLibre, the open-source GIS in the browser, opens the
+// project file site/geolibre.mjs writes (the wide GeoJSON, styled on the headline variable; in the page's
+// language, since the Spanish site has its own copy, labels included).
 // The project and the data are read from the live site (SITE_URL), whatever <base> this build has
 const geolibreUrl = (dataset, { embed = false } = {}) =>
-  `${GEOLIBRE_APP}?url=${encodeURIComponent(SITE_URL + projectPath(dataset))}&welcome=0${embed ? '&layout=viewer' : ''}`;
+  `${GEOLIBRE_APP}?url=${encodeURIComponent(SITE_URL + projectPath(dataset, language()))}&welcome=0${embed ? '&layout=viewer' : ''}`;
 
 // A row of the database table that opens a folder on GitHub: one link (the dataset's name), stretched
 // over the whole row, so the row is one target for the mouse and one stop for the keyboard

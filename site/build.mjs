@@ -91,7 +91,8 @@ writeFileSync(join(OUT, '.nojekyll'), '');
 // `geolibre: true`, its wide GeoJSON styled as GeoLibre would, opened by web.geolibre.app from this site
 {
   const { writeGeolibreProjects } = await import(pathToFileURL(join(SITE, 'geolibre.mjs')));
-  writeGeolibreProjects({ registry: C.CONTENT_REGISTRY, readJSON, write, siteUrl: SITE_URL, siteName: C.SITE_NAME });
+  const langs = existsSync(join(SITE, 'i18n')) ? readdirSync(join(SITE, 'i18n')).filter((l) => existsSync(join(SITE, 'i18n', l, 'content.json'))) : [];
+  writeGeolibreProjects({ registry: C.CONTENT_REGISTRY, readJSON, write, siteUrl: SITE_URL, siteName: C.SITE_NAME, langs });
 }
 
 // --------------------------------------------------------------------------- responsive images

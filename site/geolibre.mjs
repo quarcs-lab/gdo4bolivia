@@ -4,11 +4,13 @@
 // https://web.geolibre.app/?url=<that file> (a new tab, or the embedded viewer of the indicator page).
 // Generic: everything comes from project.yaml, content.js and the datasets' metadata.
 //
-// The project has one layer, the dataset's wide GeoJSON (data/<dataset>/<scale>/<dataset>_wide.geojson,
-// one feature per unit, a property per variable and year), fetched by GeoLibre from this website, and
-// styled as GeoLibre styles a graduated layer by default: five natural-breaks classes in its viridis
-// ramp, on the headline variable and year of the dataset (`geo:map`). Every other <variable>_<year>
-// stays in the layer, so users can restyle it in GeoLibre's Style panel.
+// The project draws the dataset's wide GeoJSON (data/<dataset>/<scale>/<dataset>_wide.geojson, one feature
+// per unit, a property per variable and year), fetched by GeoLibre from this website, styled as GeoLibre
+// styles a graduated layer by default: five natural-breaks classes in its viridis ramp, on the headline
+// variable (`geo:map`, or the entry's `geolibre: { variable, year }`). A variable with several years opens
+// as two layers, its first and its last year in classes pooled over both, side by side with GeoLibre's
+// swipe. Every other <variable>_<year> stays in the layers, so users can restyle them in the Style panel.
+// The Spanish site links to a Spanish copy (labels from site/i18n/es/).
 //
 // GeoLibre draws a graduated layer from the class breaks stored in the project (it does not compute
 // them when a project opens), so they are computed here with a port of GeoLibre's own natural breaks
@@ -17,7 +19,7 @@
 
 export const GEOLIBRE_APP = 'https://web.geolibre.app/';
 export const GEOLIBRE_DIR = 'geolibre';
-export const projectPath = (dataset) => `${GEOLIBRE_DIR}/${dataset}.geolibre.json`;
+export const projectPath = (dataset, lang = 'en') => `${GEOLIBRE_DIR}/${dataset}${lang === 'en' ? '' : `.${lang}`}.geolibre.json`;
 
 const CLASS_COUNT = 5;
 const SCHEME = 'natural-breaks';
@@ -106,26 +108,47 @@ const bboxOf = (features) => {
   return b.map((x) => Number(x.toFixed(4)));
 };
 
-export function geolibreProject({ item, pkg, geojson, siteUrl, siteName }) {
+// The variable GeoLibre maps: the dataset's headline (geo:map), unless the registry entry names another,
+// `geolibre: { variable, year }` (e.g. a log column where our own maps classify on the log scale)
+export function geolibreView(item, pkg) {
+  const own = typeof item.geolibre === 'object' ? item.geolibre : {};
+  const view = { ...pkg['geo:map'], ...own };
+  if (!view.variable || !view.year) throw new Error(`${pkg.name}: geo:map needs a variable and a year for GeoLibre`);
+  return view;
+}
+
+// Interface text of the projects, by language (the variables' labels come from the metadata and its translation)
+const TEXT = {
+  en: { department: 'Department', abstract: 'One feature per unit, a property per variable and year (<variable>_<year>); restyle any of them in the Style panel.' },
+  es: { department: 'Departamento', abstract: 'Una entidad por unidad y una propiedad por variable y año (<variable>_<año>); cambie el estilo de cualquiera en el panel Estilo.' },
+};
+
+// One project: the dataset's wide GeoJSON styled on the variable in its last year and, when the variable has
+// an earlier year, also in its first, the two in classes pooled over both years and opened side by side with
+// GeoLibre's swipe (split map)
+export function geolibreProject({ item, pkg, geojson, siteUrl, siteName, lang = 'en', tr = null }) {
   const res = pkg.resources[0];
-  const view = pkg['geo:map'];
-  if (!view?.variable || !view?.year) throw new Error(`${pkg.name}: geo:map needs a variable and a year for GeoLibre`);
-  const column = `${view.variable}_${view.year}`;
+  const view = geolibreView(item, pkg);
   const fields = Object.fromEntries(res.schema.fields.map((f) => [f.name, f]));
-  const label = fields[view.variable]?.title || view.variable;
-  const values = geojson.features.map((f) => f.properties[column]);
-  if (!values.some((v) => typeof v === 'number')) throw new Error(`${pkg.name}: ${column} is not in ${res['geo:geojson']}`);
+  const label = tr?.meta?.fields?.[view.variable]?.title || fields[view.variable]?.title || view.variable;
+  const yearLabel = (y) => (pkg['geo:map']?.panels ? `~${y}` : `${y}`);   // the Atlas's two periods are nominal years
+  const numeric = (y) => geojson.features.some((f) => typeof f.properties[`${view.variable}_${y}`] === 'number');
+  const years = Object.keys(geojson.features[0].properties)
+    .map((k) => k.match(new RegExp(`^${view.variable}_(\\d{4})$`))?.[1]).filter(Boolean).map(Number).filter(numeric).sort();
+  if (!years.includes(Number(view.year))) throw new Error(`${pkg.name}: ${view.variable}_${view.year} is not in ${res['geo:geojson']}`);
+  const shown = [...new Set([years[0], Number(view.year)])];   // first and last year, or just the one
+  const values = shown.flatMap((y) => geojson.features.map((f) => f.properties[`${view.variable}_${y}`]));
+  const stops = graduatedStops(values);
+  const text = TEXT[lang] || TEXT.en;
   const bbox = bboxOf(geojson.features);
   const creators = pkg.sources.filter((s) => s['geo:role'] === 'original').map((s) => s['geo:creator']).filter(Boolean);
-  const pageUrl = `${siteUrl}${item.section}/${item.id}/`;
-  const layerId = `${pkg.name}-wide`;
-  return {
-    version: '0.2.0',
-    name: `${item.title} · ${siteName}`,
-    mapView: { center: [Number(((bbox[0] + bbox[2]) / 2).toFixed(4)), Number(((bbox[1] + bbox[3]) / 2).toFixed(4))], zoom: 5, bearing: 0, pitch: 0, bbox },
-    layers: [{
-      id: layerId,
-      name: `${label}, ${view.year}`,
+  const pageUrl = `${siteUrl}${item.section}/${item.id}/${lang === 'en' ? '' : `?lang=${lang}`}`;
+  const title = tr?.item?.title || item.title;
+  const layer = (year) => {
+    const column = `${view.variable}_${year}`;
+    return {
+      id: `${pkg.name}-${year}`,
+      name: `${label}, ${yearLabel(year)}`,
       type: 'geojson',
       source: { type: 'geojson', data: `${siteUrl}${res['geo:geojson']}` },
       visible: true,
@@ -135,40 +158,72 @@ export function geolibreProject({ item, pkg, geojson, siteUrl, siteName }) {
         fillColor: '#3b82f6', fillOpacity: 0.8, strokeColor: '#ffffff', strokeWidth: 0.4, strokeOpacity: 0.6,
         vectorStyleMode: 'graduated', vectorStyleProperty: column, vectorStyleClassCount: CLASS_COUNT,
         vectorStyleColorRamp: RAMP, vectorStyleClassificationScheme: SCHEME,
-        vectorStyleStops: graduatedStops(values), vectorStyleExpression: '',
+        vectorStyleStops: stops, vectorStyleExpression: '',
       },
       // the click popup shows in GeoLibre's Identify mode; the hover tooltip shows the name and value at once
       popup: {
         click: true, hover: true, titleField: 'name', showFeatureId: false,
         fields: [
-          { field: 'department', label: 'Department' },
-          { field: column, label: `${label}, ${view.year}`, kind: 'number', format: { decimals: 2 }, hover: true },
+          { field: 'department', label: text.department },
+          { field: column, label: `${label}, ${yearLabel(year)}`, kind: 'number', format: { decimals: 2 }, hover: true },
           { field: 'geo_id', label: 'geo_id' },
         ],
       },
       descriptiveMetadata: {
-        title: pkg.title,
-        abstract: `${pkg.description} One feature per unit, a property per variable and year (<variable>_<year>); restyle any of them in the Style panel.`,
+        title: tr?.meta?.title || pkg.title,
+        abstract: `${tr?.item?.summary || pkg.description} ${text.abstract}`,
         license: pkg.licenses?.[0]?.name || '',
         attribution: [...creators, siteName].join('; '),
         links: [{ href: pageUrl }],
       },
-    }],
-    selectedLayerId: layerId,
-    // the map's legend panel, open (GeoLibre draws it from the layer's classes)
-    legend: { title: `${label}, ${view.year}`, groupByLayer: false, order: [], overrides: {}, panelVisible: true, panelPosition: 'bottom-right' },
+    };
   };
+  const layers = shown.map(layer);
+  const project = {
+    version: '0.2.0',
+    name: `${title} · ${siteName}`,
+    mapView: { center: [Number(((bbox[0] + bbox[2]) / 2).toFixed(4)), Number(((bbox[1] + bbox[3]) / 2).toFixed(4))], zoom: 5, bearing: 0, pitch: 0, bbox },
+    layers,
+    selectedLayerId: layers.at(-1).id,
+    // the map's legend panel, open (GeoLibre draws it from the layers' classes, the same in both years)
+    legend: { title: `${label}, ${shown.map(yearLabel).join(' | ')}`, groupByLayer: false, order: [], overrides: {}, panelVisible: true, panelPosition: 'bottom-right' },
+  };
+  if (layers.length === 2) {
+    // GeoLibre's swipe: the first year on the left, the last on the right. A project's plugin block replaces
+    // the active plugins, so it lists the ones GeoLibre activates by default (layer control, deck.gl, effects)
+    project.plugins = {
+      manifestUrls: [],
+      activePluginIds: ['maplibre-layer-control', 'maplibre-deckgl-viz', 'maplibre-atmosphere-effects', 'maplibre-gl-swipe'],
+      mapControlPositions: { 'maplibre-gl-swipe': 'top-left' },
+      settings: { 'maplibre-gl-swipe': { orientation: 'vertical', position: 50, collapsed: false, active: true,
+        leftLayers: [layers[0].id], rightLayers: [layers[1].id], isDragging: false } },
+    };
+  }
+  return project;
 }
 
-// Writes the projects of the flagged indicators into the site; returns their number
-export function writeGeolibreProjects({ registry, readJSON, write, siteUrl, siteName }) {
+// Writes the projects of the flagged indicators into the site, one per language (geolibre/<dataset>.geolibre.json,
+// geolibre/<dataset>.<lang>.geolibre.json from site/i18n/<lang>/); returns their number
+export function writeGeolibreProjects({ registry, readJSON, write, siteUrl, siteName, langs = [] }) {
   let n = 0;
+  const optional = (p) => { try { return readJSON(p); } catch { return null; } };
   for (const item of registry.filter((i) => i.type === 'indicator' && i.geolibre)) {
     for (const dataset of item.datasets || [item.dataset]) {
       const pkg = readJSON(`data/${dataset}/datapackage.json`);
       const geojson = readJSON(pkg.resources[0]['geo:geojson']);
-      write(projectPath(dataset), `${JSON.stringify(geolibreProject({ item, pkg, geojson, siteUrl, siteName }), null, 1)}\n`);
-      n += 1;
+      // the code tab maps the same column as the project
+      const view = geolibreView(item, pkg);
+      if (item.code?.geolibre && !item.code.geolibre.includes(`"${view.variable}_${view.year}"`)) {
+        throw new Error(`${item.id}: its geolibre code tab does not map ${view.variable}_${view.year}, as its GeoLibre project does`);
+      }
+      for (const lang of ['en', ...langs]) {
+        const tr = lang === 'en' ? null : {
+          item: optional(`site/i18n/${lang}/content.json`)?.items?.[item.id],
+          meta: optional(`site/i18n/${lang}/metadata/${dataset}.json`),
+        };
+        write(projectPath(dataset, lang), `${JSON.stringify(geolibreProject({ item, pkg, geojson, siteUrl, siteName, lang, tr }), null, 1)}\n`);
+        n += 1;
+      }
     }
   }
   return n;
