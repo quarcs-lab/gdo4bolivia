@@ -73,6 +73,21 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           title="${title}")`;
 
 
+// "Open in GeoLibre" in a notebook (indicators with geolibre: true): GeoLibre's own widget, the
+// open-source GIS in the browser, with the wide GeoJSON by URL. Its add_choropleth classifies the
+// column itself (equal intervals by default; the website's project uses natural breaks)
+const geolibreCode = (dataset, scale, column, name) => `!pip install -q geolibre
+from geolibre import Map
+
+# GeoLibre in the notebook: the wide GeoJSON, one feature per municipality
+# and a column per variable and year (<variable>_<year>); restyle any of
+# them in the Style panel
+BASE = "${RAW_URL}"
+m = Map(center=[-64.5, -16.5], zoom=4.5, height="600px")
+m.add_choropleth(BASE + "data/${dataset}/${scale}/${dataset}_wide.geojson",
+                 column="${column}", name="${name}")
+m`;
+
 // ====================================================================
 // The three Python packages: geo4bolivia for the fundamentals, two companions for specialised methods
 // ====================================================================
@@ -263,7 +278,7 @@ px.bar(out.nlargest(12, "points"), x="points", y="name",
     imageAlt: "Map of the No poverty index (0-100) near 2024 across Bolivia's 343 municipalities and indigenous autonomies in three natural-break classes: High 55.9 – 91.7 (155); Middle 34.1 – 55.9 (152); Low 0.7 – 34.1 (36). Highest: Nuestra Señora de La Paz, Bermejo and Colcapirhua.",
     mapAlt: "Two maps of the No poverty index (0-100) near 2012 and near 2024 across Bolivia's 343 municipalities and indigenous autonomies, in three natural-break classes shared by both periods. Legend: High 55.9 – 91.7 (55 units near 2012, 155 near 2024); Middle 34.1 – 55.9 (107 units near 2012, 152 near 2024); Low 0.7 – 34.1 (181 units near 2012, 36 near 2024). Highest near 2024: Nuestra Señora de La Paz, Bermejo and Colcapirhua.",
     map: 'images/indicators/sdg01-map.webp',
-    date: '2026-11-17', pinned: true, dataset: 'sdg01', scale: 'map343',
+    date: '2026-11-17', pinned: true, dataset: 'sdg01', scale: 'map343', geolibre: true,
     notice: "Both periods are stored at nominal years: 2012 holds the Atlas's initial values (~2012) and 2024 its final values (~2024). Each indicator's actual reference years (e.g. 2008 and 2023 for the health survey, three-year averages for volatile indicators) are listed in its description under Variables. The four indigenous autonomies and municipalities created after 2012 have values in both periods.",
     code: {
       python: `${PYTHON_SETUP}
@@ -301,6 +316,7 @@ px.choropleth_map(gdf, geojson=gdf.geometry, locations=gdf.index,
           labels={"index_sdg1": "No poverty index (0-100)"},
           title="SDG 1: No poverty index, ~2024")`,
       gpkg: wideCode('sdg01', 'map343', 'index_sdg1_2024', 'No poverty index (0-100)', 'No poverty index (0-100), ~2024'),
+      geolibre: geolibreCode('sdg01', 'map343', 'index_sdg1_2024', 'No poverty index (0-100), ~2024'),
     },
     examples: [
       {

@@ -19,6 +19,7 @@ Variables, sources, license and references come from the metadata; do not repeat
   mapAlt: '<imageAlt>. Legend: High a to b (n units), Middle ..., Low ..., no data k.',
   date: '2026-10-29', pinned: false,
   dataset: 'ntl', scale: 'map339',                           // or datasets: ['a', 'b'] for one page of several
+  geolibre: true,                                            // optional: "Open in GeoLibre" (needs geo:map), with a geolibre code tab
   notice: 'Optional warning shown under the description.',
   code: { python: `...`, pandas: `...` },
   examples: [                                                // optional: short recipes under the code tabs
@@ -73,6 +74,8 @@ download links: the page no longer uses them.
 - [ ] Cite this dataset lists the original sources first, then the observatory, then the other sources.
 - [ ] The entry has `scale` and a `gpkg` code tab (`wideCode(...)`); the sidebar's GeoPackage and GeoJSON buttons
       download `data/<dataset>/<scale>/<dataset>_wide.*` (built by `geo4bolivia build`).
+- [ ] With `geolibre: true`: a `geolibre` code tab (`geolibreCode(...)`); after the push, "Open in GeoLibre" opens the
+      map styled on `geo:map`'s variable and year, and the page's GeoLibre switch shows it embedded.
 - [ ] The metadata loads (no "could not be loaded" notice) and the console has no errors.
 - [ ] No horizontal scroll at 390 px width.
 - [ ] The card image appears in the Indicators section, and the Database architecture

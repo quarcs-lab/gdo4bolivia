@@ -297,5 +297,14 @@
  "Colab · the wide GeoPackage": "Colab · el GeoPackage ancho",
  "(wide, with boundaries)": "(formato ancho, con límites)",
  "Download, wide and ready to map": "Descargar, en formato ancho y listo para mapear",
- "One row per municipality and a column per variable and year (e.g. {col}), with boundaries. The GeoPackage also describes every column (table variables); the GeoJSON has lighter boundaries for web maps.": "Una fila por municipio y una columna por variable y año (p. ej., {col}), con límites. El GeoPackage también describe cada columna (tabla variables); el GeoJSON tiene límites más livianos para mapas web."
+ "One row per municipality and a column per variable and year (e.g. {col}), with boundaries. The GeoPackage also describes every column (table variables); the GeoJSON has lighter boundaries for web maps.": "Una fila por municipio y una columna por variable y año (p. ej., {col}), con límites. El GeoPackage también describe cada columna (tabla variables); el GeoJSON tiene límites más livianos para mapas web.",
+ "Python · GeoLibre": "Python · GeoLibre",
+ "Colab · GeoLibre": "Colab · GeoLibre",
+ "Open in GeoLibre": "Abrir en GeoLibre",
+ "Map": "Mapa",
+ "Our map": "Nuestro mapa",
+ "{title} in GeoLibre": "{title} en GeoLibre",
+ "GeoLibre, an open-source GIS by opengeos, draws the wide GeoJSON of this dataset from this site. Use the Layers and Style panels to map any other variable and year.": "GeoLibre, un SIG de código abierto de opengeos, dibuja el GeoJSON ancho de este conjunto de datos desde este sitio. Use los paneles de capas y de estilo para mapear cualquier otra variable y año.",
+ "Open full screen": "Abrir en pantalla completa",
+ "GeoLibre, an open-source GIS in the browser, opens the map with every variable and year, ready to restyle, filter, query and export.": "GeoLibre, un SIG de código abierto en el navegador, abre el mapa con todas las variables y años, listo para cambiar su estilo, filtrarlo, consultarlo y exportarlo."
 }

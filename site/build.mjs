@@ -86,6 +86,14 @@ if (FULL) {
 }
 writeFileSync(join(OUT, '.nojekyll'), '');
 
+// --------------------------------------------------------------------------- GeoLibre projects
+// "Open in GeoLibre" (site/geolibre.mjs): geolibre/<dataset>.geolibre.json for every indicator with
+// `geolibre: true`, its wide GeoJSON styled as GeoLibre would, opened by web.geolibre.app from this site
+{
+  const { writeGeolibreProjects } = await import(pathToFileURL(join(SITE, 'geolibre.mjs')));
+  writeGeolibreProjects({ registry: C.CONTENT_REGISTRY, readJSON, write, siteUrl: SITE_URL, siteName: C.SITE_NAME });
+}
+
 // --------------------------------------------------------------------------- responsive images
 // Smaller copies of every WebP under images/ (but the hero's, hero-*, which the globe needs at full size),
 // so a card or band loads the width it is shown at: assets/img/<path>-<w>.webp. Registry items' pictures

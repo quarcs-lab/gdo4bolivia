@@ -8,6 +8,7 @@ import {
   CONTENT_REGISTRY, REDIRECTS, PEOPLE, CONTACTS, CITATION_APA, CITATION_BIB, THREE_PACKAGES_EXAMPLE,
 } from './content.js';
 import { snippetPath, sharedSnippetPath } from './snippets.js';
+import { GEOLIBRE_APP, projectPath } from '../geolibre.mjs';
 import { LANGUAGES, detectLanguage, loadLanguage, setLanguage, language, t, localized, fetchMetadataTranslation, translatePackage } from './i18n.js';
 
 // The content in the current language (site/i18n/<lang>/); CONTENT_REGISTRY is the English source
@@ -464,9 +465,9 @@ const CodeBlock = ({ code, language = 'python', title, colab = false }) => {
 };
 
 // Every dataset can be loaded with the package or straight from its URL; both run in Google Colab
-const CODE_TABS = [['python', 'Python · package'], ['pandas', 'Python · URL'], ['gpkg', 'Python · GeoPackage']];
-const CODE_LANG = { pandas: 'python', gpkg: 'python' };
-const CODE_TITLE = { python: 'Colab · with geo4bolivia', pandas: 'Colab · without the package', gpkg: 'Colab · the wide GeoPackage' };
+const CODE_TABS = [['python', 'Python · package'], ['pandas', 'Python · URL'], ['gpkg', 'Python · GeoPackage'], ['geolibre', 'Python · GeoLibre']];
+const CODE_LANG = { pandas: 'python', gpkg: 'python', geolibre: 'python' };
+const CODE_TITLE = { python: 'Colab · with geo4bolivia', pandas: 'Colab · without the package', gpkg: 'Colab · the wide GeoPackage', geolibre: 'Colab · GeoLibre' };
 
 const CodeTabs = ({ code, idPrefix, itemId, slot = '' }) => {
   const tabs = CODE_TABS.filter(([k]) => code[k]);
@@ -1277,9 +1278,18 @@ const ItemCard = ({ item, showImage = true }) => {
         <div className="flex flex-wrap gap-1.5 mb-4">
           {item.tags.slice(0, 4).map((t) => <Tag key={t} type={item.type}>{t}</Tag>)}
         </div>
-        <span className={`inline-flex items-center gap-1 text-sm font-semibold ${s.text}`}>
-          {t('View details')} <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-        </span>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className={`inline-flex items-center gap-1 text-sm font-semibold ${s.text}`}>
+            {t('View details')} <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+          </span>
+          {item.geolibre && item.dataset && (
+            <a href={geolibreUrl(item.dataset)} target="_blank" rel="noopener noreferrer"
+               className="relative z-10 inline-flex items-center gap-1 text-xs font-semibold text-salt-200 bg-white/5 border border-white/15 rounded-full px-2.5 py-1 hover:border-brand-turquoise/60 hover:text-white transition-colors">
+              {t('Open in GeoLibre')} <ExternalLink size={11} />
+              <span className="sr-only"> {t('(opens in a new tab)')}</span>
+            </a>
+          )}
+        </div>
       </div>
     </article>
   );
@@ -1328,10 +1338,15 @@ const datasetFolderUrl = (item) => `${REPO_URL}/tree/main/data/${item.dataset ||
 // file), so the browser saves them instead of showing them; code reads them from RAW_URL
 const WIDE_FORMATS = [['gpkg', 'GeoPackage'], ['geojson', 'GeoJSON']];
 const wideFileUrl = (dataset, scale, ext) => `data/${dataset}/${scale}/${dataset}_wide.${ext}`;
+// "Open in GeoLibre" (indicators with `geolibre: true`): GeoLibre, the open-source GIS in the browser,
+// opens the project file site/geolibre.mjs writes (the wide GeoJSON, styled on the headline variable).
+// The project and the data are read from the live site (SITE_URL), whatever <base> this build has
+const geolibreUrl = (dataset, { embed = false } = {}) =>
+  `${GEOLIBRE_APP}?url=${encodeURIComponent(SITE_URL + projectPath(dataset))}&welcome=0${embed ? '&layout=viewer' : ''}`;
 
 // A row of the database table that opens a folder on GitHub: one link (the dataset's name), stretched
 // over the whole row, so the row is one target for the mouse and one stop for the keyboard
-const FolderRow = ({ href, name, title, scale, period, id, files, downloads = [] }) => (
+const FolderRow = ({ href, name, title, scale, period, id, files, downloads = [], links = [] }) => (
   <tr className="relative group hover:bg-teal-400/[0.06] focus-within:bg-teal-400/[0.06] transition-colors cursor-pointer">
     <td className="px-4 py-4 md:px-6">
       <a href={href} target="_blank" rel="noopener noreferrer"
@@ -1346,11 +1361,16 @@ const FolderRow = ({ href, name, title, scale, period, id, files, downloads = []
     <td className="px-4 py-4 md:px-6"><code className="font-mono text-brand-turquoise bg-teal-400/10 px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap">{id}</code></td>
     <td className="px-4 py-4 md:px-6 text-salt-400 whitespace-nowrap">
       <span className="inline-flex items-center gap-2">{files}<ExternalLink size={13} className="text-salt-500 group-hover:text-brand-turquoise transition-colors" /></span>
-      {downloads.length > 0 && (
+      {(downloads.length > 0 || links.length > 0) && (
         <span className="relative z-10 flex flex-wrap gap-1.5 mt-2">
           {downloads.map(([label, url]) => (
             <a key={label} href={url} download className="inline-flex items-center gap-1 text-[11px] font-semibold text-sand-200 bg-sand-400/10 border border-sand-400/25 rounded px-1.5 py-0.5 hover:border-sand-400/60 hover:text-white transition-colors">
               <Download size={11} />{label}<span className="sr-only"> {t('(wide, with boundaries)')}</span>
+            </a>
+          ))}
+          {links.map(([label, url]) => (
+            <a key={label} href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] font-semibold text-salt-200 bg-white/5 border border-white/15 rounded px-1.5 py-0.5 hover:border-brand-turquoise/60 hover:text-white transition-colors">
+              {label}<ExternalLink size={10} /><span className="sr-only"> {t('(opens in a new tab)')}</span>
             </a>
           ))}
         </span>
@@ -1441,7 +1461,8 @@ const IndicatorsSection = () => {
                     <FolderRow key={it.id} href={datasetFolderUrl(it)} name={(it.datasets || [it.dataset]).join(' · ')} title={it.title}
                                scale={`${it.units} · ${it.geography}`} period={it.period} id={it.idExample}
                                files="README · datapackage.json · CSV · Parquet"
-                               downloads={WIDE_FORMATS.map(([ext, label]) => [label, wideFileUrl(it.dataset, it.scale, ext)])} />
+                               downloads={WIDE_FORMATS.map(([ext, label]) => [label, wideFileUrl(it.dataset, it.scale, ext)])}
+                               links={it.geolibre ? [['GeoLibre', geolibreUrl(it.dataset)]] : []} />
                   ))}
                   <FolderRow href={`${REPO_URL}/tree/main/geo`} name="geo" title={t('Units, boundaries and crosswalks')}
                              scale={t('All scales · {n} units', { n: UNIT_COUNTS.total })} period="—" id="BO"
@@ -2033,9 +2054,36 @@ const CiteDataset = ({ packages }) => {
   );
 };
 
+// The indicator page's map: ours (the default) or, for indicators with `geolibre: true`, GeoLibre's
+// viewer, embedded only when chosen (it loads the whole GeoLibre app)
+const MapSwitch = ({ value, onChange }) => (
+  <div role="radiogroup" aria-label={t('Map')} className="inline-flex mb-4 rounded-lg border border-white/15 bg-white/[0.03] p-1 text-sm">
+    {[['ours', t('Our map')], ['geolibre', 'GeoLibre']].map(([k, label]) => (
+      <button key={k} type="button" role="radio" aria-checked={value === k} onClick={() => onChange(k)}
+              className={`px-3 py-1.5 rounded-md font-semibold transition-colors ${value === k ? 'bg-brand-turquoise/15 text-white' : 'text-salt-400 hover:text-white'}`}>
+        {label}
+      </button>
+    ))}
+  </div>
+);
+
+const GeoLibreEmbed = ({ item, dataset }) => (
+  <div>
+    <iframe src={geolibreUrl(dataset, { embed: true })} title={t('{title} in GeoLibre', { title: item.title })}
+            className="w-full h-[480px] sm:h-[600px] rounded-xl border border-white/10 bg-lagoon-900" loading="lazy" allow="fullscreen" />
+    <div className="flex flex-wrap justify-between items-start gap-3 mt-2">
+      <p className="text-xs text-salt-400 max-w-2xl">{t('GeoLibre, an open-source GIS by opengeos, draws the wide GeoJSON of this dataset from this site. Use the Layers and Style panels to map any other variable and year.')}</p>
+      <a href={geolibreUrl(dataset)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-semibold text-brand-turquoise hover:underline">
+        {t('Open full screen')} <ExternalLink size={12} /><span className="sr-only"> {t('(opens in a new tab)')}</span>
+      </a>
+    </div>
+  </div>
+);
+
 const IndicatorDetail = ({ item }) => {
   const ids = item.datasets || [item.dataset];
   const meta = useDatapackages(ids);
+  const [mapView, setMapView] = useState('ours');
   const ready = meta.status === 'ready';
   return (
     <DetailShell item={item} lead={
@@ -2080,6 +2128,16 @@ const IndicatorDetail = ({ item }) => {
             <p className="text-xs text-salt-400 mt-2">{t('One row per municipality and a column per variable and year (e.g. {col}), with boundaries. The GeoPackage also describes every column (table variables); the GeoJSON has lighter boundaries for web maps.', { col: `${(meta.packages[0]?.['geo:map']?.variable) || 'variable'}_${(meta.packages[0]?.['geo:map']?.year) || 'year'}` })}</p>
           </div>
         )}
+        {item.geolibre && ids.map((id) => (
+          <div key={`geolibre-${id}`} className="mt-4">
+            <a href={geolibreUrl(id)} target="_blank" rel="noopener noreferrer"
+               className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-brand-rose text-white text-sm font-semibold hover:bg-[#b8344c] transition-colors">
+              <MapIcon size={16} /> {t('Open in GeoLibre')} <ExternalLink size={13} />
+              <span className="sr-only"> {t('(opens in a new tab)')}</span>
+            </a>
+            <p className="text-xs text-salt-400 mt-2">{t('GeoLibre, an open-source GIS in the browser, opens the map with every variable and year, ready to restyle, filter, query and export.')}</p>
+          </div>
+        ))}
       </AsideCard>
     </>}>
       <Block title={t('About the dataset')} id="d-about">
@@ -2094,11 +2152,14 @@ const IndicatorDetail = ({ item }) => {
       </Block>
       <Block title={t('Explore the map')} id="d-map">
         <p className="text-salt-300 leading-relaxed mb-5">{t('Choose any variable and year to map it across the {n} municipalities', { n: item.units })}{item.period && !/^\d{4}$/.test(ENGLISH_BY_ID[item.id].period) ? t(', or map its change between the first and the last year') : ''}.</p>
-        <WhenNear placeholder={<div className="h-[420px] sm:h-[520px] rounded-xl border border-white/10 bg-lagoon-900" />}>
-          <React.Suspense fallback={<p className="text-sm text-salt-400" role="status">{t('Loading the map…')}</p>}>
-            <IndicatorMap key={item.id} datasets={ids} id={`map-${item.id}`} />
-          </React.Suspense>
-        </WhenNear>
+        {item.geolibre && <MapSwitch value={mapView} onChange={setMapView} />}
+        {mapView === 'geolibre' ? <GeoLibreEmbed item={item} dataset={ids[0]} /> : (
+          <WhenNear placeholder={<div className="h-[420px] sm:h-[520px] rounded-xl border border-white/10 bg-lagoon-900" />}>
+            <React.Suspense fallback={<p className="text-sm text-salt-400" role="status">{t('Loading the map…')}</p>}>
+              <IndicatorMap key={item.id} datasets={ids} id={`map-${item.id}`} />
+            </React.Suspense>
+          </WhenNear>
+        )}
       </Block>
       <Block title={t('Variables')} id="d-variables">
         <p className="text-salt-300 leading-relaxed mb-5">{t("Every column of the data. Use the label to name the variable in plots; the description says how it was built.")}</p>
