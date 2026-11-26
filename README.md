@@ -34,7 +34,7 @@ Its indicators build on the [Atlas de los ODS en Bolivia 2026](https://atlasods.
 | Website | [quarcs-lab.github.io/gdo4bolivia](https://quarcs-lab.github.io/gdo4bolivia/): indicators, tools, projects and insights | [quarcs-lab.github.io/geo4bolivia](https://quarcs-lab.github.io/geo4bolivia/): [get started](https://quarcs-lab.github.io/geo4bolivia/get-started.html), [articles](https://quarcs-lab.github.io/geo4bolivia/articles/) and the [function reference](https://quarcs-lab.github.io/geo4bolivia/reference/) |
 | Use it | Every file is a plain URL; nothing to install | `pip install geo4bolivia` ([PyPI](https://pypi.org/project/geo4bolivia/)) |
 
-The package reads the files of this repository, so the data can be updated without a new release of the package. Both repositories carry the same version tags: `ref="v0.8.1"` in the package loads the data as they were at that release.
+The package reads the files of this repository, so the data can be updated without a new release of the package. Both repositories carry the same version tags: `ref="v0.9.0"` in the package loads the data as they were at that release.
 
 ## 🚀 Quickstart
 
@@ -109,7 +109,7 @@ geo.change(mpi, "sdg1_2_mpi")                      # change and rank change per 
 geo.aggregate(mpi, to=["department", "country"],
               dataset="sdg01")                     # census-population weighted
 geo.combine(["ntl", "pop"], scale="map339")  # two datasets, one panel
-geo.load("ntl", ref="v0.8.1")                      # a frozen release of the data
+geo.load("ntl", ref="v0.9.0")                      # a frozen release of the data
 geo.map(mpi, "sdg1_2_mpi", year=2024)              # interactive map (Plotly)
 ```
 
@@ -296,7 +296,7 @@ The `geo4bolivia` command comes from the package, which finds this checkout and 
 
 ### Releases
 
-The package is released on PyPI from its own repository ([`RELEASING.md`](https://github.com/quarcs-lab/geo4bolivia/blob/main/RELEASING.md)). At each release this repository gets the same `vX.Y.Z` tag, so `geo.load("ntl", ref="v0.8.1")`, or a raw URL with `v0.8.1` in place of `main`, returns the data as they were at that release.
+The package is released on PyPI from its own repository ([`RELEASING.md`](https://github.com/quarcs-lab/geo4bolivia/blob/main/RELEASING.md)). At each release this repository gets the same `vX.Y.Z` tag, so `geo.load("ntl", ref="v0.9.0")`, or a raw URL with `v0.9.0` in place of `main`, returns the data as they were at that release.
 
 ### Part of a family of projects
 
