@@ -293,3 +293,32 @@ def test_sdsn_sources_are_cc_by():
         for s in geo.metadata.package(dataset)["sources"]:
             if "SDSN" in s.get("geo:creator", "") or "SDSN" in s["title"]:
                 assert s["geo:license"]["name"] == "CC-BY-4.0", (dataset, s["title"][:40])
+
+
+def test_wide_files_have_a_row_per_municipality_and_a_column_per_variable_and_year():
+    import geopandas as gpd
+    import pyogrio
+    root = store.repo_root()
+    sdg01 = gpd.read_file(root / "data/sdg01/map343/sdg01_wide.gpkg", layer="sdg01")
+    assert len(sdg01) == 343 and {"sdg1_2_mpi_2012", "sdg1_2_mpi_2024"} <= set(sdg01.columns)
+    assert list(sdg01.columns[:8]) == ["geo_id", "name", "province_id", "province", "department_id", "department",
+                                       "mun_id", "area_km2"]
+    lapaz = sdg01.set_index("geo_id").loc["BO-04-17-04"]
+    long = geo.load("sdg01", variables="sdg1_2_mpi").set_index(["geo_id", "year"])["sdg1_2_mpi"]
+    assert lapaz["sdg1_2_mpi_2024"] == long.loc[("BO-04-17-04", 2024)] and lapaz["department"] == "La Paz"
+    sdg = gpd.read_file(root / "data/sdg/map343/sdg_wide.geojson")
+    assert sdg["urbanization_2012"].isna().all() and sdg["urbanization_2024"].notna().any()   # empty years kept
+    pop = gpd.read_file(root / "data/pop/map339/pop_wide.geojson")
+    assert len(pop) == 339 and {f"pop_{y}" for y in range(2001, 2021)} <= set(pop.columns)
+    emb = pyogrio.read_dataframe(root / "data/emb/map339/emb_wide.gpkg", layer="emb", read_geometry=False)
+    assert {"A00_2017", "A63_pw_2017", "asdf_id"} <= set(emb.columns)
+    variables = pyogrio.read_dataframe(root / "data/sdg03/map343/sdg03_wide.gpkg", layer="variables")
+    tmi = variables.set_index("column").loc[["sdg3_2_tmi_2012", "sdg3_2_tmi_2024"], "reference"].tolist()
+    assert tmi == ["2008", "2023"]
+
+
+def test_load_wide_true_is_the_wide_file():
+    wide = geo.load("ntl", wide=True)
+    assert len(wide) == 339 and "ln_NTLpc_2020" in wide.columns and "asdf_id" in wide.columns
+    gdf = geo.load("sdg01", wide=True, geometry=True, variables="sdg1_2_mpi", years=2024)
+    assert list(gdf.columns[-2:]) == ["sdg1_2_mpi_2024", "geometry"] and len(gdf) == 343

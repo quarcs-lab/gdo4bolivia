@@ -69,6 +69,8 @@
       "geo:units": 343,
       "geo:path": "data/sdg10/map343/sdg10.csv",
       "geo:parquet": "data/sdg10/map343/sdg10.parquet",
+      "geo:gpkg": "data/sdg10/map343/sdg10_wide.gpkg",
+      "geo:geojson": "data/sdg10/map343/sdg10_wide.geojson",
       "geo:source_geometry": "Municipal statistics of the Atlas, linked by INE municipality code",
       "schema": {
         "fields": [

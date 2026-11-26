@@ -7,8 +7,9 @@ The observatory's data files are licensed under the Creative Commons Attribution
 International License (CC BY 4.0), https://creativecommons.org/licenses/by/4.0/:
 
   - data/            one folder per dataset: the published panels (CSV and Parquet), the
-                     metadata (datapackage.json, Frictionless) and the generated
-                     documentation (README.md)
+                     same data wide (GeoPackage and GeoJSON; their boundaries follow the
+                     exception below), the metadata (datapackage.json, Frictionless) and
+                     the generated documentation (README.md)
   - the variable catalog named in project.yaml (definitions_gdo-bolivia.csv)
   - geo/units.*      the unit list (geo IDs, names, codes, areas)
   - geo/crosswalks/  the crosswalks between scales

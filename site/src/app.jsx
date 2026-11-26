@@ -464,9 +464,9 @@ const CodeBlock = ({ code, language = 'python', title, colab = false }) => {
 };
 
 // Every dataset can be loaded with the package or straight from its URL; both run in Google Colab
-const CODE_TABS = [['python', 'Python · package'], ['pandas', 'Python · URL']];
-const CODE_LANG = { pandas: 'python' };
-const CODE_TITLE = { python: 'Colab · with geo4bolivia', pandas: 'Colab · without the package' };
+const CODE_TABS = [['python', 'Python · package'], ['pandas', 'Python · URL'], ['gpkg', 'Python · GeoPackage']];
+const CODE_LANG = { pandas: 'python', gpkg: 'python' };
+const CODE_TITLE = { python: 'Colab · with geo4bolivia', pandas: 'Colab · without the package', gpkg: 'Colab · the wide GeoPackage' };
 
 const CodeTabs = ({ code, idPrefix, itemId, slot = '' }) => {
   const tabs = CODE_TABS.filter(([k]) => code[k]);
@@ -1323,10 +1323,15 @@ const PackageWorkflow = ({ current, compact = false }) => (
 
 // A dataset's folder on GitHub (data/<dataset>/: README, datapackage.json, one subfolder per map)
 const datasetFolderUrl = (item) => `${REPO_URL}/tree/main/data/${item.dataset || item.datasets[0]}`;
+// A dataset's wide files (one row per unit, a column per variable and year, with boundaries). The
+// download buttons point at the site's own copy (relative to <base>; the deploy serves every tracked
+// file), so the browser saves them instead of showing them; code reads them from RAW_URL
+const WIDE_FORMATS = [['gpkg', 'GeoPackage'], ['geojson', 'GeoJSON']];
+const wideFileUrl = (dataset, scale, ext) => `data/${dataset}/${scale}/${dataset}_wide.${ext}`;
 
 // A row of the database table that opens a folder on GitHub: one link (the dataset's name), stretched
 // over the whole row, so the row is one target for the mouse and one stop for the keyboard
-const FolderRow = ({ href, name, title, scale, period, id, files }) => (
+const FolderRow = ({ href, name, title, scale, period, id, files, downloads = [] }) => (
   <tr className="relative group hover:bg-teal-400/[0.06] focus-within:bg-teal-400/[0.06] transition-colors cursor-pointer">
     <td className="px-4 py-4 md:px-6">
       <a href={href} target="_blank" rel="noopener noreferrer"
@@ -1341,6 +1346,15 @@ const FolderRow = ({ href, name, title, scale, period, id, files }) => (
     <td className="px-4 py-4 md:px-6"><code className="font-mono text-brand-turquoise bg-teal-400/10 px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap">{id}</code></td>
     <td className="px-4 py-4 md:px-6 text-salt-400 whitespace-nowrap">
       <span className="inline-flex items-center gap-2">{files}<ExternalLink size={13} className="text-salt-500 group-hover:text-brand-turquoise transition-colors" /></span>
+      {downloads.length > 0 && (
+        <span className="relative z-10 flex flex-wrap gap-1.5 mt-2">
+          {downloads.map(([label, url]) => (
+            <a key={label} href={url} download className="inline-flex items-center gap-1 text-[11px] font-semibold text-sand-200 bg-sand-400/10 border border-sand-400/25 rounded px-1.5 py-0.5 hover:border-sand-400/60 hover:text-white transition-colors">
+              <Download size={11} />{label}<span className="sr-only"> {t('(wide, with boundaries)')}</span>
+            </a>
+          ))}
+        </span>
+      )}
     </td>
   </tr>
 );
@@ -1408,7 +1422,7 @@ const IndicatorsSection = () => {
             <span className="font-mono text-sm text-brand-turquoise">01</span>
             {t('Database architecture')}
           </h3>
-          <p className="text-salt-400 max-w-3xl -mt-3 mb-5">{t('Every dataset has a folder of its own on GitHub: its documentation (README), its metadata (datapackage.json) and its files, CSV and Parquet, one subfolder per map. Click a row to open it.')}</p>
+          <p className="text-salt-400 max-w-3xl -mt-3 mb-5">{t('Every dataset has a folder of its own on GitHub: its documentation (README), its metadata (datapackage.json) and its files, CSV and Parquet, one subfolder per map. Click a row to open it. GeoPackage and GeoJSON download the data wide, ready to map: one row per municipality, a column per variable and year, with boundaries.')}</p>
           <div className="rounded-xl overflow-hidden border border-white/10 bg-white/[0.03] mb-16">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
@@ -1426,7 +1440,8 @@ const IndicatorsSection = () => {
                   {items.map((it) => (
                     <FolderRow key={it.id} href={datasetFolderUrl(it)} name={(it.datasets || [it.dataset]).join(' · ')} title={it.title}
                                scale={`${it.units} · ${it.geography}`} period={it.period} id={it.idExample}
-                               files="README · datapackage.json · CSV · Parquet" />
+                               files="README · datapackage.json · CSV · Parquet"
+                               downloads={WIDE_FORMATS.map(([ext, label]) => [label, wideFileUrl(it.dataset, it.scale, ext)])} />
                   ))}
                   <FolderRow href={`${REPO_URL}/tree/main/geo`} name="geo" title={t('Units, boundaries and crosswalks')}
                              scale={t('All scales · {n} units', { n: UNIT_COUNTS.total })} period="—" id="BO"
@@ -2051,6 +2066,20 @@ const IndicatorDetail = ({ item }) => {
           </a>
         ))}
         <p className="text-xs text-salt-400 mt-2">{t('Its documentation, metadata and files, CSV and Parquet.')}</p>
+        {item.scale && (
+          <div className="mt-4">
+            <p className="text-xs font-semibold text-salt-200 mb-2">{t('Download, wide and ready to map')}</p>
+            <div className="grid grid-cols-2 gap-2">
+              {ids.flatMap((id) => WIDE_FORMATS.map(([ext, label]) => (
+                <a key={`${id}-${ext}`} href={wideFileUrl(id, item.scale, ext)} download
+                   className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-sand-400/10 border border-sand-400/30 text-sand-200 text-sm font-semibold hover:border-sand-400/60 hover:text-white transition-colors">
+                  <Download size={14} /> {label}
+                </a>
+              )))}
+            </div>
+            <p className="text-xs text-salt-400 mt-2">{t('One row per municipality and a column per variable and year (e.g. {col}), with boundaries. The GeoPackage also describes every column (table variables); the GeoJSON has lighter boundaries for web maps.', { col: `${(meta.packages[0]?.['geo:map']?.variable) || 'variable'}_${(meta.packages[0]?.['geo:map']?.year) || 'year'}` })}</p>
+          </div>
+        )}
       </AsideCard>
     </>}>
       <Block title={t('About the dataset')} id="d-about">

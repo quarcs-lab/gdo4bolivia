@@ -16,7 +16,7 @@ export const SNIPPETS_DIR = 'snippets';
 export const snippetPath = (itemId, slot) => `${SNIPPETS_DIR}/${itemId}/${slot}.ipynb`;
 export const sharedSnippetPath = (id) => `${SNIPPETS_DIR}/${id}.ipynb`;
 
-const TAB_TITLE = { python: 'with the package', pandas: 'without the package (plain URLs)' };
+const TAB_TITLE = { python: 'with the package', pandas: 'without the package (plain URLs)', gpkg: 'from the wide GeoPackage (one row per municipality)' };
 
 // Every code box of the registry as { path, code, title, page }: page is the item's path on the
 // website (e.g. "indicators/<id>/"), title says which box it is

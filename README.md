@@ -87,6 +87,7 @@ Each dataset's folder, `data/<dataset>/`, holds:
 - `README.md`, generated: its variable dictionary, coverage, files, sources, license and how to cite it (GitHub shows it when you open the folder)
 - `datapackage.json`, its [Frictionless](https://datapackage.org/) metadata, the source of truth
 - one subfolder per map with the panel, e.g. `data/sdg01/map343/sdg01.csv` and `.parquet`
+- in the same subfolder, the data **wide and ready to map**: `sdg01_wide.gpkg` (GeoPackage, for QGIS, ArcGIS, R or Python, with a `variables` table describing every column) and `sdg01_wide.geojson` (lighter, for web maps), one row per municipality with its name, province and department, and a column per variable and year (`sdg1_2_mpi_2012`, `sdg1_2_mpi_2024`). Each indicator page has download buttons for them
 
 Every variable of every dataset is also listed in [`definitions_gdo-bolivia.csv`](definitions_gdo-bolivia.csv).
 

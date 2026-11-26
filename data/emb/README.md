@@ -15,9 +15,11 @@ Sixty-four satellite embedding dimensions for Bolivia's 339 municipalities of th
 data/emb/
 ├── README.md          this page, generated from datapackage.json
 ├── datapackage.json   the metadata (Frictionless): variables, units, sources, licenses
-└── map339/            the map339 panel, one row per unit and year
-    ├── emb.csv
-    └── emb.parquet
+└── map339/            the map339 data
+    ├── emb.csv                the panel: one row per unit and year
+    ├── emb.parquet            the same, typed and compressed
+    ├── emb_wide.gpkg          wide: one row per unit, a column per variable and year, boundaries
+    └── emb_wide.geojson       the same, on lighter boundaries, for web maps
 ```
 
 ## Scale: map339
@@ -30,6 +32,10 @@ data/emb/
 | --- | --- | --- |
 | [`map339/emb.csv`](map339/emb.csv) | CSV | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/emb/map339/emb.csv) |
 | [`map339/emb.parquet`](map339/emb.parquet) | Parquet | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/emb/map339/emb.parquet) |
+| [`map339/emb_wide.gpkg`](map339/emb_wide.gpkg) | GeoPackage, wide | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/emb/map339/emb_wide.gpkg) |
+| [`map339/emb_wide.geojson`](map339/emb_wide.geojson) | GeoJSON, wide | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/emb/map339/emb_wide.geojson) |
+
+The wide files have one row per map339 unit, with its name, the units it lies in, its source keys and area, then every variable once per year, `<variable>_<year>` (e.g. `A00_2017`); a variable has a column for every year, empty where it has no values. The GeoPackage carries the analysis boundaries and a second table, `variables`, that describes every column (label, description, unit, source, reference year); the GeoJSON carries lighter boundaries for web maps.
 
 | Variable | Label | Description | Unit | Coverage | Aggregation | Source |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -174,6 +180,7 @@ import geo4bolivia as geo
 geo.dictionary("emb")                     # variables, units, aggregation rules
 df = geo.load("emb")                      # panel: one row per unit and year
 gdf = geo.load("emb", geometry=True)      # with map339 boundaries
+wide = geo.load("emb", wide=True)         # one row per unit, a column per variable and year
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/datasets/emb/box-1.ipynb)
@@ -182,8 +189,10 @@ Without the package:
 
 ```python
 import pandas as pd
+import geopandas as gpd
 
 df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/emb/map339/emb.csv")
+wide = gpd.read_file("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/emb/map339/emb_wide.gpkg", layer="emb")
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/datasets/emb/box-2.ipynb)

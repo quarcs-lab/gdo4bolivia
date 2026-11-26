@@ -52,7 +52,7 @@ Four rules hold everything together:
 | `data/<dataset>/datapackage.json`, `data/index.json` | Dataset descriptions and the list of datasets | yes |
 | `builders/` | One builder per dataset, the geography builder, and their registry (`__init__.py`); they use the package's helpers (`geo4bolivia.build`) | yes |
 | `geo/units.*`, `geo/boundaries/`, `geo/crosswalks/` | The geography layer | generated |
-| `data/<dataset>/<scale>/<dataset>.*` | Published panels | generated |
+| `data/<dataset>/<scale>/<dataset>.*` | Published panels, and the same data wide (`_wide.gpkg`, `_wide.geojson`) | generated |
 | `data/<dataset>/README.md`, `data/README.md`, the catalog CSV | Documentation | generated |
 
 ---
@@ -123,8 +123,13 @@ data/ntl/
 ├── datapackage.json       the metadata (hand-written; the build adds the coverage fields)
 └── map339/
     ├── ntl.csv            geo_id, year, asdf_id, ln_NTLpc, ln_t400NTLpc
-    └── ntl.parquet        the same table, typed and compressed
+    ├── ntl.parquet        the same table, typed and compressed
+    ├── ntl_wide.gpkg      wide: one row per unit, ln_NTLpc_2012 … ln_t400NTLpc_2020, boundaries,
+    │                      and a table "variables" describing every column
+    └── ntl_wide.geojson   the same, on lighter boundaries, for web maps
 ```
+
+The **wide files** are for people who want a table ready to map, without the package: one row per unit with `geo_id`, `name`, the province and department it lies in (IDs and names), the dataset's source keys and `area_km2`, then every variable once per year, `<variable>_<year>`. A variable has a column for every year of the dataset, empty where it has no values. The GeoPackage carries the analysis boundaries (`geo/boundaries/`) and the dictionary table `variables` (label, description, unit, source and actual reference year of each column); the GeoJSON carries the website's lighter boundaries. The build writes them and `validate` checks them against the panel; `geo.load(dataset, wide=True)` returns the same table.
 
 On GitHub, opening a dataset's folder shows its README. The observatory's website links each dataset to its folder (the table "Database architecture").
 

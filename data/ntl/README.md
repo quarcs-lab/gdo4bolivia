@@ -15,9 +15,11 @@ Annual night-time lights per capita for Bolivia's 339 municipalities of the 2015
 data/ntl/
 ├── README.md          this page, generated from datapackage.json
 ├── datapackage.json   the metadata (Frictionless): variables, units, sources, licenses
-└── map339/            the map339 panel, one row per unit and year
-    ├── ntl.csv
-    └── ntl.parquet
+└── map339/            the map339 data
+    ├── ntl.csv                the panel: one row per unit and year
+    ├── ntl.parquet            the same, typed and compressed
+    ├── ntl_wide.gpkg          wide: one row per unit, a column per variable and year, boundaries
+    └── ntl_wide.geojson       the same, on lighter boundaries, for web maps
 ```
 
 ## Scale: map339
@@ -30,6 +32,10 @@ data/ntl/
 | --- | --- | --- |
 | [`map339/ntl.csv`](map339/ntl.csv) | CSV | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/ntl/map339/ntl.csv) |
 | [`map339/ntl.parquet`](map339/ntl.parquet) | Parquet | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/ntl/map339/ntl.parquet) |
+| [`map339/ntl_wide.gpkg`](map339/ntl_wide.gpkg) | GeoPackage, wide | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/ntl/map339/ntl_wide.gpkg) |
+| [`map339/ntl_wide.geojson`](map339/ntl_wide.geojson) | GeoJSON, wide | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/ntl/map339/ntl_wide.geojson) |
+
+The wide files have one row per map339 unit, with its name, the units it lies in, its source keys and area, then every variable once per year, `<variable>_<year>` (e.g. `ln_NTLpc_2020`); a variable has a column for every year, empty where it has no values. The GeoPackage carries the analysis boundaries and a second table, `variables`, that describes every column (label, description, unit, source, reference year); the GeoJSON carries lighter boundaries for web maps.
 
 | Variable | Label | Description | Unit | Coverage | Aggregation | Source |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -48,6 +54,7 @@ import geo4bolivia as geo
 geo.dictionary("ntl")                     # variables, units, aggregation rules
 df = geo.load("ntl")                      # panel: one row per unit and year
 gdf = geo.load("ntl", geometry=True)      # with map339 boundaries
+wide = geo.load("ntl", wide=True)         # one row per unit, a column per variable and year
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/datasets/ntl/box-1.ipynb)
@@ -56,8 +63,10 @@ Without the package:
 
 ```python
 import pandas as pd
+import geopandas as gpd
 
 df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/ntl/map339/ntl.csv")
+wide = gpd.read_file("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/ntl/map339/ntl_wide.gpkg", layer="ntl")
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/datasets/ntl/box-2.ipynb)

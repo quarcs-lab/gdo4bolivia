@@ -70,6 +70,8 @@
       "geo:units": 343,
       "geo:path": "data/sdg02/map343/sdg02.csv",
       "geo:parquet": "data/sdg02/map343/sdg02.parquet",
+      "geo:gpkg": "data/sdg02/map343/sdg02_wide.gpkg",
+      "geo:geojson": "data/sdg02/map343/sdg02_wide.geojson",
       "geo:source_geometry": "Municipal statistics of the Atlas, linked by INE municipality code",
       "schema": {
         "fields": [

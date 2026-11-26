@@ -15,9 +15,11 @@ The SDG 8 (Decent work and economic growth) index of the Atlas de los ODS en Bol
 data/sdg08/
 ├── README.md          this page, generated from datapackage.json
 ├── datapackage.json   the metadata (Frictionless): variables, units, sources, licenses
-└── map343/            the map343 panel, one row per unit and year
-    ├── sdg08.csv
-    └── sdg08.parquet
+└── map343/            the map343 data
+    ├── sdg08.csv              the panel: one row per unit and year
+    ├── sdg08.parquet          the same, typed and compressed
+    ├── sdg08_wide.gpkg        wide: one row per unit, a column per variable and year, boundaries
+    └── sdg08_wide.geojson     the same, on lighter boundaries, for web maps
 ```
 
 ## Scale: map343
@@ -30,6 +32,10 @@ data/sdg08/
 | --- | --- | --- |
 | [`map343/sdg08.csv`](map343/sdg08.csv) | CSV | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/sdg08/map343/sdg08.csv) |
 | [`map343/sdg08.parquet`](map343/sdg08.parquet) | Parquet | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/sdg08/map343/sdg08.parquet) |
+| [`map343/sdg08_wide.gpkg`](map343/sdg08_wide.gpkg) | GeoPackage, wide | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/sdg08/map343/sdg08_wide.gpkg) |
+| [`map343/sdg08_wide.geojson`](map343/sdg08_wide.geojson) | GeoJSON, wide | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/sdg08/map343/sdg08_wide.geojson) |
+
+The wide files have one row per map343 unit, with its name, the units it lies in, its source keys and area, then every variable once per year, `<variable>_<year>` (e.g. `index_sdg8_2024`); a variable has a column for every year, empty where it has no values. The GeoPackage carries the analysis boundaries and a second table, `variables`, that describes every column (label, description, unit, source, reference year); the GeoJSON carries lighter boundaries for web maps.
 
 | Variable | Label | Description | Unit | Coverage | Aggregation | Source |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -54,6 +60,7 @@ import geo4bolivia as geo
 geo.dictionary("sdg08")                     # variables, units, aggregation rules
 df = geo.load("sdg08")                      # panel: one row per unit and year
 gdf = geo.load("sdg08", geometry=True)      # with map343 boundaries
+wide = geo.load("sdg08", wide=True)         # one row per unit, a column per variable and year
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/datasets/sdg08/box-1.ipynb)
@@ -62,8 +69,10 @@ Without the package:
 
 ```python
 import pandas as pd
+import geopandas as gpd
 
 df = pd.read_csv("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/sdg08/map343/sdg08.csv")
+wide = gpd.read_file("https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/sdg08/map343/sdg08_wide.gpkg", layer="sdg08")
 ```
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/datasets/sdg08/box-2.ipynb)
