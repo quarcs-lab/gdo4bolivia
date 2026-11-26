@@ -43,7 +43,7 @@ The `geo4bolivia` command and the helpers the builders use come from the Python 
    uv run geo4bolivia validate <dataset>
    uv run pytest
    ```
-   `publish()` writes the columns in schema order with schema types. `write_docs()` writes the wide files (`data/<dataset>/<scale>/<dataset>_wide.gpkg` and `.geojson`: one row per unit, a column per variable and year, with boundaries) and generates `data/<dataset>/README.md`. `validate` reports any mismatch between the data, the metadata and `geo/`, and `pytest` fails when a dataset listed in `data/index.json` has no builder.
+   `publish()` writes the columns in schema order with schema types. `write_docs()` writes the wide files (`data/<dataset>/<scale>/<dataset>_wide.gpkg` and `.geojson`: one row per unit, a column per variable and year, with boundaries) and the Stata file (`data/<dataset>/<scale>/<dataset>.dta`: the panel with names, labels and notes, declared as a panel; from each field's `title` and `description`, so write them well) and generates `data/<dataset>/README.md`. `validate` reports any mismatch between the data, the metadata and `geo/`, and `pytest` fails when a dataset listed in `data/index.json` has no builder.
 
    Then look at the result the two ways users will load it. With the package (inside this repository it reads the local files, so it shows what you just built), here for `pop`:
    ```python

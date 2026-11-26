@@ -136,6 +136,7 @@
       "geo:parquet": "data/ntl/map339/ntl.parquet",
       "geo:gpkg": "data/ntl/map339/ntl_wide.gpkg",
       "geo:geojson": "data/ntl/map339/ntl_wide.geojson",
+      "geo:dta": "data/ntl/map339/ntl.dta",
       "geo:source_geometry": "DS4Bolivia polygons (bolivia339geoqueryFull, keyed by asdf_id), matched one-to-one to the 2015 map's municipalities by area overlap; all 339, published as map339",
       "schema": {
         "primaryKey": [

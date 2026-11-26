@@ -1338,6 +1338,10 @@ const datasetFolderUrl = (item) => `${REPO_URL}/tree/main/data/${item.dataset ||
 // file), so the browser saves them instead of showing them; code reads them from RAW_URL
 const WIDE_FORMATS = [['gpkg', 'GeoPackage'], ['geojson', 'GeoJSON']];
 const wideFileUrl = (dataset, scale, ext) => `data/${dataset}/${scale}/${dataset}_wide.${ext}`;
+// The panel itself (one row per unit and year): the CSV, and the Stata file (format 118: names, labels,
+// notes, value-labelled codes, declared as a panel), written by the package's build
+const PANEL_FORMATS = [['csv', 'CSV'], ['dta', 'Stata']];
+const panelFileUrl = (dataset, scale, ext) => `data/${dataset}/${scale}/${dataset}.${ext}`;
 // "Open in GeoLibre" (indicators with `geolibre`): GeoLibre, the open-source GIS in the browser, opens the
 // project file site/geolibre.mjs writes (the wide GeoJSON, styled on the headline variable; in the page's
 // language, since the Spanish site has its own copy, labels included).
@@ -1345,33 +1349,35 @@ const wideFileUrl = (dataset, scale, ext) => `data/${dataset}/${scale}/${dataset
 const geolibreUrl = (dataset, { embed = false } = {}) =>
   `${GEOLIBRE_APP}?url=${encodeURIComponent(SITE_URL + projectPath(dataset, language()))}&welcome=0${embed ? '&layout=viewer' : ''}`;
 
-// A row of the database table that opens a folder on GitHub: one link (the dataset's name), stretched
-// over the whole row, so the row is one target for the mouse and one stop for the keyboard
-const FolderRow = ({ href, name, title, scale, period, id, files, downloads = [], links = [] }) => (
+// A row of the database table: one link (the dataset's name), stretched over the whole row, so the row is
+// one target for the mouse and one stop for the keyboard. An indicator's row opens its page; `external`
+// rows (the geo folder) open GitHub in a new tab. The chips of the Files column sit above the stretched
+// link (relative z-10), each its own target: downloads ([label, url, what]) and links ([label, url, icon])
+const FolderRow = ({ href, external = false, name, title, scale, period, id, files, downloads = [], links = [] }) => (
   <tr className="relative group hover:bg-teal-400/[0.06] focus-within:bg-teal-400/[0.06] transition-colors cursor-pointer">
     <td className="px-4 py-4 md:px-6">
-      <a href={href} target="_blank" rel="noopener noreferrer"
+      <a href={href} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
          className="inline-flex items-center gap-1.5 font-mono text-xs text-brand-turquoise group-hover:underline focus:outline-none focus-visible:underline after:absolute after:inset-0 after:content-[''] focus-visible:after:ring-2 focus-visible:after:ring-inset focus-visible:after:ring-brand-turquoise">
-        <Github size={13} className="flex-shrink-0" />{name}
-        <span className="sr-only"> {t('folder on GitHub (opens in a new tab)')}</span>
+        {external && <Github size={13} className="flex-shrink-0" />}{name}
+        <span className="sr-only"> {external ? t('folder on GitHub (opens in a new tab)') : `· ${title}`}</span>
       </a>
       <div className="text-salt-300 mt-1">{title}</div>
     </td>
     <td className="px-4 py-4 md:px-6 text-salt-300 whitespace-nowrap">{scale}</td>
     <td className="px-4 py-4 md:px-6 text-salt-300 whitespace-nowrap">{period}</td>
     <td className="px-4 py-4 md:px-6"><code className="font-mono text-brand-turquoise bg-teal-400/10 px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap">{id}</code></td>
-    <td className="px-4 py-4 md:px-6 text-salt-400 whitespace-nowrap">
-      <span className="inline-flex items-center gap-2">{files}<ExternalLink size={13} className="text-salt-500 group-hover:text-brand-turquoise transition-colors" /></span>
+    <td className="px-4 py-4 md:px-6 text-salt-400">
+      {files && <span className="inline-flex items-center gap-2 whitespace-nowrap">{files}{external && <ExternalLink size={13} className="text-salt-500 group-hover:text-brand-turquoise transition-colors" />}</span>}
       {(downloads.length > 0 || links.length > 0) && (
-        <span className="relative z-10 flex flex-wrap gap-1.5 mt-2">
-          {downloads.map(([label, url]) => (
+        <span className={`relative z-10 flex flex-wrap gap-1.5 ${files ? 'mt-2' : ''} max-w-[19rem]`}>
+          {downloads.map(([label, url, what]) => (
             <a key={label} href={url} download className="inline-flex items-center gap-1 text-[11px] font-semibold text-sand-200 bg-sand-400/10 border border-sand-400/25 rounded px-1.5 py-0.5 hover:border-sand-400/60 hover:text-white transition-colors">
-              <Download size={11} />{label}<span className="sr-only"> {t('(wide, with boundaries)')}</span>
+              <Download size={11} />{label}<span className="sr-only"> {what}</span>
             </a>
           ))}
-          {links.map(([label, url]) => (
+          {links.map(([label, url, Icon]) => (
             <a key={label} href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] font-semibold text-salt-200 bg-white/5 border border-white/15 rounded px-1.5 py-0.5 hover:border-brand-turquoise/60 hover:text-white transition-colors">
-              {label}<ExternalLink size={10} /><span className="sr-only"> {t('(opens in a new tab)')}</span>
+              {Icon && <Icon size={11} />}{label}<ExternalLink size={10} /><span className="sr-only"> {t('(opens in a new tab)')}</span>
             </a>
           ))}
         </span>
@@ -1443,11 +1449,11 @@ const IndicatorsSection = () => {
             <span className="font-mono text-sm text-brand-turquoise">01</span>
             {t('Database architecture')}
           </h3>
-          <p className="text-salt-400 max-w-3xl -mt-3 mb-5">{t('Every dataset has a folder of its own on GitHub: its documentation (README), its metadata (datapackage.json) and its files, CSV and Parquet, one subfolder per map. Click a row to open it. GeoPackage and GeoJSON download the data wide, ready to map: one row per municipality, a column per variable and year, with boundaries.')}</p>
+          <p className="text-salt-400 max-w-3xl -mt-3 mb-5">{t('Click a row to open the indicator: its maps, variables, code, license and how to cite it. CSV and Stata download the panel, one row per municipality and year; the Stata file has labels and notes and is ready for xtset. GeoPackage and GeoJSON download the data wide, ready to map: one row per municipality, a column per variable and year, with boundaries. GitHub opens the dataset’s folder: its documentation, metadata and every file.')}</p>
           <div className="rounded-xl overflow-hidden border border-white/10 bg-white/[0.03] mb-16">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <caption className="sr-only">{t('Datasets, spatial scale, coverage, unit ID and files; each row links to the dataset’s folder on GitHub')}</caption>
+                <caption className="sr-only">{t('Datasets, spatial scale, coverage, unit ID and files; each row links to the indicator’s page')}</caption>
                 <thead className="bg-white/5 text-salt-300 text-xs uppercase tracking-wider">
                   <tr>
                     <th scope="col" className="px-4 py-3 md:px-6">{t('Dataset')}</th>
@@ -1459,13 +1465,15 @@ const IndicatorsSection = () => {
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {items.map((it) => (
-                    <FolderRow key={it.id} href={datasetFolderUrl(it)} name={(it.datasets || [it.dataset]).join(' · ')} title={it.title}
+                    <FolderRow key={it.id} href={itemHref(it)} name={(it.datasets || [it.dataset]).join(' · ')} title={it.title}
                                scale={`${it.units} · ${it.geography}`} period={it.period} id={it.idExample}
-                               files="README · datapackage.json · CSV · Parquet"
-                               downloads={WIDE_FORMATS.map(([ext, label]) => [label, wideFileUrl(it.dataset, it.scale, ext)])}
-                               links={it.geolibre ? [['GeoLibre', geolibreUrl(it.dataset)]] : []} />
+                               downloads={[
+                                 ...PANEL_FORMATS.map(([ext, label]) => [label, panelFileUrl(it.dataset, it.scale, ext), t('(panel: one row per unit and year)')]),
+                                 ...WIDE_FORMATS.map(([ext, label]) => [label, wideFileUrl(it.dataset, it.scale, ext), t('(wide, with boundaries)')]),
+                               ]}
+                               links={[['GitHub', datasetFolderUrl(it), Github], ...(it.geolibre ? [['GeoLibre', geolibreUrl(it.dataset)]] : [])]} />
                   ))}
-                  <FolderRow href={`${REPO_URL}/tree/main/geo`} name="geo" title={t('Units, boundaries and crosswalks')}
+                  <FolderRow href={`${REPO_URL}/tree/main/geo`} external name="geo" title={t('Units, boundaries and crosswalks')}
                              scale={t('All scales · {n} units', { n: UNIT_COUNTS.total })} period="—" id="BO"
                              files="CSV · Parquet · GeoJSON" />
                 </tbody>
@@ -2115,6 +2123,20 @@ const IndicatorDetail = ({ item }) => {
           </a>
         ))}
         <p className="text-xs text-salt-400 mt-2">{t('Its documentation, metadata and files, CSV and Parquet.')}</p>
+        {item.scale && (
+          <div className="mt-4">
+            <p className="text-xs font-semibold text-salt-200 mb-2">{t('Download the panel (one row per municipality and year)')}</p>
+            <div className="grid grid-cols-2 gap-2">
+              {ids.flatMap((id) => PANEL_FORMATS.map(([ext, label]) => (
+                <a key={`${id}-${ext}`} href={panelFileUrl(id, item.scale, ext)} download
+                   className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-sand-400/10 border border-sand-400/30 text-sand-200 text-sm font-semibold hover:border-sand-400/60 hover:text-white transition-colors">
+                  <Download size={14} /> {label}
+                </a>
+              )))}
+            </div>
+            <p className="text-xs text-salt-400 mt-2">{t('The Stata file (Stata 14 or later) has the names of the places, a label for every variable and notes on how it was built, and opens declared as a panel (xtset unit_id year).')}</p>
+          </div>
+        )}
         {item.scale && (
           <div className="mt-4">
             <p className="text-xs font-semibold text-salt-200 mb-2">{t('Download, wide and ready to map')}</p>

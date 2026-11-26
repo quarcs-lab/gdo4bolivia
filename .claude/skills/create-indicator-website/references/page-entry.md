@@ -69,8 +69,8 @@ download links: the page no longer uses them.
 - [ ] The page shows, in order: map, About (with the original source), Explore the map,
       Variables (every column), code, License, Cite this dataset, References, and the
       At-a-glance sidebar.
-- [ ] No download section; the sidebar's "Dataset on GitHub" opens `data/<dataset>/`, and the landing page's
-      "Database architecture" row for the dataset opens it too.
+- [ ] The sidebar's "Dataset on GitHub" opens `data/<dataset>/`, and its CSV, Stata, GeoPackage and GeoJSON
+      buttons download; the landing page's "Database architecture" row opens the page, and its GitHub chip the folder.
 - [ ] Cite this dataset lists the original sources first, then the observatory, then the other sources.
 - [ ] The entry has `scale` and a `gpkg` code tab (`wideCode(...)`); the sidebar's GeoPackage and GeoJSON buttons
       download `data/<dataset>/<scale>/<dataset>_wide.*` (built by `geo4bolivia build`).

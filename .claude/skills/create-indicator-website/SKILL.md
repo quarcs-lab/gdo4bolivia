@@ -26,8 +26,9 @@ dataset's folder on GitHub (`data/<dataset>/`). `site/build.mjs` pre-renders it 
 preview image and JSON-LD, and adds it to the sitemap and the search.
 Variables, original source, license, citations and references are read at runtime from
 `data/<dataset>/datapackage.json`, so the metadata is the single source of truth.
-There is no download section; the page links to the dataset's folder on GitHub, and the landing page's
-"Database architecture" table links every dataset there too.
+The sidebar links to the dataset's folder on GitHub and has download buttons for the panel (CSV, Stata) and
+the wide files (GeoPackage, GeoJSON); the landing page's "Database architecture" table has a row per dataset
+that opens its page, with the same downloads and a GitHub chip for its folder.
 
 ## Hard rules
 

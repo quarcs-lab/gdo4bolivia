@@ -322,3 +322,28 @@ def test_load_wide_true_is_the_wide_file():
     assert len(wide) == 339 and "ln_NTLpc_2020" in wide.columns and "asdf_id" in wide.columns
     gdf = geo.load("sdg01", wide=True, geometry=True, variables="sdg1_2_mpi", years=2024)
     assert list(gdf.columns[-2:]) == ["sdg1_2_mpi_2024", "geometry"] and len(gdf) == 343
+
+
+def test_stata_files_are_labelled_panels_with_notes():
+    """The Stata files: names, labelled codes, notes and the panel declaration, read from the files."""
+    from geo4bolivia import stata
+    root = store.repo_root()
+
+    sdg01 = stata.read(root / "data/sdg01/map343/sdg01.dta")
+    df = sdg01["data"]
+    assert len(df) == 686 and df["unit_id"].between(1, 343).all()
+    lapaz = int(df.loc[df["geo_id"] == "BO-04-17-04", "unit_id"].iloc[0])
+    assert sdg01["value_labels"]["unit_id"][lapaz] == "Nuestra Señora de La Paz (La Paz)"
+    assert sdg01["value_labels"]["department_code"][int(df.loc[df["geo_id"] == "BO-04-17-04", "department_code"].iloc[0])] == "La Paz"
+    assert sum("Cercado (" in v for v in sdg01["value_labels"]["province_code"].values()) == 4
+    chars = {(v, k): t for v, k, t in sdg01["characteristics"]}
+    assert (chars[("_dta", "_TSpanel")], chars[("_dta", "_TStvar")]) == ("unit_id", "year")
+    assert any("Andersen" in t for (v, k), t in chars.items() if v == "_dta")       # how to cite
+    assert sdg01["variable_labels"]["index_sdg1"] == "No poverty index (0-100)"
+
+    sdg03 = {(v, k): t for v, k, t in stata.characteristics(root / "data/sdg03/map343/sdg03.dta")}
+    notes = " ".join(t for (v, k), t in sdg03.items() if v == "sdg3_2_tmi")
+    assert "2012: 2008" in notes and "2024: 2023" in notes
+
+    pop = stata.read(root / "data/pop/map339/pop.dta")
+    assert len(pop["data"]) == 6780 and "ln_pop_density" in pop["data"].columns

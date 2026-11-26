@@ -19,7 +19,8 @@ data/pop/
     ├── pop.csv                the panel: one row per unit and year
     ├── pop.parquet            the same, typed and compressed
     ├── pop_wide.gpkg          wide: one row per unit, a column per variable and year, boundaries
-    └── pop_wide.geojson       the same, on lighter boundaries, for web maps
+    ├── pop_wide.geojson       the same, on lighter boundaries, for web maps
+    └── pop.dta                the panel for Stata: names, labels, notes, xtset
 ```
 
 ## Scale: map339
@@ -34,8 +35,11 @@ data/pop/
 | [`map339/pop.parquet`](map339/pop.parquet) | Parquet | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/pop/map339/pop.parquet) |
 | [`map339/pop_wide.gpkg`](map339/pop_wide.gpkg) | GeoPackage, wide | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/pop/map339/pop_wide.gpkg) |
 | [`map339/pop_wide.geojson`](map339/pop_wide.geojson) | GeoJSON, wide | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/pop/map339/pop_wide.geojson) |
+| [`map339/pop.dta`](map339/pop.dta) | Stata, long panel (labels and notes) | [raw](https://raw.githubusercontent.com/quarcs-lab/gdo4bolivia/main/data/pop/map339/pop.dta) |
 
 The wide files have one row per map339 unit, with its name, the units it lies in, its source keys and area, then every variable once per year, `<variable>_<year>` (e.g. `pop_2020`); a variable has a column for every year, empty where it has no values. The GeoPackage carries the analysis boundaries and a second table, `variables`, that describes every column (label, description, unit, source, reference year); the GeoJSON carries lighter boundaries for web maps.
+
+The Stata file (format 118, Stata 14 and later) is the panel with each unit's name, the units it lies in (as text and as labelled codes), its source keys and area, and a numeric `unit_id` labelled with the unit's name; it opens declared as a panel (`xtset unit_id year`). Every variable has a label, and `notes <variable>` shows how it was built; `notes _dta` describes the dataset and how to cite it.
 
 | Variable | Label | Description | Unit | Coverage | Aggregation | Source |
 | --- | --- | --- | --- | --- | --- | --- |

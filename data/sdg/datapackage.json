@@ -74,6 +74,7 @@
       "geo:parquet": "data/sdg/map343/sdg.parquet",
       "geo:gpkg": "data/sdg/map343/sdg_wide.gpkg",
       "geo:geojson": "data/sdg/map343/sdg_wide.geojson",
+      "geo:dta": "data/sdg/map343/sdg.dta",
       "geo:source_geometry": "Municipal statistics of the Atlas, linked by INE municipality code",
       "schema": {
         "fields": [

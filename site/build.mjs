@@ -70,13 +70,14 @@ if (FULL) {
     if (existsSync(join(ROOT, p))) cpSync(join(ROOT, p), join(OUT, p), { recursive: true });
   }
   // the indicator pages read each dataset's metadata, data/<dataset>/datapackage.json, and offer its
-  // wide files (data/<dataset>/<scale>/<dataset>_wide.gpkg and .geojson) for download
+  // panel (the CSV and the Stata file) and wide files (data/<dataset>/<scale>/<dataset>_wide.gpkg and
+  // .geojson) for download
   for (const d of readJSON('data/index.json').datasets) {
     const pkg = readJSON(`data/${d}/datapackage.json`);
     mkdirSync(join(OUT, 'data', d), { recursive: true });
     cpSync(join(ROOT, 'data', d, 'datapackage.json'), join(OUT, 'data', d, 'datapackage.json'));
     for (const res of pkg.resources) {
-      for (const key of ['geo:gpkg', 'geo:geojson']) {
+      for (const key of ['geo:path', 'geo:dta', 'geo:gpkg', 'geo:geojson']) {
         if (!res[key] || !existsSync(join(ROOT, res[key]))) continue;
         mkdirSync(dirname(join(OUT, res[key])), { recursive: true });
         cpSync(join(ROOT, res[key]), join(OUT, res[key]));
