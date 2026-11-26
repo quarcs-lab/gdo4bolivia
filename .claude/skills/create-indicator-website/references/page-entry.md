@@ -19,9 +19,9 @@ Variables, sources, license and references come from the metadata; do not repeat
   mapAlt: '<imageAlt>. Legend: High a to b (n units), Middle ..., Low ..., no data k.',
   date: '2026-10-29', pinned: false,
   dataset: 'ntl', scale: 'map339',                           // or datasets: ['a', 'b'] for one page of several
-  geolibre: true,                                            // optional: "Open in GeoLibre" (needs geo:map), with a geolibre code tab
+  geolibre: true,                                            // "Open in GeoLibre" (geo:map's variable); or { variable, year }
   notice: 'Optional warning shown under the description.',
-  code: { python: `...`, pandas: `...` },
+  code: { python: `...`, pandas: `...`, ...wideTabs('ntl', 'map339', 'ln_NTLpc_2020', '<label>', '<label>, 2020') },
   examples: [                                                // optional: short recipes under the code tabs
     { title: 'Compute the index from its indicators', text: 'One sentence on what it shows.', code: `${PYTHON_SETUP}\n...` },
   ],
@@ -74,8 +74,10 @@ download links: the page no longer uses them.
 - [ ] Cite this dataset lists the original sources first, then the observatory, then the other sources.
 - [ ] The entry has `scale` and a `gpkg` code tab (`wideCode(...)`); the sidebar's GeoPackage and GeoJSON buttons
       download `data/<dataset>/<scale>/<dataset>_wide.*` (built by `geo4bolivia build`).
-- [ ] With `geolibre: true`: a `geolibre` code tab (`geolibreCode(...)`); after the push, "Open in GeoLibre" opens the
-      map styled on `geo:map`'s variable and year, and the page's GeoLibre switch shows it embedded.
+- [ ] `geolibre: true` and the code tabs from `...wideTabs(dataset, scale, column, label, title)` (the `gpkg` and
+      `geolibre` tabs); after the push, "Open in GeoLibre" opens the map styled on `geo:map`'s variable (first and
+      last year side by side when it has several), in English and in Spanish, and the page's GeoLibre switch
+      shows it embedded.
 - [ ] The metadata loads (no "could not be loaded" notice) and the console has no errors.
 - [ ] No horizontal scroll at 390 px width.
 - [ ] The card image appears in the Indicators section, and the Database architecture
