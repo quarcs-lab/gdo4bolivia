@@ -152,8 +152,13 @@ keyless basemap whose labels sit above the units, and writes two images:
 ### 8. Page entry
 
 Add the `CONTENT_REGISTRY` entry in `site/src/content.js`; the fields and the snippet rules
-are in [references/page-entry.md](references/page-entry.md). The build writes the JSON-LD
-`Dataset` and the map data. Do not add download links or links to the data folders.
+are in [references/page-entry.md](references/page-entry.md). The structure the entry must give the
+card, the page, the Database row and the AI Notebook is specified in
+[docs/indicator-anatomy.md](../../../docs/indicator-anatomy.md): follow it, and run
+`node site/indicators-check.mjs` until it passes (the site build runs it first and stops otherwise).
+The build writes the JSON-LD `Dataset` and the map data. The seven links (GeoLibre, AI Notebook,
+GeoPackage, GeoJSON, CSV, Stata, GitHub) come from `datasetLinks()` in `app.jsx`; do not add download
+links or links to the data folders to the entry.
 
 The website is bilingual (English and Spanish): translate the page and the dictionary too.
 `node site/i18n/strings.mjs --extract <tmp dir>` writes the English source of what is translated;
@@ -177,14 +182,16 @@ Check in the browser (claude-in-chrome):
 - the page in Spanish (the EN | ES switch, top right): title, text, variables, map labels
 - no console errors
 - no horizontal scroll at 390 px (measure inside a 390 px iframe if the window cannot be resized)
-- the card on the Indicators section
+- the card on the Indicators section, and its row in the Database architecture table: the seven links in order
+- the sidebar: Open in GeoLibre, Open in AI Notebook, the wide and the panel downloads, then GitHub
 - each code box's Open in Colab button opens `notebooks/snippets/<id>/<box>.ipynb` (on GitHub only after the push)
 
 ### 9. Ship
 
 Update `CLAUDE.md`'s dataset table and anything else that lists datasets, run `build`,
 `validate` and `pytest` once more, then commit everything the build regenerated (data, docs,
-catalog, images, and the code boxes' Colab notebooks in `notebooks/snippets/`, which the
+catalog, images, the code boxes' Colab notebooks in `notebooks/snippets/` and the AI Notebook in
+`notebooks/pages/`, which the
 website's build writes; the Pages workflow also regenerates and commits them on push) with the attribution lines, and push to the default branch. If the user
 asked for a branch and PR instead, do that.
 

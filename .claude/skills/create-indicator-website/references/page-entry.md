@@ -67,9 +67,17 @@ download links: the page no longer uses them.
 
 ## QA checklist
 
+The structure every item below checks is specified in
+[docs/indicator-anatomy.md](../../../../docs/indicator-anatomy.md).
+
+- [ ] `node site/indicators-check.mjs` passes: required fields, the four code tabs, 4-6 `aiPrompts`,
+      images, `datapackage.json` with `geo:map`, the four downloads and the Spanish
+      ([the build check](../../../../docs/indicator-anatomy.md#the-build-check)).
 - [ ] The page shows, in order: map, About (with the original source), Explore the map,
       Variables (every column), code, License, Cite this dataset, References, and the
-      At-a-glance sidebar.
+      At-a-glance sidebar ([the indicator page](../../../../docs/indicator-anatomy.md#the-indicator-page)).
+- [ ] The card, the Database row and the sidebar show the seven links in order: GeoLibre, AI Notebook,
+      GeoPackage, GeoJSON, CSV, Stata, GitHub ([the links](../../../../docs/indicator-anatomy.md#the-links-in-one-order)).
 - [ ] The sidebar's "Dataset on GitHub" opens `data/<dataset>/`, and its CSV, Stata, GeoPackage and GeoJSON
       buttons download; the landing page's "Database architecture" row opens the page, and its GitHub chip the folder.
 - [ ] Cite this dataset lists the original sources first, then the observatory, then the other sources.

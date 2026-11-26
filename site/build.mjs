@@ -45,6 +45,14 @@ const oneLine = (s) => plain(s).replace(/\s*\n\s*/g, ' ');
 const paragraphs = (s) => plain(s).split(/\n\s*\n/).filter(Boolean);
 const itemPath = (item) => `${item.section}/${item.id}/`;
 
+// --------------------------------------------------------------------------- indicators
+// Every indicator must have the structure of docs/indicator-anatomy.md (site/indicators-check.mjs):
+// its registry fields, the files its buttons link to and its Spanish. The build stops otherwise.
+{
+  const { runCheck } = await import(pathToFileURL(join(SITE, 'indicators-check.mjs')));
+  if (!(await runCheck(ROOT))) process.exit(1);
+}
+
 // --------------------------------------------------------------------------- code-box notebooks
 // Every code box gets a Colab notebook with exactly its code (site/notebooks.mjs, which needs no
 // npm packages). --check-notebooks writes nothing and fails if they are out of date.

@@ -37,10 +37,8 @@ export function wantedNotebooks() {
   const wanted = new Map(boxes.map((b) => [b.path, asText(S.snippetNotebook({
     code: b.code, title: b.title, heading: b.heading, pageUrl: `${SITE_URL}${b.page || ''}`, siteName: C.SITE_NAME,
   }))]));
-  for (const item of C.CONTENT_REGISTRY.filter((i) => i.type === 'indicator')) {
-    if (!Array.isArray(item.aiPrompts) || !item.aiPrompts.length) {
-      throw new Error(`${item.id}: an indicator needs aiPrompts, the questions its AI Notebook suggests asking Gemini (site/src/content.js)`);
-    }
+  // site/indicators-check.mjs requires aiPrompts (and the rest of docs/indicator-anatomy.md) of every indicator
+  for (const item of C.CONTENT_REGISTRY.filter((i) => i.type === 'indicator' && i.aiPrompts?.length)) {
     const ids = item.datasets || [item.dataset];
     const packages = ids.map((d) => JSON.parse(readFileSync(join(ROOT, 'data', d, 'datapackage.json'), 'utf8')));
     wanted.set(S.pagePath(item.id), asText(S.pageNotebook({

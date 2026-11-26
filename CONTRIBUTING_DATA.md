@@ -67,8 +67,10 @@ The `geo4bolivia` command and the helpers the builders use come from the Python 
    [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/quarcs-lab/gdo4bolivia/blob/main/notebooks/docs/contributing-data/box-2.ipynb)
 5. **Optional: add it to the website.** The `create-indicator-website` skill (`.claude/skills/`) does this end to end. By hand:
    - render the headline map and the card with `uv run python scripts/indicator_map.py <dataset>`
-   - add an `indicator` entry to `CONTENT_REGISTRY` in `site/src/content.js` (copy an existing one)
-   - preview it with `npm run --prefix site preview`
+   - add an `indicator` entry to `CONTENT_REGISTRY` in `site/src/content.js` (copy an existing one), with every field, the four code tabs and the questions for the AI Notebook (`aiPrompts`), and its Spanish in `site/i18n/es/`
+   - check it with `node site/indicators-check.mjs`, then preview it with `npm run --prefix site preview`
+
+   Every indicator has the same card, page, Database row and AI Notebook: [docs/indicator-anatomy.md](docs/indicator-anatomy.md) specifies each element, its order and where it comes from, and the site build stops when an indicator misses a piece.
 
    The page reads the variables, sources and licenses from the metadata; the build writes its JSON-LD `Dataset` (without download URLs), its interactive-map data and its search entry.
 

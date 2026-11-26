@@ -69,6 +69,8 @@ How the database works is explained in [`docs/data-infrastructure.md`](docs/data
 | | Generated: `geo/units.*`, `geo/boundaries/`, `geo/crosswalks/`, `data/`, `docs/datasets/`, the catalog CSV |
 | | Website (`site/`, `images/`, `media/`, `.github/workflows/pages.yml`) and notebooks: optional |
 
+The website's indicators follow one structure (card, page, Database row, AI Notebook), specified in [docs/indicator-anatomy.md](docs/indicator-anatomy.md) and enforced by `site/indicators-check.mjs`; both are generic and come with the website.
+
 Generic code never names a country, a repository or a package. It reads them from `project.yaml` and from the folder name of the package. The environment variables take the package name as prefix (`GEO4LAOS_REF`, ...).
 
 ## Start a new project in 6 steps
