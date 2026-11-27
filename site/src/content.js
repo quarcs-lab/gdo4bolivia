@@ -2911,6 +2911,7 @@ theil.fig` },
 export const PEOPLE = {
   core: [
     { name: 'Carlos Mendez', affiliation: 'Nagoya University, Japan', avatar: 'images/people/carlos-mendez.webp', website: 'https://carlos-mendez.org' },
+    { name: 'Lykke Andersen', affiliation: 'SDSN Bolivia, Bolivia', avatar: 'images/people/lykke-andersen.webp', website: 'https://www.upb.edu/en/conocenos/docentes/lp-006-lykand' },
   ],
   associates: [
     { name: 'Favio Leiva', affiliation: 'Nagoya University, Japan', avatar: 'images/people/favio-leiva.webp', website: 'https://favioleiva.github.io/' },
